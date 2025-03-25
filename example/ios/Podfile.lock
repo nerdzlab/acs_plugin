@@ -1,14 +1,24 @@
 PODS:
   - acs_plugin (0.0.1):
+    - AzureCommunicationCalling (~> 2.15.01)
     - Flutter
+  - AzureCommunicationCalling (2.15.1):
+    - AzureCommunicationCommon (~> 1.0)
+  - AzureCommunicationCommon (1.2.0)
   - Flutter (1.0.0)
   - integration_test (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - acs_plugin (from `.symlinks/plugins/acs_plugin/ios`)
+  - AzureCommunicationCalling (~> 2.15.01)
   - Flutter (from `Flutter`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
+
+SPEC REPOS:
+  trunk:
+    - AzureCommunicationCalling
+    - AzureCommunicationCommon
 
 EXTERNAL SOURCES:
   acs_plugin:
@@ -19,10 +29,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/integration_test/ios"
 
 SPEC CHECKSUMS:
-  acs_plugin: 293075bda8c24378159cfc86796c8c138bf586cc
+  acs_plugin: eea8539dc5a0cf0d876794a0c09838c36f87c6bf
+  AzureCommunicationCalling: a374d99e6c6c6f4589c61eeb59ca193aea48727e
+  AzureCommunicationCommon: 130a21be2be889f83dc4adbf994af6285f962de8
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
 
-PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
+PODFILE CHECKSUM: 5a23c380910e16c08e8861ae4e35a721e83d7373
 
 COCOAPODS: 1.15.2
