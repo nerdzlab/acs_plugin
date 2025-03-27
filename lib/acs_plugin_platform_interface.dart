@@ -26,4 +26,17 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
+
+  // Add your ACS methods here, like initialize, startCall, endCall
+  Future<void> initializeCall(String token) {
+    throw UnimplementedError('initialize() has not been implemented.');
+  }
+
+  Future<void> startCall() {
+    throw UnimplementedError('startCall() has not been implemented.');
+  }
+
+  Future<void> endCall() {
+    throw UnimplementedError('endCall() has not been implemented.');
+  }
 }

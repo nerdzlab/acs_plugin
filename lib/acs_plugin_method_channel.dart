@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -11,7 +13,43 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version =
+        await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
+  }
+
+  @override
+  Future<void> initializeCall(String token) async {
+    try {
+      final String result = await methodChannel.invokeMethod(
+        'initializeCall',
+        {'token': token},
+      );
+
+      log(result);
+    } on PlatformException catch (e) {
+      log("Error initializing ACS: ${e.message}");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> startCall() async {
+    try {
+      await methodChannel.invokeMethod('startCall');
+    } on PlatformException catch (e) {
+      print("Error starting call: ${e.message}");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> endCall() async {
+    try {
+      await methodChannel.invokeMethod('endCall');
+    } on PlatformException catch (e) {
+      print("Error ending call: ${e.message}");
+      rethrow;
+    }
   }
 }
