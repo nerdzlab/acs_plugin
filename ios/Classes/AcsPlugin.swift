@@ -2,7 +2,6 @@ import Flutter
 import UIKit
 import AzureCommunicationCalling
 
-@available(iOS 13.0, *)
 public class AcsPlugin: NSObject, FlutterPlugin {
     private var callHandler: CallHandler?
     private var callService: CallService?

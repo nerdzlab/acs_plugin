@@ -96,6 +96,33 @@ class CallService {
     public func callRemoved(_ call: Call) {
         self.call = nil
     }
+    
+    func toggleMute() {
+        if (self.muted) {
+            call!.unmuteOutgoingAudio(completionHandler: { (error) in
+                if error == nil {
+                    self.muted = false
+                }
+            })
+        } else {
+            call!.muteOutgoingAudio(completionHandler: { (error) in
+                if error == nil {
+                    self.muted = true
+                }
+            })
+        }
+    }
+    
+    func toggleSpeaker() {
+        let audioSession = AVAudioSession.sharedInstance()
+        if self.speakerEnabled {
+            try! audioSession.overrideOutputAudioPort(AVAudioSession.PortOverride.none)
+        } else {
+            try! audioSession.overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
+        }
+        
+        self.speakerEnabled = !self.speakerEnabled
+    }
 }
 
 public class CallObserver : NSObject, CallDelegate {
@@ -112,7 +139,9 @@ public class CallObserver : NSObject, CallDelegate {
         callService.callState = state
         
         if (call.state == CallState.disconnected) {
-            callService.leaveRoomCall()
+            callService.leaveRoomCall(completion: { _ in
+                
+            })
         }
         else if (call.state == CallState.connected) {
             if(self.firstTimeCallConnected) {
@@ -203,33 +232,6 @@ public class CallObserver : NSObject, CallDelegate {
             callService.participants.append(array)
         }
     }
-    
-    func toggleMute() {
-        if (self.muted) {
-            call!.unmuteOutgoingAudio(completionHandler: { (error) in
-                if error == nil {
-                    self.muted = false
-                }
-            })
-        } else {
-            call!.muteOutgoingAudio(completionHandler: { (error) in
-                if error == nil {
-                    self.muted = true
-                }
-            })
-        }
-    }
-    
-    func toggleSpeaker() {
-        let audioSession = AVAudioSession.sharedInstance()
-        if self.speakerEnabled {
-            try! audioSession.overrideOutputAudioPort(AVAudioSession.PortOverride.none)
-        } else {
-            try! audioSession.overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
-        }
-        
-        self.speakerEnabled = !self.speakerEnabled
-    }
 
     private static func callStateToString(state:CallState) -> String {
         switch state {
@@ -243,21 +245,21 @@ public class CallObserver : NSObject, CallDelegate {
     }
 }
 
-class Participant: NSObject, RemoteParticipantDelegate, ObservableObject {
+class Participant: NSObject, RemoteParticipantDelegate {
     private var videoStreamCount = 0
     private let innerParticipant:RemoteParticipant
     private let call:Call
     private var renderedRemoteVideoStream:RemoteVideoStream?
     
-    @Published var state:ParticipantState = ParticipantState.disconnected
-    @Published var isMuted:Bool = false
-    @Published var isSpeaking:Bool = false
-    @Published var hasVideo:Bool = false
-    @Published var displayName:String = ""
-    @Published var videoOn:Bool = true
-    @Published var renderer:VideoStreamRenderer? = nil
-    @Published var rendererView:RendererView? = nil
-    @Published var scalingMode: ScalingMode = .fit
+     var state:ParticipantState = ParticipantState.disconnected
+     var isMuted:Bool = false
+     var isSpeaking:Bool = false
+     var hasVideo:Bool = false
+     var displayName:String = ""
+     var videoOn:Bool = true
+     var renderer:VideoStreamRenderer? = nil
+     var rendererView:RendererView? = nil
+     var scalingMode: ScalingMode = .fit
 
     init(_ call: Call, _ innerParticipant: RemoteParticipant) {
         self.call = call
