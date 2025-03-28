@@ -3,7 +3,6 @@ import UIKit
 import AzureCommunicationCalling
 
 public class AcsPlugin: NSObject, FlutterPlugin {
-    private var callHandler: CallHandler?
     private var callService: CallService?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -48,11 +47,10 @@ public class AcsPlugin: NSObject, FlutterPlugin {
             }
         }
         
-        self.callHandler = CallHandler.getOrCreateInstance()
-        self.callService = CallService()
+        self.callService = CallService.getOrCreateInstance()
         
-        if !self.callHandler!.initialized {
-            self.callHandler?.initializeCall(token: token, callService: callService!, result: result)
+        if !self.callService!.initialized {
+            self.callService?.initializeCall(token: token, result: result)
         }
         
         result("Call Initialized")
