@@ -6,6 +6,7 @@
 //
 
 import AzureCommunicationCalling
+import AzureCommunicationCalling
 import AVFoundation
 import Foundation
 import Flutter
@@ -21,6 +22,11 @@ final class CallService: NSObject, CallAgentDelegate {
     public var initialized = false  // Indicates if the CallService is initialized
     public var participants: [[Participant]] = [[]]  // List of participants in the call
     public var callState: String = "Unknown"  // Tracks the current state of the call
+    
+    private var sendingLocalVideo: Bool = false  // Define sendingLocalVideo property to track if video is being sent
+    private var localVideoStreams: [LocalVideoStream]? // Define localVideoStreams to store the local video streams
+    private var previewRenderer: VideoStreamRenderer? // For rendering the local video
+    public var previewView: RendererView? // The view to display local video
     
     // This method will be used to send errors back to Flutter
     private var result: FlutterResult?
@@ -181,7 +187,7 @@ final class CallService: NSObject, CallAgentDelegate {
             result(FlutterError(code: "NO_ACTIVE_CALL", message: "No active call to toggle mute", details: nil))
             return
         }
-
+        
         let isMuted = call.isOutgoingAudioMuted
         
         if isMuted {
@@ -256,4 +262,69 @@ final class CallService: NSObject, CallAgentDelegate {
     private func callRemoved(_ call: Call) {
         self.call = nil
     }
+    
+    /// Toggles the local video stream on or off.
+    /// - Parameter result: The FlutterResult callback used to return success, error messages, or the view reference.
+    public func toggleLocalVideo(result: @escaping FlutterResult) {
+        if self.sendingLocalVideo {
+            // If video is currently being sent, stop it
+            self.call!.stopVideo(stream: self.localVideoStreams!.first!) { (error) in
+                if let error = error {
+                    // Return an error message to Flutter if stopping video fails
+                    result("Error____ Could not stop preview renderer: \(error.localizedDescription)")
+                } else {
+                    // Successfully stopped video
+                    self.sendingLocalVideo = false
+                    self.previewView = nil
+                    self.previewRenderer?.dispose()
+                    self.previewRenderer = nil
+                    result(nil)
+                }
+            }
+        } else {
+            // Attempt to start sending video
+            guard let availableCameras = self.deviceManager?.cameras, !availableCameras.isEmpty else {
+                result("Error____ No available cameras found")
+                return
+            }
+
+            let scalingMode: ScalingMode = .crop
+
+            // Initialize local video streams if not already set
+            if self.localVideoStreams == nil {
+                self.localVideoStreams = [LocalVideoStream]()
+            }
+
+            // Create a new local video stream using the first available camera
+            self.localVideoStreams?.append(LocalVideoStream(camera: availableCameras.first!))
+
+            do {
+                // Initialize the video renderer for displaying local preview
+                self.previewRenderer = try VideoStreamRenderer(localVideoStream: self.localVideoStreams!.first!)
+                self.previewView = try previewRenderer!.createView(withOptions: CreateViewOptions(scalingMode: scalingMode))
+
+                // Start streaming the local video
+                self.call?.startVideo(stream: self.localVideoStreams!.first!) { error in
+                    if let error = error {
+                        // Return an error message if video streaming fails
+                        result("Error____ Could not share video: \(error.localizedDescription)")
+                    } else {
+                        self.sendingLocalVideo = true
+
+                        // Convert `previewView` to a format Flutter can use
+                        if let previewView = self.previewView {
+                            let viewId = String(previewView.hash) // Generate a reference ID
+                            result(viewId)
+                        } else {
+                            result("Error____ Preview view is nil")
+                        }
+                    }
+                }
+            } catch {
+                // Return an error message if video renderer initialization fails
+                result("Error____ Error initializing video renderer: \(error.localizedDescription)")
+            }
+        }
+    }
+
 }

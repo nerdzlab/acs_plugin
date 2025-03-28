@@ -77,7 +77,7 @@ public class Participant: NSObject, RemoteParticipantDelegate {
         }
     }
     
-    func remoteParticipant(_ remoteParticipant: RemoteParticipant, didUpdateVideoStreams args: RemoteVideoStreamsEventArgs) {
+    public func remoteParticipant(_ remoteParticipant: RemoteParticipant, didUpdateVideoStreams args: RemoteVideoStreamsEventArgs) {
         let hadVideo = hasVideo
         hasVideo = innerParticipant.videoStreams.count > 0
         if videoOn {
@@ -119,7 +119,7 @@ public class Participant: NSObject, RemoteParticipantDelegate {
         }
     }
     
-    func remoteParticipant(_ remoteParticipant: RemoteParticipant, didChangeDisplayName args: PropertyChangedEventArgs) {
+    public func remoteParticipant(_ remoteParticipant: RemoteParticipant, didChangeDisplayName args: PropertyChangedEventArgs) {
         self.displayName = innerParticipant.displayName
     }
 }

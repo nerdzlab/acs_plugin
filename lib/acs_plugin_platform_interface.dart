@@ -47,4 +47,8 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   Future<bool> toggleSpeaker() {
     throw UnimplementedError('toggleSpeaker() has not been implemented.');
   }
+
+  Future<String?> toggleLocalVideo() {
+    throw UnimplementedError('toggleLocalVideo() has not been implemented.');
+  }
 }

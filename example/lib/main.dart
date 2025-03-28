@@ -20,6 +20,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   final _acsPlugin = AcsPlugin();
+  String? _viewId;
 
   @override
   void initState() {
@@ -95,6 +96,19 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  Future<void> _toggleVideo() async {
+    String? viewId = await _acsPlugin.toggleLocalVideo();
+    if (viewId != null) {
+      setState(() {
+        _viewId = viewId;
+      });
+    } else {
+      setState(() {
+        _viewId = null;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -104,7 +118,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             InkWell(
               child: Container(
@@ -181,10 +195,43 @@ class _MyAppState extends State<MyApp> {
               },
             ),
             const SizedBox(height: 16),
+            InkWell(
+              child: Container(
+                height: 40,
+                width: 200,
+                color: Colors.red,
+                child: Text(
+                  'Toggle video',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              onTap: () {
+                _toggleVideo();
+              },
+            ),
+            _viewId != null
+                ? Expanded(child: IosVideoView(viewId: _viewId!))
+                : Container(height: 200, color: Colors.black),
+            const SizedBox(height: 16),
             Text('Running on: $_platformVersion\n'),
           ],
         ),
       ),
+    );
+  }
+}
+
+final class IosVideoView extends StatelessWidget {
+  final String viewId;
+
+  const IosVideoView({super.key, required this.viewId});
+
+  @override
+  Widget build(BuildContext context) {
+    return UiKitView(
+      viewType: 'acs_video_view',
+      creationParams: {'viewId': viewId},
+      creationParamsCodec: const StandardMessageCodec(),
     );
   }
 }

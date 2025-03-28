@@ -27,4 +27,8 @@ class AcsPlugin {
   Future<bool> toggleSpeaker() async {
     return await AcsPluginPlatform.instance.toggleSpeaker();
   }
+
+  Future<String?> toggleLocalVideo() async {
+    return await AcsPluginPlatform.instance.toggleLocalVideo();
+  }
 }

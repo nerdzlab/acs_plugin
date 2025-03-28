@@ -80,4 +80,16 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       return false;
     }
   }
+
+  @override
+  Future<String?> toggleLocalVideo() async {
+    try {
+      final String? viewId =
+          await methodChannel.invokeMethod('toggleLocalVideo');
+      return viewId; // This viewId will be used in the Flutter UI
+    } on PlatformException catch (e) {
+      log("Error toggling local video: ${e.message}");
+      return null;
+    }
+  }
 }

@@ -5,10 +5,19 @@ import AzureCommunicationCalling
 public class AcsPlugin: NSObject, FlutterPlugin {
     private var callService: CallService?
     
+    public static var shared: AcsPlugin = AcsPlugin()
+    
+    public var previewView: RendererView? {
+        return callService?.previewView
+    }
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "acs_plugin", binaryMessenger: registrar.messenger())
-        let instance = AcsPlugin()
+        let instance = AcsPlugin.shared
         registrar.addMethodCallDelegate(instance, channel: channel)
+
+        let factory = AcsVideoViewFactory(messenger: registrar.messenger())
+        registrar.register(factory, withId: "acs_video_view")
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -35,6 +44,8 @@ public class AcsPlugin: NSObject, FlutterPlugin {
             toggleMute(result: result)
         case "toggleSpeaker":
             toggleSpeaker(result: result)
+        case "toggleLocalVideo":
+            toggleLocalVideo(result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -63,12 +74,16 @@ public class AcsPlugin: NSObject, FlutterPlugin {
     private func leaveRoomCall(result: @escaping FlutterResult) {
         self.callService?.leaveRoomCall(result: result)
     }
-
+    
     private func toggleMute(result: @escaping FlutterResult) {
         self.callService?.toggleMute(result: result)
     }
     
     private func toggleSpeaker(result: @escaping FlutterResult) {
         self.callService?.toggleSpeaker(result: result)
+    }
+    
+    private func toggleLocalVideo(result: @escaping FlutterResult) {
+        self.callService?.toggleLocalVideo(result: result)
     }
 }
