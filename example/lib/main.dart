@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -54,9 +54,44 @@ class _MyAppState extends State<MyApp> {
     try {
       final result = await _acsPlugin.initializeCall(
           token:
-              "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDMwNjUzNzgiLCJleHAiOjE3NDMxNTE3NzgsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDMwNjUzNzh9.ygkwoEikEr-pFNAt_-30i70lm62R88iODBU2FiAjGZuZ6naPKkYSldUgd9eFrodosDUGPfWVEXqcNtGrClMguDZESFsZKFbngubRq9EV1RhN0mfHfSyANvJTyDuMnLzQFENMW-RCY2piFRqG4jKIlmjOJaghQcfOGrLylM5T_B6Y-LibbVdQWbn3IlvbrSVvLyB28Oue6A7jffvmzIqyI86wzoTnOa3ISJSHQHjFFu3Gc5RGJSak0FDMHINx17HVatFeZNUQn-di9wvm-j8bJ5NQX1IEo1LDqKVAN-hEgWFc6Z0H52FK70p46GHY-LxowDGZkUvpy5O8R_GsimLPQw");
+              "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDMxNTA1MDIiLCJleHAiOjE3NDMyMzY5MDIsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDMxNTA1MDJ9.qkzoEjk6IMxYcMTq5J60u9GfpIgMx5F3jGiej29h26zwD7Pdk5vGe5obEjwKSI4sd8nT3foD6Jv7Eu5qMSEv_XbkIoHZ8ph527eoKe1JBVzaSFYZ4Vk99b9BIpRWNt7w3JCJBITE8St0Mm8AUxkHKY-sSKJBN_4vIuxFWgrfAasgi2pMMHId99iiU98IeGlbGvuFUgp9kd24n8cLUQFl-3ku_oKKcbM8_Lly4YXFjqKnvTHVWG2_6ZxHxqZgf4JZDBTpXGA75P585Z7PnaK0_42C6jZP5w-uG5lBT-IJBoL-LV_Lhji0cyhWpBW7_E2aTVBM7Urk6yaoUE360XIWYg");
     } catch (error) {
-      print(error);
+      log(error.toString());
+    }
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> joinRoom() async {
+    try {
+      final result = await _acsPlugin.joinRoom(roomId: "99585141029588928");
+    } catch (error) {
+      log(error.toString());
+    }
+  }
+
+  Future<void> leaveRoom() async {
+    try {
+      final result = await _acsPlugin.leaveRoomCall();
+    } catch (error) {
+      log(error.toString());
+    }
+  }
+
+  Future<void> toggleMute() async {
+    try {
+      final result = await _acsPlugin.toggleMute();
+      log('Call is muted = ${result.toString()}');
+    } catch (error) {
+      log(error.toString());
+    }
+  }
+
+  Future<void> toggleSpeaker() async {
+    try {
+      final result = await _acsPlugin.toggleSpeaker();
+      log('Speaker is enabled = ${result.toString()}');
+    } catch (error) {
+      log(error.toString());
     }
   }
 
@@ -85,9 +120,67 @@ class _MyAppState extends State<MyApp> {
                 initAzure();
               },
             ),
-            const SizedBox(
-              height: 16,
+            const SizedBox(height: 16),
+            InkWell(
+              child: Container(
+                height: 40,
+                width: 200,
+                color: Colors.red,
+                child: Text(
+                  'Join room',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              onTap: () {
+                joinRoom();
+              },
             ),
+            const SizedBox(height: 16),
+            InkWell(
+              child: Container(
+                height: 40,
+                width: 200,
+                color: Colors.red,
+                child: Text(
+                  'Leave room',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              onTap: () {
+                leaveRoom();
+              },
+            ),
+            const SizedBox(height: 16),
+            InkWell(
+              child: Container(
+                height: 40,
+                width: 200,
+                color: Colors.red,
+                child: Text(
+                  'Toggle speaker',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              onTap: () {
+                toggleSpeaker();
+              },
+            ),
+            const SizedBox(height: 16),
+            InkWell(
+              child: Container(
+                height: 40,
+                width: 200,
+                color: Colors.red,
+                child: Text(
+                  'Toggle mute',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              onTap: () {
+                toggleMute();
+              },
+            ),
+            const SizedBox(height: 16),
             Text('Running on: $_platformVersion\n'),
           ],
         ),

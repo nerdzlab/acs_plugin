@@ -32,11 +32,19 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('initialize() has not been implemented.');
   }
 
-  Future<void> startCall() {
-    throw UnimplementedError('startCall() has not been implemented.');
+  Future<void> joinRoom(String roomId) {
+    throw UnimplementedError('joinRoom() has not been implemented.');
   }
 
-  Future<void> endCall() {
-    throw UnimplementedError('endCall() has not been implemented.');
+  Future<void> leaveRoomCall() {
+    throw UnimplementedError('leaveRoomCall() has not been implemented.');
+  }
+
+  Future<bool> toggleMute() {
+    throw UnimplementedError('toggleMute() has not been implemented.');
+  }
+
+  Future<bool> toggleSpeaker() {
+    throw UnimplementedError('toggleSpeaker() has not been implemented.');
   }
 }

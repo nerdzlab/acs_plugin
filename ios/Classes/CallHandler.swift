@@ -34,12 +34,14 @@ final class CallHandler: NSObject, CallAgentDelegate {
     public func callAgent(_ callAgent: CallAgent, didUpdateCalls args: CallsUpdatedEventArgs) {
         if let removedCall = args.removedCalls.first {
             callService?.callRemoved(removedCall)
-            result?(FlutterError(code: "CREDENTIAL_ERROR", message: "Need to remove call", details: nil))
+            debugPrint("Error____ Call removed")
+            result?(FlutterError(code: "Error", message: "Call removed", details: nil))
         }
     }
     
     public func initializeCall(token: String, callService: CallService, result: @escaping FlutterResult) {
         if self.initialized {
+            debugPrint("Success___ Already initialized")
             result("Already initialized")
             return
         }
@@ -54,6 +56,7 @@ final class CallHandler: NSObject, CallAgentDelegate {
         do {
             userCredential = try CommunicationTokenCredential(token: token)
         } catch {
+            debugPrint("Error____ Failed to create CommunicationTokenCredential")
             result(FlutterError(code: "CREDENTIAL_ERROR", message: "Failed to create CommunicationTokenCredential", details: nil))
             lock.unlock()
             return
@@ -63,10 +66,11 @@ final class CallHandler: NSObject, CallAgentDelegate {
         
         self.callClient!.getDeviceManager { (deviceManager, error) in
             if let error = error {
+                debugPrint("Error____ Failed to get DeviceManager \(error.localizedDescription)")
                 self.result?(FlutterError(code: "DEVICE_MANAGER_ERROR", message: "Failed to get DeviceManager", details: error.localizedDescription))
                 return
             } else {
-                print("Got device manager instance")
+                debugPrint("Success___ Got device manager instance")
                 // Handle the device manager logic if necessary
             }
         }
@@ -76,10 +80,13 @@ final class CallHandler: NSObject, CallAgentDelegate {
         // Creating the call agent
         self.callClient!.createCallAgent(userCredential: userCredential, options: options) { (callAgent, error) in
             if let error = error {
+                debugPrint("Error____ Failed to create CallAgent \(error.localizedDescription)")
                 self.result?(FlutterError(code: "CALL_AGENT_ERROR", message: "Failed to create CallAgent", details: error.localizedDescription))
             } else {
                 // Call agent created successfully
+                callService.setCallAgent(callAgent: callAgent!, callHandler: self)
                 self.initialized = true
+                debugPrint("Success___ Call Agent Initialized Successfully")
                 self.result?("Call Agent Initialized Successfully")
             }
         }

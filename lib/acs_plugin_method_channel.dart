@@ -34,22 +34,49 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
-  Future<void> startCall() async {
+  Future<void> joinRoom(String roomId) async {
     try {
-      await methodChannel.invokeMethod('startCall');
+      final String result = await methodChannel.invokeMethod(
+        'joinRoom',
+        {'roomId': roomId},
+      );
+      log(result);
     } on PlatformException catch (e) {
-      print("Error starting call: ${e.message}");
+      log("Error starting call: ${e.message}");
       rethrow;
     }
   }
 
   @override
-  Future<void> endCall() async {
+  Future<void> leaveRoomCall() async {
     try {
-      await methodChannel.invokeMethod('endCall');
+      await methodChannel.invokeMethod('leaveRoomCall');
     } on PlatformException catch (e) {
-      print("Error ending call: ${e.message}");
+      log("Error ending call: ${e.message}");
       rethrow;
+    }
+  }
+
+  @override
+  Future<bool> toggleMute() async {
+    try {
+      final bool muted = await methodChannel.invokeMethod('toggleMute');
+      return muted;
+    } on PlatformException catch (e) {
+      log("Failed to toggle mute: ${e.message}");
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> toggleSpeaker() async {
+    try {
+      final bool speakerEnabled =
+          await methodChannel.invokeMethod('toggleSpeaker');
+      return speakerEnabled;
+    } on PlatformException catch (e) {
+      log("Failed to toggle speaker: ${e.message}");
+      return false;
     }
   }
 }

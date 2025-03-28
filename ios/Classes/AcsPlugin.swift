@@ -25,14 +25,17 @@ public class AcsPlugin: NSObject, FlutterPlugin {
             }
             
         case "joinRoom":
-            
             if let arguments = call.arguments as? [String: Any], let roomId = arguments["roomId"] as? String {
-                initializeCall(token: roomId, result: result)
+                startCall(roomId: roomId, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "RoomId is required", details: nil))
             }
-        case "endCall":
-            endCall(result: result)
+        case "leaveRoomCall":
+            leaveRoomCall(result: result)
+        case "toggleMute":
+            toggleMute(result: result)
+        case "toggleSpeaker":
+            toggleSpeaker(result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -55,13 +58,19 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         result("Call Initialized")
     }
     
-    private func startCall(result: @escaping FlutterResult) {
-        // Логіка для початку виклику
-        result("Call Started")
+    private func startCall(roomId: String, result: @escaping FlutterResult) {
+        self.callService?.joinRoomCall(roomId: roomId, result: result)
     }
     
-    private func endCall(result: @escaping FlutterResult) {
-        // Логіка для завершення виклику
-        result("Call Ended")
+    private func leaveRoomCall(result: @escaping FlutterResult) {
+        self.callService?.leaveRoomCall(result: result)
+    }
+
+    private func toggleMute(result: @escaping FlutterResult) {
+        self.callService?.toggleMute(result: result)
+    }
+    
+    private func toggleSpeaker(result: @escaping FlutterResult) {
+        self.callService?.toggleSpeaker(result: result)
     }
 }

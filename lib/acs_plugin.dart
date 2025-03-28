@@ -11,12 +11,20 @@ class AcsPlugin {
   }
 
   // Start a call
-  Future<void> startCall() async {
-    await AcsPluginPlatform.instance.startCall();
+  Future<void> joinRoom({required String roomId}) async {
+    await AcsPluginPlatform.instance.joinRoom(roomId);
   }
 
   // End a call
-  Future<void> endCall() async {
-    await AcsPluginPlatform.instance.endCall();
+  Future<void> leaveRoomCall() async {
+    await AcsPluginPlatform.instance.leaveRoomCall();
+  }
+
+  Future<bool> toggleMute() async {
+    return await AcsPluginPlatform.instance.toggleMute();
+  }
+
+  Future<bool> toggleSpeaker() async {
+    return await AcsPluginPlatform.instance.toggleSpeaker();
   }
 }
