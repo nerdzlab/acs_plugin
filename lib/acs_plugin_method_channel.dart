@@ -50,7 +50,8 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   @override
   Future<void> leaveRoomCall() async {
     try {
-      await methodChannel.invokeMethod('leaveRoomCall');
+      final String result = await methodChannel.invokeMethod('leaveRoomCall');
+      log(result);
     } on PlatformException catch (e) {
       log("Error ending call: ${e.message}");
       rethrow;
