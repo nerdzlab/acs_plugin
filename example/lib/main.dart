@@ -52,6 +52,15 @@ class _CallScreenState extends State<CallScreen> {
     _getPlatformVersion();
   }
 
+  _shwoSnacBar(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 1),
+        content: Text(text),
+      ),
+    );
+  }
+
   // Helper methods for platform interactions
   Future<void> _getPlatformVersion() async {
     try {
@@ -77,8 +86,9 @@ class _CallScreenState extends State<CallScreen> {
     try {
       final result = await _acsPlugin.requestMicrophonePermissions();
       log('Microphone permissions granted: $result');
-    } catch (error) {
-      log('Microphone permission error: $error');
+      _shwoSnacBar("Microphone permissions granted: $result");
+    } on PlatformException catch (error) {
+      log('Microphone permission error: ${error.message}');
     }
   }
 
@@ -86,8 +96,10 @@ class _CallScreenState extends State<CallScreen> {
     try {
       final result = await _acsPlugin.requestCameraPermissions();
       log('Camera permissions granted: $result');
-    } catch (error) {
-      log('Camera permission error: $error');
+      _shwoSnacBar('Camera permissions granted: $result');
+    } on PlatformException catch (error) {
+      log('Camera permission error: ${error.message}');
+      _shwoSnacBar('Camera permission error: ${error.message}');
     }
   }
 
@@ -96,8 +108,10 @@ class _CallScreenState extends State<CallScreen> {
     try {
       await _acsPlugin.initializeCall(token: _acsToken);
       log('Azure Communication Services initialized successfully');
-    } catch (error) {
-      log('Failed to initialize ACS: $error');
+      _shwoSnacBar('Azure Communication Services initialized successfully');
+    } on PlatformException catch (error) {
+      log('Failed to initialize ACS: ${error.message}');
+      _shwoSnacBar('Failed to initialize ACS: ${error.message}');
     }
   }
 
@@ -105,8 +119,10 @@ class _CallScreenState extends State<CallScreen> {
     try {
       await _acsPlugin.joinRoom(roomId: _roomId);
       log('Joined room successfully');
-    } catch (error) {
-      log('Failed to join room: $error');
+      _shwoSnacBar('Joined room successfully');
+    } on PlatformException catch (error) {
+      log('Failed to join room: ${error.message}');
+      _shwoSnacBar('Failed to join room: ${error.message}');
     }
   }
 
@@ -118,8 +134,10 @@ class _CallScreenState extends State<CallScreen> {
         _isVideoOn = false;
       });
       log('Left room successfully');
-    } catch (error) {
-      log('Failed to leave room: $error');
+      _shwoSnacBar('Left room successfully');
+    } on PlatformException catch (error) {
+      log('Failed to leave room: ${error.message}');
+      _shwoSnacBar('Failed to leave room: ${error.message}');
     }
   }
 
@@ -131,8 +149,10 @@ class _CallScreenState extends State<CallScreen> {
         _isMuted = result;
       });
       log('Call is muted: $result');
-    } catch (error) {
-      log('Failed to toggle mute: $error');
+      _shwoSnacBar('Call is muted: $result');
+    } on PlatformException catch (error) {
+      log('Failed to toggle mute: ${error.message}');
+      _shwoSnacBar('Failed to toggle mute: ${error.message}');
     }
   }
 
@@ -143,8 +163,10 @@ class _CallScreenState extends State<CallScreen> {
         _isSpeakerOn = result;
       });
       log('Speaker is enabled: $result');
-    } catch (error) {
-      log('Failed to toggle speaker: $error');
+      _shwoSnacBar('Speaker is enabled: $result');
+    } on PlatformException catch (error) {
+      log('Failed to toggle speaker: ${error.message}');
+      _shwoSnacBar('Failed to toggle speaker: ${error.message}');
     }
   }
 
@@ -156,8 +178,10 @@ class _CallScreenState extends State<CallScreen> {
         _isVideoOn = viewId != null;
       });
       log('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
-    } catch (error) {
-      log('Failed to toggle video: $error');
+      _shwoSnacBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
+    } on PlatformException catch (error) {
+      log('Failed to toggle video: ${error.message}');
+      _shwoSnacBar('Failed to toggle video: ${error.message}');
     }
   }
 

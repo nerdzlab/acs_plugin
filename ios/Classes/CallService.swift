@@ -58,7 +58,7 @@ final class CallService: NSObject, CallAgentDelegate {
             }
         }
     }
-
+    
     /// Requests permission to access the camera.
     /// - Parameter result: Callback to return success or error result.
     public func requestCameraPermissions(result: @escaping FlutterResult) {
@@ -80,7 +80,8 @@ final class CallService: NSObject, CallAgentDelegate {
         // Check if already initialized
         if initialized {
             debugPrint("Success___ Already initialized")
-            result("Already initialized")
+            result(FlutterError(code: "CREDENTIAL_ERROR", message: "Already initialized", details: nil))
+            
             return
         }
         
@@ -151,9 +152,15 @@ final class CallService: NSObject, CallAgentDelegate {
     /// - Parameter roomId: The ID of the room to join.
     /// - Parameter result: Callback to return the success or failure result.
     public func joinRoomCall(roomId: String, result: @escaping FlutterResult) {
+        if (call != nil) {
+            debugPrint("Error____ You already have active call")
+            result(FlutterError(code: "Error", message: "You already have active call", details: nil))
+            return
+        }
+        
         if self.callAgent == nil {
             debugPrint("Error____ CallAgent not initialized")
-            result("CallAgent not initialized")
+            result(FlutterError(code: "Error", message: "CallAgent not initialized", details: nil))
             return
         }
         
@@ -175,7 +182,7 @@ final class CallService: NSObject, CallAgentDelegate {
             DispatchQueue.main.async {
                 if let error = error {
                     debugPrint("Error____ Failed to join the call: \(error.localizedDescription)")
-                    result("Failed to join the call: \(error.localizedDescription)")
+                    result(FlutterError(code: "Error", message: "Failed to join the call: \(error.localizedDescription)", details: nil))
                     return
                 }
                 
@@ -189,21 +196,36 @@ final class CallService: NSObject, CallAgentDelegate {
     /// Leaves the current room call if active.
     /// - Parameter result: Callback to return the success or failure result.
     public func leaveRoomCall(result: @escaping FlutterResult) {
-        if let currentCall = self.call {
-            currentCall.hangUp(options: nil) { [weak self] error in
-                if let error = error {
-                    debugPrint("Error____ Failed to leave the call: \(error.localizedDescription)")
-                    result("Failed to leave the call: \(error.localizedDescription)")
-                    return
+        if self.call != nil {
+            // If video is currently being sent, stop it
+            if (self.sendingLocalVideo) {
+                self.call?.stopVideo(stream: self.localVideoStreams!.first!) { (error) in
+                    if let error = error {
+                        // Return an error message to Flutter if stopping video fails
+                        debugPrint("Error___ Could not stop preview renderer: \(error.localizedDescription)")
+                        result(FlutterError(code: "Error", message: "No active call to leave", details: nil))
+                        
+                    } else {
+                        // Successfully stopped video
+                        self.sendingLocalVideo = false
+                        self.previewView = nil
+                        self.previewRenderer?.dispose()
+                        self.previewRenderer = nil
+                        debugPrint("Success___ video successfully stopped")
+                        result(nil)
+                    }
                 }
-                
-                self?.call = nil
-                debugPrint("Success___ Left the call successfully")
-                result("Left the call successfully")
             }
+            
+            self.call?.hangUp(options: nil) { (error) in }
+            self.participants.removeAll()
+            self.call?.delegate = nil
+            self.call = nil
+            debugPrint("Success___ Left the call successfully")
+            result("Left the call successfully")
         } else {
             debugPrint("Error____ No active call to leave")
-            result("No active call to leave")
+            result(FlutterError(code: "Error", message: "No active call to leave", details: nil))
         }
     }
     
@@ -244,6 +266,12 @@ final class CallService: NSObject, CallAgentDelegate {
     /// Toggles the speaker output of the audio session.
     /// - Parameter result: Callback to return the new speaker state.
     public func toggleSpeaker(result: @escaping FlutterResult) {
+        guard call != nil else {
+            debugPrint("Error___ No active call to toggle speaker")
+            result(FlutterError(code: "NO_ACTIVE_CALL", message: "No active call to toggle speaker", details: nil))
+            return
+        }
+        
         let audioSession = AVAudioSession.sharedInstance()
         
         do {
@@ -294,65 +322,77 @@ final class CallService: NSObject, CallAgentDelegate {
     /// Toggles the local video stream on or off.
     /// - Parameter result: The FlutterResult callback used to return success, error messages, or the view reference.
     public func toggleLocalVideo(result: @escaping FlutterResult) {
+        guard call != nil else {
+            debugPrint("Error___ No active call to toggle video")
+            result(FlutterError(code: "NO_ACTIVE_CALL", message: "No active call to toggle video", details: nil))
+            return
+        }
+        
         if self.sendingLocalVideo {
             // If video is currently being sent, stop it
             self.call!.stopVideo(stream: self.localVideoStreams!.first!) { (error) in
                 if let error = error {
                     // Return an error message to Flutter if stopping video fails
-                    result("Error____ Could not stop preview renderer: \(error.localizedDescription)")
+                    debugPrint("Error___ Could not stop preview renderer: \(error.localizedDescription)")
+                    result(FlutterError(code: "Error", message: "Could not stop preview renderer: \(error.localizedDescription)", details: nil))
                 } else {
                     // Successfully stopped video
                     self.sendingLocalVideo = false
                     self.previewView = nil
                     self.previewRenderer?.dispose()
                     self.previewRenderer = nil
+                    debugPrint("Success___ video successfully stopped")
                     result(nil)
                 }
             }
         } else {
             // Attempt to start sending video
             guard let availableCameras = self.deviceManager?.cameras, !availableCameras.isEmpty else {
-                result("Error____ No available cameras found")
+                debugPrint("Error___ No available cameras found")
+                result(FlutterError(code: "Error", message: "No available cameras found", details: nil))
                 return
             }
-
+            
             let scalingMode: ScalingMode = .crop
-
+            
             // Initialize local video streams if not already set
             if self.localVideoStreams == nil {
                 self.localVideoStreams = [LocalVideoStream]()
             }
-
+            
             // Create a new local video stream using the first available camera
             self.localVideoStreams?.append(LocalVideoStream(camera: availableCameras.first!))
-
+            
             do {
                 // Initialize the video renderer for displaying local preview
                 self.previewRenderer = try VideoStreamRenderer(localVideoStream: self.localVideoStreams!.first!)
                 self.previewView = try previewRenderer!.createView(withOptions: CreateViewOptions(scalingMode: scalingMode))
-
+                
                 // Start streaming the local video
                 self.call?.startVideo(stream: self.localVideoStreams!.first!) { error in
                     if let error = error {
                         // Return an error message if video streaming fails
-                        result("Error____ Could not share video: \(error.localizedDescription)")
+                        debugPrint("Error____ Could not share video: \(error.localizedDescription)")
+                        result(FlutterError(code: "Error", message: "Could not share video: \(error.localizedDescription)", details: nil))
                     } else {
                         self.sendingLocalVideo = true
-
+                        
                         // Convert `previewView` to a format Flutter can use
                         if let previewView = self.previewView {
+                            debugPrint("Success____ Preview view generated")
                             let viewId = String(previewView.hash) // Generate a reference ID
                             result(viewId)
                         } else {
-                            result("Error____ Preview view is nil")
+                            debugPrint("Error____ Preview view is nil")
+                            result(FlutterError(code: "Error", message: "Preview view is nil", details: nil))
                         }
                     }
                 }
             } catch {
                 // Return an error message if video renderer initialization fails
-                result("Error____ Error initializing video renderer: \(error.localizedDescription)")
+                debugPrint("Error____ Error initializing video renderer: \(error.localizedDescription)")
+                result(FlutterError(code: "Error", message: "Error initializing video renderer: \(error.localizedDescription)", details: nil))
             }
         }
     }
-
 }

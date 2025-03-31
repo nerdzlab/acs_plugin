@@ -102,22 +102,47 @@ public class AcsPlugin: NSObject, FlutterPlugin {
     }
     
     private func startCall(roomId: String, result: @escaping FlutterResult) {
+        if self.callService == nil {
+            result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
+            return
+        }
+        
         self.callService?.joinRoomCall(roomId: roomId, result: result)
     }
     
     private func leaveRoomCall(result: @escaping FlutterResult) {
+        if self.callService == nil {
+            result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
+            return
+        }
+        
         self.callService?.leaveRoomCall(result: result)
     }
     
     private func toggleMute(result: @escaping FlutterResult) {
+        if self.callService == nil {
+            result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
+            return
+        }
+        
         self.callService?.toggleMute(result: result)
     }
     
     private func toggleSpeaker(result: @escaping FlutterResult) {
+        if self.callService == nil {
+            result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
+            return
+        }
+        
         self.callService?.toggleSpeaker(result: result)
     }
     
     private func toggleLocalVideo(result: @escaping FlutterResult) {
+        if self.callService == nil {
+            result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
+            return
+        }
+        
         self.callService?.toggleLocalVideo(result: result)
     }
 }
