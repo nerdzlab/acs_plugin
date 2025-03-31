@@ -15,7 +15,7 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         let channel = FlutterMethodChannel(name: "acs_plugin", binaryMessenger: registrar.messenger())
         let instance = AcsPlugin.shared
         registrar.addMethodCallDelegate(instance, channel: channel)
-
+        
         let factory = AcsVideoViewFactory(messenger: registrar.messenger())
         registrar.register(factory, withId: "acs_video_view")
     }
@@ -24,6 +24,12 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         switch call.method {
         case "getPlatformVersion":
             result("iOS " + UIDevice.current.systemVersion)
+            
+        case "requestMicrophonePermissions":
+            requestMicrophonePermissions(result: result)
+            
+        case "requestCameraPermissions":
+            requestCameraPermissions(result: result)
             
         case "initializeCall":
             if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String {
@@ -51,20 +57,48 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         }
     }
     
+    private func requestMicrophonePermissions(result: @escaping FlutterResult) {
+        self.callService = CallService.getOrCreateInstance()
+        self.callService?.requestMicrophonePermissions(result: result)
+    }
+    
+    private func requestCameraPermissions(result: @escaping FlutterResult) {
+        self.callService = CallService.getOrCreateInstance()
+        self.callService?.requestCameraPermissions(result: result)
+    }
+    
     private func initializeCall(token: String, result: @escaping FlutterResult) {
-        AVAudioSession.sharedInstance().requestRecordPermission { (granted) in
-            if granted {
-                AVCaptureDevice.requestAccess(for: .video) { (videoGranted) in /* NOOP */ }
+        // Check microphone permission
+        AVAudioSession.sharedInstance().requestRecordPermission { [weak self] (micGranted) in
+            guard let self = self else {
+                result(FlutterError(code: "SELF_NULL", message: "Self reference lost", details: nil))
+                return
+            }
+            
+            if !micGranted {
+                debugPrint("Error____ Microphone permission denied")
+                result(FlutterError(code: "MICROPHONE_PERMISSION_DENIED", message: "Microphone access is required", details: nil))
+                return
+            }
+            
+            // Check camera permission
+            AVCaptureDevice.requestAccess(for: .video) { (cameraGranted) in
+                if !cameraGranted {
+                    debugPrint("Error____ Camera permission denied")
+                    result(FlutterError(code: "CAMERA_PERMISSION_DENIED", message: "Camera access is required", details: nil))
+                    return
+                }
+                
+                // Proceed with call initialization if permissions are granted
+                self.callService = CallService.getOrCreateInstance()
+                
+                if !self.callService!.initialized {
+                    self.callService?.initializeCall(token: token, result: result)
+                } else {
+                    result("Call Already Initialized")
+                }
             }
         }
-        
-        self.callService = CallService.getOrCreateInstance()
-        
-        if !self.callService!.initialized {
-            self.callService?.initializeCall(token: token, result: result)
-        }
-        
-        result("Call Initialized")
     }
     
     private func startCall(roomId: String, result: @escaping FlutterResult) {

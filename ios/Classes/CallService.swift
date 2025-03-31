@@ -45,6 +45,34 @@ final class CallService: NSObject, CallAgentDelegate {
         return instance!
     }
     
+    /// Requests permission to access the microphone.
+    /// - Parameter result: Callback to return success or error result.
+    public func requestMicrophonePermissions(result: @escaping FlutterResult) {
+        AVAudioSession.sharedInstance().requestRecordPermission { granted in
+            if granted {
+                debugPrint("Success___ Microphone permission granted")
+                result(true)
+            } else {
+                debugPrint("Error____ Microphone permission denied")
+                result(false)
+            }
+        }
+    }
+
+    /// Requests permission to access the camera.
+    /// - Parameter result: Callback to return success or error result.
+    public func requestCameraPermissions(result: @escaping FlutterResult) {
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            if granted {
+                debugPrint("Success___ Camera permission granted")
+                result(true)
+            } else {
+                debugPrint("Error____ Camera permission denied")
+                result(false)
+            }
+        }
+    }
+    
     /// Initializes the call service with the provided token.
     /// - Parameter token: Communication token for authentication.
     /// - Parameter result: Callback to return success or error result.

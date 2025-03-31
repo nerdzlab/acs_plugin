@@ -27,6 +27,16 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
+  Future<bool> requestMicrophonePermissions() {
+    throw UnimplementedError(
+        'requestMicrophonePermissions() has not been implemented.');
+  }
+
+  Future<bool> requestCameraPermissions() {
+    throw UnimplementedError(
+        'requestCameraPermissions() has not been implemented.');
+  }
+
   // Add your ACS methods here, like initialize, startCall, endCall
   Future<void> initializeCall(String token) {
     throw UnimplementedError('initialize() has not been implemented.');

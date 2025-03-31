@@ -5,6 +5,14 @@ class AcsPlugin {
     return AcsPluginPlatform.instance.getPlatformVersion();
   }
 
+  Future<bool> requestMicrophonePermissions() async {
+    return await AcsPluginPlatform.instance.requestMicrophonePermissions();
+  }
+
+  Future<bool> requestCameraPermissions() async {
+    return await AcsPluginPlatform.instance.requestCameraPermissions();
+  }
+
   // Initialize the ACS plugin with a token
   Future<void> initializeCall({required String token}) async {
     await AcsPluginPlatform.instance.initializeCall(token);

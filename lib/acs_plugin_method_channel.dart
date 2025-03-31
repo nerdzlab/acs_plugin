@@ -19,6 +19,30 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
+  Future<bool> requestMicrophonePermissions() async {
+    try {
+      final bool result =
+          await methodChannel.invokeMethod('requestMicrophonePermissions');
+      return result;
+    } on PlatformException catch (e) {
+      log("Error toggling local video: ${e.message}");
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> requestCameraPermissions() async {
+    try {
+      final bool result =
+          await methodChannel.invokeMethod('requestCameraPermissions');
+      return result;
+    } on PlatformException catch (e) {
+      log("Error toggling local video: ${e.message}");
+      return false;
+    }
+  }
+
+  @override
   Future<void> initializeCall(String token) async {
     try {
       final String result = await methodChannel.invokeMethod(

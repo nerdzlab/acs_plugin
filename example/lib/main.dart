@@ -50,12 +50,30 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future<void> requestMicrophonePermissions() async {
+    try {
+      final result = await _acsPlugin.requestMicrophonePermissions();
+      log('Microphone permissions is granted = ${result.toString()}');
+    } catch (error) {
+      log(error.toString());
+    }
+  }
+
+  Future<void> requestCameraPermissions() async {
+    try {
+      final result = await _acsPlugin.requestCameraPermissions();
+      log('Camera permissions is granted = ${result.toString()}');
+    } catch (error) {
+      log(error.toString());
+    }
+  }
+
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initAzure() async {
     try {
       final result = await _acsPlugin.initializeCall(
           token:
-              "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDMxNTA1MDIiLCJleHAiOjE3NDMyMzY5MDIsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDMxNTA1MDJ9.qkzoEjk6IMxYcMTq5J60u9GfpIgMx5F3jGiej29h26zwD7Pdk5vGe5obEjwKSI4sd8nT3foD6Jv7Eu5qMSEv_XbkIoHZ8ph527eoKe1JBVzaSFYZ4Vk99b9BIpRWNt7w3JCJBITE8St0Mm8AUxkHKY-sSKJBN_4vIuxFWgrfAasgi2pMMHId99iiU98IeGlbGvuFUgp9kd24n8cLUQFl-3ku_oKKcbM8_Lly4YXFjqKnvTHVWG2_6ZxHxqZgf4JZDBTpXGA75P585Z7PnaK0_42C6jZP5w-uG5lBT-IJBoL-LV_Lhji0cyhWpBW7_E2aTVBM7Urk6yaoUE360XIWYg");
+              "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDM0MTEyMTUiLCJleHAiOjE3NDM0OTc2MTUsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDM0MTEyMTV9.EkuqQKM99Lz6kZ7P2sWYhxGmj9vYRnhxijO-Uk6H104GWRqGjC9Lw7IU-xZtkBhFqF84-yED2w64oiF_QvvP07FjjgMKUjW1XvDftfVrs-RvR3pHE99G96GwIuJFt7Emd__3mNMkLUdP87GAu-SgZkUyo24s58pK_-zmidbyjwmOeOMyFplukA4VHuY_zd4v1BT1IaRvEJgQKDRvcptSTi268Igi4x-xHHq_X7SzLPNt7SDtkisUl6VI58Hapr6QHZUQAn_wZ4asLCbmTiRIKkdKHuhd21q06NdS1mSxZyRmXLNqELsulpiP4h00zSk_9AWCv6uoTiTse02RqAYFTA");
     } catch (error) {
       log(error.toString());
     }
@@ -64,7 +82,7 @@ class _MyAppState extends State<MyApp> {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> joinRoom() async {
     try {
-      final result = await _acsPlugin.joinRoom(roomId: "99585141029588928");
+      final result = await _acsPlugin.joinRoom(roomId: "99547464766727963");
     } catch (error) {
       log(error.toString());
     }
@@ -120,6 +138,36 @@ class _MyAppState extends State<MyApp> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            InkWell(
+              child: Container(
+                height: 40,
+                width: 200,
+                color: Colors.red,
+                child: Text(
+                  'Request microphone',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              onTap: () {
+                requestMicrophonePermissions();
+              },
+            ),
+            const SizedBox(height: 16),
+            InkWell(
+              child: Container(
+                height: 40,
+                width: 200,
+                color: Colors.red,
+                child: Text(
+                  'Request camera',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              onTap: () {
+                requestCameraPermissions();
+              },
+            ),
+            const SizedBox(height: 16),
             InkWell(
               child: Container(
                 height: 40,
