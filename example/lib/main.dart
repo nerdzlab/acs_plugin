@@ -41,15 +41,61 @@ class _CallScreenState extends State<CallScreen> {
   bool _isSpeakerOn = false;
   bool _isVideoOn = false;
 
+  StreamSubscription? _viewIdSubscription;
+
   // Configuration constants - move to a config file in a real app
   static const String _acsToken =
-      "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDM0MTEyMTUiLCJleHAiOjE3NDM0OTc2MTUsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDM0MTEyMTV9.EkuqQKM99Lz6kZ7P2sWYhxGmj9vYRnhxijO-Uk6H104GWRqGjC9Lw7IU-xZtkBhFqF84-yED2w64oiF_QvvP07FjjgMKUjW1XvDftfVrs-RvR3pHE99G96GwIuJFt7Emd__3mNMkLUdP87GAu-SgZkUyo24s58pK_-zmidbyjwmOeOMyFplukA4VHuY_zd4v1BT1IaRvEJgQKDRvcptSTi268Igi4x-xHHq_X7SzLPNt7SDtkisUl6VI58Hapr6QHZUQAn_wZ4asLCbmTiRIKkdKHuhd21q06NdS1mSxZyRmXLNqELsulpiP4h00zSk_9AWCv6uoTiTse02RqAYFTA";
-  static const String _roomId = "99547464766727963";
+      "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDM0OTQzODUiLCJleHAiOjE3NDM1ODA3ODUsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDM0OTQzODV9.PuhSLX3_uG7AisLEQHagfM-JmbK4QKduVEJrl8Dzo-l9KSgPyD5GH17l9AQU-C8ZDb40BEHQU1tEfFwvvS9PS_biKUp0zLNC7Vm6J5eJZ-_fL2He63YIyjdIZAz11-tXIOqdNHnpE6NJrhLGrKrWv0PrLO7bcpCnD9EDoGXqcyTiw2j5h3vCj13dN4SkGJr3qCrKicoD2cZsFMQGAQtINfqRZUtkFIg1rYodv1RFX69X457BEurj_6y9szFh82ifLzu7sv-8WKe07jCC4mWGNhImnIL99t4J-ty_HZfKc_zLSNa3bc4qhwHB0T7u0_H-oWey2HE2FBSxwEg63MEoUg";
+  static const String _roomId = "99530934209225207";
 
   @override
-  void initState() {
+  initState() {
     super.initState();
     _getPlatformVersion();
+
+    _viewIdSubscription = _acsPlugin.viewIdStream.listen(
+      (viewId) {
+        setState(() {
+          _viewId = viewId;
+          if (viewId == null) {
+            _isVideoOn = false;
+            log('Received nil viewId from iOS');
+            _shwoSnacBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
+            // Handle nil case here
+          } else {
+            _isVideoOn = true;
+            _shwoSnacBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
+            log('Received viewId from iOS: $viewId');
+            // Handle the viewId here
+          }
+        });
+      },
+      onError: (error, stackTrace) {
+        log('Error receiving viewId: $error');
+        log('Stack trace: $stackTrace');
+
+        // Handle error appropriately
+        setState(() {
+          // Update UI to reflect error state
+          _isVideoOn = false;
+          _viewId = null;
+          _shwoSnacBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
+        });
+      },
+      onDone: () {
+        // This gets called if the stream is closed normally
+        log('ViewId stream closed');
+        // Handle stream closure if needed
+      },
+      cancelOnError:
+          false, // Set to true if you want to cancel the subscription on first error
+    );
+  }
+
+  @override
+  dispose() {
+    _viewIdSubscription?.cancel();
+    super.dispose();
   }
 
   _shwoSnacBar(String text) {
@@ -129,10 +175,6 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _leaveRoom() async {
     try {
       await _acsPlugin.leaveRoomCall();
-      setState(() {
-        _viewId = null;
-        _isVideoOn = false;
-      });
       log('Left room successfully');
       _shwoSnacBar('Left room successfully');
     } on PlatformException catch (error) {
@@ -172,13 +214,7 @@ class _CallScreenState extends State<CallScreen> {
 
   Future<void> _toggleVideo() async {
     try {
-      String? viewId = await _acsPlugin.toggleLocalVideo();
-      setState(() {
-        _viewId = viewId;
-        _isVideoOn = viewId != null;
-      });
-      log('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
-      _shwoSnacBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
+      await _acsPlugin.toggleLocalVideo();
     } on PlatformException catch (error) {
       log('Failed to toggle video: ${error.message}');
       _shwoSnacBar('Failed to toggle video: ${error.message}');

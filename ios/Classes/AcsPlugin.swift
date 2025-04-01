@@ -3,18 +3,29 @@ import UIKit
 import AzureCommunicationCalling
 
 public class AcsPlugin: NSObject, FlutterPlugin {
-    private var callService: CallService?
+    
+    private var callService: CallService {
+        return CallService.getOrCreateInstance()
+    }
+    
+    private var eventChannel: FlutterEventChannel?
+    private var eventSink: FlutterEventSink?
     
     public static var shared: AcsPlugin = AcsPlugin()
     
     public var previewView: RendererView? {
-        return callService?.previewView
+        return callService.previewView
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "acs_plugin", binaryMessenger: registrar.messenger())
         let instance = AcsPlugin.shared
         registrar.addMethodCallDelegate(instance, channel: channel)
+        
+        // Add event channel setup
+        let eventChannel = FlutterEventChannel(name: "acs_plugin_events", binaryMessenger: registrar.messenger())
+        eventChannel.setStreamHandler(instance)
+        instance.eventChannel = eventChannel
         
         let factory = AcsVideoViewFactory(messenger: registrar.messenger())
         registrar.register(factory, withId: "acs_video_view")
@@ -51,98 +62,80 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         case "toggleSpeaker":
             toggleSpeaker(result: result)
         case "toggleLocalVideo":
-            toggleLocalVideo(result: result)
+            toggleLocalVideo()
         default:
             result(FlutterMethodNotImplemented)
         }
     }
     
     private func requestMicrophonePermissions(result: @escaping FlutterResult) {
-        self.callService = CallService.getOrCreateInstance()
-        self.callService?.requestMicrophonePermissions(result: result)
+        callService.requestMicrophonePermissions(result: result)
     }
     
     private func requestCameraPermissions(result: @escaping FlutterResult) {
-        self.callService = CallService.getOrCreateInstance()
-        self.callService?.requestCameraPermissions(result: result)
+        callService.requestCameraPermissions(result: result)
     }
     
     private func initializeCall(token: String, result: @escaping FlutterResult) {
-        // Check microphone permission
-        AVAudioSession.sharedInstance().requestRecordPermission { [weak self] (micGranted) in
-            guard let self = self else {
-                result(FlutterError(code: "SELF_NULL", message: "Self reference lost", details: nil))
-                return
-            }
-            
-            if !micGranted {
-                debugPrint("Error____ Microphone permission denied")
-                result(FlutterError(code: "MICROPHONE_PERMISSION_DENIED", message: "Microphone access is required", details: nil))
-                return
-            }
-            
-            // Check camera permission
-            AVCaptureDevice.requestAccess(for: .video) { (cameraGranted) in
-                if !cameraGranted {
-                    debugPrint("Error____ Camera permission denied")
-                    result(FlutterError(code: "CAMERA_PERMISSION_DENIED", message: "Camera access is required", details: nil))
-                    return
-                }
-                
-                // Proceed with call initialization if permissions are granted
-                self.callService = CallService.getOrCreateInstance()
-                
-                if !self.callService!.initialized {
-                    self.callService?.initializeCall(token: token, result: result)
-                } else {
-                    result("Call Already Initialized")
-                }
-            }
+        if !callService.initialized {
+            callService.initializeCall(token: token, result: result)
+        } else {
+            result("Call Already Initialized")
         }
     }
     
     private func startCall(roomId: String, result: @escaping FlutterResult) {
-        if self.callService == nil {
+        if !callService.initialized {
             result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
             return
         }
         
-        self.callService?.joinRoomCall(roomId: roomId, result: result)
+        callService.joinRoomCall(roomId: roomId, result: result)
     }
     
     private func leaveRoomCall(result: @escaping FlutterResult) {
-        if self.callService == nil {
+        if !callService.initialized {
             result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
             return
         }
         
-        self.callService?.leaveRoomCall(result: result)
+        callService.leaveRoomCall(result: result)
     }
     
     private func toggleMute(result: @escaping FlutterResult) {
-        if self.callService == nil {
-            result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
-            return
-        }
-        
-        self.callService?.toggleMute(result: result)
+        callService.toggleMute(result: result)
     }
     
     private func toggleSpeaker(result: @escaping FlutterResult) {
-        if self.callService == nil {
-            result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
-            return
-        }
-        
-        self.callService?.toggleSpeaker(result: result)
+        callService.toggleSpeaker(result: result)
     }
     
-    private func toggleLocalVideo(result: @escaping FlutterResult) {
-        if self.callService == nil {
-            result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
-            return
+    private func toggleLocalVideo() {
+        callService.toggleLocalVideo()
+    }
+}
+
+extension AcsPlugin: FlutterStreamHandler {
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.eventSink = events
+        return nil
+    }
+    
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.eventSink = nil
+        return nil
+    }
+    
+    // Method to send viewId to Flutter
+    public func sendViewId(_ viewId: String?) {
+        if let eventSink = eventSink {
+            eventSink(viewId)
         }
-        
-        self.callService?.toggleLocalVideo(result: result)
+    }
+    
+    public func sendError(_ error: FlutterError) {
+        if let eventSink = eventSink {
+            eventSink(error)
+        }
     }
 }

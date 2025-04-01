@@ -37,7 +37,6 @@ abstract class AcsPluginPlatform extends PlatformInterface {
         'requestCameraPermissions() has not been implemented.');
   }
 
-  // Add your ACS methods here, like initialize, startCall, endCall
   Future<void> initializeCall(String token) {
     throw UnimplementedError('initialize() has not been implemented.');
   }
@@ -58,7 +57,11 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('toggleSpeaker() has not been implemented.');
   }
 
-  Future<String?> toggleLocalVideo() {
+  Future<void> toggleLocalVideo() {
     throw UnimplementedError('toggleLocalVideo() has not been implemented.');
+  }
+
+  Stream<String?> get viewIdStream {
+    throw UnimplementedError('viewIdStream has not been implemented.');
   }
 }

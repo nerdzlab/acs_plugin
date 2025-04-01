@@ -11,6 +11,28 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('acs_plugin');
 
+  @visibleForTesting
+  final eventChannel = const EventChannel('acs_plugin_events');
+
+  // Create a broadcast stream for viewId
+  Stream<String?>? _viewIdStream;
+
+  @override
+  Stream<String?> get viewIdStream {
+    _viewIdStream ??=
+        eventChannel.receiveBroadcastStream().map((dynamic event) {
+      // Return null if event is null
+      if (event == null) {
+        return null;
+      }
+      // Otherwise convert to string
+      return event.toString();
+    }).handleError((error, stackTrace) {
+      throw error;
+    });
+    return _viewIdStream!;
+  }
+
   @override
   Future<String?> getPlatformVersion() async {
     final version =
@@ -37,8 +59,8 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
-  Future<void> joinRoom(String roomId) async {
-    await methodChannel.invokeMethod(
+  Future<String?> joinRoom(String roomId) async {
+    return await methodChannel.invokeMethod(
       'joinRoom',
       {'roomId': roomId},
     );

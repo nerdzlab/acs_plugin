@@ -36,7 +36,12 @@ class AcsPlugin {
     return await AcsPluginPlatform.instance.toggleSpeaker();
   }
 
-  Future<String?> toggleLocalVideo() async {
-    return await AcsPluginPlatform.instance.toggleLocalVideo();
+  Future<void> toggleLocalVideo() async {
+    await AcsPluginPlatform.instance.toggleLocalVideo();
+  }
+
+  // Add this getter for the viewId stream
+  Stream<String?> get viewIdStream {
+    return AcsPluginPlatform.instance.viewIdStream;
   }
 }

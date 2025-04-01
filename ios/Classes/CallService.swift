@@ -187,6 +187,11 @@ final class CallService: NSObject, CallAgentDelegate {
                 }
                 
                 self?.setCallAndObserver(call: call, error: error)
+                
+                if (self?.sendingLocalVideo == true) {
+                    self?.startLocalVideo(call: call)
+                }
+                
                 debugPrint("Success___ Joined call successfully")
                 result("Joined call successfully")
             }
@@ -203,16 +208,12 @@ final class CallService: NSObject, CallAgentDelegate {
                     if let error = error {
                         // Return an error message to Flutter if stopping video fails
                         debugPrint("Error___ Could not stop preview renderer: \(error.localizedDescription)")
-                        result(FlutterError(code: "Error", message: "No active call to leave", details: nil))
+                        AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "Could not stop video: \(error.localizedDescription)", details: nil))
                         
                     } else {
                         // Successfully stopped video
-                        self.sendingLocalVideo = false
-                        self.previewView = nil
-                        self.previewRenderer?.dispose()
-                        self.previewRenderer = nil
+                        self.disposePreview()
                         debugPrint("Success___ video successfully stopped")
-                        result(nil)
                     }
                 }
             }
@@ -266,12 +267,6 @@ final class CallService: NSObject, CallAgentDelegate {
     /// Toggles the speaker output of the audio session.
     /// - Parameter result: Callback to return the new speaker state.
     public func toggleSpeaker(result: @escaping FlutterResult) {
-        guard call != nil else {
-            debugPrint("Error___ No active call to toggle speaker")
-            result(FlutterError(code: "NO_ACTIVE_CALL", message: "No active call to toggle speaker", details: nil))
-            return
-        }
-        
         let audioSession = AVAudioSession.sharedInstance()
         
         do {
@@ -320,15 +315,114 @@ final class CallService: NSObject, CallAgentDelegate {
     }
     
     /// Toggles the local video stream on or off.
-    /// - Parameter result: The FlutterResult callback used to return success, error messages, or the view reference.
-    public func toggleLocalVideo(result: @escaping FlutterResult) {
-        guard call != nil else {
-            debugPrint("Error___ No active call to toggle video")
-            result(FlutterError(code: "NO_ACTIVE_CALL", message: "No active call to toggle video", details: nil))
+    public func toggleLocalVideo() {
+        if sendingLocalVideo {
+            stopLocalVideo()
+        } else {
+            startLocalVideo(call: call)
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    /// Stops the local video stream
+    private func stopLocalVideo() {
+        guard let call = call else {
+            disposePreview()
+            debugPrint("Success___ Video successfully stopped")
             return
         }
         
-        if self.sendingLocalVideo {
+        guard let stream = localVideoStreams?.first else {
+            debugPrint("Error___ No local video stream found")
+            AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "No local video stream found", details: nil))
+            return
+        }
+        
+        call.stopVideo(stream: stream) { error in
+            if let error = error {
+                debugPrint("Error___ Could not stop video: \(error.localizedDescription)")
+                AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "Could not stop video: \(error.localizedDescription)", details: nil))
+            } else {
+                self.disposePreview()
+                debugPrint("Success___ Video successfully stopped")
+            }
+        }
+    }
+    
+    /// Starts the local video stream
+    private func startLocalVideo(call: Call?) {
+        guard let availableCameras = deviceManager?.cameras, let camera = availableCameras.first else {
+            debugPrint("Error___ No available cameras found")
+            AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "No available cameras found", details: nil))
+            return
+        }
+        
+        do {
+            if (previewView == nil) {
+                let localStream = LocalVideoStream(camera: camera)
+                let renderer = try VideoStreamRenderer(localVideoStream: localStream)
+                let view = try renderer.createView(withOptions: CreateViewOptions(scalingMode: .crop))
+                
+                self.localVideoStreams = [localStream]
+                self.previewRenderer = renderer
+                self.previewView = view
+            }
+            
+            if let call = call {
+                call.startVideo(stream: self.localVideoStreams!.first!) { error in
+                    debugPrint("Success___ start video")
+                    if let error = error {
+                        debugPrint("Error___ Could not start video: \(error.localizedDescription)")
+                        AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "Could not start video: \(error.localizedDescription)", details: nil))
+                    } else {
+                        self.sendingLocalVideo = true
+                        self.returnPreviewView()
+                    }
+                }
+            } else {
+                self.sendingLocalVideo = true
+                self.returnPreviewView()
+            }
+        } catch {
+            debugPrint("Error___ Error initializing video renderer: \(error.localizedDescription)")
+            AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "Error initializing video renderer: \(error.localizedDescription)", details: nil))
+        }
+    }
+    
+    /// Disposes of the preview renderer and resets the video state
+    private func disposePreview() {
+        sendingLocalVideo = false
+        previewView = nil
+        previewRenderer?.dispose()
+        previewRenderer = nil
+        
+        AcsPlugin.shared.sendViewId(nil)
+    }
+    
+    /// Returns the preview view ID to Flutter
+    private func returnPreviewView() {
+        if let previewView = previewView {
+            let viewId = String(previewView.hash) // Generate a reference ID
+            debugPrint("Success___ Preview view generated: \(viewId)")
+            AcsPlugin.shared.sendViewId(viewId)
+        } else {
+            debugPrint("Error___ Preview view is nil")
+            AcsPlugin.shared.sendViewId(nil)
+        }
+    }
+    
+    public func toggleLocalsVideo(result: @escaping FlutterResult) {
+        if self.sendingLocalVideo && call == nil {
+            // Successfully stopped video
+            self.sendingLocalVideo = false
+            self.previewView = nil
+            self.previewRenderer?.dispose()
+            self.previewRenderer = nil
+            debugPrint("Success___ video successfully stopped")
+            result(nil)
+            
+        } else if self.sendingLocalVideo && call != nil {
             // If video is currently being sent, stop it
             self.call!.stopVideo(stream: self.localVideoStreams!.first!) { (error) in
                 if let error = error {
@@ -368,24 +462,37 @@ final class CallService: NSObject, CallAgentDelegate {
                 self.previewRenderer = try VideoStreamRenderer(localVideoStream: self.localVideoStreams!.first!)
                 self.previewView = try previewRenderer!.createView(withOptions: CreateViewOptions(scalingMode: scalingMode))
                 
-                // Start streaming the local video
-                self.call?.startVideo(stream: self.localVideoStreams!.first!) { error in
-                    if let error = error {
-                        // Return an error message if video streaming fails
-                        debugPrint("Error____ Could not share video: \(error.localizedDescription)")
-                        result(FlutterError(code: "Error", message: "Could not share video: \(error.localizedDescription)", details: nil))
-                    } else {
-                        self.sendingLocalVideo = true
-                        
-                        // Convert `previewView` to a format Flutter can use
-                        if let previewView = self.previewView {
-                            debugPrint("Success____ Preview view generated")
-                            let viewId = String(previewView.hash) // Generate a reference ID
-                            result(viewId)
+                if call != nil {
+                    // Start streaming the local video
+                    self.call?.startVideo(stream: self.localVideoStreams!.first!) { error in
+                        if let error = error {
+                            // Return an error message if video streaming fails
+                            debugPrint("Error____ Could not share video: \(error.localizedDescription)")
+                            result(FlutterError(code: "Error", message: "Could not share video: \(error.localizedDescription)", details: nil))
                         } else {
-                            debugPrint("Error____ Preview view is nil")
-                            result(FlutterError(code: "Error", message: "Preview view is nil", details: nil))
+                            self.sendingLocalVideo = true
+                            
+                            // Convert previewView to a format Flutter can use
+                            if let previewView = self.previewView {
+                                debugPrint("Success____ Preview view generated")
+                                let viewId = String(previewView.hash) // Generate a reference ID
+                                result(viewId)
+                            } else {
+                                debugPrint("Error____ Preview view is nil")
+                                result(FlutterError(code: "Error", message: "Preview view is nil", details: nil))
+                            }
                         }
+                    }
+                } else {
+                    self.sendingLocalVideo = true
+                    // Convert previewView to a format Flutter can use
+                    if let previewView = self.previewView {
+                        debugPrint("Success____ Preview view generated")
+                        let viewId = String(previewView.hash) // Generate a reference ID
+                        result(viewId)
+                    } else {
+                        debugPrint("Error____ Preview view is nil")
+                        result(FlutterError(code: "Error", message: "Preview view is nil", details: nil))
                     }
                 }
             } catch {
