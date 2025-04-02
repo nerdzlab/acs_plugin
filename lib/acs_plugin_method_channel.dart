@@ -14,23 +14,26 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   @visibleForTesting
   final eventChannel = const EventChannel('acs_plugin_events');
 
-  // Create a broadcast stream for viewId
-  Stream<String?>? _viewIdStream;
+  Stream<Map<String, dynamic>>? _eventStream;
 
   @override
-  Stream<String?> get viewIdStream {
-    _viewIdStream ??=
-        eventChannel.receiveBroadcastStream().map((dynamic event) {
-      // Return null if event is null
-      if (event == null) {
-        return null;
-      }
-      // Otherwise convert to string
-      return event.toString();
-    }).handleError((error, stackTrace) {
-      throw error;
-    });
-    return _viewIdStream!;
+  Stream<Map<String, dynamic>> get eventStream {
+    _eventStream ??= eventChannel
+        .receiveBroadcastStream()
+        .map((dynamic event) {
+          if (event is Map) {
+            // Convert the event to Map<String, dynamic>
+            return Map<String, dynamic>.from(event);
+          }
+          return {}; // Return an empty map if it's not of type Map
+        })
+        .cast<
+            Map<String,
+                dynamic>>() // Cast the stream to Stream<Map<String, dynamic>>
+        .handleError((error, stackTrace) {
+          throw error;
+        });
+    return _eventStream!;
   }
 
   @override

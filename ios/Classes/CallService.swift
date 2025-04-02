@@ -208,7 +208,7 @@ final class CallService: NSObject, CallAgentDelegate {
                     if let error = error {
                         // Return an error message to Flutter if stopping video fails
                         debugPrint("Error___ Could not stop preview renderer: \(error.localizedDescription)")
-                        AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "Could not stop video: \(error.localizedDescription)", details: nil))
+                        AcsPlugin.shared.sendError(FlutterError(code: "PREVIEW_ERROR", message: "Could not stop video: \(error.localizedDescription)", details: nil))
                         
                     } else {
                         // Successfully stopped video
@@ -335,14 +335,14 @@ final class CallService: NSObject, CallAgentDelegate {
         
         guard let stream = localVideoStreams?.first else {
             debugPrint("Error___ No local video stream found")
-            AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "No local video stream found", details: nil))
+            AcsPlugin.shared.sendError(FlutterError(code: "PREVIEW_ERROR", message: "No local video stream found", details: nil))
             return
         }
         
         call.stopVideo(stream: stream) { error in
             if let error = error {
                 debugPrint("Error___ Could not stop video: \(error.localizedDescription)")
-                AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "Could not stop video: \(error.localizedDescription)", details: nil))
+                AcsPlugin.shared.sendError(FlutterError(code: "PREVIEW_ERROR", message: "Could not stop video: \(error.localizedDescription)", details: nil))
             } else {
                 self.disposePreview()
                 debugPrint("Success___ Video successfully stopped")
@@ -354,7 +354,7 @@ final class CallService: NSObject, CallAgentDelegate {
     private func startLocalVideo(call: Call?) {
         guard let availableCameras = deviceManager?.cameras, let camera = availableCameras.first else {
             debugPrint("Error___ No available cameras found")
-            AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "No available cameras found", details: nil))
+            AcsPlugin.shared.sendError(FlutterError(code: "PREVIEW_ERROR", message: "No available cameras found", details: nil))
             return
         }
         
@@ -374,7 +374,7 @@ final class CallService: NSObject, CallAgentDelegate {
                     debugPrint("Success___ start video")
                     if let error = error {
                         debugPrint("Error___ Could not start video: \(error.localizedDescription)")
-                        AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "Could not start video: \(error.localizedDescription)", details: nil))
+                        AcsPlugin.shared.sendError(FlutterError(code: "PREVIEW_ERROR", message: "Could not start video: \(error.localizedDescription)", details: nil))
                     } else {
                         self.sendingLocalVideo = true
                         self.returnPreviewView()
@@ -386,7 +386,7 @@ final class CallService: NSObject, CallAgentDelegate {
             }
         } catch {
             debugPrint("Error___ Error initializing video renderer: \(error.localizedDescription)")
-            AcsPlugin.shared.sendError(FlutterError(code: "Error", message: "Error initializing video renderer: \(error.localizedDescription)", details: nil))
+            AcsPlugin.shared.sendError(FlutterError(code: "PREVIEW_ERROR", message: "Error initializing video renderer: \(error.localizedDescription)", details: nil))
         }
     }
     

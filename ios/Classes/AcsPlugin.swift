@@ -118,6 +118,7 @@ public class AcsPlugin: NSObject, FlutterPlugin {
 extension AcsPlugin: FlutterStreamHandler {
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         self.eventSink = events
+        sendParticipantList()
         return nil
     }
     
@@ -128,9 +129,30 @@ extension AcsPlugin: FlutterStreamHandler {
     
     // Method to send viewId to Flutter
     public func sendViewId(_ viewId: String?) {
-        if let eventSink = eventSink {
-            eventSink(viewId)
-        }
+        guard let eventSink = eventSink else { return }
+        
+        let eventData: [String: Any?] = [
+            "event": "preview",
+            "viewId": viewId
+        ]
+        
+        eventSink(eventData)
+    }
+    
+    // Send the participant list to Flutter
+    public func sendParticipantList() {
+        guard let eventSink = eventSink else { return }
+        
+        // Convert 2D array ([[Participant]]) into 1D array ([Participant])
+        let flattenedParticipants = callService.participants.flatMap { $0 }
+        
+        let participantsData = flattenedParticipants.map { $0.toMap() }
+        
+        let eventData: [String: Any?] = [
+            "event": "participantList",
+            "participants": participantsData
+        ]
+        eventSink(eventData)
     }
     
     public func sendError(_ error: FlutterError) {

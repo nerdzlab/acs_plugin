@@ -137,3 +137,19 @@ class Utilities {
         }
     }
 }
+
+extension Participant {
+    func toMap() -> [String: Any] {
+        return [
+            "displayName": self.displayName,
+            "mri": self.getMri(),
+            "isMuted": self.isMuted,
+            "isSpeaking": self.isSpeaking,
+            "hasVideo": self.hasVideo,
+            "videoOn": self.videoOn,
+            "state": self.state.rawValue, // Assuming ParticipantState is an enum with raw values
+            "scalingMode": self.scalingMode.rawValue, // Similarly for ScalingMode
+            "rendererViewId": self.innerParticipant.identifier.rawId,
+        ]
+    }
+}

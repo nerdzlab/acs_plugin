@@ -61,7 +61,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('toggleLocalVideo() has not been implemented.');
   }
 
-  Stream<String?> get viewIdStream {
+  Stream<Map<String, dynamic>> get eventStream {
     throw UnimplementedError('viewIdStream has not been implemented.');
   }
 }

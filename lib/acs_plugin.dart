@@ -40,8 +40,8 @@ class AcsPlugin {
     await AcsPluginPlatform.instance.toggleLocalVideo();
   }
 
-  // Add this getter for the viewId stream
-  Stream<String?> get viewIdStream {
-    return AcsPluginPlatform.instance.viewIdStream;
+// Stream to listen for events
+  Stream<Map<String, dynamic>> get eventStream {
+    return AcsPluginPlatform.instance.eventStream;
   }
 }

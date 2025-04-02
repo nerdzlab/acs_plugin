@@ -40,8 +40,9 @@ class _CallScreenState extends State<CallScreen> {
   bool _isMuted = false;
   bool _isSpeakerOn = false;
   bool _isVideoOn = false;
+  List<Participant> _participants = [];
 
-  StreamSubscription? _viewIdSubscription;
+  StreamSubscription? _eventsSubscription;
 
   // Configuration constants - move to a config file in a real app
   static const String _acsToken =
@@ -53,48 +54,106 @@ class _CallScreenState extends State<CallScreen> {
     super.initState();
     _getPlatformVersion();
 
-    _viewIdSubscription = _acsPlugin.viewIdStream.listen(
-      (viewId) {
-        setState(() {
-          _viewId = viewId;
-          if (viewId == null) {
-            _isVideoOn = false;
-            log('Received nil viewId from iOS');
-            _shwoSnacBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
-            // Handle nil case here
-          } else {
-            _isVideoOn = true;
-            _shwoSnacBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
-            log('Received viewId from iOS: $viewId');
-            // Handle the viewId here
-          }
-        });
-      },
-      onError: (error, stackTrace) {
-        log('Error receiving viewId: $error');
-        log('Stack trace: $stackTrace');
+    // Subscribe to event stream
+    _eventsSubscription = _acsPlugin.eventStream.listen(
+      _handleEvent,
+      onError: _handleError,
+      cancelOnError: false,
+    );
+  }
 
-        // Handle error appropriately
+// Handle incoming events
+  _handleEvent(dynamic event) {
+    final String eventName = event['event'];
+
+    switch (eventName) {
+      case 'preview':
+        _handlePreviewEvent(event);
+        break;
+      case 'participantList':
+        _handleParticipantList(event);
+        break;
+      // Add more cases as needed
+      default:
+        log('Unhandled event type: $eventName');
+        break;
+    }
+  }
+
+  // Handle preview event
+  _handlePreviewEvent(Map<dynamic, dynamic> event) {
+    final viewId = event['viewId'];
+
+    setState(() {
+      _viewId = viewId;
+      _isVideoOn = viewId != null;
+
+      if (!_isVideoOn) {
+        log('Received nil viewId from iOS');
+      } else {
+        log('Received viewId from iOS: $viewId');
+      }
+
+      _showSnackBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
+    });
+  }
+
+  // Handle participant list event
+  _handleParticipantList(Map<dynamic, dynamic> event) {
+    final participants = event['participants'] as List;
+
+    // Convert to your participant model objects
+    final List<Participant> participantList = participants
+        .map((participantMap) =>
+            Participant.fromMap(participantMap as Map<String, dynamic>))
+        .toList();
+
+    setState(() {
+      _participants = participantList;
+    });
+
+    log('Received ${participantList.length} participants');
+  }
+
+  // Handle stream errors
+  _handleError(dynamic error) {
+    if (error is PlatformException) {
+      log('Error code: ${error.code}');
+      log('Error message: ${error.message}');
+      log('Error details: ${error.details}');
+
+      _handlePlatformError(error);
+    } else {
+      log('Non-platform error: $error');
+    }
+  }
+
+// Handle platform-specific errors
+  _handlePlatformError(PlatformException error) {
+    switch (error.code) {
+      case 'PREVIEW_ERROR':
         setState(() {
-          // Update UI to reflect error state
           _isVideoOn = false;
           _viewId = null;
-          _shwoSnacBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
+          _showSnackBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
         });
-      },
-      onDone: () {
-        // This gets called if the stream is closed normally
-        log('ViewId stream closed');
-        // Handle stream closure if needed
-      },
-      cancelOnError:
-          false, // Set to true if you want to cancel the subscription on first error
-    );
+        break;
+      default:
+        log('Unhandled error code: ${error.code}');
+        // Handle other errors
+        break;
+    }
+  }
+
+  // Helper method for showing snackbars (fixed typo from original)
+  _showSnackBar(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   dispose() {
-    _viewIdSubscription?.cancel();
+    _eventsSubscription?.cancel();
     super.dispose();
   }
 
@@ -402,4 +461,144 @@ class ButtonConfig {
     required this.icon,
     this.backgroundColor = Colors.blue,
   });
+}
+
+class Participant {
+  final String displayName;
+  final String mri;
+  final bool isMuted;
+  final bool isSpeaking;
+  final bool hasVideo;
+  final bool videoOn;
+  final String state;
+  final String scalingMode;
+  final String? rendererViewId;
+
+  Participant({
+    required this.displayName,
+    required this.mri,
+    required this.isMuted,
+    required this.isSpeaking,
+    required this.hasVideo,
+    required this.videoOn,
+    required this.state,
+    required this.scalingMode,
+    this.rendererViewId,
+  });
+
+  factory Participant.fromMap(Map<String, dynamic> map) {
+    return Participant(
+      displayName: map['displayName'] as String,
+      mri: map['mri'] as String,
+      isMuted: map['isMuted'] as bool,
+      isSpeaking: map['isSpeaking'] as bool,
+      hasVideo: map['hasVideo'] as bool,
+      videoOn: map['videoOn'] as bool,
+      state: map['state'] as String,
+      scalingMode: map['scalingMode'] as String,
+      rendererViewId: map['rendererViewId'] as String?,
+    );
+  }
+
+  // Helper method to get participant's state as enum if needed
+  ParticipantState get participantState => participantStateFromString(state);
+
+  // Helper method to get scaling mode as enum if needed
+  ScalingMode get participantScalingMode =>
+      _getScalingModeFromString(scalingMode);
+
+  // Optional: Convert back to map if needed for any reason
+  Map<String, dynamic> toMap() {
+    return {
+      'displayName': displayName,
+      'mri': mri,
+      'isMuted': isMuted,
+      'isSpeaking': isSpeaking,
+      'hasVideo': hasVideo,
+      'videoOn': videoOn,
+      'state': state,
+      'scalingMode': scalingMode,
+      'rendererViewId': rendererViewId,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Participant(displayName: $displayName, mri: $mri, isMuted: $isMuted, isSpeaking: $isSpeaking, hasVideo: $hasVideo, videoOn: $videoOn, state: $state, scalingMode: $scalingMode, rendererViewId: $rendererViewId)';
+  }
+}
+
+// You'll need to create these enums to match your Swift enums
+enum ParticipantState {
+  idle, // ACSParticipantStateIdle
+  earlyMedia, // ACSParticipantStateEarlyMedia
+  connecting, // ACSParticipantStateConnecting
+  connected, // ACSParticipantStateConnected
+  hold, // ACSParticipantStateHold
+  inLobby, // ACSParticipantStateInLobby
+  disconnected, // ACSParticipantStateDisconnected
+  ringing, // ACSParticipantStateRinging
+}
+
+enum ScalingMode {
+  fit,
+  crop,
+  // Add more scaling modes as needed based on your Swift enum
+}
+
+// Helper functions to convert string values to enum values
+String participantStateToString(ParticipantState state) {
+  switch (state) {
+    case ParticipantState.idle:
+      return 'Idle';
+    case ParticipantState.earlyMedia:
+      return 'Early Media';
+    case ParticipantState.connecting:
+      return 'Connecting';
+    case ParticipantState.connected:
+      return 'Connected';
+    case ParticipantState.hold:
+      return 'On Hold';
+    case ParticipantState.inLobby:
+      return 'In Lobby';
+    case ParticipantState.disconnected:
+      return 'Disconnected';
+    case ParticipantState.ringing:
+      return 'Ringing';
+  }
+}
+
+ParticipantState participantStateFromString(String stateString) {
+  switch (stateString.toLowerCase()) {
+    case 'idle':
+      return ParticipantState.idle;
+    case 'early media':
+      return ParticipantState.earlyMedia;
+    case 'connecting':
+      return ParticipantState.connecting;
+    case 'connected':
+      return ParticipantState.connected;
+    case 'on hold':
+      return ParticipantState.hold;
+    case 'in lobby':
+      return ParticipantState.inLobby;
+    case 'disconnected':
+      return ParticipantState.disconnected;
+    case 'ringing':
+      return ParticipantState.ringing;
+    default:
+      throw ArgumentError('Unknown state string: $stateString');
+  }
+}
+
+ScalingMode _getScalingModeFromString(String value) {
+  switch (value) {
+    case 'fit':
+      return ScalingMode.fit;
+    case 'crop':
+      return ScalingMode.crop;
+    // Add more cases as needed
+    default:
+      return ScalingMode.fit; // Default value
+  }
 }

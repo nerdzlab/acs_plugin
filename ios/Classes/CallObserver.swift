@@ -24,6 +24,7 @@ public class CallObserver : NSObject, CallDelegate {
         callService?.callState = state
         
         if (call.state == CallState.disconnected) {
+            //TODO need to add logic to return result that leave room
             callService?.leaveRoomCall(result: { _ in
                 
             })
