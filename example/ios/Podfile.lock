@@ -29,12 +29,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/integration_test/ios"
 
 SPEC CHECKSUMS:
-  acs_plugin: e6ffd7067818de574898747d0bdd9deac23c37f7
+  acs_plugin: c4fa5a9a81dab23661162da16e7bec4e8141632b
   AzureCommunicationCalling: a374d99e6c6c6f4589c61eeb59ca193aea48727e
   AzureCommunicationCommon: 130a21be2be889f83dc4adbf994af6285f962de8
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
 
-PODFILE CHECKSUM: 364e0b05fb1bade4ade2e1966f26ca4dd7473c0f
+PODFILE CHECKSUM: 873b5bfcae461e76f8f3aa08d98088b86b747438
 
 COCOAPODS: 1.16.2
