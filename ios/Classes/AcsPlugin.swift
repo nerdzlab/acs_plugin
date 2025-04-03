@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import AzureCommunicationCalling
+import AVKit
 
 public class AcsPlugin: NSObject, FlutterPlugin {
     
@@ -139,7 +140,24 @@ public class AcsPlugin: NSObject, FlutterPlugin {
     }
     
     private func toggleMute(result: @escaping FlutterResult) {
-        callService.toggleMute(result: result)
+        //        callService.toggleMute(result: result)
+        //        callService.getAvailableOutputDevices(result: result)
+        
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: [.allowBluetooth, .allowBluetoothA2DP])
+//            try audioSession.setActive(true)
+        } catch {
+            print("Failed to set audio session: \(error)")
+        }
+        
+        let routePickerView = AVRoutePickerView()
+        
+        
+        if let button = routePickerView.subviews.first(where: { $0 is UIButton }) as? UIButton {
+            button.sendActions(for: .touchUpInside) // Opens AirPlay UI
+        }
+        
     }
     
     private func toggleSpeaker(result: @escaping FlutterResult) {

@@ -294,6 +294,98 @@ final class CallService: NSObject, CallAgentDelegate {
         }
     }
     
+    /// Returns a list of all available output devices.
+    /// - Parameter result: Callback to return a list of available device names.
+    public func getAvailableOutputDevices(result: @escaping FlutterResult) {
+        let audioSession = AVAudioSession.sharedInstance()
+        let currentRoute = audioSession.currentRoute
+
+        var outputDevices: [String] = []
+
+        // Iterate through available output devices and get their names
+        for output in currentRoute.outputs {
+            outputDevices.append(output.portName) // Human-readable name of the device
+        }
+
+        debugPrint("Success___ Available Output Devices: \(outputDevices)")
+        result(outputDevices) // Return the list of device names
+    }
+    
+    /// Selects an output device by its name.
+    /// - Parameters:
+    ///   - deviceName: The name of the output device to switch to.
+    ///   - result: Callback to return the success or failure message.
+    public func selectOutputDevice(deviceName: String, result: @escaping FlutterResult) {
+        let audioSession = AVAudioSession.sharedInstance()
+        let currentRoute = audioSession.currentRoute
+
+        // Find the requested device in the list of available outputs
+        guard let selectedDevice = currentRoute.outputs.first(where: { $0.portName == deviceName }) else {
+            let errorMessage = "DEVICE_NOT_FOUND Failed to find device: \(deviceName)"
+            debugPrint("Error____ \(errorMessage)")
+            result(FlutterError(code: "DEVICE_NOT_FOUND", message: errorMessage, details: nil))
+            return
+        }
+
+        do {
+            // Check if the selected device is the built-in speaker
+            if selectedDevice.portType == .builtInSpeaker {
+                try audioSession.overrideOutputAudioPort(.speaker)
+                debugPrint("Success___ Switched to Speaker")
+                result("Switched to Speaker")
+            } else {
+                // For other devices, use default routing (iOS manages Bluetooth, etc.)
+                try audioSession.overrideOutputAudioPort(.none)
+                debugPrint("Success___ Switched to \(deviceName)")
+                result("Switched to \(deviceName)")
+            }
+        } catch {
+            let errorMessage = "SWITCH_DEVICE_ERROR Failed to switch to \(deviceName): \(error.localizedDescription)"
+            debugPrint("Error____ \(errorMessage)")
+            result(FlutterError(code: "SWITCH_DEVICE_ERROR", message: errorMessage, details: nil))
+        }
+    }
+    
+//    private func getCurrentAudioDevice() -> AudioDeviceType {
+//        let audioSession = AVAudioSession.sharedInstance()
+//
+//        if let output = audioSession.currentRoute.outputs.first {
+//            switch output.portType {
+//            case .bluetoothA2DP, .bluetoothLE, .bluetoothHFP:
+//                return .bluetooth
+//            case .headphones, .headsetMic:
+//                return .headphones
+//            case .builtInSpeaker:
+//                return .speaker
+//            default:
+//                return .receiver
+//            }
+//        }
+//        return .receiver
+//    }
+//
+//    private func switchAudioDevice(to selectedAudioDevice: AudioDeviceType) {
+//        let audioSession = AVAudioSession.sharedInstance()
+//
+//        let audioPort: AVAudioSession.PortOverride
+//        switch selectedAudioDevice {
+//        case .speaker:
+//            audioPort = .speaker
+//        case .receiver, .headphones, .bluetooth:
+//            audioPort = .none
+//        }
+//
+//        do {
+//            try audioSession.setActive(true)
+//            try audioSession.overrideOutputAudioPort(audioPort)
+//            store.dispatch(action: .localUserAction(.audioDeviceChangeSucceeded(device: selectedAudioDevice)))
+//        } catch let error {
+//            logger.error("Failed to select audio device, reason: \(error.localizedDescription)")
+//            store.dispatch(action: .localUserAction(.audioDeviceChangeFailed(error: error)))
+//            store.dispatch(action: .localUserAction(.audioDeviceChangeSucceeded(device: getCurrentAudioDevice())))
+//        }
+//    }
+    
     // Private Methods
     
     /// Sets the call and attaches a call observer to it.
