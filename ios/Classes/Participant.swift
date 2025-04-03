@@ -62,18 +62,23 @@ public class Participant: NSObject, RemoteParticipantDelegate {
         renderedRemoteVideoStream = innerParticipant.videoStreams[0]
         renderer = try! VideoStreamRenderer(remoteVideoStream: renderedRemoteVideoStream!)
         rendererView = try! renderer!.createView()
+        AcsPlugin.shared.updateParticipant(self)
     }
     
-    func toggleVideo() {
+    func toggleVideo(result: @escaping FlutterResult) {
         if videoOn {
             rendererView = nil
             renderer?.dispose()
             videoOn = false
+            AcsPlugin.shared.updateParticipant(self)
+            result("Participant video is turned off")
         }
         else {
             renderer = try! VideoStreamRenderer(remoteVideoStream: innerParticipant.videoStreams[0])
             rendererView = try! renderer!.createView()
             videoOn = true
+            AcsPlugin.shared.updateParticipant(self)
+            result("Participant video is turned on")
         }
     }
     
@@ -85,11 +90,15 @@ public class Participant: NSObject, RemoteParticipantDelegate {
                 // Remote user stopped sharing
                 rendererView = nil
                 renderer?.dispose()
+                AcsPlugin.shared.updateParticipant(self)
+                
             } else if hasVideo && !hadVideo {
                 // remote user started sharing
                 renderedRemoteVideoStream = innerParticipant.videoStreams[0]
                 renderer = try! VideoStreamRenderer(remoteVideoStream: renderedRemoteVideoStream!)
                 rendererView = try! renderer!.createView()
+                AcsPlugin.shared.updateParticipant(self)
+                
             } else if hadVideo && hasVideo {
                 if args.addedRemoteVideoStreams.count > 0 {
                     if renderedRemoteVideoStream?.id == args.addedRemoteVideoStreams[0].id {
@@ -100,10 +109,13 @@ public class Participant: NSObject, RemoteParticipantDelegate {
                     guard let rendererTemp = renderer else {
                         return
                     }
+                    
                     rendererTemp.dispose()
                     renderedRemoteVideoStream = args.addedRemoteVideoStreams[0]
                     renderer = try! VideoStreamRenderer(remoteVideoStream: renderedRemoteVideoStream!)
                     rendererView = try! renderer!.createView()
+                    AcsPlugin.shared.updateParticipant(self)
+                    
                 } else if args.removedRemoteVideoStreams.count > 0 {
                     if args.removedRemoteVideoStreams[0].id == renderedRemoteVideoStream!.id {
                         // remote user stopped sharing video that we were rendering but is sharing
@@ -113,14 +125,29 @@ public class Participant: NSObject, RemoteParticipantDelegate {
                         renderedRemoteVideoStream = innerParticipant.videoStreams[0]
                         renderer = try! VideoStreamRenderer(remoteVideoStream: renderedRemoteVideoStream!)
                         rendererView = try! renderer!.createView()
+                        AcsPlugin.shared.updateParticipant(self)
                     }
                 }
             }
         }
     }
     
+    // Handle mute state changes
+    public func remoteParticipant(_ remoteParticipant: RemoteParticipant, didChangeMuteState args: PropertyChangedEventArgs) {
+        isMuted = remoteParticipant.isMuted
+        AcsPlugin.shared.updateParticipant(self)
+    }
+    
+    // Handle speaking state changes
+    public func remoteParticipant(_ remoteParticipant: RemoteParticipant, didChangeSpeakingState args: PropertyChangedEventArgs) {
+        isSpeaking = remoteParticipant.isSpeaking
+        AcsPlugin.shared.updateParticipant(self)
+    }
+    
+    // Handle display name changes
     public func remoteParticipant(_ remoteParticipant: RemoteParticipant, didChangeDisplayName args: PropertyChangedEventArgs) {
-        self.displayName = innerParticipant.displayName
+        displayName = innerParticipant.displayName
+        AcsPlugin.shared.updateParticipant(self)
     }
 }
 
@@ -149,7 +176,7 @@ extension Participant {
             "videoOn": self.videoOn,
             "state": self.state.rawValue, // Assuming ParticipantState is an enum with raw values
             "scalingMode": self.scalingMode.rawValue, // Similarly for ScalingMode
-            "rendererViewId": self.innerParticipant.identifier.rawId,
+            "rendererViewId": self.getMri(),
         ]
     }
 }

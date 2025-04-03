@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:acs_plugin_example/participant.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -46,8 +47,8 @@ class _CallScreenState extends State<CallScreen> {
 
   // Configuration constants - move to a config file in a real app
   static const String _acsToken =
-      "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDM0OTQzODUiLCJleHAiOjE3NDM1ODA3ODUsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDM0OTQzODV9.PuhSLX3_uG7AisLEQHagfM-JmbK4QKduVEJrl8Dzo-l9KSgPyD5GH17l9AQU-C8ZDb40BEHQU1tEfFwvvS9PS_biKUp0zLNC7Vm6J5eJZ-_fL2He63YIyjdIZAz11-tXIOqdNHnpE6NJrhLGrKrWv0PrLO7bcpCnD9EDoGXqcyTiw2j5h3vCj13dN4SkGJr3qCrKicoD2cZsFMQGAQtINfqRZUtkFIg1rYodv1RFX69X457BEurj_6y9szFh82ifLzu7sv-8WKe07jCC4mWGNhImnIL99t4J-ty_HZfKc_zLSNa3bc4qhwHB0T7u0_H-oWey2HE2FBSxwEg63MEoUg";
-  static const String _roomId = "99530934209225207";
+      "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDM2NzExMDUiLCJleHAiOjE3NDM3NTc1MDUsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDM2NzExMDV9.ixd6574qA0b-Zg9UOlYT68zV8AGWR5U9HmI2l9XbTGeaZv4113rPRUBffSBM4BTjHo66khcP-P0ubnws6qOTR2Y-D6N2l2kQH3G7KByKbs-CADQY4KDdUjTYDNHIllty6YVnm9rZRMfhDwMfuW3-e-_Dv1ICjXdNWWMSb01iV4GxICm4Rvrvrxl9P8_kv7YMPNcdcL0PzTGtO5rbl0J04uovx2XDYNuW_z-pWCJ3MCpa0Jm4x8jvS8yJBKL2dMMBXSeMZPJXpthfTcspHapWeYAgub7yy-REL2nrtdxY-XqSBIWdue81BnHM-U9fLi9IRd8QRHWCqTwBTnWZPsjWVw";
+  static const String _roomId = "99537223093283920";
 
   @override
   initState() {
@@ -70,7 +71,7 @@ class _CallScreenState extends State<CallScreen> {
       case 'preview':
         _handlePreviewEvent(event);
         break;
-      case 'participantList':
+      case 'participant_list':
         _handleParticipantList(event);
         break;
       // Add more cases as needed
@@ -102,10 +103,10 @@ class _CallScreenState extends State<CallScreen> {
   _handleParticipantList(Map<dynamic, dynamic> event) {
     final participants = event['participants'] as List;
 
-    // Convert to your participant model objects
-    final List<Participant> participantList = participants
+    final participantList = participants
+        .whereType<Map>()
         .map((participantMap) =>
-            Participant.fromMap(participantMap as Map<String, dynamic>))
+            Participant.fromMap(participantMap.cast<String, dynamic>()))
         .toList();
 
     setState(() {
@@ -138,6 +139,12 @@ class _CallScreenState extends State<CallScreen> {
           _showSnackBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
         });
         break;
+      case 'CALL_ERROR':
+        setState(() {
+          _isVideoOn = false;
+          _viewId = null;
+          _showSnackBar('${error.message}');
+        });
       default:
         log('Unhandled error code: ${error.code}');
         // Handle other errors
@@ -228,6 +235,18 @@ class _CallScreenState extends State<CallScreen> {
     } on PlatformException catch (error) {
       log('Failed to join room: ${error.message}');
       _shwoSnacBar('Failed to join room: ${error.message}');
+    }
+  }
+
+  Future<void> toggleParticipantVideo(String participantId) async {
+    try {
+      await _acsPlugin.toggleParticipantVideo(participantId);
+      log('Toggled participant video successfully');
+      _shwoSnacBar('Joined room successfully');
+    } on PlatformException catch (error) {
+      log('Failed to toggle participant $participantId video: ${error.message}');
+      _shwoSnacBar(
+          'Failed to toggle participant $participantId video: ${error.message}');
     }
   }
 
@@ -365,7 +384,10 @@ class _CallScreenState extends State<CallScreen> {
                 child: _viewId != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: IosVideoView(viewId: _viewId!),
+                        child: IosVideoView(
+                          viewId: _viewId!,
+                          viewType: "self_preview",
+                        ),
                       )
                     : const Center(
                         child: Text(
@@ -374,6 +396,15 @@ class _CallScreenState extends State<CallScreen> {
                         ),
                       ),
               ),
+              // Participants section
+              if (_participants.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                _buildSectionHeader('Participants'),
+                SizedBox(
+                  height: 200,
+                  child: _buildParticipantGrid(),
+                ),
+              ],
             ],
           ),
         ),
@@ -432,18 +463,88 @@ class _CallScreenState extends State<CallScreen> {
       ),
     );
   }
+
+  Widget _buildParticipantGrid() {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1.0,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+      ),
+      itemCount: _participants.length,
+      itemBuilder: (context, index) {
+        final participant = _participants[index];
+        return _buildParticipantVideo(participant);
+      },
+    );
+  }
+
+  Widget _buildParticipantVideo(Participant participant) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Stack(
+        children: [
+          // Video view
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: participant.hasVideo
+                ? IosVideoView(
+                    viewId: participant.rendererViewId ?? '',
+                    viewType: "participant_preview",
+                  )
+                : const Center(
+                    child: Icon(
+                      Icons.videocam_off,
+                      color: Colors.white54,
+                      size: 40,
+                    ),
+                  ),
+          ),
+
+          // Participant name overlay
+          Positioned(
+            left: 4,
+            bottom: 4,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                participant.displayName ?? 'Unknown',
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class IosVideoView extends StatelessWidget {
   final String viewId;
+  final String viewType;
 
-  const IosVideoView({super.key, required this.viewId});
+  const IosVideoView({
+    super.key,
+    required this.viewId,
+    required this.viewType,
+  });
 
   @override
   Widget build(BuildContext context) {
     return UiKitView(
       viewType: 'acs_video_view',
-      creationParams: {'viewId': viewId},
+      creationParams: {
+        'view_id': viewId,
+        "view_type": viewType,
+      },
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
@@ -461,144 +562,4 @@ class ButtonConfig {
     required this.icon,
     this.backgroundColor = Colors.blue,
   });
-}
-
-class Participant {
-  final String displayName;
-  final String mri;
-  final bool isMuted;
-  final bool isSpeaking;
-  final bool hasVideo;
-  final bool videoOn;
-  final String state;
-  final String scalingMode;
-  final String? rendererViewId;
-
-  Participant({
-    required this.displayName,
-    required this.mri,
-    required this.isMuted,
-    required this.isSpeaking,
-    required this.hasVideo,
-    required this.videoOn,
-    required this.state,
-    required this.scalingMode,
-    this.rendererViewId,
-  });
-
-  factory Participant.fromMap(Map<String, dynamic> map) {
-    return Participant(
-      displayName: map['displayName'] as String,
-      mri: map['mri'] as String,
-      isMuted: map['isMuted'] as bool,
-      isSpeaking: map['isSpeaking'] as bool,
-      hasVideo: map['hasVideo'] as bool,
-      videoOn: map['videoOn'] as bool,
-      state: map['state'] as String,
-      scalingMode: map['scalingMode'] as String,
-      rendererViewId: map['rendererViewId'] as String?,
-    );
-  }
-
-  // Helper method to get participant's state as enum if needed
-  ParticipantState get participantState => participantStateFromString(state);
-
-  // Helper method to get scaling mode as enum if needed
-  ScalingMode get participantScalingMode =>
-      _getScalingModeFromString(scalingMode);
-
-  // Optional: Convert back to map if needed for any reason
-  Map<String, dynamic> toMap() {
-    return {
-      'displayName': displayName,
-      'mri': mri,
-      'isMuted': isMuted,
-      'isSpeaking': isSpeaking,
-      'hasVideo': hasVideo,
-      'videoOn': videoOn,
-      'state': state,
-      'scalingMode': scalingMode,
-      'rendererViewId': rendererViewId,
-    };
-  }
-
-  @override
-  String toString() {
-    return 'Participant(displayName: $displayName, mri: $mri, isMuted: $isMuted, isSpeaking: $isSpeaking, hasVideo: $hasVideo, videoOn: $videoOn, state: $state, scalingMode: $scalingMode, rendererViewId: $rendererViewId)';
-  }
-}
-
-// You'll need to create these enums to match your Swift enums
-enum ParticipantState {
-  idle, // ACSParticipantStateIdle
-  earlyMedia, // ACSParticipantStateEarlyMedia
-  connecting, // ACSParticipantStateConnecting
-  connected, // ACSParticipantStateConnected
-  hold, // ACSParticipantStateHold
-  inLobby, // ACSParticipantStateInLobby
-  disconnected, // ACSParticipantStateDisconnected
-  ringing, // ACSParticipantStateRinging
-}
-
-enum ScalingMode {
-  fit,
-  crop,
-  // Add more scaling modes as needed based on your Swift enum
-}
-
-// Helper functions to convert string values to enum values
-String participantStateToString(ParticipantState state) {
-  switch (state) {
-    case ParticipantState.idle:
-      return 'Idle';
-    case ParticipantState.earlyMedia:
-      return 'Early Media';
-    case ParticipantState.connecting:
-      return 'Connecting';
-    case ParticipantState.connected:
-      return 'Connected';
-    case ParticipantState.hold:
-      return 'On Hold';
-    case ParticipantState.inLobby:
-      return 'In Lobby';
-    case ParticipantState.disconnected:
-      return 'Disconnected';
-    case ParticipantState.ringing:
-      return 'Ringing';
-  }
-}
-
-ParticipantState participantStateFromString(String stateString) {
-  switch (stateString.toLowerCase()) {
-    case 'idle':
-      return ParticipantState.idle;
-    case 'early media':
-      return ParticipantState.earlyMedia;
-    case 'connecting':
-      return ParticipantState.connecting;
-    case 'connected':
-      return ParticipantState.connected;
-    case 'on hold':
-      return ParticipantState.hold;
-    case 'in lobby':
-      return ParticipantState.inLobby;
-    case 'disconnected':
-      return ParticipantState.disconnected;
-    case 'ringing':
-      return ParticipantState.ringing;
-    default:
-      throw ArgumentError('Unknown state string: $stateString');
-  }
-}
-
-ScalingMode _getScalingModeFromString(String value) {
-  switch (value) {
-    case 'fit':
-      return ScalingMode.fit;
-    case 'crop':
-      return ScalingMode.crop;
-    // Add more cases as needed
-    default:
-      return ScalingMode.fit; // Default value
-  }
 }

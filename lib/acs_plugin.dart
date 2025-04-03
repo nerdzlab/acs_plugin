@@ -40,6 +40,10 @@ class AcsPlugin {
     await AcsPluginPlatform.instance.toggleLocalVideo();
   }
 
+  Future<void> toggleParticipantVideo(String participantId) async {
+    await AcsPluginPlatform.instance.toggleParticipantVideo(participantId);
+  }
+
 // Stream to listen for events
   Stream<Map<String, dynamic>> get eventStream {
     return AcsPluginPlatform.instance.eventStream;

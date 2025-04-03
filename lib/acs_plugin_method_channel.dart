@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -65,7 +63,15 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   Future<String?> joinRoom(String roomId) async {
     return await methodChannel.invokeMethod(
       'joinRoom',
-      {'roomId': roomId},
+      {'room_id': roomId},
+    );
+  }
+
+  @override
+  Future<String?> toggleParticipantVideo(String participantId) async {
+    return await methodChannel.invokeMethod(
+      'toggleParticipantVideo',
+      {'participant_id': participantId},
     );
   }
 

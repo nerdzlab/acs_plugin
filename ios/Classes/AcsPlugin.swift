@@ -50,7 +50,7 @@ public class AcsPlugin: NSObject, FlutterPlugin {
             }
             
         case "joinRoom":
-            if let arguments = call.arguments as? [String: Any], let roomId = arguments["roomId"] as? String {
+            if let arguments = call.arguments as? [String: Any], let roomId = arguments["room_id"] as? String {
                 startCall(roomId: roomId, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "RoomId is required", details: nil))
@@ -63,8 +63,35 @@ public class AcsPlugin: NSObject, FlutterPlugin {
             toggleSpeaker(result: result)
         case "toggleLocalVideo":
             toggleLocalVideo()
+        case "toggleParticipantVideo":
+            if let arguments = call.arguments as? [String: Any], let participantId = arguments["participant_id"] as? String {
+                toggleParticipantVideo(participantId: participantId, result: result)
+            } else {
+                result(FlutterError(code: "INVALID_ARGUMENTS", message: "RoomId is required", details: nil))
+            }
         default:
             result(FlutterMethodNotImplemented)
+        }
+    }
+    
+    public func getParticipantView(for participantId: String) -> UIView? {
+        return callService.participants.first(where: {$0.getMri() == participantId})?.rendererView
+    }
+    
+    public func updateParticipant(_ newParticipant: Participant) {
+        if let index = callService.participants.firstIndex(where: { $0.getMri() == newParticipant.getMri() }) {
+            callService.participants[index] = newParticipant
+            sendParticipantList()
+        } else {
+            print("Participant not found in the list.")
+        }
+    }
+    
+    private func toggleParticipantVideo(participantId: String, result: @escaping FlutterResult) {
+        if let index = callService.participants.firstIndex(where: { $0.getMri() == participantId }) {
+            callService.participants[index].toggleVideo(result: result)
+        } else {
+            result(FlutterError(code: "PARTICIPANT_ERROR", message: "Participant not found in the list", details: nil))
         }
     }
     
@@ -118,7 +145,6 @@ public class AcsPlugin: NSObject, FlutterPlugin {
 extension AcsPlugin: FlutterStreamHandler {
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         self.eventSink = events
-        sendParticipantList()
         return nil
     }
     
@@ -143,13 +169,10 @@ extension AcsPlugin: FlutterStreamHandler {
     public func sendParticipantList() {
         guard let eventSink = eventSink else { return }
         
-        // Convert 2D array ([[Participant]]) into 1D array ([Participant])
-        let flattenedParticipants = callService.participants.flatMap { $0 }
-        
-        let participantsData = flattenedParticipants.map { $0.toMap() }
+        let participantsData = callService.participants.map { $0.toMap() }
         
         let eventData: [String: Any?] = [
-            "event": "participantList",
+            "event": "participant_list",
             "participants": participantsData
         ]
         eventSink(eventData)

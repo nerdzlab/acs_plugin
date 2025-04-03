@@ -45,6 +45,11 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('joinRoom() has not been implemented.');
   }
 
+  Future<void> toggleParticipantVideo(String participantId) {
+    throw UnimplementedError(
+        'toggleParticipantVideo() has not been implemented.');
+  }
+
   Future<void> leaveRoomCall() {
     throw UnimplementedError('leaveRoomCall() has not been implemented.');
   }
