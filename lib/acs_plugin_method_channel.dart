@@ -60,16 +60,16 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
-  Future<String?> joinRoom(String roomId) async {
-    return await methodChannel.invokeMethod(
+  Future<void> joinRoom(String roomId) async {
+    await methodChannel.invokeMethod(
       'joinRoom',
       {'room_id': roomId},
     );
   }
 
   @override
-  Future<String?> toggleParticipantVideo(String participantId) async {
-    return await methodChannel.invokeMethod(
+  Future<void> toggleParticipantVideo(String participantId) async {
+    await methodChannel.invokeMethod(
       'toggleParticipantVideo',
       {'participant_id': participantId},
     );
@@ -91,7 +91,12 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
-  Future<String?> toggleLocalVideo() async {
-    return await methodChannel.invokeMethod('toggleLocalVideo');
+  Future<void> toggleLocalVideo() async {
+    await methodChannel.invokeMethod('toggleLocalVideo');
+  }
+
+  @override
+  Future<void> switchCamera() async {
+    await methodChannel.invokeMethod('switchCamera');
   }
 }

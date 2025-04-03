@@ -69,4 +69,8 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   Stream<Map<String, dynamic>> get eventStream {
     throw UnimplementedError('viewIdStream has not been implemented.');
   }
+
+  Future<void> switchCamera() async {
+    throw UnimplementedError('switchCamera() has not been implemented.');
+  }
 }

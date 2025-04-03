@@ -371,12 +371,6 @@ final class CallService: NSObject, CallAgentDelegate {
                 let renderer = try VideoStreamRenderer(localVideoStream: localStream)
                 let view = try renderer.createView(withOptions: CreateViewOptions(scalingMode: .crop))
                 
-//                let currentCamera = localStream.source
-//                let flippedFacing: CameraFacing = currentCamera.cameraFacing == .front ? .back : .front
-//                localStream.switchSource(camera: currentCamera) { <#(any Error)?#> in
-//                    <#code#>
-//                }
-                
                 self.localVideoStream = localStream
                 self.previewRenderer = renderer
                 self.previewView = view
@@ -423,5 +417,48 @@ final class CallService: NSObject, CallAgentDelegate {
             debugPrint("Error___ Preview view is nil")
             AcsPlugin.shared.sendViewId(nil)
         }
+    }
+    
+    public func switchCamera(result: @escaping FlutterResult) {
+        guard let videoStream = localVideoStream else {
+            let error = CallCompositeInternalError.cameraSwitchFailed.toCallCompositeErrorCode()
+            debugPrint("Error___ Failed to toggle camera: \(error ?? "")")
+            result(FlutterError(code: "SWITCH_CAMERA_ERROR", message: "Failed to toggle camera: \(error ?? "")", details: nil))
+            return
+        }
+        
+        let currentCamera = videoStream.source
+        let flippedFacing: CameraFacing = currentCamera.cameraFacing == .front ? .back : .front
+        
+        let deviceInfo = getVideoDeviceInfo(flippedFacing)
+        
+        guard let deviceInfo else {
+            result(FlutterError(code: "SWITCH_CAMERA_ERROR", message: "Failed to toggle camera", details: nil))
+            return
+        }
+        
+        change(videoStream, source: deviceInfo, result: result)
+    }
+    
+    private func change(_ videoStream: LocalVideoStream, source: VideoDeviceInfo, result: @escaping FlutterResult) {
+        videoStream.switchSource(camera: source) { error in
+            if let error = error {
+                debugPrint("Error___ Failed to switch camera: \(error)")
+                result(FlutterError(code: "SWITCH_CAMERA_ERROR", message: "Failed to toggle camera \(error)", details: nil))
+            } else {
+                debugPrint("Camera switched successfully")
+                result("Camera switched successfully")
+            }
+        }
+    }
+    
+    private func getVideoDeviceInfo(_ cameraFacing: CameraFacing) -> VideoDeviceInfo? {
+        if let camera = deviceManager?.cameras
+            .first(where: { $0.cameraFacing == cameraFacing }
+            ) {
+            return  camera
+        }
+        
+        return nil
     }
 }

@@ -55,20 +55,29 @@ public class AcsPlugin: NSObject, FlutterPlugin {
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "RoomId is required", details: nil))
             }
+            
         case "leaveRoomCall":
             leaveRoomCall(result: result)
+            
         case "toggleMute":
             toggleMute(result: result)
+            
         case "toggleSpeaker":
             toggleSpeaker(result: result)
+            
         case "toggleLocalVideo":
             toggleLocalVideo()
+            
+        case "switchCamera":
+            switchCamera(result: result)
+            
         case "toggleParticipantVideo":
             if let arguments = call.arguments as? [String: Any], let participantId = arguments["participant_id"] as? String {
                 toggleParticipantVideo(participantId: participantId, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "RoomId is required", details: nil))
             }
+            
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -139,6 +148,10 @@ public class AcsPlugin: NSObject, FlutterPlugin {
     
     private func toggleLocalVideo() {
         callService.toggleLocalVideo()
+    }
+    
+    private func switchCamera(result: @escaping FlutterResult) {
+        callService.switchCamera(result: result)
     }
 }
 

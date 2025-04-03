@@ -44,6 +44,10 @@ class AcsPlugin {
     await AcsPluginPlatform.instance.toggleParticipantVideo(participantId);
   }
 
+  Future<void> switchCamera() async {
+    await AcsPluginPlatform.instance.switchCamera();
+  }
+
 // Stream to listen for events
   Stream<Map<String, dynamic>> get eventStream {
     return AcsPluginPlatform.instance.eventStream;

@@ -299,6 +299,15 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  Future<void> _switchCamera() async {
+    try {
+      await _acsPlugin.switchCamera();
+    } on PlatformException catch (error) {
+      log('Failed to toggle video: ${error.message}');
+      _shwoSnacBar('Failed to toggle video: ${error.message}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -348,6 +357,11 @@ class _CallScreenState extends State<CallScreen> {
                   onTap: _leaveRoom,
                   icon: Icons.call_end,
                   backgroundColor: Colors.red,
+                ),
+                ButtonConfig(
+                  label: 'Switch Camera',
+                  onTap: _switchCamera,
+                  icon: Icons.switch_camera,
                 ),
               ]),
               // Media Controls Section
