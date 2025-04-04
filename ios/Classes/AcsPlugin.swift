@@ -2,11 +2,26 @@ import Flutter
 import UIKit
 import AzureCommunicationCalling
 
+import UIKit
+import SwiftUI
+import FluentUI
+import AVKit
+import Combine
+import AzureCommunicationUICalling
+
+class GlobalCompositeManager {
+    static var callComposite: CallComposite?
+}
+
+
+
 public class AcsPlugin: NSObject, FlutterPlugin {
     
     private var callService: CallService {
         return CallService.getOrCreateInstance()
     }
+
+    
     
     private var eventChannel: FlutterEventChannel?
     private var eventSink: FlutterEventSink?
@@ -113,11 +128,47 @@ public class AcsPlugin: NSObject, FlutterPlugin {
     }
     
     private func initializeCall(token: String, result: @escaping FlutterResult) {
-        if !callService.initialized {
-            callService.initializeCall(token: token, result: result)
-        } else {
-            result("Call Already Initialized")
+//        if !callService.initialized {
+//            callService.initializeCall(token: token, result: result)
+//        } else {
+//            result("Call Already Initialized")
+//        }
+        
+        
+        
+        guard let credential = try? CommunicationTokenCredential(token: token) else { return  }
+        
+         let callCompositeOptions = CallCompositeOptions(
+                     enableMultitasking: true,
+                     enableSystemPictureInPictureWhenMultitasking: true)
+
+        let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
+
+        let customButton = CustomButtonViewData(id: UUID().uuidString,
+                                                image: UIImage(),
+                                                title: "Hide composite") {_ in
+            // hide call composite and display Troubleshooting tips
+            callComposite.isHidden = true
+            // ...
         }
+
+         let cameraButton = ButtonViewData(visible: true)
+        let micButton = ButtonViewData(enabled: true)
+
+        let callScreenControlBarOptions = CallScreenControlBarOptions(
+            cameraButton: cameraButton,
+            microphoneButton: micButton,
+            customButtons: [customButton]
+        )
+
+        let callScreenOptions = CallScreenOptions(controlBarOptions: callScreenControlBarOptions)
+        let localOptions = LocalOptions(callScreenOptions: callScreenOptions)
+        
+        GlobalCompositeManager.callComposite = callComposite
+
+        callComposite.launch(locator: .roomCall(roomId: "99510353646132320"), localOptions: localOptions)
+        
+        
     }
     
     private func startCall(roomId: String, result: @escaping FlutterResult) {

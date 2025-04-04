@@ -1,17 +1,62 @@
 PODS:
   - acs_plugin (0.0.1):
-    - AzureCommunicationCalling (~> 2.15.1)
+    - AzureCommunicationUICalling (= 1.13.0)
     - Flutter
-  - AzureCommunicationCalling (2.15.1):
+  - AzureCommunicationCalling (2.14.1):
     - AzureCommunicationCommon (~> 1.0)
   - AzureCommunicationCommon (1.2.0)
+  - AzureCommunicationUICalling (1.13.0):
+    - AzureCommunicationCalling (= 2.14.1)
+    - AzureCore (= 1.0.0-beta.15)
+    - MicrosoftFluentUI/ActivityIndicator_ios (= 0.10.0)
+    - MicrosoftFluentUI/Avatar_ios (= 0.10.0)
+    - MicrosoftFluentUI/AvatarGroup_ios (= 0.10.0)
+    - MicrosoftFluentUI/BottomSheet_ios (= 0.10.0)
+    - MicrosoftFluentUI/Button_ios (= 0.10.0)
+    - MicrosoftFluentUI/PopupMenu_ios (= 0.10.0)
+  - AzureCore (1.0.0-beta.15)
   - Flutter (1.0.0)
   - integration_test (0.0.1):
     - Flutter
+  - MicrosoftFluentUI/ActivityIndicator_ios (0.10.0):
+    - MicrosoftFluentUI/Core_ios
+  - MicrosoftFluentUI/Avatar_ios (0.10.0):
+    - MicrosoftFluentUI/Core_ios
+  - MicrosoftFluentUI/AvatarGroup_ios (0.10.0):
+    - MicrosoftFluentUI/Avatar_ios
+  - MicrosoftFluentUI/BottomSheet_ios (0.10.0):
+    - MicrosoftFluentUI/Obscurable_ios
+    - MicrosoftFluentUI/ResizingHandleView_ios
+  - MicrosoftFluentUI/Button_ios (0.10.0):
+    - MicrosoftFluentUI/Core_ios
+  - MicrosoftFluentUI/Core_ios (0.10.0)
+  - MicrosoftFluentUI/Drawer_ios (0.10.0):
+    - MicrosoftFluentUI/Obscurable_ios
+    - MicrosoftFluentUI/ResizingHandleView_ios
+    - MicrosoftFluentUI/Separator_ios
+    - MicrosoftFluentUI/TouchForwardingView_ios
+  - MicrosoftFluentUI/Label_ios (0.10.0):
+    - MicrosoftFluentUI/Core_ios
+  - MicrosoftFluentUI/Obscurable_ios (0.10.0):
+    - MicrosoftFluentUI/Core_ios
+  - MicrosoftFluentUI/PopupMenu_ios (0.10.0):
+    - MicrosoftFluentUI/Drawer_ios
+    - MicrosoftFluentUI/Label_ios
+    - MicrosoftFluentUI/Separator_ios
+    - MicrosoftFluentUI/TableView_ios
+  - MicrosoftFluentUI/ResizingHandleView_ios (0.10.0):
+    - MicrosoftFluentUI/Core_ios
+  - MicrosoftFluentUI/Separator_ios (0.10.0):
+    - MicrosoftFluentUI/Core_ios
+  - MicrosoftFluentUI/TableView_ios (0.10.0):
+    - MicrosoftFluentUI/Label_ios
+    - MicrosoftFluentUI/Separator_ios
+  - MicrosoftFluentUI/TouchForwardingView_ios (0.10.0):
+    - MicrosoftFluentUI/Core_ios
 
 DEPENDENCIES:
   - acs_plugin (from `.symlinks/plugins/acs_plugin/ios`)
-  - AzureCommunicationCalling (~> 2.15.1)
+  - AzureCommunicationUICalling (= 1.13.0)
   - Flutter (from `Flutter`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
 
@@ -19,6 +64,9 @@ SPEC REPOS:
   trunk:
     - AzureCommunicationCalling
     - AzureCommunicationCommon
+    - AzureCommunicationUICalling
+    - AzureCore
+    - MicrosoftFluentUI
 
 EXTERNAL SOURCES:
   acs_plugin:
@@ -29,12 +77,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/integration_test/ios"
 
 SPEC CHECKSUMS:
-  acs_plugin: c4fa5a9a81dab23661162da16e7bec4e8141632b
-  AzureCommunicationCalling: a374d99e6c6c6f4589c61eeb59ca193aea48727e
+  acs_plugin: 11bc92d31ecaf66427b4a42b6e29d15b8ba26bc6
+  AzureCommunicationCalling: 8907740906f89374676d0b28ae1de9af491a950b
   AzureCommunicationCommon: 130a21be2be889f83dc4adbf994af6285f962de8
+  AzureCommunicationUICalling: b09d4b20521245331861449f5e6cac2799dca090
+  AzureCore: ebbf7cf4dfe72afc7584088c38d1c99f5a35d647
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
+  MicrosoftFluentUI: f6db695718efb93f4ca9bdc366c00b80a1f91dba
 
-PODFILE CHECKSUM: 26d894148078e303fead04edf0565897ac4f4201
+PODFILE CHECKSUM: c0ff3b2bcd5fb87bd81e672f7f2664fe4a4b6b78
 
 COCOAPODS: 1.16.2
