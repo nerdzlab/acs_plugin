@@ -14,8 +14,15 @@ A new Flutter plugin project.
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
-  s.dependency 'Flutter'
-  s.dependency 'AzureCommunicationUICalling', '1.13.0'
+  s.dependency 'Flutter'  
+  s.dependency 'AzureCommunicationCalling', '2.14.1'
+  s.dependency 'AzureCommunicationChat', '1.3.3'
+  s.dependency 'MicrosoftFluentUI/Avatar_ios', '0.10.0'
+  s.dependency 'MicrosoftFluentUI/BottomSheet_ios', '0.10.0'
+  s.dependency 'MicrosoftFluentUI/Button_ios', '0.10.0'
+  s.dependency 'MicrosoftFluentUI/PopupMenu_ios', '0.10.0'
+  s.dependency 'MicrosoftFluentUI/ActivityIndicator_ios', '0.10.0'
+  s.dependency 'MicrosoftFluentUI/AvatarGroup_ios', '0.10.0'
   s.platform = :ios, '16.0'
 
   # Flutter.framework does not contain a i386 slice.

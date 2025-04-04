@@ -7,7 +7,6 @@ import SwiftUI
 import FluentUI
 import AVKit
 import Combine
-import AzureCommunicationUICalling
 
 class GlobalCompositeManager {
     static var callComposite: CallComposite?
@@ -167,8 +166,6 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         GlobalCompositeManager.callComposite = callComposite
 
         callComposite.launch(locator: .roomCall(roomId: "99510353646132320"), localOptions: localOptions)
-        
-        
     }
     
     private func startCall(roomId: String, result: @escaping FlutterResult) {

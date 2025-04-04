@@ -22,13 +22,13 @@ public class CallObserver : NSObject, CallDelegate {
     public func call(_ call: Call, didChangeState args: PropertyChangedEventArgs) {
         let internalError = call.callEndReason.toCompositeInternalError(callService?.wasCallConnected() ?? false)?.toCallCompositeErrorCode()
         
-        if (call.state == CallState.disconnected) {
+        if (call.state == AzureCommunicationCalling.CallState.disconnected) {
             callService?.leaveRoomCall(result: { _ in
                 AcsPlugin.shared.sendParticipantList()
                 AcsPlugin.shared.sendError(FlutterError(code: "CALL_ERROR", message: "Call disconnected \(internalError ?? "")", details: nil))
             })
         }
-        else if (call.state == CallState.connected) {
+        else if (call.state == AzureCommunicationCalling.CallState.connected) {
             if(self.firstTimeCallConnected) {
                 self.handleInitialCallState(call: call);
             }
