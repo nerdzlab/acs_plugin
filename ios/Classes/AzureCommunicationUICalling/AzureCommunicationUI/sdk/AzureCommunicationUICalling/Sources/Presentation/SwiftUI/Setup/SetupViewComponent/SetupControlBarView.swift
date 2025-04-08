@@ -9,41 +9,34 @@ struct SetupControlBarView: View {
     @ObservedObject var viewModel: SetupControlBarViewModel
     @State var audioDeviceButtonSourceView = UIView()
     @AccessibilityFocusState var focusedOnAudioButton: Bool
-    let layoutSpacing: CGFloat = 0
-    let controlWidth: CGFloat = 315
-    let controlHeight: CGFloat = 50
-    let horizontalPadding: CGFloat = 16
-    let verticalPadding: CGFloat = 13
-
+    let layoutSpacing: CGFloat = 16
+    let controlHeight: CGFloat = 32
+    
     var body: some View {
 #if DEBUG
         let _ = Self._printChanges()
 #endif
         
         GeometryReader { geometry in
-            VStack(alignment: .center) {
-                Spacer()
-                HStack(alignment: .center, spacing: layoutSpacing) {
-                    if viewModel.isCameraButtonVisible {
-                        Spacer()
-                        cameraButton
-                    }
-                    if viewModel.isMicButtonVisible {
-                        Spacer()
-                        micButton
-                    }
-                    if viewModel.isAudioDeviceButtonVisible {
-                        Spacer()
-                        audioDeviceButton
-                    }
-                    Spacer()
+            HStack(alignment: .center, spacing: layoutSpacing) {
+                if viewModel.isCameraButtonVisible {
+                    cameraButton
                 }
-                .frame(width: getWidth(from: geometry), height: controlHeight)
-                .padding(.horizontal, getHorizontalPadding(from: geometry))
-                .padding(.vertical, verticalPadding)
-                .hidden(viewModel.isControlBarHidden())
-                .accessibilityElement(children: .contain)
-            }.accessibilityElement(children: .contain)
+                if viewModel.isMicButtonVisible {
+                    micButton
+                }
+                if viewModel.isAudioDeviceButtonVisible {
+                    audioDeviceButton
+                }
+                Spacer()
+             //MTODO need to add more buttons
+                if viewModel.isAudioDeviceButtonVisible {
+                    audioDeviceButton
+                }
+            }
+            .frame(height: controlHeight)
+            .hidden(viewModel.isControlBarHidden())
+            .accessibilityElement(children: .contain)
         }
     }
     var cameraButton: some View {
@@ -51,32 +44,18 @@ struct SetupControlBarView: View {
             .accessibility(identifier: AccessibilityIdentifier.toggleVideoAccessibilityID.rawValue)
             .hidden(!viewModel.isCameraButtonVisible)
     }
-
+    
     var micButton: some View {
         PrimaryIconButton(viewModel: viewModel.micButtonViewModel)
             .accessibility(identifier: AccessibilityIdentifier.toggleMicAccessibilityID.rawValue)
             .hidden(!viewModel.isMicButtonVisible)
     }
-
+    
     var audioDeviceButton: some View {
         PrimaryIconButton(viewModel: viewModel.audioDeviceButtonViewModel)
             .background(SourceViewSpace(sourceView: audioDeviceButtonSourceView))
             .accessibility(identifier: AccessibilityIdentifier.toggleAudioDeviceAccessibilityID.rawValue)
             .accessibilityFocused($focusedOnAudioButton, equals: true)
             .hidden(!viewModel.isAudioDeviceButtonVisible)
-    }
-
-    private func getWidth(from geometry: GeometryProxy) -> CGFloat {
-        if controlWidth > geometry.size.width {
-            return geometry.size.width
-        }
-        return controlWidth
-    }
-
-    private func getHorizontalPadding(from geometry: GeometryProxy) -> CGFloat {
-        if controlWidth > geometry.size.width {
-            return 0
-        }
-        return (geometry.size.width - controlWidth) / 2
     }
 }

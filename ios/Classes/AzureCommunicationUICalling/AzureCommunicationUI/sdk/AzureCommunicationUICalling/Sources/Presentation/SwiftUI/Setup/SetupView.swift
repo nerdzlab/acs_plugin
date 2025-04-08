@@ -14,7 +14,7 @@ struct SetupView: View {
     @Environment(\.verticalSizeClass) var heightSizeClass: UserInterfaceSizeClass?
     @Orientation var orientation: UIDeviceOrientation
     let avatarManager: AvatarViewManagerProtocol
-
+    
     enum LayoutConstant {
         static let spacing: CGFloat = 0
         static let spacingLarge: CGFloat = 0
@@ -24,7 +24,7 @@ struct SetupView: View {
         static let iPadSmallHeightWithMargin: CGFloat = iPadSmall + spacingLarge + startCallButtonHeight
         static let iPadLargeHeightWithMargin: CGFloat = iPadLarge + spacingLarge + startCallButtonHeight
     }
-
+    
     var body: some View {
 #if DEBUG
         let _ = Self._printChanges()
@@ -42,13 +42,24 @@ struct SetupView: View {
                                 PreviewAreaView(viewModel: viewModel.previewAreaViewModel,
                                                 viewManager: viewManager,
                                                 avatarManager: avatarManager)
-                                if viewModel.shouldShowSetupControlBarView() {
-                                    SetupControlBarView(viewModel: viewModel.setupControlBarViewModel)
-                                }
                             }
                             .background(Color(UIColor.compositeColor(.lightPurple)))
                             .accessibilityElement(children: .contain)
-                            joinCallView
+                            
+                            VStack(spacing: 0) {
+                                if viewModel.shouldShowSetupControlBarView() {
+                                    SetupControlBarView(viewModel: viewModel.setupControlBarViewModel)
+                                }
+                                joinCallView
+                                    .padding(.bottom, 32)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.top, 12)
+                            .background(Color.white)
+                            .clipShape(RoundedCorner(radius: 24, corners: [.topLeft, .topRight]))
+                            .shadow(color: .black.opacity(0.05), radius: 8, y: -2)
+                            .frame(height: 140)
+                            
                         }
                         errorInfoView
                             .padding(.bottom, CGFloat(16))
@@ -58,11 +69,12 @@ struct SetupView: View {
             BottomDrawer(isPresented: viewModel.audioDeviceListViewModel.isDisplayed,
                          hideDrawer: viewModel.dismissAudioDevicesDrawer) {
                 AudioDevicesListView(viewModel: viewModel.audioDeviceListViewModel,
-                avatarManager: avatarManager)
+                                     avatarManager: avatarManager)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
     }
-
+    
     var joinCallView: some View {
         Group {
             if viewModel.isJoinRequested {
@@ -74,7 +86,7 @@ struct SetupView: View {
             }
         }
     }
-
+    
     var errorInfoView: some View {
         VStack {
             Spacer()
@@ -88,13 +100,13 @@ struct SetupView: View {
                 .accessibilityAddTraits(.isModal)
         }
     }
-
+    
     private func getSizeClass() -> ScreenSizeClassType {
         switch (widthSizeClass, heightSizeClass) {
         case (.compact, .regular):
             return .iphonePortraitScreenSize
         case (.compact, .compact),
-             (.regular, .compact):
+            (.regular, .compact):
             return .iphoneLandscapeScreenSize
         default:
             return .ipadScreenSize
@@ -107,9 +119,9 @@ struct SetupTitleView: View {
     let padding: CGFloat = 34.0
     let verticalSpacing: CGFloat = 0
     var viewModel: SetupViewModel
-
+    
     @Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
-
+    
     var body: some View {
 #if DEBUG
         let _ = Self._printChanges()
@@ -143,5 +155,20 @@ struct SetupTitleView: View {
                 }.accessibilitySortPriority(1)
             }.frame(height: viewHeight)
         }
+    }
+}
+
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+    
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
     }
 }
