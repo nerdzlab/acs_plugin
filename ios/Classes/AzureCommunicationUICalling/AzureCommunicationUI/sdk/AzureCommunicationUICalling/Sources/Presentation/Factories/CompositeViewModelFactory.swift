@@ -190,6 +190,18 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                 isDisabled: isDisabled,
                 action: action)
     }
+    
+    func makePrimaryIconButtonViewModel<T: PrimaryButtonState>(
+        selectedButtonState: T,
+        localizationProvider: LocalizationProviderProtocol,
+        isDisabled: Bool,
+        action: @escaping (() -> Void)) -> PrimaryIconButtonViewModel<T> {
+            PrimaryIconButtonViewModel(
+                selectedButtonState: selectedButtonState,
+                localizationProvider: localizationProvider,
+                isDisabled: isDisabled,
+                action: action)
+    }
 
     func makeLocalVideoViewModel(dispatchAction: @escaping ActionDispatch) -> LocalVideoViewModel {
         LocalVideoViewModel(compositeViewModelFactory: self,

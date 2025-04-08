@@ -43,19 +43,19 @@ struct SetupControlBarView: View {
         }
     }
     var cameraButton: some View {
-        IconWithLabelButton(viewModel: viewModel.cameraButtonViewModel)
+        PrimaryIconButton(viewModel: viewModel.cameraButtonViewModel)
             .accessibility(identifier: AccessibilityIdentifier.toggleVideoAccessibilityID.rawValue)
             .hidden(!viewModel.isCameraButtonVisible)
     }
 
     var micButton: some View {
-        IconWithLabelButton(viewModel: viewModel.micButtonViewModel)
+        PrimaryIconButton(viewModel: viewModel.micButtonViewModel)
             .accessibility(identifier: AccessibilityIdentifier.toggleMicAccessibilityID.rawValue)
             .hidden(!viewModel.isMicButtonVisible)
     }
 
     var audioDeviceButton: some View {
-        IconWithLabelButton(viewModel: viewModel.audioDeviceButtonViewModel)
+        PrimaryIconButton(viewModel: viewModel.audioDeviceButtonViewModel)
             .background(SourceViewSpace(sourceView: audioDeviceButtonSourceView))
             .accessibility(identifier: AccessibilityIdentifier.toggleAudioDeviceAccessibilityID.rawValue)
             .accessibilityFocused($focusedOnAudioButton, equals: true)

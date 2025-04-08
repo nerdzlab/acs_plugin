@@ -34,6 +34,13 @@ protocol CompositeViewModelFactoryProtocol {
         buttonTypeColor: IconWithLabelButtonViewModel<ButtonStateType>.ButtonTypeColor,
         isDisabled: Bool,
         action: @escaping (() -> Void)) -> IconWithLabelButtonViewModel<ButtonStateType>
+    
+    func makePrimaryIconButtonViewModel<ButtonStateType>(
+        selectedButtonState: ButtonStateType,
+        localizationProvider: LocalizationProviderProtocol,
+        isDisabled: Bool,
+        action: @escaping (() -> Void)) -> PrimaryIconButtonViewModel<ButtonStateType>
+    
     func makeLocalVideoViewModel(dispatchAction: @escaping ActionDispatch) -> LocalVideoViewModel
     func makePrimaryButtonViewModel(buttonStyle: FluentUI.ButtonStyle,
                                     buttonLabel: String,
