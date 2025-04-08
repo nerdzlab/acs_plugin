@@ -93,7 +93,6 @@ public class CallComposite {
     private var callKitRemoteInfo: CallKitRemoteInfo?
     private var credential: CommunicationTokenCredential?
     private var userId: CommunicationIdentifier?
-    private var displayName: String?
     private var disableInternalPushForIncomingCall = false
     private var callingSDKInitializer: CallingSDKInitializer?
     private var callConfiguration: CallConfiguration?
@@ -102,6 +101,8 @@ public class CallComposite {
     private var videoViewManager: VideoViewManager?
     private var callingSDKEventsHandler: CallingSDKEventsHandler?
     private var callingSDKWrapper: CallingSDKWrapperProtocol?
+    
+    public var displayName: String?
     /* <CALL_START_TIME>
     private var callStartTimeInternal: Date?
     </CALL_START_TIME> */

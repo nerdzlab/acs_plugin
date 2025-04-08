@@ -52,51 +52,21 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
-  Future<void> initializeCall(String token) async {
+  Future<void> initializeRoomCall({
+    required String token,
+    required String roomId,
+  }) async {
     await methodChannel.invokeMethod(
-      'initializeCall',
-      {'token': token},
-    );
-  }
-
-  @override
-  Future<void> joinRoom(String roomId) async {
-    await methodChannel.invokeMethod(
-      'joinRoom',
-      {'room_id': roomId},
-    );
-  }
-
-  @override
-  Future<void> toggleParticipantVideo(String participantId) async {
-    await methodChannel.invokeMethod(
-      'toggleParticipantVideo',
-      {'participant_id': participantId},
+      'initializeRoomCall',
+      {
+        'token': token,
+        'roomId': roomId,
+      },
     );
   }
 
   @override
   Future<void> leaveRoomCall() async {
     await methodChannel.invokeMethod('leaveRoomCall');
-  }
-
-  @override
-  Future<bool> toggleMute() async {
-    return await methodChannel.invokeMethod('toggleMute');
-  }
-
-  @override
-  Future<bool> toggleSpeaker() async {
-    return await methodChannel.invokeMethod('toggleSpeaker');
-  }
-
-  @override
-  Future<void> toggleLocalVideo() async {
-    await methodChannel.invokeMethod('toggleLocalVideo');
-  }
-
-  @override
-  Future<void> switchCamera() async {
-    await methodChannel.invokeMethod('switchCamera');
   }
 }

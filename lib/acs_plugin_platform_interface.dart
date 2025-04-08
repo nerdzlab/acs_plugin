@@ -37,40 +37,18 @@ abstract class AcsPluginPlatform extends PlatformInterface {
         'requestCameraPermissions() has not been implemented.');
   }
 
-  Future<void> initializeCall(String token) {
-    throw UnimplementedError('initialize() has not been implemented.');
-  }
-
-  Future<void> joinRoom(String roomId) {
-    throw UnimplementedError('joinRoom() has not been implemented.');
-  }
-
-  Future<void> toggleParticipantVideo(String participantId) {
-    throw UnimplementedError(
-        'toggleParticipantVideo() has not been implemented.');
+  Future<void> initializeRoomCall({
+    required String token,
+    required String roomId,
+  }) {
+    throw UnimplementedError('initializeRoomCall() has not been implemented.');
   }
 
   Future<void> leaveRoomCall() {
     throw UnimplementedError('leaveRoomCall() has not been implemented.');
   }
 
-  Future<bool> toggleMute() {
-    throw UnimplementedError('toggleMute() has not been implemented.');
-  }
-
-  Future<bool> toggleSpeaker() {
-    throw UnimplementedError('toggleSpeaker() has not been implemented.');
-  }
-
-  Future<void> toggleLocalVideo() {
-    throw UnimplementedError('toggleLocalVideo() has not been implemented.');
-  }
-
   Stream<Map<String, dynamic>> get eventStream {
-    throw UnimplementedError('viewIdStream has not been implemented.');
-  }
-
-  Future<void> switchCamera() async {
-    throw UnimplementedError('switchCamera() has not been implemented.');
+    throw UnimplementedError('eventStream has not been implemented.');
   }
 }

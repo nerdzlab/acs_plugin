@@ -229,7 +229,7 @@ final class CallService: NSObject, CallAgentDelegate {
             self.call?.delegate = nil
             self.call = nil
             debugPrint("Success___ Left the call successfully")
-            AcsPlugin.shared.sendParticipantList()
+//            AcsPlugin.shared.sendParticipantList()
             result("Left the call successfully")
         } else {
             debugPrint("Error____ No active call to leave")
@@ -404,7 +404,7 @@ final class CallService: NSObject, CallAgentDelegate {
         previewRenderer?.dispose()
         previewRenderer = nil
         
-        AcsPlugin.shared.sendViewId(nil)
+//        AcsPlugin.shared.sendViewId(nil)
     }
     
     /// Returns the preview view ID to Flutter
@@ -412,10 +412,10 @@ final class CallService: NSObject, CallAgentDelegate {
         if let previewView = previewView {
             let viewId = String(previewView.hash) // Generate a reference ID
             debugPrint("Success___ Preview view generated: \(viewId)")
-            AcsPlugin.shared.sendViewId(viewId)
+//            AcsPlugin.shared.sendViewId(viewId)
         } else {
             debugPrint("Error___ Preview view is nil")
-            AcsPlugin.shared.sendViewId(nil)
+//            AcsPlugin.shared.sendViewId(nil)
         }
     }
     

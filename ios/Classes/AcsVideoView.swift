@@ -27,11 +27,11 @@ class AcsVideoView: NSObject, FlutterPlatformView {
                 self.containerView.addSubview(existingView)
             }
             
-        case "participant_preview":
-            if let participantId = (args as? [String: Any])?["view_id"] as? String,
-               let remoteView = AcsPlugin.shared.getParticipantView(for: participantId) {
-                self.containerView.addSubview(remoteView)
-            }
+//        case "participant_preview":
+//            if let participantId = (args as? [String: Any])?["view_id"] as? String,
+//               let remoteView = AcsPlugin.shared.getParticipantView(for: participantId) {
+//                self.containerView.addSubview(remoteView)
+//            }
             
         default:
             // Default view or error handling

@@ -72,16 +72,12 @@ class SetupViewModel: ObservableObject {
             dispatchAction: actionDispatch,
             localUserState: store.state.localUserState)
 
-        var callButtonLocalization = LocalizationKey.joinCall
-        if self.callType == .oneToNOutgoing {
-            callButtonLocalization = LocalizationKey.startCall
-        }
+        let callButtonLocalization = LocalizationKey.startCall
 
         joinCallButtonViewModel = compositeViewModelFactory.makePrimaryButtonViewModel(
             buttonStyle: .primaryFilled,
             buttonLabel: self.localizationProvider
-                .getLocalizedString(callButtonLocalization),
-            iconName: .meetNow,
+                .getLocalizedString(callButtonLocalization).uppercased(),
             isDisabled: false) { [weak self] in
                 guard let self = self else {
                     return
@@ -129,10 +125,8 @@ class SetupViewModel: ObservableObject {
             self.localizationProvider.getLocalizedString(key))
         } else {
             // Update the accessibility label for the normal state
-            var key = LocalizationKey.joinCall
-            if callType == .oneToNOutgoing {
-                key = LocalizationKey.startCall
-            }
+            var key = LocalizationKey.startCall
+           
             joinCallButtonViewModel.update(accessibilityLabel: self.localizationProvider.getLocalizedString(key))
         }
     }

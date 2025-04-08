@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:acs_plugin_example/participant.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -37,18 +36,13 @@ class CallScreen extends StatefulWidget {
 class _CallScreenState extends State<CallScreen> {
   String _platformVersion = 'Unknown';
   final _acsPlugin = AcsPlugin();
-  String? _viewId;
-  bool _isMuted = false;
-  bool _isSpeakerOn = false;
-  bool _isVideoOn = false;
-  List<Participant> _participants = [];
 
   StreamSubscription? _eventsSubscription;
 
   // Configuration constants - move to a config file in a real app
   static const String _acsToken =
-      "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi05MWFmLWU3YWEtM2Y4Mi1hZjNhMGQwMGIzZDIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDM3NDc3MzAiLCJleHAiOjE3NDM4MzQxMzAsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDM3NDc3MzB9.EJnU1_b84payT-x5rcz5yTekWRGph-iq5yGpGVjIrhYXdQoQsxJuhlp_Rs4MOj3_Hxvr9POCtPdO1y9fhNxfJnRSpzOj51kwlJzgf6kAT3y2cKvSPGV--sDSg1cRJ8yvWrVNZq28QbUI5nY_ySX0_IvHfZEK0pIIXWxeWubj8fyEAGu9ueLx5_g2VXvwBgq-CI1n1uR5w2oIJnpjTrKZYjQYv5RA4Q07P02c5JBoVQ1upOdAFcEslYqOJM5SOfZjn3Hod7Z-XvYsjyBpPV0QBixk1Aq8DxrRuSl0y3Qg557Rm9L_yFzZ7HpMs2PKfWqx9gm82zVTo-65IBuKyhv_1g";
-  static const String _roomId = "99510353646132320";
+      "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDQwOTE4MjgiLCJleHAiOjE3NDQxNzgyMjgsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDQwOTE4Mjh9.y2FuxKDR9QkEYUDIiE4j3k5ddlRi39TKPy70QBdYIRBXzQEcGatXNAiS0gkcYYOmtKaf21627skzst-bBsOmCa2wbwhSP9KVFYejAeHoyJ_Ph7WB9QkW5AqSvUg43cIKmLED2ImdEYYRSKCy8plp93mRlrcxth4t-3rx93fnRbz0OCvBHATEgqr438s8PgzUoV_uPpis69vXk2ccUmlbr3xCCGbviQXrqHND4POvXYMHSKWIxLUVoE2StUdEdZp7UTtt7L5vJeTd6FQIY1z2LRkJZYxn7fKMHyNZsVs29ZYwjwZ35sM0v_lYPT6lJI128X_je2qJXKW69JSqGuQmfA";
+  static const String _roomId = "99547972557015248";
 
   @override
   initState() {
@@ -68,52 +62,10 @@ class _CallScreenState extends State<CallScreen> {
     final String eventName = event['event'];
 
     switch (eventName) {
-      case 'preview':
-        _handlePreviewEvent(event);
-        break;
-      case 'participant_list':
-        _handleParticipantList(event);
-        break;
-      // Add more cases as needed
       default:
         log('Unhandled event type: $eventName');
         break;
     }
-  }
-
-  // Handle preview event
-  _handlePreviewEvent(Map<dynamic, dynamic> event) {
-    final viewId = event['viewId'];
-
-    setState(() {
-      _viewId = viewId;
-      _isVideoOn = viewId != null;
-
-      if (!_isVideoOn) {
-        log('Received nil viewId from iOS');
-      } else {
-        log('Received viewId from iOS: $viewId');
-      }
-
-      _showSnackBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
-    });
-  }
-
-  // Handle participant list event
-  _handleParticipantList(Map<dynamic, dynamic> event) {
-    final participants = event['participants'] as List;
-
-    final participantList = participants
-        .whereType<Map>()
-        .map((participantMap) =>
-            Participant.fromMap(participantMap.cast<String, dynamic>()))
-        .toList();
-
-    setState(() {
-      _participants = participantList;
-    });
-
-    log('Received ${participantList.length} participants');
   }
 
   // Handle stream errors
@@ -132,30 +84,11 @@ class _CallScreenState extends State<CallScreen> {
 // Handle platform-specific errors
   _handlePlatformError(PlatformException error) {
     switch (error.code) {
-      case 'PREVIEW_ERROR':
-        setState(() {
-          _isVideoOn = false;
-          _viewId = null;
-          _showSnackBar('Video toggled: ${_isVideoOn ? 'on' : 'off'}');
-        });
-        break;
-      case 'CALL_ERROR':
-        setState(() {
-          _isVideoOn = false;
-          _viewId = null;
-          _showSnackBar('${error.message}');
-        });
       default:
         log('Unhandled error code: ${error.code}');
         // Handle other errors
         break;
     }
-  }
-
-  // Helper method for showing snackbars (fixed typo from original)
-  _showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -216,37 +149,14 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   // Call management methods
-  Future<void> _initAzure() async {
+  Future<void> initializeRoomCall() async {
     try {
-      await _acsPlugin.initializeCall(token: _acsToken);
-      log('Azure Communication Services initialized successfully');
-      _shwoSnacBar('Azure Communication Services initialized successfully');
+      await _acsPlugin.initializeRoomCall(token: _acsToken, roomId: _roomId);
+      log('Room call initialized successfully');
+      _shwoSnacBar('Room call initialized successfully');
     } on PlatformException catch (error) {
-      log('Failed to initialize ACS: ${error.message}');
-      _shwoSnacBar('Failed to initialize ACS: ${error.message}');
-    }
-  }
-
-  Future<void> _joinRoom() async {
-    try {
-      await _acsPlugin.joinRoom(roomId: _roomId);
-      log('Joined room successfully');
-      _shwoSnacBar('Joined room successfully');
-    } on PlatformException catch (error) {
-      log('Failed to join room: ${error.message}');
-      _shwoSnacBar('Failed to join room: ${error.message}');
-    }
-  }
-
-  Future<void> toggleParticipantVideo(String participantId) async {
-    try {
-      await _acsPlugin.toggleParticipantVideo(participantId);
-      log('Toggled participant video successfully');
-      _shwoSnacBar('Joined room successfully');
-    } on PlatformException catch (error) {
-      log('Failed to toggle participant $participantId video: ${error.message}');
-      _shwoSnacBar(
-          'Failed to toggle participant $participantId video: ${error.message}');
+      log('Failed to initialize room call: ${error.message}');
+      _shwoSnacBar('Failed to initialize room call: ${error.message}');
     }
   }
 
@@ -258,53 +168,6 @@ class _CallScreenState extends State<CallScreen> {
     } on PlatformException catch (error) {
       log('Failed to leave room: ${error.message}');
       _shwoSnacBar('Failed to leave room: ${error.message}');
-    }
-  }
-
-  // Media control methods
-  Future<void> _toggleMute() async {
-    try {
-      final result = await _acsPlugin.toggleMute();
-      setState(() {
-        _isMuted = result;
-      });
-      log('Call is muted: $result');
-      _shwoSnacBar('Call is muted: $result');
-    } on PlatformException catch (error) {
-      log('Failed to toggle mute: ${error.message}');
-      _shwoSnacBar('Failed to toggle mute: ${error.message}');
-    }
-  }
-
-  Future<void> _toggleSpeaker() async {
-    try {
-      final result = await _acsPlugin.toggleSpeaker();
-      setState(() {
-        _isSpeakerOn = result;
-      });
-      log('Speaker is enabled: $result');
-      _shwoSnacBar('Speaker is enabled: $result');
-    } on PlatformException catch (error) {
-      log('Failed to toggle speaker: ${error.message}');
-      _shwoSnacBar('Failed to toggle speaker: ${error.message}');
-    }
-  }
-
-  Future<void> _toggleVideo() async {
-    try {
-      await _acsPlugin.toggleLocalVideo();
-    } on PlatformException catch (error) {
-      log('Failed to toggle video: ${error.message}');
-      _shwoSnacBar('Failed to toggle video: ${error.message}');
-    }
-  }
-
-  Future<void> _switchCamera() async {
-    try {
-      await _acsPlugin.switchCamera();
-    } on PlatformException catch (error) {
-      log('Failed to toggle video: ${error.message}');
-      _shwoSnacBar('Failed to toggle video: ${error.message}');
     }
   }
 
@@ -339,8 +202,8 @@ class _CallScreenState extends State<CallScreen> {
                   icon: Icons.camera_alt,
                 ),
                 ButtonConfig(
-                  label: 'Init Azure',
-                  onTap: _initAzure,
+                  label: 'Init room call',
+                  onTap: initializeRoomCall,
                   icon: Icons.cloud,
                 ),
               ]),
@@ -348,77 +211,12 @@ class _CallScreenState extends State<CallScreen> {
               _buildSectionHeader('Call Management'),
               _buildButtonGrid([
                 ButtonConfig(
-                  label: 'Join Room',
-                  onTap: _joinRoom,
-                  icon: Icons.call,
-                ),
-                ButtonConfig(
                   label: 'Leave Room',
                   onTap: _leaveRoom,
                   icon: Icons.call_end,
                   backgroundColor: Colors.red,
                 ),
-                ButtonConfig(
-                  label: 'Switch Camera',
-                  onTap: _switchCamera,
-                  icon: Icons.switch_camera,
-                ),
               ]),
-              // Media Controls Section
-              _buildSectionHeader('Media Controls'),
-              _buildButtonGrid([
-                ButtonConfig(
-                  label: _isMuted ? 'Unmute' : 'Mute',
-                  onTap: _toggleMute,
-                  icon: _isMuted ? Icons.mic_off : Icons.mic,
-                ),
-                ButtonConfig(
-                  label: _isSpeakerOn ? 'Speaker Off' : 'Speaker On',
-                  onTap: _toggleSpeaker,
-                  icon: _isSpeakerOn ? Icons.volume_up : Icons.volume_off,
-                ),
-                ButtonConfig(
-                  label: _isVideoOn ? 'Video Off' : 'Video On',
-                  onTap: _toggleVideo,
-                  icon: _isVideoOn ? Icons.videocam : Icons.videocam_off,
-                ),
-              ]),
-
-              const SizedBox(height: 12),
-
-              // Video Preview
-              _buildSectionHeader('Video Preview'),
-              Container(
-                height: 240,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: _viewId != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: IosVideoView(
-                          viewId: _viewId!,
-                          viewType: "self_preview",
-                        ),
-                      )
-                    : const Center(
-                        child: Text(
-                          'No video',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-              ),
-              // Participants section
-              if (_participants.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                _buildSectionHeader('Participants'),
-                SizedBox(
-                  height: 200,
-                  child: _buildParticipantGrid(),
-                ),
-              ],
             ],
           ),
         ),
@@ -475,91 +273,6 @@ class _CallScreenState extends State<CallScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildParticipantGrid() {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.0,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: _participants.length,
-      itemBuilder: (context, index) {
-        final participant = _participants[index];
-        return _buildParticipantVideo(participant);
-      },
-    );
-  }
-
-  Widget _buildParticipantVideo(Participant participant) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Stack(
-        children: [
-          // Video view
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: participant.hasVideo
-                ? IosVideoView(
-                    viewId: participant.rendererViewId ?? '',
-                    viewType: "participant_preview",
-                  )
-                : const Center(
-                    child: Icon(
-                      Icons.videocam_off,
-                      color: Colors.white54,
-                      size: 40,
-                    ),
-                  ),
-          ),
-
-          // Participant name overlay
-          Positioned(
-            left: 4,
-            bottom: 4,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                participant.displayName ?? 'Unknown',
-                style: const TextStyle(color: Colors.white, fontSize: 12),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class IosVideoView extends StatelessWidget {
-  final String viewId;
-  final String viewType;
-
-  const IosVideoView({
-    super.key,
-    required this.viewId,
-    required this.viewType,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return UiKitView(
-      viewType: 'acs_video_view',
-      creationParams: {
-        'view_id': viewId,
-        "view_type": viewType,
-      },
-      creationParamsCodec: const StandardMessageCodec(),
     );
   }
 }

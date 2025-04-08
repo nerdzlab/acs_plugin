@@ -56,6 +56,7 @@ internal class CallingSDKInitializer: NSObject {
                 logger.debug("Reusing call agent")
                 return existingCallAgent
         }
+        
         let callClient = setupCallClient()
         let options = CallAgentOptions()
         options.disableInternalPushForIncomingCall = disableInternalPushForIncomingCall

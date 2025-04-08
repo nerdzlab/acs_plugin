@@ -24,7 +24,7 @@ public class CallObserver : NSObject, CallDelegate {
         
         if (call.state == AzureCommunicationCalling.CallState.disconnected) {
             callService?.leaveRoomCall(result: { _ in
-                AcsPlugin.shared.sendParticipantList()
+//                AcsPlugin.shared.sendParticipantList()
                 AcsPlugin.shared.sendError(FlutterError(code: "CALL_ERROR", message: "Call disconnected \(internalError ?? "")", details: nil))
             })
         }
@@ -63,7 +63,7 @@ public class CallObserver : NSObject, CallDelegate {
         callService?.participants = participants
         
         // Send the updated participant list to the plugin
-        AcsPlugin.shared.sendParticipantList()
+//        AcsPlugin.shared.sendParticipantList()
     }
     
     public func call(_ call: Call, didUpdateRemoteParticipant args: ParticipantsUpdatedEventArgs) {
@@ -89,6 +89,6 @@ public class CallObserver : NSObject, CallDelegate {
         // Update the service's participant list
         callService?.participants = participants
         
-        AcsPlugin.shared.sendParticipantList()
+//        AcsPlugin.shared.sendParticipantList()
     }
 }

@@ -13,9 +13,9 @@
 "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.AccessibilityLabel"= "%@ selected";
 
 /* SetupView */
-"AzureCommunicationUICalling.SetupView.Title"="Setup";
+"AzureCommunicationUICalling.SetupView.Title"="Start your call";
 "AzureCommunicationUICalling.SetupView.Button.Dismiss.AccessibilityLabel"="Back";
-"AzureCommunicationUICalling.SetupView.Button.JoinCall"="Join call";
+"AzureCommunicationUICalling.SetupView.Button.JoinCall"="Start call";
 "AzureCommunicationUICalling.SetupView.Button.StartCall"="Start call";
 "AzureCommunicationUICalling.SetupView.Button.JoiningCall"="Joining call…";
 "AzureCommunicationUICalling.SetupView.Button.StartingCall"="Starting call…";

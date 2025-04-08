@@ -13,39 +13,20 @@ class AcsPlugin {
     return await AcsPluginPlatform.instance.requestCameraPermissions();
   }
 
-  // Initialize the ACS plugin with a token
-  Future<void> initializeCall({required String token}) async {
-    await AcsPluginPlatform.instance.initializeCall(token);
-  }
-
-  // Start a call
-  Future<void> joinRoom({required String roomId}) async {
-    await AcsPluginPlatform.instance.joinRoom(roomId);
+  // Initialize the room call
+  Future<void> initializeRoomCall({
+    required String token,
+    required String roomId,
+  }) async {
+    await AcsPluginPlatform.instance.initializeRoomCall(
+      token: token,
+      roomId: roomId,
+    );
   }
 
   // End a call
   Future<void> leaveRoomCall() async {
     await AcsPluginPlatform.instance.leaveRoomCall();
-  }
-
-  Future<bool> toggleMute() async {
-    return await AcsPluginPlatform.instance.toggleMute();
-  }
-
-  Future<bool> toggleSpeaker() async {
-    return await AcsPluginPlatform.instance.toggleSpeaker();
-  }
-
-  Future<void> toggleLocalVideo() async {
-    await AcsPluginPlatform.instance.toggleLocalVideo();
-  }
-
-  Future<void> toggleParticipantVideo(String participantId) async {
-    await AcsPluginPlatform.instance.toggleParticipantVideo(participantId);
-  }
-
-  Future<void> switchCamera() async {
-    await AcsPluginPlatform.instance.switchCamera();
   }
 
 // Stream to listen for events

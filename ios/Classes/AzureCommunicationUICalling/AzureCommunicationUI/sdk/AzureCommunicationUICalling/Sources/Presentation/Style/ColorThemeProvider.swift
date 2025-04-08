@@ -20,39 +20,15 @@ class ColorThemeProvider {
     // MARK: Text Label Colours
     let textSecondary: UIColor = Colors.textSecondary
 
-    lazy var onWarning: UIColor = {
-        return dynamicColor(light: Colors.Palette.warningShade30.color,
-                            dark: Colors.surfacePrimary)
-    }()
+    let onWarning: UIColor = Colors.Palette.warningShade30.color
     let onHoldBackground = UIColor.compositeColor(.onHoldBackground)
-    lazy var onError: UIColor = {
-        return dynamicColor(light: Colors.surfacePrimary,
-                            dark: Colors.surfaceSecondary)
-    }()
-    lazy var onPrimary: UIColor = {
-        return dynamicColor(light: Colors.surfacePrimary,
-                            dark: Colors.surfaceSecondary)
-    }()
-    lazy var onSuccess: UIColor = {
-        return dynamicColor(light: Colors.surfacePrimary,
-                            dark: Colors.surfaceSecondary)
-    }()
-    lazy var onSurface: UIColor = {
-        return dynamicColor(light: Colors.Palette.gray950.color,
-                            dark: Colors.textDominant)
-    }()
-    lazy var onBackground: UIColor = {
-        return dynamicColor(light: Colors.Palette.gray950.color,
-                            dark: Colors.textDominant)
-    }()
-    lazy var onSurfaceColor: UIColor = {
-        return dynamicColor(light: Colors.Palette.gray950.color,
-                            dark: Colors.textDominant)
-    }()
-    lazy var onNavigationSecondary: UIColor = {
-        return dynamicColor(light: Colors.textSecondary,
-                            dark: Colors.textDominant)
-    }()
+    let onError: UIColor = Colors.surfacePrimary
+    let onPrimary: UIColor = Colors.surfacePrimary
+    let onSuccess: UIColor = Colors.surfacePrimary
+    let onSurface: UIColor = Colors.Palette.gray950.color
+    let onBackground: UIColor = Colors.Palette.gray950.color
+    let onSurfaceColor: UIColor = Colors.Palette.gray950.color
+    let onNavigationSecondary: UIColor = Colors.textSecondary
 
     // MARK: - Button Icon Colours
     let hangup = UIColor.compositeColor(.hangup)
@@ -62,32 +38,17 @@ class ColorThemeProvider {
     // MARK: - View Background Colours
     let error: UIColor = Colors.error
     let success: UIColor = Colors.Palette.successPrimary.color
-    lazy var warning: UIColor = {
-        return dynamicColor(light: Colors.Palette.warningTint40.color,
-                            dark: Colors.warning)
-    }()
+    let warning: UIColor = Colors.Palette.warningTint40.color
     let overlay = UIColor.compositeColor(.overlay)
     let gridLayoutBackground: UIColor = Colors.surfacePrimary
     let gradientColor = UIColor.black.withAlphaComponent(0.7)
     let surfaceDarkColor = UIColor.black.withAlphaComponent(0.6)
     let surfaceLightColor = UIColor.black.withAlphaComponent(0.3)
-    lazy var backgroundColor: UIColor = {
-        return dynamicColor(light: Colors.surfacePrimary,
-                            dark: Colors.surfaceSecondary)
-    }()
-    lazy var drawerColor: UIColor = {
-        return dynamicColor(light: Colors.surfacePrimary,
-                            dark: Colors.Palette.gray900.color)
-    }()
-    lazy var popoverColor: UIColor = {
-        return dynamicColor(light: Colors.surfacePrimary,
-                            dark: Colors.surfaceQuaternary)
-    }()
-    lazy var surface: UIColor = {
-        return dynamicColor(light: Colors.surfaceQuaternary,
-                            dark: Colors.Palette.gray800.color)
-    }()
-
+    let backgroundColor: UIColor = Colors.surfacePrimary
+    let drawerColor: UIColor = Colors.surfacePrimary
+    let popoverColor: UIColor = Colors.surfacePrimary
+    let surface: UIColor = Colors.surfaceQuaternary
+    
     init(themeOptions: ThemeOptions?) {
         self.colorSchemeOverride = themeOptions?.colorSchemeOverride ?? .unspecified
 
@@ -98,10 +59,6 @@ class ColorThemeProvider {
         /* <CUSTOM_COLOR_FEATURE> */
         self.foregroundOnPrimaryColor = themeOptions?.foregroundOnPrimaryColor ?? .orange
         /* </CUSTOM_COLOR_FEATURE> */
-    }
-
-    private func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
-        return UIColor { $0.userInterfaceStyle == .dark ? dark : light }
     }
 }
 

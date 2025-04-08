@@ -143,8 +143,8 @@ struct SetupTitleView: View {
                     Spacer()
                     VStack {
                         Text(viewModel.title)
-                            .font(Fonts.headline.font)
-                            .foregroundColor(Color(StyleProvider.color.onBackground))
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(Color(UIColor.compositeColor(.headerTitle)))
                             .lineLimit(1)
                             .minimumScaleFactor(sizeCategory.isAccessibilityCategory ? 0.4 : 1)
                             .accessibilityAddTraits(.isHeader)

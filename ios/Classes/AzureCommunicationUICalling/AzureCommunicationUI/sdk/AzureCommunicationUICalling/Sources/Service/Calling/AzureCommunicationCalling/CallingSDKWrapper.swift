@@ -119,6 +119,8 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
 
         do {
             let callAgent = try await callingSDKInitializer.setupCallAgent()
+            //MTODO: Displayname
+//            callAgent.
             let joinedCall = try await callAgent.join(with: joinLocator, joinCallOptions: joinCallOptions)
             if let callingEventsHandler = self.callingEventsHandler as? CallingSDKEventsHandler {
                 joinedCall.delegate = callingEventsHandler
