@@ -1,13 +1,23 @@
 import Flutter
 import UIKit
 import AzureCommunicationCalling
+
+import UIKit
+import SwiftUI
+import FluentUI
 import AVKit
+import Combine
+
+class GlobalCompositeManager {
+    static var callComposite: CallComposite?
+}
 
 public class AcsPlugin: NSObject, FlutterPlugin {
     
     private var callService: CallService {
         return CallService.getOrCreateInstance()
     }
+    
     
     private var eventChannel: FlutterEventChannel?
     private var eventSink: FlutterEventSink?
@@ -43,65 +53,18 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         case "requestCameraPermissions":
             requestCameraPermissions(result: result)
             
-        case "initializeCall":
-            if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String {
-                initializeCall(token: token, result: result)
+        case "initializeRoomCall":
+            if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String, let roomId = arguments["roomId"] as? String {
+                initializeRoomCall(token: token, roomId: roomId, result: result)
             } else {
-                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token is required", details: nil))
-            }
-            
-        case "joinRoom":
-            if let arguments = call.arguments as? [String: Any], let roomId = arguments["room_id"] as? String {
-                startCall(roomId: roomId, result: result)
-            } else {
-                result(FlutterError(code: "INVALID_ARGUMENTS", message: "RoomId is required", details: nil))
+                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
             
         case "leaveRoomCall":
             leaveRoomCall(result: result)
             
-        case "toggleMute":
-            toggleMute(result: result)
-            
-        case "toggleSpeaker":
-            toggleSpeaker(result: result)
-            
-        case "toggleLocalVideo":
-            toggleLocalVideo()
-            
-        case "switchCamera":
-            switchCamera(result: result)
-            
-        case "toggleParticipantVideo":
-            if let arguments = call.arguments as? [String: Any], let participantId = arguments["participant_id"] as? String {
-                toggleParticipantVideo(participantId: participantId, result: result)
-            } else {
-                result(FlutterError(code: "INVALID_ARGUMENTS", message: "RoomId is required", details: nil))
-            }
-            
         default:
             result(FlutterMethodNotImplemented)
-        }
-    }
-    
-    public func getParticipantView(for participantId: String) -> UIView? {
-        return callService.participants.first(where: {$0.getMri() == participantId})?.rendererView
-    }
-    
-    public func updateParticipant(_ newParticipant: Participant) {
-        if let index = callService.participants.firstIndex(where: { $0.getMri() == newParticipant.getMri() }) {
-            callService.participants[index] = newParticipant
-            sendParticipantList()
-        } else {
-            print("Participant not found in the list.")
-        }
-    }
-    
-    private func toggleParticipantVideo(participantId: String, result: @escaping FlutterResult) {
-        if let index = callService.participants.firstIndex(where: { $0.getMri() == participantId }) {
-            callService.participants[index].toggleVideo(result: result)
-        } else {
-            result(FlutterError(code: "PARTICIPANT_ERROR", message: "Participant not found in the list", details: nil))
         }
     }
     
@@ -113,21 +76,41 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         callService.requestCameraPermissions(result: result)
     }
     
-    private func initializeCall(token: String, result: @escaping FlutterResult) {
-        if !callService.initialized {
-            callService.initializeCall(token: token, result: result)
-        } else {
-            result("Call Already Initialized")
-        }
-    }
-    
-    private func startCall(roomId: String, result: @escaping FlutterResult) {
-        if !callService.initialized {
-            result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
-            return
-        }
+    private func initializeRoomCall(token: String, roomId: String, result: @escaping FlutterResult) {
+        guard let credential = try? CommunicationTokenCredential(token: token) else { return  }
         
-        callService.joinRoomCall(roomId: roomId, result: result)
+         let callCompositeOptions = CallCompositeOptions(
+                     enableMultitasking: true,
+                     enableSystemPictureInPictureWhenMultitasking: true,
+                     displayName: "Yra")
+
+        let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
+        
+        
+
+        let customButton = CustomButtonViewData(id: UUID().uuidString,
+                                                image: UIImage(),
+                                                title: "Hide composite") {_ in
+            // hide call composite and display Troubleshooting tips
+            callComposite.isHidden = true
+            // ...
+        }
+
+         let cameraButton = ButtonViewData(visible: true)
+        let micButton = ButtonViewData(enabled: true)
+
+        let callScreenControlBarOptions = CallScreenControlBarOptions(
+            cameraButton: cameraButton,
+            microphoneButton: micButton,
+            customButtons: [customButton]
+        )
+
+        let callScreenOptions = CallScreenOptions(controlBarOptions: callScreenControlBarOptions)
+        let localOptions = LocalOptions(callScreenOptions: callScreenOptions)
+        
+        GlobalCompositeManager.callComposite = callComposite
+
+        callComposite.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
     }
     
     private func leaveRoomCall(result: @escaping FlutterResult) {
@@ -137,39 +120,6 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         }
         
         callService.leaveRoomCall(result: result)
-    }
-    
-    private func toggleMute(result: @escaping FlutterResult) {
-        //        callService.toggleMute(result: result)
-        //        callService.getAvailableOutputDevices(result: result)
-        
-        do {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: [.allowBluetooth, .allowBluetoothA2DP])
-//            try audioSession.setActive(true)
-        } catch {
-            print("Failed to set audio session: \(error)")
-        }
-        
-        let routePickerView = AVRoutePickerView()
-        
-        
-        if let button = routePickerView.subviews.first(where: { $0 is UIButton }) as? UIButton {
-            button.sendActions(for: .touchUpInside) // Opens AirPlay UI
-        }
-        
-    }
-    
-    private func toggleSpeaker(result: @escaping FlutterResult) {
-        callService.toggleSpeaker(result: result)
-    }
-    
-    private func toggleLocalVideo() {
-        callService.toggleLocalVideo()
-    }
-    
-    private func switchCamera(result: @escaping FlutterResult) {
-        callService.switchCamera(result: result)
     }
 }
 
@@ -182,31 +132,6 @@ extension AcsPlugin: FlutterStreamHandler {
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
         self.eventSink = nil
         return nil
-    }
-    
-    // Method to send viewId to Flutter
-    public func sendViewId(_ viewId: String?) {
-        guard let eventSink = eventSink else { return }
-        
-        let eventData: [String: Any?] = [
-            "event": "preview",
-            "viewId": viewId
-        ]
-        
-        eventSink(eventData)
-    }
-    
-    // Send the participant list to Flutter
-    public func sendParticipantList() {
-        guard let eventSink = eventSink else { return }
-        
-        let participantsData = callService.participants.map { $0.toMap() }
-        
-        let eventData: [String: Any?] = [
-            "event": "participant_list",
-            "participants": participantsData
-        ]
-        eventSink(eventData)
     }
     
     public func sendError(_ error: FlutterError) {

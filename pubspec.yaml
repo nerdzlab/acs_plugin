@@ -38,7 +38,7 @@ flutter:
         pluginClass: AcsPlugin
       ios:
         pluginClass: AcsPlugin
-        iosPlatform: 13.0
+        iosPlatform: 15.0
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

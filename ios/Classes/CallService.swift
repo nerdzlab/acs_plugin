@@ -21,7 +21,7 @@ final class CallService: NSObject, CallAgentDelegate {
     public var deviceManager: DeviceManager?  // Device manager for accessing devices
     public var initialized = false  // Indicates if the CallService is initialized
     public var participants: [Participant] = []  // List of participants in the call
-    public var callState: CallState = .none  // Tracks the current state of the call
+    public var callState: AzureCommunicationCalling.CallState = .none  // Tracks the current state of the call
     
     private var sendingLocalVideo: Bool = false  // Define sendingLocalVideo property to track if video is being sent
     private var localVideoStream: LocalVideoStream? // Define localVideoStreams to store the local video streams
@@ -229,7 +229,7 @@ final class CallService: NSObject, CallAgentDelegate {
             self.call?.delegate = nil
             self.call = nil
             debugPrint("Success___ Left the call successfully")
-            AcsPlugin.shared.sendParticipantList()
+//            AcsPlugin.shared.sendParticipantList()
             result("Left the call successfully")
         } else {
             debugPrint("Error____ No active call to leave")
@@ -399,7 +399,7 @@ final class CallService: NSObject, CallAgentDelegate {
             self.callObserver = CallObserver(callService: self)
             self.call?.delegate = self.callObserver
             
-            if self.call?.state == CallState.connected {
+            if self.call?.state == AzureCommunicationCalling.CallState.connected {
                 self.callObserver?.handleInitialCallState(call: call)
             }
         }
@@ -496,7 +496,7 @@ final class CallService: NSObject, CallAgentDelegate {
         previewRenderer?.dispose()
         previewRenderer = nil
         
-        AcsPlugin.shared.sendViewId(nil)
+//        AcsPlugin.shared.sendViewId(nil)
     }
     
     /// Returns the preview view ID to Flutter
@@ -504,10 +504,10 @@ final class CallService: NSObject, CallAgentDelegate {
         if let previewView = previewView {
             let viewId = String(previewView.hash) // Generate a reference ID
             debugPrint("Success___ Preview view generated: \(viewId)")
-            AcsPlugin.shared.sendViewId(viewId)
+//            AcsPlugin.shared.sendViewId(viewId)
         } else {
             debugPrint("Error___ Preview view is nil")
-            AcsPlugin.shared.sendViewId(nil)
+//            AcsPlugin.shared.sendViewId(nil)
         }
     }
     

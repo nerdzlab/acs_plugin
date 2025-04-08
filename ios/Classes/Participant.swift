@@ -62,7 +62,7 @@ public class Participant: NSObject, RemoteParticipantDelegate {
         renderedRemoteVideoStream = innerParticipant.videoStreams[0]
         renderer = try! VideoStreamRenderer(remoteVideoStream: renderedRemoteVideoStream!)
         rendererView = try! renderer!.createView()
-        AcsPlugin.shared.updateParticipant(self)
+//        AcsPlugin.shared.updateParticipant(self)
     }
     
     func toggleVideo(result: @escaping FlutterResult) {
@@ -70,14 +70,14 @@ public class Participant: NSObject, RemoteParticipantDelegate {
             rendererView = nil
             renderer?.dispose()
             videoOn = false
-            AcsPlugin.shared.updateParticipant(self)
+//            AcsPlugin.shared.updateParticipant(self)
             result("Participant video is turned off")
         }
         else {
             renderer = try! VideoStreamRenderer(remoteVideoStream: innerParticipant.videoStreams[0])
             rendererView = try! renderer!.createView()
             videoOn = true
-            AcsPlugin.shared.updateParticipant(self)
+//            AcsPlugin.shared.updateParticipant(self)
             result("Participant video is turned on")
         }
     }
@@ -90,14 +90,14 @@ public class Participant: NSObject, RemoteParticipantDelegate {
                 // Remote user stopped sharing
                 rendererView = nil
                 renderer?.dispose()
-                AcsPlugin.shared.updateParticipant(self)
+//                AcsPlugin.shared.updateParticipant(self)
                 
             } else if hasVideo && !hadVideo {
                 // remote user started sharing
                 renderedRemoteVideoStream = innerParticipant.videoStreams[0]
                 renderer = try! VideoStreamRenderer(remoteVideoStream: renderedRemoteVideoStream!)
                 rendererView = try! renderer!.createView()
-                AcsPlugin.shared.updateParticipant(self)
+//                AcsPlugin.shared.updateParticipant(self)
                 
             } else if hadVideo && hasVideo {
                 if args.addedRemoteVideoStreams.count > 0 {
@@ -114,7 +114,7 @@ public class Participant: NSObject, RemoteParticipantDelegate {
                     renderedRemoteVideoStream = args.addedRemoteVideoStreams[0]
                     renderer = try! VideoStreamRenderer(remoteVideoStream: renderedRemoteVideoStream!)
                     rendererView = try! renderer!.createView()
-                    AcsPlugin.shared.updateParticipant(self)
+//                    AcsPlugin.shared.updateParticipant(self)
                     
                 } else if args.removedRemoteVideoStreams.count > 0 {
                     if args.removedRemoteVideoStreams[0].id == renderedRemoteVideoStream!.id {
@@ -125,7 +125,7 @@ public class Participant: NSObject, RemoteParticipantDelegate {
                         renderedRemoteVideoStream = innerParticipant.videoStreams[0]
                         renderer = try! VideoStreamRenderer(remoteVideoStream: renderedRemoteVideoStream!)
                         rendererView = try! renderer!.createView()
-                        AcsPlugin.shared.updateParticipant(self)
+//                        AcsPlugin.shared.updateParticipant(self)
                     }
                 }
             }
@@ -135,19 +135,19 @@ public class Participant: NSObject, RemoteParticipantDelegate {
     // Handle mute state changes
     public func remoteParticipant(_ remoteParticipant: RemoteParticipant, didChangeMuteState args: PropertyChangedEventArgs) {
         isMuted = remoteParticipant.isMuted
-        AcsPlugin.shared.updateParticipant(self)
+//        AcsPlugin.shared.updateParticipant(self)
     }
     
     // Handle speaking state changes
     public func remoteParticipant(_ remoteParticipant: RemoteParticipant, didChangeSpeakingState args: PropertyChangedEventArgs) {
         isSpeaking = remoteParticipant.isSpeaking
-        AcsPlugin.shared.updateParticipant(self)
+//        AcsPlugin.shared.updateParticipant(self)
     }
     
     // Handle display name changes
     public func remoteParticipant(_ remoteParticipant: RemoteParticipant, didChangeDisplayName args: PropertyChangedEventArgs) {
         displayName = innerParticipant.displayName
-        AcsPlugin.shared.updateParticipant(self)
+//        AcsPlugin.shared.updateParticipant(self)
     }
 }
 
