@@ -29,7 +29,6 @@ struct SetupView: View {
 #if DEBUG
         let _ = Self._printChanges()
 #endif
-        
         ZStack {
             VStack(spacing: 0) {
                 SetupTitleView(viewModel: viewModel)
@@ -136,7 +135,7 @@ struct SetupTitleView: View {
                     Spacer()
                     VStack {
                         Text(viewModel.title)
-                            .font(.system(size: 24, weight: .bold))
+                            .font(AppFont.CircularStd.bold.font(size: 24))
                             .foregroundColor(Color(UIColor.compositeColor(.headerTitle)))
                             .lineLimit(1)
                             .minimumScaleFactor(sizeCategory.isAccessibilityCategory ? 0.4 : 1)
@@ -144,7 +143,7 @@ struct SetupTitleView: View {
                             .padding(.bottom, 4)
                         if let subtitle = viewModel.subTitle, !subtitle.isEmpty {
                             Text(subtitle)
-                                .font(.system(size: 16, weight: .regular))
+                                .font(AppFont.CircularStd.book.font(size: 16))
                                 .foregroundColor(Color(UIColor.compositeColor(.headerTitle)))
                                 .lineLimit(1)
                                 .minimumScaleFactor(sizeCategory.isAccessibilityCategory ? 0.4 : 1)

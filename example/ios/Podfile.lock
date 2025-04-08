@@ -91,7 +91,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/integration_test/ios"
 
 SPEC CHECKSUMS:
-  acs_plugin: 7204c831bd83c852cfcb74bfd95acee33e14270b
+  acs_plugin: 8dd486ea035240993deff24f98ad9e23954fe2aa
   AzureCommunicationCalling: 8907740906f89374676d0b28ae1de9af491a950b
   AzureCommunicationChat: 79fb67f0d6160754817d77d307565a015a5eb9b2
   AzureCommunicationCommon: 130a21be2be889f83dc4adbf994af6285f962de8

@@ -29,12 +29,12 @@ struct AppCompositeButton: UIViewRepresentable {
     var update: (UIButton, Context) -> Void
     
     init(
-    buttonStyle: ButtonStyleType,
-    buttonLabel: String,
-    iconName: CompositeIcon? = nil,
-    paddings: Paddings? = nil,
-    themeOptions: ThemeOptions,
-    updater update: @escaping (UIButton) -> Void)
+        buttonStyle: ButtonStyleType,
+        buttonLabel: String,
+        iconName: CompositeIcon? = nil,
+        paddings: Paddings? = nil,
+        themeOptions: ThemeOptions,
+        updater update: @escaping (UIButton) -> Void)
     {
         self.buttonStyle = buttonStyle
         self.buttonLabel = buttonLabel
@@ -109,6 +109,7 @@ struct AppCompositeButton: UIViewRepresentable {
         case .primaryFilled:
             button.backgroundColor = themeOptions.primaryColor
             button.setTitleColor(themeOptions.foregroundOnPrimaryColor, for: .normal)
+            button.titleLabel?.font = AppFont.CircularStd.bold.uiFont(size: 16)
             // Add bottom-only, no-blur shadow
             button.layer.shadowColor = themeOptions.primaryShadowColor.cgColor
             button.layer.shadowOpacity = 1

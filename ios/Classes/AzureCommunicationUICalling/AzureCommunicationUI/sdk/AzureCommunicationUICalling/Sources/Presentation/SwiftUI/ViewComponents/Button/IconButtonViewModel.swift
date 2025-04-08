@@ -9,6 +9,7 @@ import SwiftUI
 
 class IconButtonViewModel: ObservableObject {
     enum ButtonType {
+        case backNavigation
         case controlButton
         case roundedRectButton
         case infoButton

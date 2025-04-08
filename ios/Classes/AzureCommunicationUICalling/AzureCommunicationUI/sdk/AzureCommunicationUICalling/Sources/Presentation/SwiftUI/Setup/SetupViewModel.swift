@@ -88,7 +88,7 @@ class SetupViewModel: ObservableObject {
         updateAccessibilityLabel()
         dismissButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .leftArrow,
-            buttonType: .controlButton,
+            buttonType: .backNavigation,
             isDisabled: false,
             renderAsOriginal: true) { [weak self] in
                 guard let self = self else {
