@@ -46,7 +46,7 @@ struct SetupView: View {
                             .background(Color(UIColor.compositeColor(.lightPurple)))
                             .accessibilityElement(children: .contain)
                             
-                            VStack(spacing: 0) {
+                            VStack(alignment: .trailing, spacing: 0) {
                                 if viewModel.shouldShowSetupControlBarView() {
                                     SetupControlBarView(viewModel: viewModel.setupControlBarViewModel)
                                 }
@@ -80,8 +80,8 @@ struct SetupView: View {
             if viewModel.isJoinRequested {
                 JoiningCallActivityView(viewModel: viewModel.joiningCallActivityViewModel)
             } else {
-                PrimaryButton(viewModel: viewModel.joinCallButtonViewModel)
-                    .frame(height: 52)
+                AppPrimaryButton(viewModel: viewModel.joinCallButtonViewModel)
+                    .frame(width: 128, height: 40)
                     .accessibilityIdentifier(AccessibilityIdentifier.joinCallAccessibilityID.rawValue)
             }
         }

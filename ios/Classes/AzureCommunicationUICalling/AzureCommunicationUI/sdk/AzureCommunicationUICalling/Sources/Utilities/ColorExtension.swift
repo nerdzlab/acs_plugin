@@ -13,6 +13,7 @@ enum CompositeColor: String {
     case headerTitle = "#393939"
     case purpleBlue = "purpleBlue"
     case lightPurple = "lightPurple"
+    case darkPurple = "darkPurple"
 }
 
 extension UIColor {

@@ -22,7 +22,7 @@ class SetupViewModel: ObservableObject {
     var audioSessionManager: AudioSessionManagerProtocol
     var errorInfoViewModel: ErrorInfoViewModel
     var dismissButtonViewModel: IconButtonViewModel!
-    var joinCallButtonViewModel: PrimaryButtonViewModel!
+    var joinCallButtonViewModel: AppPrimaryButtonViewModel!
     var setupControlBarViewModel: SetupControlBarViewModel!
     var joiningCallActivityViewModel: JoiningCallActivityViewModel!
     var cancellables = Set<AnyCancellable>()
@@ -74,7 +74,7 @@ class SetupViewModel: ObservableObject {
 
         let callButtonLocalization = LocalizationKey.startCall
 
-        joinCallButtonViewModel = compositeViewModelFactory.makePrimaryButtonViewModel(
+        joinCallButtonViewModel = compositeViewModelFactory.makeAppPrimaryButtonViewModel(
             buttonStyle: .primaryFilled,
             buttonLabel: self.localizationProvider
                 .getLocalizedString(callButtonLocalization).uppercased(),

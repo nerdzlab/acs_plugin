@@ -8,7 +8,7 @@ import Foundation
 import SwiftUI
 
 // swiftlint:disable file_length
-class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
+class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {    
     private let logger: Logger
     private let store: Store<AppState, Action>
     private let networkManager: NetworkManager
@@ -219,6 +219,21 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                     paddings: CompositeButton.Paddings? = nil,
                                     action: @escaping (() -> Void)) -> PrimaryButtonViewModel {
         PrimaryButtonViewModel(buttonStyle: buttonStyle,
+                               buttonLabel: buttonLabel,
+                               iconName: iconName,
+                               isDisabled: isDisabled,
+                               paddings: paddings,
+                               themeOptions: themeOptions,
+                               action: action)
+    }
+    
+    func makeAppPrimaryButtonViewModel(buttonStyle: AppCompositeButton.ButtonStyleType,
+                                       buttonLabel: String,
+                                       iconName: CompositeIcon?,
+                                       isDisabled: Bool,
+                                       paddings: AppCompositeButton.Paddings? = nil,
+                                       action: @escaping (() -> Void)) -> AppPrimaryButtonViewModel {
+        AppPrimaryButtonViewModel(buttonStyle: buttonStyle,
                                buttonLabel: buttonLabel,
                                iconName: iconName,
                                isDisabled: isDisabled,

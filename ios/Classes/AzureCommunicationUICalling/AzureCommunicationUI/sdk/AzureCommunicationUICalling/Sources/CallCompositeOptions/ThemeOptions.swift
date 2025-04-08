@@ -20,6 +20,8 @@ public protocol ThemeOptions {
 
     /// Provide a getter to return a custom primary color.
     var primaryColor: UIColor { get }
+    
+    var primaryShadowColor: UIColor { get }
 
     /// Provide a getter to return a custom primary color tint10.
     var primaryColorTint10: UIColor { get }

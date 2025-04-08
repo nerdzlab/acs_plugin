@@ -81,17 +81,17 @@ protocol CompositeViewModelFactoryProtocol {
                                        dispatchAction: @escaping ActionDispatch) -> LobbyErrorHeaderViewModel
     func makeParticipantGridsViewModel(isIpadInterface: Bool,
                                        rendererViewManager: RendererViewManager) -> ParticipantGridViewModel
-
+    
     func makeParticipantCellViewModel(participantModel: ParticipantInfoModel) -> ParticipantGridCellViewModel
-
+    
     func makeParticipantsListViewModel(localUserState: LocalUserState,
                                        isDisplayed: Bool,
                                        dispatchAction: @escaping ActionDispatch) -> ParticipantsListViewModel
-
+    
     func makeParticipantMenuViewModel(localUserState: LocalUserState,
                                       isDisplayed: Bool,
                                       dispatchAction: @escaping ActionDispatch) -> ParticipantMenuViewModel
-
+    
     func makeBannerViewModel(dispatchAction: @escaping ActionDispatch) -> BannerViewModel
     func makeBannerTextViewModel() -> BannerTextViewModel
     func makeMoreCallOptionsListViewModel(
@@ -109,7 +109,7 @@ protocol CompositeViewModelFactoryProtocol {
                                    showCaptionsLanguage: @escaping () -> Void,
                                    isDisplayed: Bool) -> CaptionsListViewModel
     func makeDebugInfoSharingActivityViewModel() -> DebugInfoSharingActivityViewModel
-
+    
     func makeToggleListItemViewModel(title: String,
                                      isToggleOn: Binding<Bool>,
                                      showToggle: Bool,
@@ -117,7 +117,7 @@ protocol CompositeViewModelFactoryProtocol {
                                      startIcon: CompositeIcon,
                                      isEnabled: Bool,
                                      action: @escaping (() -> Void)) -> DrawerGenericItemViewModel
-
+    
     func makeLanguageListItemViewModel(title: String,
                                        subtitle: String?,
                                        accessibilityIdentifier: String,
@@ -132,7 +132,7 @@ protocol CompositeViewModelFactoryProtocol {
     func makeLeaveCallConfirmationViewModel(
         endCall: @escaping (() -> Void),
         dismissConfirmation: @escaping (() -> Void)) -> LeaveCallConfirmationViewModel
-
+    
     func makeSupportFormViewModel() -> SupportFormViewModel
     func makeCallDiagnosticsViewModel(dispatchAction: @escaping ActionDispatch) -> CallDiagnosticsViewModel
     func makeBottomToastViewModel(toastNotificationState: ToastNotificationState,
@@ -143,6 +143,13 @@ protocol CompositeViewModelFactoryProtocol {
                                       localUserState: LocalUserState,
                                       buttonViewDataState: ButtonViewDataState) -> SetupControlBarViewModel
     func makeJoiningCallActivityViewModel(title: String) -> JoiningCallActivityViewModel
+    
+    func makeAppPrimaryButtonViewModel(buttonStyle: AppCompositeButton.ButtonStyleType,
+                                       buttonLabel: String,
+                                       iconName: CompositeIcon?,
+                                       isDisabled: Bool,
+                                       paddings: AppCompositeButton.Paddings?,
+                                       action: @escaping (() -> Void)) -> AppPrimaryButtonViewModel
 }
 
 extension CompositeViewModelFactoryProtocol {
@@ -158,7 +165,20 @@ extension CompositeViewModelFactoryProtocol {
                                           paddings: nil,
                                           action: action)
     }
-
+    
+    func makeAppPrimaryButtonViewModel(buttonStyle: AppCompositeButton.ButtonStyleType,
+                                       buttonLabel: String,
+                                       iconName: CompositeIcon? = CompositeIcon.none,
+                                       isDisabled: Bool,
+                                       action: @escaping (() -> Void)) -> AppPrimaryButtonViewModel {
+        return makeAppPrimaryButtonViewModel(buttonStyle: buttonStyle,
+                                             buttonLabel: buttonLabel,
+                                             iconName: iconName,
+                                             isDisabled: isDisabled,
+                                             paddings: nil,
+                                             action: action)
+    }
+    
     func makeJoiningCallActivityViewModel(title: String) -> JoiningCallActivityViewModel {
         return JoiningCallActivityViewModel(title: title)
     }
