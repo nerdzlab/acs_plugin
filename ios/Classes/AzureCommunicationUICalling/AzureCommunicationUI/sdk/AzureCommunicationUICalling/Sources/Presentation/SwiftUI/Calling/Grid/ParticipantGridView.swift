@@ -11,6 +11,10 @@ struct ParticipantGridView: View {
     let screenSize: ScreenSizeClassType
     @State var gridsCount: Int = 0
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         return Group {
             ParticipantGridLayoutView(cellViewModels: viewModel.participantsCellViewModelArr,
                                       rendererViewManager: viewModel.rendererViewManager,

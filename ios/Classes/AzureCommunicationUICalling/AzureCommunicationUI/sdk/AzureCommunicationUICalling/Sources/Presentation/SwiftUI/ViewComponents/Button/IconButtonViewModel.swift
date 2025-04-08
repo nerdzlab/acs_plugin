@@ -26,18 +26,21 @@ class IconButtonViewModel: ObservableObject {
     @Published var isVisible: Bool
 
     var buttonType: ButtonType
+    var renderAsOriginal: Bool
     var action: (() -> Void)
 
     init(iconName: CompositeIcon?,
          buttonType: ButtonType = .controlButton,
          isDisabled: Bool = false,
          isVisible: Bool = true,
+         renderAsOriginal: Bool = false,
          action: @escaping (() -> Void) = {}) {
         self.iconName = iconName
         self.buttonType = buttonType
         self.isDisabled = isDisabled
         self.action = action
         self.isVisible = isVisible
+        self.renderAsOriginal = renderAsOriginal
     }
 
     convenience init(icon: UIImage,

@@ -16,8 +16,8 @@ struct SetupView: View {
     let avatarManager: AvatarViewManagerProtocol
 
     enum LayoutConstant {
-        static let spacing: CGFloat = 24
-        static let spacingLarge: CGFloat = 40
+        static let spacing: CGFloat = 0
+        static let spacingLarge: CGFloat = 0
         static let startCallButtonHeight: CGFloat = 52
         static let iPadLarge: CGFloat = 469.0
         static let iPadSmall: CGFloat = 375.0
@@ -26,8 +26,12 @@ struct SetupView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         ZStack {
-            VStack(spacing: LayoutConstant.spacing) {
+            VStack(spacing: 0) {
                 SetupTitleView(viewModel: viewModel)
                 GeometryReader { geometry in
                     ZStack(alignment: .bottomLeading) {
@@ -42,17 +46,13 @@ struct SetupView: View {
                                     SetupControlBarView(viewModel: viewModel.setupControlBarViewModel)
                                 }
                             }
-                            .background(Color(StyleProvider.color.surface))
-                            .cornerRadius(4)
+                            .background(Color(UIColor.compositeColor(.lightPurple)))
                             .accessibilityElement(children: .contain)
                             joinCallView
-                                .padding(.bottom)
                         }
-                        .padding(.vertical, setupViewVerticalPadding(parentSize: geometry.size))
                         errorInfoView
-                            .padding(.bottom, setupViewVerticalPadding(parentSize: geometry.size))
+                            .padding(.bottom, CGFloat(16))
                     }
-                    .padding(.horizontal, setupViewHorizontalPadding(parentSize: geometry.size))
                 }
             }
             BottomDrawer(isPresented: viewModel.audioDeviceListViewModel.isDisplayed,
@@ -89,29 +89,6 @@ struct SetupView: View {
         }
     }
 
-    private func setupViewHorizontalPadding(parentSize: CGSize) -> CGFloat {
-        let isIpad = getSizeClass() == .ipadScreenSize
-        guard isIpad else {
-            return 16
-        }
-        let isLandscape = orientation.isLandscape
-        let screenSize = isLandscape ? LayoutConstant.iPadLarge : LayoutConstant.iPadSmall
-        let horizontalPadding = (parentSize.width - screenSize) / 2.0
-        return horizontalPadding
-    }
-
-    private func setupViewVerticalPadding(parentSize: CGSize) -> CGFloat {
-        let isIpad = getSizeClass() == .ipadScreenSize
-        guard isIpad else {
-            return 16
-        }
-        let isLandscape = orientation.isLandscape
-        let verticalPadding = (parentSize.height - (isLandscape ?
-                                                    LayoutConstant.iPadSmallHeightWithMargin
-                                                    : LayoutConstant.iPadLargeHeightWithMargin)) / 2.0
-        return verticalPadding
-    }
-
     private func getSizeClass() -> ScreenSizeClassType {
         switch (widthSizeClass, heightSizeClass) {
         case (.compact, .regular):
@@ -126,7 +103,7 @@ struct SetupView: View {
 }
 
 struct SetupTitleView: View {
-    let viewHeight: CGFloat = 44
+    let viewHeight: CGFloat = 80
     let padding: CGFloat = 34.0
     let verticalSpacing: CGFloat = 0
     var viewModel: SetupViewModel
@@ -134,6 +111,10 @@ struct SetupTitleView: View {
     @Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         VStack(spacing: verticalSpacing) {
             ZStack(alignment: .leading) {
                 IconButton(viewModel: viewModel.dismissButtonViewModel)
@@ -148,10 +129,11 @@ struct SetupTitleView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(sizeCategory.isAccessibilityCategory ? 0.4 : 1)
                             .accessibilityAddTraits(.isHeader)
+                            .padding(.bottom, 4)
                         if let subtitle = viewModel.subTitle, !subtitle.isEmpty {
                             Text(subtitle)
-                                .font(Fonts.caption1.font)
-                                .foregroundColor(Color(StyleProvider.color.onNavigationSecondary))
+                                .font(.system(size: 16, weight: .regular))
+                                .foregroundColor(Color(UIColor.compositeColor(.headerTitle)))
                                 .lineLimit(1)
                                 .minimumScaleFactor(sizeCategory.isAccessibilityCategory ? 0.4 : 1)
                                 .accessibilityAddTraits(.isHeader)
@@ -159,9 +141,7 @@ struct SetupTitleView: View {
                     }
                     Spacer()
                 }.accessibilitySortPriority(1)
-                 .padding(padding)
             }.frame(height: viewHeight)
-            Divider()
         }
     }
 }

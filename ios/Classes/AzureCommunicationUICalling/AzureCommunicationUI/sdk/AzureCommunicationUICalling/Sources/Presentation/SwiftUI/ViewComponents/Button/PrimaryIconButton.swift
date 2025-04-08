@@ -21,8 +21,8 @@ struct PrimaryIconButton<T: PrimaryButtonState>: View {
 
     let iconImageSize: CGFloat = 25
     let verticalSpacing: CGFloat = 8
-    let width: CGFloat = 85
-    let height: CGFloat = 85
+    let width: CGFloat = 32
+    let height: CGFloat = 32
     let buttonDisabledColor = Color(StyleProvider.color.disableColor)
 
     var buttonForegroundColor: Color {
@@ -30,9 +30,13 @@ struct PrimaryIconButton<T: PrimaryButtonState>: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Button(action: viewModel.action) {
-            VStack(alignment: .center, spacing: verticalSpacing) {
-                Icon(name: viewModel.iconName, size: iconImageSize)
+            VStack(alignment: .center) {
+                Icon(name: viewModel.iconName, size: iconImageSize, renderAsOriginal: false)
                     .accessibilityHidden(true)
             }
         }

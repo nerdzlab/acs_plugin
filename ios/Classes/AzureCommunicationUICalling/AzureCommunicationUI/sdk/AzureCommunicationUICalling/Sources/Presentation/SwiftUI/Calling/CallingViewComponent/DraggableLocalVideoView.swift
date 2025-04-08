@@ -17,6 +17,10 @@ struct DraggableLocalVideoView: View {
     let screenSize: ScreenSizeClassType
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         return GeometryReader { geometry in
             let size = getPipSize(parentSize: geometry.size)
             localVideoPipView

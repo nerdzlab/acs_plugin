@@ -9,6 +9,10 @@ internal struct DrawerTitleView: View {
     let item: TitleDrawerListItemViewModel
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack {
             Spacer()
             Text(item.title)

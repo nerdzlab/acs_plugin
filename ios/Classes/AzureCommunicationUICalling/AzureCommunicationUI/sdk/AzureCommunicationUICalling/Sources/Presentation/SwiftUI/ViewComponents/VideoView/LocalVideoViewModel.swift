@@ -31,7 +31,7 @@ class LocalVideoViewModel: ObservableObject {
         cameraSwitchButtonPipViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .cameraSwitch,
             buttonType: .cameraSwitchButtonPip,
-            isDisabled: false) { [weak self] in
+            isDisabled: false, renderAsOriginal: false) { [weak self] in
                 guard let self = self else {
                     return
                 }
@@ -40,7 +40,7 @@ class LocalVideoViewModel: ObservableObject {
         cameraSwitchButtonFullViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .cameraSwitch,
             buttonType: .cameraSwitchButtonFull,
-            isDisabled: false) { [weak self] in
+            isDisabled: false, renderAsOriginal: false) { [weak self] in
                 guard let self = self else {
                     return
                 }

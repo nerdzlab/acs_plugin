@@ -17,6 +17,10 @@ struct ParticipantGridCellView: View {
     let avatarSize: CGFloat = 56
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Group {
             GeometryReader { geometry in
                 if let videoStreamId = displayedVideoStreamId,
@@ -130,6 +134,10 @@ struct ParticipantTitleView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack(alignment: .center, spacing: Constants.hSpace, content: {
             if let displayName = displayName,
                !displayName.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -142,7 +150,7 @@ struct ParticipantTitleView: View {
                     .foregroundColor(Color(StyleProvider.color.onBackground))
             }
             if isMuted && !isHold {
-                Icon(name: .micOff, size: mutedIconSize)
+                Icon(name: .micOff, size: mutedIconSize, renderAsOriginal: false)
                     .accessibility(hidden: true)
             }
         })

@@ -10,6 +10,10 @@ internal struct DrawerBodyTextView: View {
     let item: BodyTextDrawerListItemViewModel
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack {
             Text(item.title)
                 .foregroundColor(.primary)
@@ -32,6 +36,10 @@ internal struct DrawerBodyWithActionTextView: View {
     var isConfirming = false
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack {
             Text(item.title)
                 .foregroundColor(.primary)

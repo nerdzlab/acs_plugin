@@ -66,6 +66,10 @@ internal struct BottomDrawer<Content: View>: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         ZStack(alignment: .bottom) {
             if drawerState != .gone {
                 Group {

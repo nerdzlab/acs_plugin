@@ -24,6 +24,10 @@ internal struct DrawerListView: View {
     private var scrollViewContentSize: CGSize = .zero
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         let halfScreenHeight = UIScreen.main.bounds.height * 0.5
 
         ScrollView {

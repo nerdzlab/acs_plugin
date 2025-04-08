@@ -15,6 +15,10 @@ struct CaptionsErrorView: View {
     private let verticalPadding: CGFloat = 5
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         if viewModel.visible {
             HStack(alignment: .center) {
                 if let icon = viewModel.icon {

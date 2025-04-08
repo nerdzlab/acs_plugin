@@ -18,6 +18,10 @@ struct ControlBarView: View {
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         if viewModel.isDisplayed {
             Group {
                 if screenSizeClass == .ipadScreenSize || viewModel.totalButtonCount < 5 {

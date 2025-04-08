@@ -10,9 +10,13 @@ internal struct DrawerSelectableItemView: View {
     let item: DrawerSelectableItemViewModel
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack {
             if let icon = item.icon {
-                Icon(name: icon, size: DrawerListConstants.iconSize)
+                Icon(name: icon, size: DrawerListConstants.iconSize, renderAsOriginal: false)
                     .foregroundColor(.primary)
             }
             Text(item.title)
@@ -22,7 +26,7 @@ internal struct DrawerSelectableItemView: View {
 
             Spacer()
             if item.isSelected {
-                Icon(name: .checkmark, size: DrawerListConstants.iconSize)
+                Icon(name: .checkmark, size: DrawerListConstants.iconSize, renderAsOriginal: false)
             }
         }
         .padding(.horizontal, DrawerListConstants.optionPaddingHorizontal)

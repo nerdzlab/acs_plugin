@@ -65,6 +65,10 @@ struct LocalVideoView: View {
     @State private var localVideoStreamId: String?
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Group {
             GeometryReader { geometry in
                 if viewModel.cameraOperationalStatus == .on,

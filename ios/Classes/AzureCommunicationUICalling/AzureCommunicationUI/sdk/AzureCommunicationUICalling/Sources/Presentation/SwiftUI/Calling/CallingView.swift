@@ -46,6 +46,10 @@ struct CallingView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         GeometryReader { geometry in
             ZStack {
                 if getSizeClass() != .iphoneLandscapeScreenSize {

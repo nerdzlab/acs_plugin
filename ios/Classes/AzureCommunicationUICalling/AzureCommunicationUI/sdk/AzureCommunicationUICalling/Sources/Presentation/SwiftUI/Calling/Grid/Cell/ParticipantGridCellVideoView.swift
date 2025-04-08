@@ -17,6 +17,10 @@ struct ParticipantGridCellVideoView: View {
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
     @State var show = true
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         ZStack(alignment: .bottomLeading) {
             VStack(alignment: .center, spacing: 0) {
                 if zoomable {

@@ -16,6 +16,10 @@ struct SetupControlBarView: View {
     let verticalPadding: CGFloat = 13
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         GeometryReader { geometry in
             VStack(alignment: .center) {
                 Spacer()

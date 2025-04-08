@@ -15,6 +15,7 @@ protocol CompositeViewModelFactoryProtocol {
     func makeIconButtonViewModel(iconName: CompositeIcon,
                                  buttonType: IconButtonViewModel.ButtonType,
                                  isDisabled: Bool,
+                                 renderAsOriginal: Bool,
                                  action: @escaping (() -> Void)) -> IconButtonViewModel
     func makeIconButtonViewModel(iconName: CompositeIcon,
                                  buttonType: IconButtonViewModel.ButtonType,

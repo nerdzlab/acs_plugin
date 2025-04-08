@@ -10,9 +10,13 @@ internal struct DrawerGenericItemView: View {
     let item: DrawerGenericItemViewModel
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack {
             if let icon = item.startCompositeIcon {
-                Icon(name: icon, size: DrawerListConstants.iconSize)
+                Icon(name: icon, size: DrawerListConstants.iconSize, renderAsOriginal: false)
                     .foregroundColor(item.isEnabled ? .primary : .gray)
                     .accessibilityHidden(true)
             } else if let icon = item.startIcon {
@@ -41,7 +45,7 @@ internal struct DrawerGenericItemView: View {
                     .accessibilityLabel(Text(item.title))
             } else if let accessoryView = item.endIcon,
                       accessoryView != .none {
-                Icon(name: item.endIcon ?? .rightChevron, size: DrawerListConstants.trailingIconSize)
+                Icon(name: item.endIcon ?? .rightChevron, size: DrawerListConstants.trailingIconSize, renderAsOriginal: false)
                     .accessibilityHidden(true)
                     .foregroundColor(item.isEnabled ? .primary : .gray)
             }

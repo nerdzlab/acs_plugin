@@ -12,6 +12,10 @@ struct PreviewAreaView: View {
     let avatarManager: AvatarViewManagerProtocol
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Group {
             if viewModel.isPermissionsDenied {
                 PermissionWarningView(displayIcon: viewModel.getPermissionWarningIcon(),
@@ -43,13 +47,17 @@ struct PermissionWarningView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         GeometryReader { geometry in
             VStack(spacing: Constants.verticalSpacing) {
                 Spacer()
                 GeometryReader { scrollViewGeometry in
                     ScrollView {
                         VStack {
-                            Icon(name: displayIcon, size: Constants.iconSize)
+                            Icon(name: displayIcon, size: Constants.iconSize, renderAsOriginal: false)
                                 .foregroundColor(Color(StyleProvider.color.onSurface))
                             Text(displayText)
                                 .padding(.horizontal, Constants.horizontalSpacing)
@@ -75,6 +83,10 @@ struct PermissionWarningView: View {
 
 struct GradientView: View {
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         let height: CGFloat = 160
 
         VStack {

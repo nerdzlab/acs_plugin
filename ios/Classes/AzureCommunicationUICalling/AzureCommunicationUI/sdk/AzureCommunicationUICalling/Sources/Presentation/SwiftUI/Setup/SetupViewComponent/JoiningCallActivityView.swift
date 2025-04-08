@@ -11,6 +11,10 @@ struct JoiningCallActivityView: View {
     let containerHeight: CGFloat = 52
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack {
             Spacer()
             ActivityIndicator(size: .small)

@@ -36,7 +36,7 @@ class LobbyErrorHeaderViewModel: ObservableObject {
         self.dismissButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .dismiss,
             buttonType: .infoButton,
-            isDisabled: false) { [weak self] in
+            isDisabled: false, renderAsOriginal: false) { [weak self] in
                 guard let self = self else {
                     return
                 }

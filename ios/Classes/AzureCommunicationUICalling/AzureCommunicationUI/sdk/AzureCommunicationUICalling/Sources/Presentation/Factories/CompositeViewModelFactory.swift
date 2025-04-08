@@ -145,10 +145,12 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
     func makeIconButtonViewModel(iconName: CompositeIcon,
                                  buttonType: IconButtonViewModel.ButtonType = .controlButton,
                                  isDisabled: Bool,
+                                 renderAsOriginal: Bool,
                                  action: @escaping (() -> Void)) -> IconButtonViewModel {
         IconButtonViewModel(iconName: iconName,
                             buttonType: buttonType,
                             isDisabled: isDisabled,
+                            renderAsOriginal: renderAsOriginal,
                             action: action)
     }
 

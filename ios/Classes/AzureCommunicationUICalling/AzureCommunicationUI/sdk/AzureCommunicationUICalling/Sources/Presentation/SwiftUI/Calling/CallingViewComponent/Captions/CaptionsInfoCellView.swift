@@ -19,6 +19,10 @@ struct CaptionsInfoCellView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack(alignment: .top) {
             avatarView
             VStack(alignment: isRTL ? .trailing : .leading, spacing: 0) {

@@ -17,6 +17,8 @@ enum LocalizationKey: String {
 
     /* SetupView */
     case setupTitle = "AzureCommunicationUICalling.SetupView.Title"
+    case setupSubTitle = "AzureCommunicationUICalling.SetupView.SubTitle"
+
     case dismissAccessibilityLabel = "AzureCommunicationUICalling.SetupView.Button.Dismiss.AccessibilityLabel"
     case joinCall = "AzureCommunicationUICalling.SetupView.Button.JoinCall"
     case joiningCall = "AzureCommunicationUICalling.SetupView.Button.JoiningCall"

@@ -17,6 +17,10 @@ internal struct ParticipantsListView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         var sections: [DrawerListSection] = []
 
         // Include Lobby Participants if in VM

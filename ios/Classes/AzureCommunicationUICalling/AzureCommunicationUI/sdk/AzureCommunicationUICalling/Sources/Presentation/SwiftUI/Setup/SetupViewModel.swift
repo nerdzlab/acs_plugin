@@ -55,7 +55,7 @@ class SetupViewModel: ObservableObject {
         } else {
             // else if title is nil/empty, use default title
             self.title = self.localizationProvider.getLocalizedString(.setupTitle)
-            self.subTitle = nil
+            self.subTitle = self.localizationProvider.getLocalizedString(.setupSubTitle)
         }
 
         previewAreaViewModel = compositeViewModelFactory.makePreviewAreaViewModel(dispatchAction: store.dispatch)
@@ -89,7 +89,8 @@ class SetupViewModel: ObservableObject {
         dismissButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .leftArrow,
             buttonType: .controlButton,
-            isDisabled: false) { [weak self] in
+            isDisabled: false,
+            renderAsOriginal: true) { [weak self] in
                 guard let self = self else {
                     return
                 }

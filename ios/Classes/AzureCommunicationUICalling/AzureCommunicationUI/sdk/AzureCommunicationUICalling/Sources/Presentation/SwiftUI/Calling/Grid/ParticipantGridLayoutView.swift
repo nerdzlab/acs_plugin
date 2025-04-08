@@ -14,6 +14,10 @@ struct ParticipantGridLayoutView: View {
     @Orientation var orientation: UIDeviceOrientation
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Group {
             switch screenSize {
             case .iphonePortraitScreenSize:

@@ -18,6 +18,10 @@ internal struct ParticipantMenuView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         DrawerListView(sections: [DrawerListSection(header: nil, items: viewModel.items)],
                        avatarManager: avatarManager)
     }

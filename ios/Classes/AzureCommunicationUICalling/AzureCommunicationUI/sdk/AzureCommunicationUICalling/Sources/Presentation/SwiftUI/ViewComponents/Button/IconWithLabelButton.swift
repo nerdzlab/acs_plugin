@@ -27,9 +27,13 @@ struct IconWithLabelButton<T: ButtonState>: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Button(action: viewModel.action) {
             VStack(alignment: .center, spacing: verticalSpacing) {
-                Icon(name: viewModel.iconName, size: iconImageSize)
+                Icon(name: viewModel.iconName, size: iconImageSize, renderAsOriginal: false)
                     .accessibilityHidden(true)
                 if let buttonLabel = viewModel.buttonLabel {
                     if sizeCategory >= ContentSizeCategory.accessibilityMedium {

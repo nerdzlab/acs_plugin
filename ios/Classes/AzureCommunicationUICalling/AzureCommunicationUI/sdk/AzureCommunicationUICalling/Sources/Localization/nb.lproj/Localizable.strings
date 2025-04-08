@@ -13,6 +13,7 @@
 
 /* SetupView */
 "AzureCommunicationUICalling.SetupView.Title"="Oppsett";
+"AzureCommunicationUICalling.SetupView.SubTitle"="Check your video and audio.";
 "AzureCommunicationUICalling.SetupView.Button.Dismiss.AccessibilityLabel"="Tilbake";
 "AzureCommunicationUICalling.SetupView.Button.JoinCall"="Bli med i samtale";
 "AzureCommunicationUICalling.SetupView.Button.JoiningCall"="Blir med i samtalen …";

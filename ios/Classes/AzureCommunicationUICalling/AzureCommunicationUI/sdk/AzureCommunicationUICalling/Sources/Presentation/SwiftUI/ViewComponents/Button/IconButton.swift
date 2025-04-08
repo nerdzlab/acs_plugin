@@ -14,7 +14,7 @@ struct IconButton: View {
         case .dismissButton:
             return 16
         default:
-            return 24
+            return 32
         }
     }
     var width: CGFloat {
@@ -62,7 +62,7 @@ struct IconButton: View {
     var buttonForegroundColor: Color {
         switch viewModel.buttonType {
         case .controlButton:
-            return Color(StyleProvider.color.onSurfaceColor)
+            return .red
         case .dismissButton:
             return Color(StyleProvider.color.onBackground)
         default:
@@ -112,15 +112,18 @@ struct IconButton: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         if viewModel.isVisible {
             Group {
                 Button(action: viewModel.action) {
-                    icon
+                    icon // Unstyled image view
                 }
                 .disabled(viewModel.isDisabled)
-                .foregroundColor(viewModel.isDisabled ? buttonDisabledColor : buttonForegroundColor)
                 .frame(width: width, height: height, alignment: .center)
-                .background(buttonBackgroundColor)
+                .background(buttonBackgroundColor) // Apply background if needed
                 .clipShape(RoundedCornersShape(radius: shapeCornerRadius, corners: roundedCorners))
                 .accessibilityLabel(Text(viewModel.accessibilityLabel ?? ""))
                 .accessibilityValue(Text(viewModel.accessibilityValue ?? ""))
@@ -131,8 +134,6 @@ struct IconButton: View {
                    alignment: .center)
             .contentShape(Rectangle())
             .onTapGesture {
-                // ignore action in case if button is disabled
-                // .disabled(_) is not used because tap is passed to superview when it shouldn't
                 guard !viewModel.isDisabled else {
                     return
                 }
@@ -142,7 +143,7 @@ struct IconButton: View {
     }
 
     var icon: some View {
-        var icon = Icon(size: iconImageSize)
+        var icon = Icon(size: iconImageSize, renderAsOriginal: viewModel.renderAsOriginal)
         icon.contentShape(Rectangle())
         if let uiImage = viewModel.icon {
             icon.uiImage = uiImage

@@ -13,6 +13,10 @@ internal struct DrawerParticipantView: View {
     var isConfirming = false
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         let participantViewData = item.getParticipantViewData(from: avatarManager)
         let name = item.getParticipantName(with: participantViewData)
         let displayName = item.getCellDisplayName(with: participantViewData)
@@ -38,7 +42,7 @@ internal struct DrawerParticipantView: View {
                 Text("On Hold")
             } else {
                 Icon(name: item.isMuted ? .micOff : .micOn,
-                     size: DrawerListConstants.iconSize)
+                     size: DrawerListConstants.iconSize, renderAsOriginal: false)
                 .opacity(DrawerListConstants.micIconOpacity)
             }
         }

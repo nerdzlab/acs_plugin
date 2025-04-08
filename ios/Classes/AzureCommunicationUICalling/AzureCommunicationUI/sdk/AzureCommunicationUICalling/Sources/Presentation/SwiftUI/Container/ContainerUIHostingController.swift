@@ -128,6 +128,10 @@ class ContainerUIHostingController: UIHostingController<ContainerUIHostingContro
         let environmentProperties: EnvironmentProperty
 
         var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+            
             containerView
                 .onPreferenceChange(SupportedOrientationsPreferenceKey.self) {
                     // Update the binding to set the value on the root controller.
