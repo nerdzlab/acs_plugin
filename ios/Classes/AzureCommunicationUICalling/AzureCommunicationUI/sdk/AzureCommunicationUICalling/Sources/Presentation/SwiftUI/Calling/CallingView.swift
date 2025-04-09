@@ -87,8 +87,7 @@ struct CallingView: View {
             }
             BottomDrawer(isPresented: viewModel.audioDeviceListViewModel.isDisplayed,
                          hideDrawer: viewModel.dismissDrawer) {
-                AudioDevicesListView(viewModel: viewModel.audioDeviceListViewModel,
-                avatarManager: avatarManager)
+                AudioDevicesListView(viewModel: viewModel.audioDeviceListViewModel)
             }
             BottomDrawer(isPresented: viewModel.participantActionViewModel.isDisplayed,
                          hideDrawer: viewModel.dismissDrawer) {

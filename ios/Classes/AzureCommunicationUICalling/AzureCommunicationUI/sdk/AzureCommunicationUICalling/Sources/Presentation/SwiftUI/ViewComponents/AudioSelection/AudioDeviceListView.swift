@@ -7,42 +7,14 @@ import Foundation
 import SwiftUI
 import FluentUI
 
-//internal struct AudioDevicesListView: View {
-//    @ObservedObject var viewModel: AudioDevicesListViewModel
-//    let avatarManager: AvatarViewManagerProtocol
-//
-//    init(viewModel: AudioDevicesListViewModel,
-//         avatarManager: AvatarViewManagerProtocol) {
-//        self.viewModel = viewModel
-//        self.avatarManager = avatarManager
-//    }
-//
-//    var body: some View {
-//#if DEBUG
-//        let _ = Self._printChanges()
-//#endif
-//        
-//        DrawerListView(sections: [DrawerListSection(header: nil, items: viewModel.audioDevicesList)],
-//                       avatarManager: avatarManager)
-//    }
-//}
-
-//
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  Licensed under the MIT License.
-//
-
 internal struct AudioDevicesListView: View {
     @ObservedObject var viewModel: AudioDevicesListViewModel
-    let avatarManager: AvatarViewManagerProtocol
     
     @State
     private var scrollViewContentSize: CGSize = .zero
     
-    init(viewModel: AudioDevicesListViewModel,
-         avatarManager: AvatarViewManagerProtocol) {
+    init(viewModel: AudioDevicesListViewModel) {
         self.viewModel = viewModel
-        self.avatarManager = avatarManager
     }
     
     var body: some View {
@@ -70,8 +42,13 @@ internal struct AudioDevicesListView: View {
                 
                 ForEach(0..<viewModel.audioDevicesList.count, id: \.self) { itemIndex in
                     let item = viewModel.audioDevicesList[itemIndex]
-                    inflateView(for: item, avatarManager: avatarManager)
-                        .accessibilityElement(children: .combine)
+                    AnyView(DrawerSelectableItemView(item: item))
+                }
+                
+                Divider()
+                    .padding(.horizontal, DrawerListConstants.optionPaddingHorizontal)
+                
+                if let noiseSuppressionViewModel = viewModel.noiseSuppressionViewModel { NoiseSuppressionToggleView(viewModel: noiseSuppressionViewModel)
                 }
             }
             .padding([.bottom, .top], DrawerListConstants.listVerticalPadding)
@@ -95,22 +72,4 @@ internal struct AudioDevicesListView: View {
         }
         .frame(maxHeight: min(scrollViewContentSize.height, halfScreenHeight))
     }
-    
-    func inflateView(for item: BaseDrawerItemViewModel, avatarManager: AvatarViewManagerProtocol) -> some View {
-        if let selectableItem = item as? DrawerSelectableItemViewModel {
-            return AnyView(DrawerSelectableItemView(item: selectableItem))
-        } else if let titleItem = item as? TitleDrawerListItemViewModel {
-            return AnyView(DrawerTitleView(item: titleItem))
-        } else if let bodyItem = item as? BodyTextDrawerListItemViewModel {
-            return AnyView(DrawerBodyTextView(item: bodyItem))
-        } else if let participantItem = item as? ParticipantsListCellViewModel {
-            return AnyView(DrawerParticipantView(item: participantItem, avatarManager: avatarManager))
-        } else if let drawerItem = item as? DrawerGenericItemViewModel {
-            return AnyView(DrawerGenericItemView(item: drawerItem))
-        } else if let drawerItem = item as? BodyTextWithActionDrawerListItemViewModel {
-            return AnyView(DrawerBodyWithActionTextView(item: drawerItem))
-        }
-        return AnyView(EmptyView())
-    }
 }
-

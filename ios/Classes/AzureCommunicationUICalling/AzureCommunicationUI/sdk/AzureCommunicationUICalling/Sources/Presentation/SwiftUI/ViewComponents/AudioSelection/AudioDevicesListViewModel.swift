@@ -17,6 +17,8 @@ internal class AudioDevicesListViewModel: ObservableObject {
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
     private var localUserState: LocalUserState
     
+    private(set) var noiseSuppressionViewModel: NoiseSuppressionItemViewModel?
+    
     var listTitle: String {
         return localizationProvider.getLocalizedString(.chooseAudioHeader)
     }
@@ -30,6 +32,7 @@ internal class AudioDevicesListViewModel: ObservableObject {
         self.audioDeviceStatus = localUserState.audioState.device
         self.localizationProvider = localizationProvider
         self.compositeViewModelFactory = compositeViewModelFactory
+        self.noiseSuppressionViewModel = getNoiseSuppressionViewModel()
     }
 
     func update(audioDeviceStatus: LocalUserState.AudioDeviceSelectionStatus,
@@ -43,7 +46,20 @@ internal class AudioDevicesListViewModel: ObservableObject {
             self.audioDeviceStatus = audioDeviceStatus
             self.audioDevicesList = getAvailableAudioDevices(audioDeviceStatus: audioDeviceStatus)
         }
+        
+        self.noiseSuppressionViewModel = getNoiseSuppressionViewModel()
+        
         isDisplayed = visibilityState.currentStatus == .visible && navigationState.audioSelectionVisible
+    }
+
+    private func getNoiseSuppressionViewModel() -> NoiseSuppressionItemViewModel {
+        return NoiseSuppressionItemViewModel(title: localizationProvider.getLocalizedString(.noiseSuppressionTitle), icon: CompositeIcon.noiseSuppresion, isOn: localUserState.noiseSuppressionState.operation == .on) { [weak self] isOn in
+            if isOn {
+                self?.dispatch(.localUserAction(.noiseSuppressionPreviewOn))
+            } else {
+                self?.dispatch(.localUserAction(.noiseSuppressionPreviewOff))
+            }
+        }
     }
 
     private func getAvailableAudioDevices(audioDeviceStatus: LocalUserState.AudioDeviceSelectionStatus)

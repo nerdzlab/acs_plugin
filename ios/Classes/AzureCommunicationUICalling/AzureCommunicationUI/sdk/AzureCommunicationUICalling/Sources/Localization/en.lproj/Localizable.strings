@@ -13,6 +13,7 @@
 "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.MuteIncomingAudio"= "Turn off the audio";
 "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.AccessibilityLabel"= "%@ selected";
 "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.ChooseAudioHeader"= "Choose audio";
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.SelectNoiseSuppression"= "Noise suppression";
 
 /* SetupView */
 "AzureCommunicationUICalling.SetupView.Title"="Start your call";

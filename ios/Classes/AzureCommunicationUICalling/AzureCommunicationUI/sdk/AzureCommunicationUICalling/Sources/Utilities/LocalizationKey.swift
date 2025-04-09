@@ -191,6 +191,7 @@ enum LocalizationKey: String {
     case callDiagnosticsSpeakerNotWorking = "AzureCommunicationUICalling.Diagnostics.Text.SpeakerNotWorking"
     case callDiagnosticsSpeakerMuted = "AzureCommunicationUICalling.Diagnostics.Text.SpeakerMuted"
     case chooseAudioHeader="AzureCommunicationUICalling.AudioDevice.Drawer.Selected.ChooseAudioHeader"
+    case noiseSuppressionTitle="AzureCommunicationUICalling.AudioDevice.Drawer.Selected.SelectNoiseSuppression"
 
     case callDiagnosticsDismissAccessibilityLabel =
             "AzureCommunicationUICalling.Diagnostics.Button.Dismiss.AccessibilityLabel"

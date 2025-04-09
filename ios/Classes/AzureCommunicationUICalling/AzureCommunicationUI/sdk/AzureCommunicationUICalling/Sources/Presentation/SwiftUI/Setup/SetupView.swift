@@ -81,7 +81,7 @@ struct SetupView: View {
                                 .clipShape(RoundedCorner(radius: 12, corners: [.topLeft, .topRight]))
                                 .shadow(color: .black.opacity(0.05), radius: 8, y: -2)
                                 .offset(y: -keyboard.currentHeight) // 👈 apply here outside the fixed frame
-                                .animation(.easeOut(duration: 0.2), value: keyboard.currentHeight)
+                                .animation(.easeOut(duration: 0.3), value: keyboard.currentHeight)
                             }
                             
                             
@@ -95,8 +95,7 @@ struct SetupView: View {
             }
             BottomDrawer(isPresented: viewModel.audioDeviceListViewModel.isDisplayed,
                          hideDrawer: viewModel.dismissAudioDevicesDrawer) {
-                AudioDevicesListView(viewModel: viewModel.audioDeviceListViewModel,
-                                     avatarManager: avatarManager)
+                AudioDevicesListView(viewModel: viewModel.audioDeviceListViewModel)
             }
         }
         .ignoresSafeArea(edges: .bottom)
