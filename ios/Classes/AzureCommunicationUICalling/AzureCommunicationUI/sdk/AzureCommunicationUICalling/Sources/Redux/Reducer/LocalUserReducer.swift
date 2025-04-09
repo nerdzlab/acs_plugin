@@ -26,6 +26,7 @@ extension Reducer where State == LocalUserState,
         var currentCapabilitiesAreDefault = localUserState.currentCapabilitiesAreDefault
         
         var noiseSuppressionStatus = localUserState.noiseSuppressionState.operation
+        var incomingAudioStatus = localUserState.incomingAudioState.operation
 
         switch action {
         case .cameraPreviewOnTriggered:
@@ -77,6 +78,7 @@ extension Reducer where State == LocalUserState,
             audioDeviceStatus = getRequestedDeviceStatus(for: device)
         case .audioDeviceChangeSucceeded(let device):
             audioDeviceStatus = getSelectedDeviceStatus(for: device)
+            incomingAudioStatus = .unmuted
         case .audioDeviceChangeFailed(let error):
             audioError = error
         case .participantRoleChanged(let newParticipantRole):
@@ -90,6 +92,8 @@ extension Reducer where State == LocalUserState,
             noiseSuppressionStatus = .on
         case .noiseSuppressionPreviewOff:
             noiseSuppressionStatus = .off
+        case .muteIncomingAudioOnPreviewRequested:
+            incomingAudioStatus = .muted
         }
 
         let cameraState = LocalUserState.CameraState(operation: cameraStatus,
@@ -102,6 +106,8 @@ extension Reducer where State == LocalUserState,
         
         let noiseSuppressionState = LocalUserState.NoiseSuppressionState(operation: noiseSuppressionStatus)
         
+        let incomingAudioState = LocalUserState.IncomingAudioState(operation: incomingAudioStatus)
+        
         return LocalUserState(cameraState: cameraState,
                               audioState: audioState,
                               displayName: displayName,
@@ -109,7 +115,7 @@ extension Reducer where State == LocalUserState,
                               participantRole: participantRole,
                               capabilities: capabilities,
                               currentCapabilitiesAreDefault: currentCapabilitiesAreDefault,
-                              noiseSuppressionState: noiseSuppressionState
+                              noiseSuppressionState: noiseSuppressionState, incomingAudioState: incomingAudioState
         )
     }
 }

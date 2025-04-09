@@ -37,6 +37,8 @@ enum LocalUserAction: Equatable {
     
     case noiseSuppressionPreviewOn
     case noiseSuppressionPreviewOff
+    
+    case muteIncomingAudioOnPreviewRequested
 
     case audioDeviceChangeRequested(device: AudioDeviceType)
     case audioDeviceChangeSucceeded(device: AudioDeviceType)
@@ -69,6 +71,7 @@ enum LocalUserAction: Equatable {
             (.microphonePreviewOn, .microphonePreviewOn),
             (.noiseSuppressionPreviewOn, .noiseSuppressionPreviewOn),
             (.noiseSuppressionPreviewOff, .noiseSuppressionPreviewOff),
+            (.muteIncomingAudioOnPreviewRequested, .muteIncomingAudioOnPreviewRequested),
             (.microphonePreviewOff, .microphonePreviewOff):
             return true
 

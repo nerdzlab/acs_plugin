@@ -50,6 +50,8 @@ extension Reducer where State == NavigationState,
             drawerVisibility = .captionsLangaugeViewVisible
         case .localUserAction(.audioDeviceChangeRequested):
             drawerVisibility = .hidden
+        case .localUserAction(.muteIncomingAudioOnPreviewRequested):
+            drawerVisibility = .hidden
         case .captionsAction(.setSpokenLanguageRequested(language: let language)),
                 .captionsAction(.setCaptionLanguageRequested(language: let language)):
             drawerVisibility = .hidden

@@ -182,6 +182,7 @@ class SetupViewModel: ObservableObject {
         audioDeviceListViewModel.update(
             audioDeviceStatus: state.localUserState.audioState.device,
             navigationState: state.navigationState,
+            localUserState: state.localUserState,
             visibilityState: state.visibilityState
         )
         objectWillChange.send()

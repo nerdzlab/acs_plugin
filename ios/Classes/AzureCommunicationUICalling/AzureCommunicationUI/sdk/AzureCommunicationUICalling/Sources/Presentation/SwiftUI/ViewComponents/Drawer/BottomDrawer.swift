@@ -26,7 +26,7 @@ internal enum DrawerConstants {
     static let bottomFillY: CGFloat = 48
 
     // Opacity of faded items (like background overlay)
-    static let overlayOpacity: CGFloat = 0.4
+    static let overlayOpacity: CGFloat = 0.7
 
     // After hiding, the delay before making it "gone", accounts for animation
     static let delayUntilGone: CGFloat = 0.3
@@ -93,14 +93,13 @@ internal struct BottomDrawer<Content: View>: View {
                                 .allowsHitTesting(drawerState == .visible)
 
                             content
-
-                            Spacer().frame(height: DrawerConstants.bottomFillY)
                         }
                         .frame(maxWidth: .infinity)
                         .background(Color(StyleProvider.color.drawerColor))
                         .cornerRadius(DrawerConstants.drawerCornerRadius)
                         .shadow(radius: DrawerConstants.drawerShadowRadius)
-                        .padding(.bottom, -DrawerConstants.bottomFillY)
+                        .padding(.bottom, 34)
+                        .padding(.horizontal, 12)
                     }
                     .transition(.move(edge: .bottom))
                     .animation(.easeInOut, value: drawerState == .visible)

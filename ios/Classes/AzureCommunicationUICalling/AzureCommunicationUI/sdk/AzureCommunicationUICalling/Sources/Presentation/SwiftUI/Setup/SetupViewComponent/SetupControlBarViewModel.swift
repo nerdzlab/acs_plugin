@@ -243,9 +243,19 @@ class SetupControlBarViewModel: ObservableObject {
         let audioDeviceStatus = localUserState.audioState.device
         audioDeviceButtonViewModel.update(isDisabled: isAudioDeviceButtonDisabled())
         audioDeviceButtonViewModel.update(
-            selectedButtonState: AudioButtonState.getButtonState(from: audioDeviceStatus))
+            selectedButtonState: getAudioButtonState(localUserState: localUserState))
         audioDeviceButtonViewModel.update(
             accessibilityValue: audioDeviceStatus.getLabel(localizationProvider: localizationProvider))
+    }
+    
+    private func getAudioButtonState(localUserState: LocalUserState) -> AudioButtonState {
+        
+        if localUserState.incomingAudioState.operation == .muted {
+            return AudioButtonState.incomingAudioMuted
+        } else {
+            let audioDeviceStatus = localUserState.audioState.device
+           return AudioButtonState.getButtonState(from: audioDeviceStatus)
+        }
     }
 
     private func shouldCameraButtonBeVisible(

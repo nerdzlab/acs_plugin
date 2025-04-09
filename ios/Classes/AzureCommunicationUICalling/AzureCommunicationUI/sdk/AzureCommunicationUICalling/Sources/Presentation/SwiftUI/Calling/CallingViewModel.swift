@@ -242,6 +242,7 @@ internal class CallingViewModel: ObservableObject {
         audioDeviceListViewModel.update(
             audioDeviceStatus: state.localUserState.audioState.device,
             navigationState: state.navigationState,
+            localUserState: state.localUserState,
             visibilityState: state.visibilityState)
         leaveCallConfirmationViewModel.update(state: state)
         supportFormViewModel.update(state: state)

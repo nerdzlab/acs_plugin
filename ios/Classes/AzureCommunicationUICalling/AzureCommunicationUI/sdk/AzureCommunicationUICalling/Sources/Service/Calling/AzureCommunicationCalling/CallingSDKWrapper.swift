@@ -49,7 +49,12 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         try await setupCallClientAndDeviceManager()
     }
     
-    func startCall(isCameraPreferred: Bool, isAudioPreferred: Bool, isNoiseSuppressionPreferred: Bool) async throws {
+    func startCall(
+        isCameraPreferred: Bool,
+        isMicrophonePreferred: Bool,
+        isNoiseSuppressionPreferred: Bool,
+        isMuteIncomingAudio: Bool
+    ) async throws {
         logger.debug("Reset Subjects in callingEventsHandler")
         if let callingEventsHandler = self.callingEventsHandler
             as? CallingSDKEventsHandler {
@@ -59,18 +64,18 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         if callConfiguration.compositeCallType == .groupCall ||
             callConfiguration.compositeCallType == .teamsMeeting ||
             callConfiguration.compositeCallType == .roomsCall {
-            try await joinCall(isCameraPreferred: isCameraPreferred, isAudioPreferred: isAudioPreferred, isNoiceSuppressionPreferred: isNoiseSuppressionPreferred)
+            try await joinCall(isCameraPreferred: isCameraPreferred, isMicrophonePreferred: isMicrophonePreferred, isNoiceSuppressionPreferred: isNoiseSuppressionPreferred, isMuteIncomingAudio: isMuteIncomingAudio)
         } else if callConfiguration.compositeCallType == .oneToNOutgoing {
-            try await outgoingCall(isCameraPreferred: isCameraPreferred, isAudioPreferred: isAudioPreferred)
+            try await outgoingCall(isCameraPreferred: isCameraPreferred, isMicrophonePreferred: isMicrophonePreferred)
         } else if callConfiguration.compositeCallType == .oneToOneIncoming {
-            try await incomingCall(isCameraPreferred: isCameraPreferred, isAudioPreferred: isAudioPreferred)
+            try await incomingCall(isCameraPreferred: isCameraPreferred, isMicrophonePreferred: isMicrophonePreferred)
         } else {
             logger.error("Unknown calltype access")
             throw CallCompositeInternalError.callJoinFailed
         }
     }
     
-    func joinCall(isCameraPreferred: Bool, isAudioPreferred: Bool, isNoiceSuppressionPreferred: Bool) async throws {
+    func joinCall(isCameraPreferred: Bool, isMicrophonePreferred: Bool, isNoiceSuppressionPreferred: Bool, isMuteIncomingAudio: Bool) async throws {
         logger.debug( "Joining call")
         let joinCallOptions = JoinCallOptions()
         
@@ -101,7 +106,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             joinCallOptions.outgoingAudioOptions?.filters = filters
         }
         
-        joinCallOptions.outgoingAudioOptions?.muted = !isAudioPreferred
+        joinCallOptions.outgoingAudioOptions?.muted = !isMicrophonePreferred
         joinCallOptions.incomingVideoOptions = incomingVideoOptions
         if let remoteInfo = callKitRemoteInfo {
             let callKitRemoteInfo = AzureCommunicationCalling.CallKitRemoteInfo()
@@ -131,6 +136,11 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         
         do {
             let callAgent = try await callingSDKInitializer.setupCallAgent()
+            
+            if isMuteIncomingAudio {
+                joinCallOptions.incomingAudioOptions?.muted = isMuteIncomingAudio
+            }
+            
             //MTODO: Displayname
             //            callAgent.
             let joinedCall = try await callAgent.join(with: joinLocator, joinCallOptions: joinCallOptions)
@@ -145,7 +155,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         }
     }
     
-    func outgoingCall(isCameraPreferred: Bool, isAudioPreferred: Bool) async throws {
+    func outgoingCall(isCameraPreferred: Bool, isMicrophonePreferred: Bool) async throws {
         logger.debug( "Starting outgoing call")
         let startCallOptions = StartCallOptions()
         
@@ -165,7 +175,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         }
         
         startCallOptions.outgoingAudioOptions = OutgoingAudioOptions()
-        startCallOptions.outgoingAudioOptions?.muted = !isAudioPreferred
+        startCallOptions.outgoingAudioOptions?.muted = !isMicrophonePreferred
         startCallOptions.incomingVideoOptions = incomingVideoOptions
         if let remoteInfo = callKitRemoteInfo {
             let callKitRemoteInfo = AzureCommunicationCalling.CallKitRemoteInfo()
@@ -193,7 +203,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         }
     }
     
-    func incomingCall(isCameraPreferred: Bool, isAudioPreferred: Bool) async throws {
+    func incomingCall(isCameraPreferred: Bool, isMicrophonePreferred: Bool) async throws {
         logger.debug( "incoming call")
         do {
             let callAgent = try await callingSDKInitializer.setupCallAgent()
@@ -214,7 +224,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
                     options.outgoingVideoOptions = videoOptions
                 }
                 options.outgoingAudioOptions = OutgoingAudioOptions()
-                options.outgoingAudioOptions?.muted = !isAudioPreferred
+                options.outgoingAudioOptions?.muted = !isMicrophonePreferred
                 options.incomingVideoOptions = incomingVideoOptions
                 if let remoteInfo = callKitRemoteInfo {
                     let callKitRemoteInfo = AzureCommunicationCalling.CallKitRemoteInfo()

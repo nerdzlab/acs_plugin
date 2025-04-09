@@ -69,6 +69,7 @@ enum AudioButtonState: PrimaryButtonState {
     case receiver
     case bluetooth
     case headphones
+    case incomingAudioMuted
     
     var iconName: CompositeIcon {
         switch self {
@@ -80,6 +81,8 @@ enum AudioButtonState: PrimaryButtonState {
             return .speakerRegular
         case .speaker:
             return .speakerFilled
+        case .incomingAudioMuted:
+            return .volumeOff
         }
     }
     
@@ -92,6 +95,8 @@ enum AudioButtonState: PrimaryButtonState {
         case .receiver:
             return AudioDeviceType.receiver.name
         case .speaker:
+            return AudioDeviceType.speaker.name
+        case .incomingAudioMuted:
             return AudioDeviceType.speaker.name
         }
     }

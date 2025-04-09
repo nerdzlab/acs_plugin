@@ -93,6 +93,22 @@ struct LocalUserState {
             }
         }
     }
+    
+    enum IncomingAudioOperationalStatus: Equatable {
+        case muted
+        case unmuted
+
+        static func == (lhs: LocalUserState.IncomingAudioOperationalStatus,
+                        rhs: LocalUserState.IncomingAudioOperationalStatus) -> Bool {
+            switch (lhs, rhs) {
+            case (.muted, .muted),
+                (.unmuted, .unmuted):
+                return true
+            default:
+                return false
+            }
+        }
+    }
 
     enum AudioDeviceSelectionStatus: Equatable {
         case speakerSelected
@@ -148,9 +164,15 @@ struct LocalUserState {
         let operation: NoiseSuppressionOperationalStatus
         var error: Error?
     }
+    
+    struct IncomingAudioState {
+        let operation: IncomingAudioOperationalStatus
+        var error: Error?
+    }
 
     let cameraState: CameraState
     let audioState: AudioState
+    let incomingAudioState: IncomingAudioState
     let noiseSuppressionState: NoiseSuppressionState
     let displayName: String?
     let userId: String?
@@ -170,7 +192,8 @@ struct LocalUserState {
          participantRole: ParticipantRoleEnum? = nil,
          capabilities: Set<ParticipantCapabilityType> = [.unmuteMicrophone, .turnVideoOn],
          currentCapabilitiesAreDefault: Bool = true,
-         noiseSuppressionState: NoiseSuppressionState = NoiseSuppressionState(operation: .off, error: nil)
+         noiseSuppressionState: NoiseSuppressionState = NoiseSuppressionState(operation: .off, error: nil),
+         incomingAudioState: IncomingAudioState = IncomingAudioState(operation: .unmuted, error: nil)
     ) {
         self.cameraState = cameraState
         self.noiseSuppressionState = noiseSuppressionState
@@ -181,5 +204,6 @@ struct LocalUserState {
         self.participantRole = participantRole
         self.capabilities = capabilities
         self.currentCapabilitiesAreDefault = currentCapabilitiesAreDefault
+        self.incomingAudioState = incomingAudioState
     }
 }

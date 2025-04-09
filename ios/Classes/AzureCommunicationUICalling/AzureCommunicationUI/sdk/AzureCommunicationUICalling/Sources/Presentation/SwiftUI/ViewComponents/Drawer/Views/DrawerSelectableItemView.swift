@@ -16,17 +16,17 @@ internal struct DrawerSelectableItemView: View {
         
         HStack {
             if let icon = item.icon {
-                Icon(name: icon, size: DrawerListConstants.iconSize, renderAsOriginal: false)
+                Icon(name: icon, size: DrawerListConstants.iconSize, renderAsOriginal: true)
                     .foregroundColor(.primary)
             }
             Text(item.title)
                 .foregroundColor(.primary)
                 .padding(.leading, DrawerListConstants.textPaddingLeading)
-                .font(.body)
+                .font(AppFont.CircularStd.book.font(size: 16))
 
             Spacer()
             if item.isSelected {
-                Icon(name: .checkmark, size: DrawerListConstants.iconSize, renderAsOriginal: false)
+                Icon(name: .checkmark, size: DrawerListConstants.iconSize, renderAsOriginal: true)
             }
         }
         .padding(.horizontal, DrawerListConstants.optionPaddingHorizontal)

@@ -140,7 +140,7 @@ class AudioSessionManager: AudioSessionManagerProtocol {
 
     private func getCurrentAudioDevice() -> AudioDeviceType {
         let audioSession = AVAudioSession.sharedInstance()
-
+        
         if let output = audioSession.currentRoute.outputs.first {
             switch output.portType {
             case .bluetoothA2DP, .bluetoothLE, .bluetoothHFP:

@@ -61,7 +61,12 @@ protocol CallingSDKWrapperProtocol {
 
     func startPreviewVideoStream() async throws -> String
     func setupCall() async throws
-    func startCall(isCameraPreferred: Bool, isAudioPreferred: Bool, isNoiseSuppressionPreferred: Bool) async throws
+    func startCall(
+        isCameraPreferred: Bool,
+        isMicrophonePreferred: Bool,
+        isNoiseSuppressionPreferred: Bool,
+        isMuteIncomingAudio: Bool
+    ) async throws
     func endCall() async throws
     func startCallLocalVideoStream() async throws -> String
     func stopLocalVideoStream() async throws

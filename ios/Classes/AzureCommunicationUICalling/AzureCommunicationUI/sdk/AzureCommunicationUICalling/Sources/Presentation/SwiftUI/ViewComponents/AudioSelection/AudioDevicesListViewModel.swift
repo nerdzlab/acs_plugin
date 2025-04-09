@@ -15,11 +15,13 @@ internal class AudioDevicesListViewModel: ObservableObject {
     private let dispatch: ActionDispatch
     private let localizationProvider: LocalizationProviderProtocol
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
+    private var localUserState: LocalUserState
 
     init(compositeViewModelFactory: CompositeViewModelFactoryProtocol,
          dispatchAction: @escaping ActionDispatch,
          localUserState: LocalUserState,
          localizationProvider: LocalizationProviderProtocol) {
+        self.localUserState = localUserState
         self.dispatch = dispatchAction
         self.audioDeviceStatus = localUserState.audioState.device
         self.localizationProvider = localizationProvider
@@ -28,8 +30,11 @@ internal class AudioDevicesListViewModel: ObservableObject {
 
     func update(audioDeviceStatus: LocalUserState.AudioDeviceSelectionStatus,
                 navigationState: NavigationState,
+                localUserState: LocalUserState,
                 visibilityState: VisibilityState) {
-        if audioDeviceStatus != self.audioDeviceStatus || audioDevicesList.isEmpty,
+        self.localUserState = localUserState
+        
+        if audioDeviceStatus != self.audioDeviceStatus || audioDevicesList.isEmpty || localUserState.incomingAudioState.operation == .muted,
            LocalUserState.AudioDeviceSelectionStatus.isSelected(for: audioDeviceStatus) {
             self.audioDeviceStatus = audioDeviceStatus
             self.audioDevicesList = getAvailableAudioDevices(audioDeviceStatus: audioDeviceStatus)
@@ -73,6 +78,7 @@ internal class AudioDevicesListViewModel: ObservableObject {
         var audioDeviceOptions = [DrawerSelectableItemViewModel]()
         audioDeviceOptions.append(getAudioDeviceOption(for: systemDefaultAudio))
         audioDeviceOptions.append(getAudioDeviceOption(for: .speaker))
+        audioDeviceOptions.append(getMuteAudioOption())
         return audioDeviceOptions
     }
 
@@ -86,6 +92,21 @@ internal class AudioDevicesListViewModel: ObservableObject {
             accessibilityLabel: isSelected ?
             localizationProvider.getLocalizedString(.selected, getAudioDeviceTitle(audioDeviceType)) :
                 getAudioDeviceTitle(audioDeviceType),
+            isSelected: isSelected,
+            action: { [weak self] in self?.dispatch(.localUserAction(action)) })
+        return audioDeviceOption
+    }
+    
+    private func getMuteAudioOption() -> DrawerSelectableItemViewModel {
+        let isSelected = localUserState.incomingAudioState.operation == .muted
+        
+        let action = LocalUserAction.muteIncomingAudioOnPreviewRequested
+        
+        let audioDeviceOption = DrawerSelectableItemViewModel(
+            icon: CompositeIcon.volumeOff,
+            title: localizationProvider.getLocalizedString(.muteIncomingAudio),
+            accessibilityIdentifier: "",
+            accessibilityLabel: "",
             isSelected: isSelected,
             action: { [weak self] in self?.dispatch(.localUserAction(action)) })
         return audioDeviceOption
@@ -114,6 +135,10 @@ internal class AudioDevicesListViewModel: ObservableObject {
 
     private func isAudioDeviceSelected(_ audioDeviceType: AudioDeviceType,
                                        selectedDevice: LocalUserState.AudioDeviceSelectionStatus) -> Bool {
+        if localUserState.incomingAudioState.operation == .muted {
+            return false
+        }
+        
         switch selectedDevice {
         case .bluetoothSelected where audioDeviceType == .bluetooth,
              .headphonesSelected where audioDeviceType == .headphones,

@@ -34,7 +34,13 @@ protocol CallingServiceProtocol {
     var capabilitiesChangedSubject: PassthroughSubject<CapabilitiesChangedEvent, Never> {get}
 
     func setupCall() async throws
-    func startCall(isCameraPreferred: Bool, isAudioPreferred: Bool, isNoiseSuppressionPreferred: Bool) async throws
+    func startCall(
+        isCameraPreferred: Bool,
+        isMicrophonePreferred: Bool,
+        isNoiseSuppressionPreferred: Bool,
+        isMuteIncomingAudio: Bool
+    ) async throws
+    
     func endCall() async throws
 
     func requestCameraPreviewOn() async throws -> String
@@ -126,10 +132,16 @@ class CallingService: NSObject, CallingServiceProtocol {
         try await callingSDKWrapper.setupCall()
     }
 
-    func startCall(isCameraPreferred: Bool, isAudioPreferred: Bool, isNoiseSuppressionPreferred: Bool) async throws {
+    func startCall(
+        isCameraPreferred: Bool,
+        isMicrophonePreferred: Bool,
+        isNoiseSuppressionPreferred: Bool,
+        isMuteIncomingAudio: Bool
+    ) async throws {
         try await callingSDKWrapper.startCall(
             isCameraPreferred: isCameraPreferred,
-            isAudioPreferred: isAudioPreferred, isNoiseSuppressionPreferred: isNoiseSuppressionPreferred
+            isMicrophonePreferred: isMicrophonePreferred, isNoiseSuppressionPreferred: isNoiseSuppressionPreferred,
+            isMuteIncomingAudio: isMuteIncomingAudio
         )
     }
 

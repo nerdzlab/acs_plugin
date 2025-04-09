@@ -14,6 +14,7 @@ enum LocalizationKey: String {
     case headphones = "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.Headphones"
     case bluetooth = "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.Bluetooth"
     case selected = "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.AccessibilityLabel"
+    case muteIncomingAudio = "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.MuteIncomingAudio"
 
     /* SetupView */
     case setupTitle = "AzureCommunicationUICalling.SetupView.Title"
