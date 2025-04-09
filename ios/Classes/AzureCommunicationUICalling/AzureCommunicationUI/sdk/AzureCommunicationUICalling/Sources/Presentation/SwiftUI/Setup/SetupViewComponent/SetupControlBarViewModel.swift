@@ -28,6 +28,8 @@ class SetupControlBarViewModel: ObservableObject {
     private var localVideoStreamId: String?
     private(set) var cameraButtonViewModel: PrimaryIconButtonViewModel<CameraButtonState>!
     private(set) var micButtonViewModel: PrimaryIconButtonViewModel<MicButtonState>!
+    private(set) var backgroundEffectButtonViewModel: PrimaryIconButtonViewModel<BackgroundEffectButtonState>!
+    private(set) var switchCameraButtonViewModel: PrimaryIconButtonViewModel<SwitchCameraButtonState>!
     private(set) var audioDeviceButtonViewModel: PrimaryIconButtonViewModel<AudioButtonState>!
 
     init(compositeViewModelFactory: CompositeViewModelFactoryProtocol,
@@ -87,6 +89,30 @@ class SetupControlBarViewModel: ObservableObject {
         }
         audioDeviceButtonViewModel.accessibilityLabel = self.localizationProvider.getLocalizedString(
             .deviceAccesibiiltyLabel)
+        
+        backgroundEffectButtonViewModel = compositeViewModelFactory.makePrimaryIconButtonViewModel(
+            selectedButtonState: BackgroundEffectButtonState.off,
+            localizationProvider: self.localizationProvider,
+            isDisabled: cameraStatus == LocalUserState.CameraOperationalStatus.off) { [weak self] in
+                guard let self = self else {
+                    return
+                }
+        
+                self.logger.debug("Background effect button tapped")
+                self.backgroundEffectButtonTapped()
+        }
+        
+        switchCameraButtonViewModel = compositeViewModelFactory.makePrimaryIconButtonViewModel(
+            selectedButtonState: SwitchCameraButtonState.default,
+            localizationProvider: self.localizationProvider,
+            isDisabled: cameraStatus == LocalUserState.CameraOperationalStatus.off) { [weak self] in
+                guard let self = self else {
+                    return
+                }
+        
+                self.logger.debug("Switch camera button tapped")
+                self.switchCameraButtonTapped()
+        }
 
         isCameraButtonVisible = shouldCameraButtonBeVisible(audioVideoMode, buttonViewDataState)
         isMicButtonVisible = shouldMicButtonBeVisible(buttonViewDataState)
@@ -111,6 +137,15 @@ class SetupControlBarViewModel: ObservableObject {
         case (true, _):
             dispatch(.localUserAction(.cameraOffTriggered))
         }
+    }
+    
+    func backgroundEffectButtonTapped() {
+        //MTODO
+        //need to show screen with effects
+    }
+    
+    func switchCameraButtonTapped() {
+        dispatch(.localUserAction(.cameraSwitchTriggered))
     }
 
     func microphoneButtonTapped() {
@@ -187,6 +222,12 @@ class SetupControlBarViewModel: ObservableObject {
                                        buttonViewDataState: ButtonViewDataState) {
         cameraButtonViewModel.update(
             selectedButtonState: cameraStatus == .on ? CameraButtonState.videoOn : CameraButtonState.videoOff)
+        
+        backgroundEffectButtonViewModel.update(
+            isDisabled: cameraStatus == .off)
+        
+        switchCameraButtonViewModel.update(isDisabled: cameraStatus == .off)
+        
         cameraButtonViewModel.update(accessibilityLabel: cameraStatus == .on
                                      ? localizationProvider.getLocalizedString(.videoOnAccessibilityLabel)
                                      : localizationProvider.getLocalizedString(.videoOffAccessibilityLabel))

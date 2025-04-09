@@ -15,6 +15,9 @@ struct SetupView: View {
     @Orientation var orientation: UIDeviceOrientation
     let avatarManager: AvatarViewManagerProtocol
     
+    @StateObject private var keyboard = KeyboardResponder()
+    @State private var displayName: String = ""
+    
     enum LayoutConstant {
         static let spacing: CGFloat = 0
         static let spacingLarge: CGFloat = 0
@@ -37,27 +40,52 @@ struct SetupView: View {
                         VStack(alignment: .center,
                                spacing: getSizeClass() == .ipadScreenSize ?
                                LayoutConstant.spacingLarge : LayoutConstant.spacing) {
-                            ZStack(alignment: .center) {
-                                PreviewAreaView(viewModel: viewModel.previewAreaViewModel,
-                                                viewManager: viewManager,
-                                                avatarManager: avatarManager)
-                            }
-                            .background(Color(UIColor.compositeColor(.lightPurple)))
-                            .accessibilityElement(children: .contain)
-                            
-                            VStack(alignment: .trailing, spacing: 0) {
-                                if viewModel.shouldShowSetupControlBarView() {
-                                    SetupControlBarView(viewModel: viewModel.setupControlBarViewModel)
+                            ZStack(alignment: .bottom) {
+                                PreviewAreaView(
+                                    viewModel: viewModel.previewAreaViewModel,
+                                    viewManager: viewManager,
+                                    avatarManager: avatarManager
+                                )
+                                .background(Color(UIColor.compositeColor(.lightPurple)))
+                                .accessibilityElement(children: .contain)
+                                .padding(.bottom, 120)
+                                
+                                Group {
+                                    VStack(alignment: .trailing, spacing: 0) {
+                                        if viewModel.shouldShowSetupControlBarView() {
+                                            SetupControlBarView(viewModel: viewModel.setupControlBarViewModel)
+                                        }
+
+                                        HStack(alignment: .top, spacing: 12) {
+                                            if !viewModel.isJoinRequested {
+                                                TextField(viewModel.textFieldPLaceholder, text: $displayName)
+                                                    .padding(.horizontal, 12)
+                                                    .font(AppFont.CircularStd.book.font(size: 16))
+                                                    .frame(height: 44)
+                                                    .background(Color(UIColor.compositeColor(.filledFill)))
+                                                    .cornerRadius(8)
+                                                    .overlay(
+                                                            RoundedRectangle(cornerRadius: 8)
+                                                                .stroke(Color(UIColor.compositeColor(.filledBorder)), lineWidth: 1)
+                                                        )
+                                            }
+                                            joinCallView
+                                        }
+                                        .padding(.bottom, 34)
+                                    }
+                                    .frame(height: 130)
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 16)
                                 }
-                                joinCallView
-                                    .padding(.bottom, 32)
+                                .background(Color.white)
+                                .clipShape(RoundedCorner(radius: 12, corners: [.topLeft, .topRight]))
+                                .shadow(color: .black.opacity(0.05), radius: 8, y: -2)
+                                .offset(y: -keyboard.currentHeight) // 👈 apply here outside the fixed frame
+                                .animation(.easeOut(duration: 0.2), value: keyboard.currentHeight)
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.top, 12)
-                            .background(Color.white)
-                            .clipShape(RoundedCorner(radius: 24, corners: [.topLeft, .topRight]))
-                            .shadow(color: .black.opacity(0.05), radius: 8, y: -2)
-                            .frame(height: 140)
+                            
+                            
+                            
                             
                         }
                         errorInfoView

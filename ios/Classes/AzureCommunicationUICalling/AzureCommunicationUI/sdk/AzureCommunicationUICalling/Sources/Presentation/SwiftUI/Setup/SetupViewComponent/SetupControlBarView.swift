@@ -19,17 +19,19 @@ struct SetupControlBarView: View {
         
         GeometryReader { geometry in
             HStack(alignment: .center, spacing: layoutSpacing) {
-                if viewModel.isCameraButtonVisible {
-                    cameraButton
-                }
                 if viewModel.isMicButtonVisible {
                     micButton
                 }
-                if viewModel.isAudioDeviceButtonVisible {
-                    audioDeviceButton
+                
+                if viewModel.isCameraButtonVisible {
+                    cameraButton
                 }
+                
+                switchCameraButton
+                
+                backgroundEffectButton
                 Spacer()
-             //MTODO need to add more buttons
+             
                 if viewModel.isAudioDeviceButtonVisible {
                     audioDeviceButton
                 }
@@ -49,6 +51,16 @@ struct SetupControlBarView: View {
         PrimaryIconButton(viewModel: viewModel.micButtonViewModel)
             .accessibility(identifier: AccessibilityIdentifier.toggleMicAccessibilityID.rawValue)
             .hidden(!viewModel.isMicButtonVisible)
+    }
+    
+    var backgroundEffectButton: some View {
+        PrimaryIconButton(viewModel: viewModel.backgroundEffectButtonViewModel)
+            .accessibility(identifier: AccessibilityIdentifier.toggleMicAccessibilityID.rawValue)
+    }
+    
+    var switchCameraButton: some View {
+        PrimaryIconButton(viewModel: viewModel.switchCameraButtonViewModel)
+            .accessibility(identifier: AccessibilityIdentifier.toggleMicAccessibilityID.rawValue)
     }
     
     var audioDeviceButton: some View {

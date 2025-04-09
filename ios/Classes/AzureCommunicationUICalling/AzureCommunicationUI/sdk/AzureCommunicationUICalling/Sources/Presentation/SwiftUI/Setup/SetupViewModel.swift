@@ -17,6 +17,7 @@ class SetupViewModel: ObservableObject {
     let previewAreaViewModel: PreviewAreaViewModel
     var title: String
     var subTitle: String?
+    var textFieldPLaceholder: String
 
     var networkManager: NetworkManager
     var audioSessionManager: AudioSessionManagerProtocol
@@ -57,6 +58,8 @@ class SetupViewModel: ObservableObject {
             self.title = self.localizationProvider.getLocalizedString(.setupTitle)
             self.subTitle = self.localizationProvider.getLocalizedString(.setupSubTitle)
         }
+        
+        self.textFieldPLaceholder = self.localizationProvider.getLocalizedString(.setupScreenTextfieldPlaceholder)
 
         previewAreaViewModel = compositeViewModelFactory.makePreviewAreaViewModel(dispatchAction: store.dispatch)
         var joiningButtonLocalization = LocalizationKey.joiningCall

@@ -110,7 +110,7 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         )
         
         let callScreenOptions = CallScreenOptions(controlBarOptions: callScreenControlBarOptions)
-        let localOptions = LocalOptions(callScreenOptions: callScreenOptions)
+        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true, callScreenOptions: callScreenOptions)
         
         GlobalCompositeManager.callComposite = callComposite
         

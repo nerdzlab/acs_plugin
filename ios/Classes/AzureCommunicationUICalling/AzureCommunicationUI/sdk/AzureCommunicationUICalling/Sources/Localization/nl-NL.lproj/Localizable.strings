@@ -16,6 +16,7 @@
 "AzureCommunicationUICalling.SetupView.Title"="Configuratie";
 "AzureCommunicationUICalling.SetupView.SubTitle"="Check your video and audio.";
 "AzureCommunicationUICalling.SetupView.Button.Dismiss.AccessibilityLabel"="Terug";
+"AzureCommunicationUICalling.SetupView.Placeholder"="Display name";
 "AzureCommunicationUICalling.SetupView.Button.JoinCall"="Deelnemen aan gesprek";
 "AzureCommunicationUICalling.SetupView.Button.StartCall"="Start call";
 "AzureCommunicationUICalling.SetupView.Button.JoiningCall"="Deelnemen aan gesprek…";

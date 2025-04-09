@@ -16,6 +16,7 @@
 "AzureCommunicationUICalling.SetupView.Title"="Start your call";
 "AzureCommunicationUICalling.SetupView.SubTitle"="Check your video and audio.";
 "AzureCommunicationUICalling.SetupView.Button.Dismiss.AccessibilityLabel"="Back";
+"AzureCommunicationUICalling.SetupView.Placeholder"="Display name";
 "AzureCommunicationUICalling.SetupView.Button.JoinCall"="Start call";
 "AzureCommunicationUICalling.SetupView.Button.StartCall"="Start call";
 "AzureCommunicationUICalling.SetupView.Button.JoiningCall"="Joining call…";

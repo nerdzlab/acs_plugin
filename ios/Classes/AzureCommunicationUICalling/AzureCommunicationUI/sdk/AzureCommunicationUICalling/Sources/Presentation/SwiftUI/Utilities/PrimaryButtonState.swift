@@ -17,10 +17,12 @@ protocol PrimaryButtonState: Equatable {
     var iconName: CompositeIcon { get }
 }
 
+
+
 enum CameraButtonState: PrimaryButtonState {
     case videoOn
     case videoOff
-
+    
     var iconName: CompositeIcon {
         switch self {
         case .videoOn:
@@ -34,7 +36,7 @@ enum CameraButtonState: PrimaryButtonState {
 enum MicButtonState: PrimaryButtonState {
     case micOn
     case micOff
-
+    
     var iconName: CompositeIcon {
         switch self {
         case .micOn:
@@ -45,12 +47,29 @@ enum MicButtonState: PrimaryButtonState {
     }
 }
 
+enum BackgroundEffectButtonState: PrimaryButtonState {
+    case on
+    case off
+    
+    var iconName: CompositeIcon {
+        return .backgroundEffectOn
+    }
+}
+
+enum SwitchCameraButtonState: PrimaryButtonState {
+    case `default`
+    
+    var iconName: CompositeIcon {
+        return .cameraSwitch
+    }
+}
+
 enum AudioButtonState: PrimaryButtonState {
     case speaker
     case receiver
     case bluetooth
     case headphones
-
+    
     var iconName: CompositeIcon {
         switch self {
         case .bluetooth:
@@ -63,7 +82,7 @@ enum AudioButtonState: PrimaryButtonState {
             return .speakerFilled
         }
     }
-
+    
     var localizationKey: LocalizationKey {
         switch self {
         case .bluetooth:
@@ -76,7 +95,7 @@ enum AudioButtonState: PrimaryButtonState {
             return AudioDeviceType.speaker.name
         }
     }
-
+    
     static func getButtonState(from audioDeviceStatus: LocalUserState.AudioDeviceSelectionStatus) -> AudioButtonState {
         switch audioDeviceStatus {
         case .speakerSelected,

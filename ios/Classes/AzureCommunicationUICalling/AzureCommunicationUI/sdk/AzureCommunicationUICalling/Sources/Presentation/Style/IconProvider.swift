@@ -9,6 +9,8 @@ import SwiftUI
 enum CompositeIcon: String {
     case none = ""
     case cameraSwitch = "ic_fluent_camera_switch_24_regular"
+    case backgroundEffectOn = "ic_background_effect_on"
+    case backgroundEffectOff = "ic_background_effect_off"
     case meetNow = "ic_fluent_meet_now_20_regular"
     case micOff = "ic_fluent_mic_off_24_filled"
     case micOffRegular = "ic_fluent_mic_off_24_regular"
