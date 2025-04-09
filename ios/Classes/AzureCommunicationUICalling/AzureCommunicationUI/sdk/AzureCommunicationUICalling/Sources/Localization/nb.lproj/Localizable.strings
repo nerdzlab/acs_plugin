@@ -10,6 +10,7 @@
 "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.iPad"="iPad";
 "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.Headphones"="Hodetelefoner";
 "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.Bluetooth"="Bluetooth";
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.ChooseAudioHeader"= "Choose audio";
 
 /* SetupView */
 "AzureCommunicationUICalling.SetupView.Title"="Oppsett";

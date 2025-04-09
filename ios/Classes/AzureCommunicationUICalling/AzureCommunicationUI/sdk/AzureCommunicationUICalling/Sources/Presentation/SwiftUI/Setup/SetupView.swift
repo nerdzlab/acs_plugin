@@ -164,7 +164,7 @@ struct SetupTitleView: View {
                     VStack {
                         Text(viewModel.title)
                             .font(AppFont.CircularStd.bold.font(size: 24))
-                            .foregroundColor(Color(UIColor.compositeColor(.headerTitle)))
+                            .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                             .lineLimit(1)
                             .minimumScaleFactor(sizeCategory.isAccessibilityCategory ? 0.4 : 1)
                             .accessibilityAddTraits(.isHeader)
@@ -172,7 +172,7 @@ struct SetupTitleView: View {
                         if let subtitle = viewModel.subTitle, !subtitle.isEmpty {
                             Text(subtitle)
                                 .font(AppFont.CircularStd.book.font(size: 16))
-                                .foregroundColor(Color(UIColor.compositeColor(.headerTitle)))
+                                .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                                 .lineLimit(1)
                                 .minimumScaleFactor(sizeCategory.isAccessibilityCategory ? 0.4 : 1)
                                 .accessibilityAddTraits(.isHeader)

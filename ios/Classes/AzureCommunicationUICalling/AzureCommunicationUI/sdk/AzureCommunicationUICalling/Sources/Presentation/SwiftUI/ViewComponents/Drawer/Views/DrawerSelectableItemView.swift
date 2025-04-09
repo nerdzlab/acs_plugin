@@ -17,10 +17,9 @@ internal struct DrawerSelectableItemView: View {
         HStack {
             if let icon = item.icon {
                 Icon(name: icon, size: DrawerListConstants.iconSize, renderAsOriginal: true)
-                    .foregroundColor(.primary)
             }
             Text(item.title)
-                .foregroundColor(.primary)
+                .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                 .padding(.leading, DrawerListConstants.textPaddingLeading)
                 .font(AppFont.CircularStd.book.font(size: 16))
 

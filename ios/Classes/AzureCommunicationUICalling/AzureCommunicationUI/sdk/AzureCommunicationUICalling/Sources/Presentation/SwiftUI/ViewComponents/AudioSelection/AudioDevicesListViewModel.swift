@@ -16,6 +16,10 @@ internal class AudioDevicesListViewModel: ObservableObject {
     private let localizationProvider: LocalizationProviderProtocol
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
     private var localUserState: LocalUserState
+    
+    var listTitle: String {
+        return localizationProvider.getLocalizedString(.chooseAudioHeader)
+    }
 
     init(compositeViewModelFactory: CompositeViewModelFactoryProtocol,
          dispatchAction: @escaping ActionDispatch,
