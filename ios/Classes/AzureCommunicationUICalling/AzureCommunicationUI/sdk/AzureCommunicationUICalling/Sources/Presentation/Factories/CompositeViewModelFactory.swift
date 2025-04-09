@@ -163,6 +163,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                             buttonType: buttonType,
                             isDisabled: isDisabled,
                             isVisible: isVisible,
+                            renderAsOriginal: true,
                             action: action)
     }
     /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */

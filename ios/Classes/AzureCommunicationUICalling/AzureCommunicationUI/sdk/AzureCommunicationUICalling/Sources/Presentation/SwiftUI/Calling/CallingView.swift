@@ -70,6 +70,7 @@ struct CallingView: View {
         }.onAppear {
             resetOrientation()
         }
+        .ignoresSafeArea(edges: .bottom)
     }
 
     var bottomDrawer: some View {

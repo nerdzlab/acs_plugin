@@ -73,7 +73,7 @@ struct LobbyErrorHeaderView: View {
     }
 
     var errorIcon: some View {
-        Icon(name: .lobbyError, size: 24, renderAsOriginal: false)
+        Icon(name: .lobbyError, size: 24, renderAsOriginal: true)
             .foregroundColor(.white)
             .contentShape(Rectangle())
     }
