@@ -24,6 +24,8 @@ extension Reducer where State == LocalUserState,
         var participantRole = localUserState.participantRole
         var capabilities = localUserState.capabilities
         var currentCapabilitiesAreDefault = localUserState.currentCapabilitiesAreDefault
+        
+        var noiseSuppressionStatus = localUserState.noiseSuppressionState.operation
 
         switch action {
         case .cameraPreviewOnTriggered:
@@ -84,6 +86,10 @@ extension Reducer where State == LocalUserState,
             currentCapabilitiesAreDefault = false
         case .onCapabilitiesChanged(event: let event):
             break
+        case .noiseSuppressionPreviewOn:
+            noiseSuppressionStatus = .on
+        case .noiseSuppressionPreviewOff:
+            noiseSuppressionStatus = .off
         }
 
         let cameraState = LocalUserState.CameraState(operation: cameraStatus,
@@ -93,13 +99,18 @@ extension Reducer where State == LocalUserState,
         let audioState = LocalUserState.AudioState(operation: audioOperationStatus,
                                                    device: audioDeviceStatus,
                                                    error: audioError)
+        
+        let noiseSuppressionState = LocalUserState.NoiseSuppressionState(operation: noiseSuppressionStatus)
+        
         return LocalUserState(cameraState: cameraState,
                               audioState: audioState,
                               displayName: displayName,
                               localVideoStreamIdentifier: localVideoStreamIdentifier,
                               participantRole: participantRole,
                               capabilities: capabilities,
-                              currentCapabilitiesAreDefault: currentCapabilitiesAreDefault)
+                              currentCapabilitiesAreDefault: currentCapabilitiesAreDefault,
+                              noiseSuppressionState: noiseSuppressionState
+        )
     }
 }
 

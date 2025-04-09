@@ -77,6 +77,22 @@ struct LocalUserState {
             }
         }
     }
+    
+    enum NoiseSuppressionOperationalStatus: Equatable {
+        case on
+        case off
+
+        static func == (lhs: LocalUserState.NoiseSuppressionOperationalStatus,
+                        rhs: LocalUserState.NoiseSuppressionOperationalStatus) -> Bool {
+            switch (lhs, rhs) {
+            case (.on, .on),
+                (.off, .off):
+                return true
+            default:
+                return false
+            }
+        }
+    }
 
     enum AudioDeviceSelectionStatus: Equatable {
         case speakerSelected
@@ -127,9 +143,15 @@ struct LocalUserState {
         let device: AudioDeviceSelectionStatus
         var error: Error?
     }
+    
+    struct NoiseSuppressionState {
+        let operation: NoiseSuppressionOperationalStatus
+        var error: Error?
+    }
 
     let cameraState: CameraState
     let audioState: AudioState
+    let noiseSuppressionState: NoiseSuppressionState
     let displayName: String?
     let userId: String?
     let localVideoStreamIdentifier: String?
@@ -147,8 +169,11 @@ struct LocalUserState {
          localVideoStreamIdentifier: String? = nil,
          participantRole: ParticipantRoleEnum? = nil,
          capabilities: Set<ParticipantCapabilityType> = [.unmuteMicrophone, .turnVideoOn],
-         currentCapabilitiesAreDefault: Bool = true) {
+         currentCapabilitiesAreDefault: Bool = true,
+         noiseSuppressionState: NoiseSuppressionState = NoiseSuppressionState(operation: .off, error: nil)
+    ) {
         self.cameraState = cameraState
+        self.noiseSuppressionState = noiseSuppressionState
         self.audioState = audioState
         self.displayName = displayName
         self.userId = userId

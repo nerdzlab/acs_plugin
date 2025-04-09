@@ -153,7 +153,8 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             do {
                 try await callingService.startCall(
                     isCameraPreferred: state.localUserState.cameraState.operation == .on,
-                    isAudioPreferred: state.localUserState.audioState.operation == .on
+                    isAudioPreferred: state.localUserState.audioState.operation == .on,
+                    isNoiseSuppressionPreferred: state.localUserState.noiseSuppressionState.operation == .on
                 )
                 subscription(dispatch: dispatch,
                              isSkipRequested: state.callingState.operationStatus == .skipSetupRequested)

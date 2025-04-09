@@ -140,8 +140,8 @@ class SetupControlBarViewModel: ObservableObject {
     }
     
     func backgroundEffectButtonTapped() {
-        //MTODO
-        //need to show screen with effects
+        //MTODO just for test
+        dispatch(.localUserAction(.noiseSuppressionPreviewOn))
     }
     
     func switchCameraButtonTapped() {
