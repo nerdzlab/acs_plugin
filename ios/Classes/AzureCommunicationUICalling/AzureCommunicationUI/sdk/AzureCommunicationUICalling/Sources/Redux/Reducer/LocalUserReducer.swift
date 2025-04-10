@@ -19,7 +19,8 @@ extension Reducer where State == LocalUserState,
         var audioDeviceStatus = localUserState.audioState.device
         var audioError = localUserState.audioState.error
 
-        let displayName = localUserState.displayName
+        let initialDisplayName = localUserState.initialDisplayName
+        var updatedDisplayName = localUserState.updatedDisplayName
         var localVideoStreamIdentifier = localUserState.localVideoStreamIdentifier
         var participantRole = localUserState.participantRole
         var capabilities = localUserState.capabilities
@@ -94,6 +95,8 @@ extension Reducer where State == LocalUserState,
             noiseSuppressionStatus = .off
         case .muteIncomingAudioOnPreviewRequested:
             incomingAudioStatus = .muted
+        case .changeDisplayNameRequested(displayName: let name):
+            updatedDisplayName = name
         }
 
         let cameraState = LocalUserState.CameraState(operation: cameraStatus,
@@ -110,7 +113,8 @@ extension Reducer where State == LocalUserState,
         
         return LocalUserState(cameraState: cameraState,
                               audioState: audioState,
-                              displayName: displayName,
+                              initialDisplayName: initialDisplayName,
+                              updatedDisplayName: updatedDisplayName,
                               localVideoStreamIdentifier: localVideoStreamIdentifier,
                               participantRole: participantRole,
                               capabilities: capabilities,

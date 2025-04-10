@@ -23,7 +23,7 @@ class ParticipantsListCellViewModel: BaseDrawerItemViewModel {
          localizationProvider: LocalizationProviderProtocol) {
         participantId = nil
         self.localizationProvider = localizationProvider
-        self.displayName = localUserState.displayName ?? ""
+        self.displayName = localUserState.initialDisplayName ?? ""
         self.isMuted = localUserState.audioState.operation != .on
         self.isLocalParticipant = true
         self.isHold = false

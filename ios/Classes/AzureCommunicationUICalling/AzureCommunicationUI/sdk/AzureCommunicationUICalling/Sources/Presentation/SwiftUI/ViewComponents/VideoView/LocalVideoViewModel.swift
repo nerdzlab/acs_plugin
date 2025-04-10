@@ -57,8 +57,8 @@ class LocalVideoViewModel: ObservableObject {
             localVideoStreamId = localUserState.localVideoStreamIdentifier
         }
 
-        if displayName != localUserState.displayName {
-            displayName = localUserState.displayName
+        if displayName != localUserState.initialDisplayName {
+            displayName = localUserState.initialDisplayName
         }
 
         if cameraOperationalStatus != localUserState.cameraState.operation {

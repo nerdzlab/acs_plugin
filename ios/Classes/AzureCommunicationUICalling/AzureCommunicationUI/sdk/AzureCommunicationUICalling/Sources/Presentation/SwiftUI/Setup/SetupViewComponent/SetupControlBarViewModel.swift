@@ -55,6 +55,7 @@ class SetupControlBarViewModel: ObservableObject {
                 guard let self = self else {
                     return
                 }
+                
                 self.callCustomOnClickHandler(updatableOptionsManager.setupScreenOptions?.cameraButton)
                 self.logger.debug("Toggle camera button tapped")
                 self.videoButtonTapped()
@@ -83,6 +84,8 @@ class SetupControlBarViewModel: ObservableObject {
                 guard let self = self else {
                     return
                 }
+                
+                self.endEditing()
                 self.callCustomOnClickHandler(updatableOptionsManager.setupScreenOptions?.audioDeviceButton)
                 self.logger.debug("Select audio device button tapped")
                 self.selectAudioDeviceButtonTapped()
@@ -98,6 +101,7 @@ class SetupControlBarViewModel: ObservableObject {
                     return
                 }
         
+                self.endEditing()
                 self.logger.debug("Background effect button tapped")
                 self.backgroundEffectButtonTapped()
         }
@@ -272,5 +276,9 @@ class SetupControlBarViewModel: ObservableObject {
     private func shouldsAudioDeviceButtonBeVisible(
         _ buttonViewDataState: ButtonViewDataState) -> Bool {
             return buttonViewDataState.setupScreenAudioDeviceButtonState?.visible ?? true
+    }
+    
+    private func endEditing() {
+        UIApplication.shared.endEditing()
     }
 }

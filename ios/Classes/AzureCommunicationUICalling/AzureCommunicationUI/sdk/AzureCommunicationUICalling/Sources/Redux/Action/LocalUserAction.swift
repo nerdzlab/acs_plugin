@@ -39,6 +39,8 @@ enum LocalUserAction: Equatable {
     case noiseSuppressionPreviewOff
     
     case muteIncomingAudioOnPreviewRequested
+    
+    case changeDisplayNameRequested(displayName: String?)
 
     case audioDeviceChangeRequested(device: AudioDeviceType)
     case audioDeviceChangeSucceeded(device: AudioDeviceType)
@@ -83,6 +85,9 @@ enum LocalUserAction: Equatable {
             return lMuted == rMuted
 
         case let (.cameraOnSucceeded(lId), .cameraOnSucceeded(rId)):
+            return lId == rId
+            
+        case let (.changeDisplayNameRequested(lId), .changeDisplayNameRequested(rId)):
             return lId == rId
 
         case let (.cameraSwitchSucceeded(lDev), .cameraSwitchSucceeded(rDev)):

@@ -151,6 +151,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
     func startCall(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
+                callingService.updateDisplayName(state.localUserState.updatedDisplayName ?? state.localUserState.initialDisplayName)
                 try await callingService.startCall(
                     isCameraPreferred: state.localUserState.cameraState.operation == .on,
                     isMicrophonePreferred: state.localUserState.audioState.operation == .on,

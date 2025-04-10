@@ -60,6 +60,7 @@ protocol CallingSDKWrapperProtocol {
     -> CompositeLocalVideoStream<LocalVideoStreamType>?
 
     func startPreviewVideoStream() async throws -> String
+    func updateDisplayName(_ displayName: String?)
     func setupCall() async throws
     func startCall(
         isCameraPreferred: Bool,

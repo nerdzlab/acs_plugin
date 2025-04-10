@@ -33,6 +33,7 @@ protocol CallingServiceProtocol {
     var captionsTypeSubject: CurrentValueSubject<CallCompositeCaptionsType, Never> { get }
     var capabilitiesChangedSubject: PassthroughSubject<CapabilitiesChangedEvent, Never> {get}
 
+    func updateDisplayName(_ displayName: String?)
     func setupCall() async throws
     func startCall(
         isCameraPreferred: Bool,
@@ -130,6 +131,10 @@ class CallingService: NSObject, CallingServiceProtocol {
 
     func setupCall() async throws {
         try await callingSDKWrapper.setupCall()
+    }
+    
+    func updateDisplayName(_ displayName: String?) {
+        callingSDKWrapper.updateDisplayName(displayName)
     }
 
     func startCall(

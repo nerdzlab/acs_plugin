@@ -174,7 +174,8 @@ struct LocalUserState {
     let audioState: AudioState
     let incomingAudioState: IncomingAudioState
     let noiseSuppressionState: NoiseSuppressionState
-    let displayName: String?
+    let initialDisplayName: String?
+    let updatedDisplayName: String?
     let userId: String?
     let localVideoStreamIdentifier: String?
     let participantRole: ParticipantRoleEnum?
@@ -186,7 +187,8 @@ struct LocalUserState {
                                                 transmission: .local),
          audioState: AudioState = AudioState(operation: .off,
                                              device: .receiverSelected),
-         displayName: String? = nil,
+         initialDisplayName: String? = nil,
+         updatedDisplayName: String? = nil,
          userId: String? = nil,
          localVideoStreamIdentifier: String? = nil,
          participantRole: ParticipantRoleEnum? = nil,
@@ -198,7 +200,8 @@ struct LocalUserState {
         self.cameraState = cameraState
         self.noiseSuppressionState = noiseSuppressionState
         self.audioState = audioState
-        self.displayName = displayName
+        self.initialDisplayName = initialDisplayName
+        self.updatedDisplayName = updatedDisplayName
         self.userId = userId
         self.localVideoStreamIdentifier = localVideoStreamIdentifier
         self.participantRole = participantRole

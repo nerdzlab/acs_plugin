@@ -16,7 +16,7 @@ struct SetupView: View {
     let avatarManager: AvatarViewManagerProtocol
     
     @StateObject private var keyboard = KeyboardResponder()
-    @State private var displayName: String = ""
+    @State var updatedDisplayName: String = ""
     
     enum LayoutConstant {
         static let spacing: CGFloat = 0
@@ -49,25 +49,31 @@ struct SetupView: View {
                                 .background(Color(UIColor.compositeColor(.lightPurple)))
                                 .accessibilityElement(children: .contain)
                                 .padding(.bottom, 120)
+                                .onTapGesture {
+                                    self.endEditing()
+                                }
                                 
                                 Group {
                                     VStack(alignment: .trailing, spacing: 0) {
                                         if viewModel.shouldShowSetupControlBarView() {
                                             SetupControlBarView(viewModel: viewModel.setupControlBarViewModel)
                                         }
-
+                                        
                                         HStack(alignment: .top, spacing: 12) {
                                             if !viewModel.isJoinRequested {
-                                                TextField(viewModel.textFieldPLaceholder, text: $displayName)
+                                                TextField(viewModel.textFieldPLaceholder, text: $updatedDisplayName)
                                                     .padding(.horizontal, 12)
                                                     .font(AppFont.CircularStd.book.font(size: 16))
                                                     .frame(height: 44)
                                                     .background(Color(UIColor.compositeColor(.filledFill)))
                                                     .cornerRadius(8)
                                                     .overlay(
-                                                            RoundedRectangle(cornerRadius: 8)
-                                                                .stroke(Color(UIColor.compositeColor(.filledBorder)), lineWidth: 1)
-                                                        )
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .stroke(Color(UIColor.compositeColor(.filledBorder)), lineWidth: 1)
+                                                    )
+                                                    .onChange(of: updatedDisplayName) { newValue in
+                                                        viewModel.updatedDisplayName = newValue
+                                                    }
                                             }
                                             joinCallView
                                         }
@@ -137,6 +143,10 @@ struct SetupView: View {
         default:
             return .ipadScreenSize
         }
+    }
+    
+    private func endEditing() {
+        UIApplication.shared.endEditing()
     }
 }
 

@@ -325,7 +325,7 @@ internal class CallingViewModel: ObservableObject {
 
     private func updateIsLocalCameraOn(with state: AppState) {
         let isLocalCameraOn = state.localUserState.cameraState.operation == .on
-        let displayName = state.localUserState.displayName ?? ""
+        let displayName = state.localUserState.updatedDisplayName ?? state.localUserState.initialDisplayName ?? ""
         let isLocalUserInfoNotEmpty = isLocalCameraOn || !displayName.isEmpty
         isVideoGridViewAccessibilityAvailable = !lobbyOverlayViewModel.isDisplayed
         && !onHoldOverlayViewModel.isDisplayed

@@ -49,6 +49,10 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         try await setupCallClientAndDeviceManager()
     }
     
+    func updateDisplayName(_ displayName: String?) {
+        callingSDKInitializer.updateDisplayName(displayName)
+    }
+    
     func startCall(
         isCameraPreferred: Bool,
         isMicrophonePreferred: Bool,

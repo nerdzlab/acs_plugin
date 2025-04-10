@@ -50,12 +50,18 @@ internal class CallingSDKInitializer: NSObject {
         }
         return self.callClient!
     }
+    
+    func updateDisplayName(_ displayName: String?) {
+        self.displayName = displayName
+    }
 
     func setupCallAgent() async throws -> CallAgent {
-        if let existingCallAgent = self.callAgent {
-                logger.debug("Reusing call agent")
-                return existingCallAgent
-        }
+        self.callAgent = nil
+        
+//        if let existingCallAgent = self.callAgent {
+//                logger.debug("Reusing call agent")
+//                return existingCallAgent
+//        }
         
         let callClient = setupCallClient()
         let options = CallAgentOptions()
