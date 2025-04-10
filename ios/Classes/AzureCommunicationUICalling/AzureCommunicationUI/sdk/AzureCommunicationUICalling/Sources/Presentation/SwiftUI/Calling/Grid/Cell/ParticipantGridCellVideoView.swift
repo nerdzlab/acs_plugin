@@ -34,18 +34,18 @@ struct ParticipantGridCellVideoView: View {
             ParticipantTitleView(displayName: $displayName,
                                  isMuted: $isMuted,
                                  isHold: .constant(false),
-                                 titleFont: Fonts.caption1.font,
+                                 titleFont: AppFont.CircularStd.bold.font(size: 13),
                                  mutedIconSize: 14)
                 .padding(.vertical, 2)
-                .background(Color(StyleProvider.color.overlay))
-                .clipShape(RoundedRectangle(cornerRadius: 3))
-                .padding(.leading, 4)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .padding(.leading, 8)
                 .padding(.bottom, screenSizeClass == .iphoneLandscapeScreenSize
-                    && UIDevice.current.hasHomeBar ? 16 : 4)
+                    && UIDevice.current.hasHomeBar ? 16 : 8)
 
         }.overlay(
-            isSpeaking && !isMuted ? RoundedRectangle(cornerRadius: 4)
-                .strokeBorder(Color(StyleProvider.color.primaryColor), lineWidth: 4) : nil
+            isSpeaking && !isMuted ? RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(Color(UIColor.compositeColor(.purpleBlue)), lineWidth: 4) : nil
         ).animation(.default, value: show)
     }
 

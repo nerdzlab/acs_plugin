@@ -57,14 +57,15 @@ struct DraggableLocalVideoView: View {
     }
 
     var localVideoPipView: some View {
-        let shapeCornerRadius: CGFloat = 4
+        let shapeCornerRadius: CGFloat = 8
         return Group {
             LocalVideoView(viewModel: viewModel.localVideoViewModel,
                            viewManager: viewManager,
                            viewType: .localVideoPip,
                            avatarManager: avatarManager)
-            .background(Color(StyleProvider.color.backgroundColor))
+            .background(Color(UIColor.compositeColor(.lightPurple)))
             .clipShape(RoundedRectangle(cornerRadius: shapeCornerRadius))
+            .shadow(color: Color.black.opacity(0.4), radius: 6, x: 0, y: 2)
         }
     }
 
@@ -135,8 +136,8 @@ struct DraggableLocalVideoView: View {
         }
 
         func defaultPipSize() -> CGSize {
-            let width = isPortraitMode ? 72 : 104
-            let height = isPortraitMode ? 104 : 72
+            let width = isPortraitMode ? 104 : 160
+            let height = isPortraitMode ? 160 : 104
             let size = CGSize(width: width, height: height)
             return size
         }

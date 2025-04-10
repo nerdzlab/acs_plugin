@@ -11,7 +11,7 @@ struct CallingView: View {
     enum InfoHeaderViewConstants {
         static let horizontalPadding: CGFloat = 8.0
         static let maxWidth: CGFloat = 380.0
-        static let height: CGFloat = 46.0
+        static let height: CGFloat = 100.0
     }
 
     enum ErrorInfoConstants {
@@ -20,7 +20,7 @@ struct CallingView: View {
     }
 
     enum Constants {
-        static let topAlertAreaViewTopPadding: CGFloat = 10.0
+        static let topAlertAreaViewTopPadding: CGFloat = 0.0
     }
 
     enum DiagnosticToastInfoConstants {
@@ -35,7 +35,7 @@ struct CallingView: View {
     @ObservedObject var viewModel: CallingViewModel
     let avatarManager: AvatarViewManagerProtocol
     let viewManager: VideoViewManager
-
+    
     @Environment(\.horizontalSizeClass) var widthSizeClass: UserInterfaceSizeClass?
     @Environment(\.verticalSizeClass) var heightSizeClass: UserInterfaceSizeClass?
 
@@ -57,9 +57,11 @@ struct CallingView: View {
                 } else {
                     landscapeCallingView
                 }
+                
                 errorInfoView
                 bottomDrawer
-            }.frame(width: geometry.size.width,
+            }
+            .frame(width: geometry.size.width,
                     height: geometry.size.height)
         }
         .environment(\.screenSizeClass, getSizeClass())
@@ -127,7 +129,10 @@ struct CallingView: View {
     var portraitCallingView: some View {
         VStack(alignment: .center, spacing: 0) {
             containerView
+                .cornerRadius(12)
+                .padding(.all, 4)
             ControlBarView(viewModel: viewModel.controlBarViewModel)
+                       .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: -2)
         }
     }
 
@@ -201,7 +206,6 @@ struct CallingView: View {
                     .accessibilityHidden(!viewModel.onHoldOverlayViewModel.isDisplayed)
             })
             .accessibilityElement(children: .contain)
-            .background(Color(StyleProvider.color.drawerColor))
         }
     }
 
@@ -296,8 +300,7 @@ struct CallingView: View {
                            viewManager: viewManager,
                            viewType: .localVideofull,
                            avatarManager: avatarManager)
-                .background(Color(StyleProvider.color.surface))
-                .edgesIgnoringSafeArea(safeAreaIgnoreArea)
+            .background(Color(UIColor.compositeColor(.lightPurple)))
         }
     }
 

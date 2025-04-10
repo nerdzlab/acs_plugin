@@ -39,7 +39,6 @@ target 'Runner' do
   pod 'MicrosoftFluentUI/PopupMenu_ios', '0.10.0'
   pod 'MicrosoftFluentUI/ActivityIndicator_ios', '0.10.0'
   pod 'MicrosoftFluentUI/AvatarGroup_ios', '0.10.0'
-  pod 'Reveal-SDK', :configurations => ['Debug']
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do

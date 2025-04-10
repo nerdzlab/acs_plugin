@@ -64,7 +64,7 @@
 "AzureCommunicationUICalling.CallingView.LobbyActionError.Dismiss.AccessibilityLabel" = "Lukk varsel om lobbyfeil";
 
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.Unnamed"="Deltaker uten navn";
-"AzureCommunicationUICalling.CallingView.ParticipantDrawer.LocalParticipant"="%@ (me)"; // %@ is local participant name
+"AzureCommunicationUICalling.CallingView.ParticipantDrawer.LocalParticipant"="%@ (you)"; // %@ is local participant name
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.IsMuted"="Dempet";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.IsUnmuted"="Demping opphevet";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.IsSpeaking"="Snakker";

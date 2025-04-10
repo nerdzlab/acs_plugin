@@ -70,7 +70,7 @@
 "AzureCommunicationUICalling.CallingView.LobbyActionError.Dismiss.AccessibilityLabel" = "Dismiss lobby error notification";
 
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.Unnamed"="Unnamed Participant";
-"AzureCommunicationUICalling.CallingView.ParticipantDrawer.LocalParticipant"="%@ (me)"; // %@ is local participant name
+"AzureCommunicationUICalling.CallingView.ParticipantDrawer.LocalParticipant"="%@ (you)"; // %@ is local participant name
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.IsMuted"="Muted";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.IsUnmuted"="Unmuted";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.IsSpeaking"="Speaking";

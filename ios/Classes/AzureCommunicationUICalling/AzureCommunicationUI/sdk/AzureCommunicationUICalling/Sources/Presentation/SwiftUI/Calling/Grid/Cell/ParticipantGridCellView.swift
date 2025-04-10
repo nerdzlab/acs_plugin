@@ -15,6 +15,7 @@ struct ParticipantGridCellView: View {
     @State var displayedVideoStreamId: String?
     @State var isVideoChanging = false
     let avatarSize: CGFloat = 56
+    let initialsFontSize: CGFloat = 20
 
     var body: some View {
 #if DEBUG
@@ -87,7 +88,8 @@ struct ParticipantGridCellView: View {
         return VStack(alignment: .center, spacing: 5) {
             CompositeAvatar(displayName: $viewModel.avatarDisplayName,
                             avatarImage: $avatarImage,
-                            isSpeaking: viewModel.isSpeaking && !viewModel.isMuted)
+                            
+                            isSpeaking: viewModel.isSpeaking && !viewModel.isMuted, avatarSize: avatarSize, fontSize: initialsFontSize)
             .frame(width: avatarSize, height: avatarSize)
             .opacity(viewModel.isHold ? 0.6 : 1)
             Spacer().frame(height: 10)
@@ -147,14 +149,14 @@ struct ParticipantTitleView: View {
                     .minimumScaleFactor(sizeCategory.isAccessibilityCategory ?
                                         Constants.accessibilityFontScale :
                                             Constants.defaultFontScale)
-                    .foregroundColor(Color(StyleProvider.color.onBackground))
+                    .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
             }
             if isMuted && !isHold {
                 Icon(name: .micOff, size: mutedIconSize, renderAsOriginal: false)
                     .accessibility(hidden: true)
             }
         })
-        .padding(.horizontal, isEmpty ? 0 : 4)
+        .padding(.horizontal, isEmpty ? 0 : 6)
         .animation(.default, value: true)
     }
 }

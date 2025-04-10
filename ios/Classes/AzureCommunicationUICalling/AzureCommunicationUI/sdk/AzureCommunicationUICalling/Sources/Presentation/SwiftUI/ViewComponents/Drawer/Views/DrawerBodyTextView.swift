@@ -16,9 +16,9 @@ internal struct DrawerBodyTextView: View {
         
         HStack {
             Text(item.title)
-                .foregroundColor(.primary)
+                .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                 .padding(.leading, DrawerListConstants.textPaddingLeading)
-                .font(.body)
+                .font(AppFont.CircularStd.bold.font(size: 20))
             Spacer()
         }
         .padding(.horizontal, DrawerListConstants.optionPaddingHorizontal)

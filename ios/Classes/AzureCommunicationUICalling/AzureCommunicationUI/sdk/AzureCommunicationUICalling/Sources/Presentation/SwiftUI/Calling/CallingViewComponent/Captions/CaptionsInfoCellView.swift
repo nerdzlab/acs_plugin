@@ -57,7 +57,9 @@ struct CaptionsInfoCellView: View {
         CompositeAvatar(displayName: $displayName,
                         avatarImage: $avatarImage,
                         isSpeaking: false,
-                        avatarSize: .size24)
+                        avatarSize: 24,
+                        fontSize: 10
+        )
     }
 
     // Display text based on caption availability

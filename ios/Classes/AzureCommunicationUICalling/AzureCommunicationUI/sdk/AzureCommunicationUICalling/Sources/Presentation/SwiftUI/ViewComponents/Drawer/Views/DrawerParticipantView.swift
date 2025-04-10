@@ -31,12 +31,13 @@ internal struct DrawerParticipantView: View {
                         avatarManager.avatarStorage.value(forKey: item.participantId ?? "")?.avatarImage
                 ),
                 isSpeaking: false,
-                avatarSize: .size40
+                avatarSize: 40,
+                fontSize: 12
             )
             Text(displayName)
-                .foregroundColor(.primary)
+                .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                 .padding(.leading, DrawerListConstants.textPaddingLeading)
-                .font(.body)
+                .font(AppFont.CircularStd.book.font(size: 16))
             Spacer()
             if item.isHold {
                 Text("On Hold")

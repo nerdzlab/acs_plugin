@@ -79,7 +79,7 @@ struct ParticipantGridLayoutView: View {
                 }
             }
         }
-        .background(Color(StyleProvider.color.gridLayoutBackground))
+        .background(Color.white)
         .accessibilityElement(children: .contain)
     }
 
@@ -93,7 +93,7 @@ struct ParticipantGridLayoutView: View {
                 }
             }
         }
-        .background(Color(StyleProvider.color.gridLayoutBackground))
+        .background(Color.white)
         .accessibilityElement(children: .contain)
     }
 
@@ -103,8 +103,8 @@ struct ParticipantGridLayoutView: View {
                                     rendererViewManager: rendererViewManager,
                                     avatarViewManager: avatarViewManager)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(StyleProvider.color.surface))
-                .clipShape(RoundedRectangle(cornerRadius: 4))
+                .background(Color(UIColor.compositeColor(.lightPurple)))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
                 .accessibilityElement(children: .contain)
 
         }

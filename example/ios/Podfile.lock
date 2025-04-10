@@ -55,7 +55,6 @@ PODS:
     - MicrosoftFluentUI/Separator_ios
   - MicrosoftFluentUI/TouchForwardingView_ios (0.10.0):
     - MicrosoftFluentUI/Core_ios
-  - Reveal-SDK (52)
   - Trouter (0.2.0)
 
 DEPENDENCIES:
@@ -70,7 +69,6 @@ DEPENDENCIES:
   - MicrosoftFluentUI/BottomSheet_ios (= 0.10.0)
   - MicrosoftFluentUI/Button_ios (= 0.10.0)
   - MicrosoftFluentUI/PopupMenu_ios (= 0.10.0)
-  - Reveal-SDK
 
 SPEC REPOS:
   trunk:
@@ -79,7 +77,6 @@ SPEC REPOS:
     - AzureCommunicationCommon
     - AzureCore
     - MicrosoftFluentUI
-    - Reveal-SDK
     - Trouter
 
 EXTERNAL SOURCES:
@@ -99,9 +96,8 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   MicrosoftFluentUI: f6db695718efb93f4ca9bdc366c00b80a1f91dba
-  Reveal-SDK: a3476ae49f6563aa1cf7642a208193960fe65e92
   Trouter: 7eab36954ad740e32db3ff9f6025b0dff92193d7
 
-PODFILE CHECKSUM: dc0528af40380172d190b96cb5ad2dbe2c138383
+PODFILE CHECKSUM: f5db790055d5a314d947f49b28d43d25447cc24e
 
 COCOAPODS: 1.16.2
