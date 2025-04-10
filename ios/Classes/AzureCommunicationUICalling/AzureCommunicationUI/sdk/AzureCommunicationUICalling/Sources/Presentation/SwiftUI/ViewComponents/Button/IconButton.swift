@@ -13,15 +13,18 @@ struct IconButton: View {
         switch viewModel.buttonType {
         case .dismissButton:
             return 16
+        case .roundedRectButton:
+            return 24
         default:
             return 32
         }
     }
     var width: CGFloat {
         switch viewModel.buttonType {
+        case  .roundedRectButton:
+            return 59
         case .controlButton,
-                .backNavigation,
-                .roundedRectButton:
+                .backNavigation:
             return 60
         case .infoButton:
             return iconImageSize
@@ -34,9 +37,10 @@ struct IconButton: View {
     }
     var height: CGFloat {
         switch viewModel.buttonType {
+        case  .roundedRectButton:
+            return 56
         case .controlButton,
-                .backNavigation,
-                .roundedRectButton:
+                .backNavigation:
             return 60
         case .infoButton:
             return iconImageSize
@@ -50,7 +54,7 @@ struct IconButton: View {
     var buttonBackgroundColor: Color {
         switch viewModel.buttonType {
         case .roundedRectButton:
-            return Color(StyleProvider.color.hangup)
+            return Color(UIColor.compositeColor(.errorColor))
         case .controlButton,
                 .infoButton,
                 .backNavigation,
@@ -100,6 +104,8 @@ struct IconButton: View {
         case .cameraSwitchButtonPip,
                 .cameraSwitchButtonFull:
             return 4
+        case .roundedRectButton:
+            return 14
         default:
             return 8
         }
