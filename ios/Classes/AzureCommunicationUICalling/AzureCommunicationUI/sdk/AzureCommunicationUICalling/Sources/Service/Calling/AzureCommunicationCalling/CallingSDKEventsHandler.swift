@@ -49,6 +49,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
     private var teamsCaptions: TeamsCaptions?
     private var communicationCaptions: CommunicationCaptions?
     private var capabilitiesCallFeature: CapabilitiesCallFeature?
+    private var raiseHandFeature: RaiseHandCallFeature?
 
     private var previousCallingStatus: CallingStatus = .none
     private var remoteParticipants = MappedSequence<String, AzureCommunicationCalling.RemoteParticipant>()
@@ -94,6 +95,11 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         self.capabilitiesCallFeature = capabilitiesCallFeature
         self.capabilitiesCallFeature?.delegate = self
     }
+    
+    func assign(_ raiseHandFeature: RaiseHandCallFeature) {
+        self.raiseHandFeature = raiseHandFeature
+        raiseHandFeature.delegate = self
+    }
 
     func setupProperties() {
         participantsInfoListSubject.value.removeAll()
@@ -105,6 +111,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         remoteParticipants = MappedSequence<String, AzureCommunicationCalling.RemoteParticipant>()
         previousCallingStatus = .none
         capabilitiesCallFeature = nil
+        raiseHandFeature = nil
     }
 
     private func setupRemoteParticipantEventsAdapter() {
@@ -200,7 +207,9 @@ extension CallingSDKEventsHandler: CallDelegate,
     MediaDiagnosticsDelegate,
     NetworkDiagnosticsDelegate,
     CaptionsCallFeatureDelegate,
-    CapabilitiesCallFeatureDelegate {
+    CapabilitiesCallFeatureDelegate,
+    RaiseHandCallFeatureDelegate
+{
     func call(_ call: Call, didChangeId args: PropertyChangedEventArgs) {
         callIdSubject.send(call.id)
     }
@@ -442,6 +451,16 @@ extension CallingSDKEventsHandler: CallDelegate,
                           didChangeIsSpeakingWhileMicrophoneIsMuted args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .speakingWhileMicrophoneIsMuted, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
+    }
+    
+    func raiseHandCallFeature(_ raiseHandCallFeature: RaiseHandCallFeature, didRaiseHand args: RaisedHandChangedEventArgs) {
+        print("Participant \(args.identifier) raised their hand.")
+        // Update UI accordingly
+    }
+    
+    func raiseHandCallFeature(_ raiseHandCallFeature: RaiseHandCallFeature, didLowerHand args: LoweredHandChangedEventArgs) {
+        print("Participant \(args.identifier) lowered their hand.")
+       // Update UI accordingly
     }
 }
 

@@ -655,6 +655,8 @@ extension CallingSDKWrapper {
         let localUserDiagnosticsFeature = call.feature(Features.localUserDiagnostics)
         let captionsFeature = call.feature(Features.captions)
         let capabilitiesFeature = call.feature(Features.capabilities)
+        let raiseHandFeature = call.feature(Features.raisedHands)
+        
         if let callingEventsHandler = self.callingEventsHandler as? CallingSDKEventsHandler {
             callingEventsHandler.assign(recordingCallFeature)
             callingEventsHandler.assign(transcriptionCallFeature)
@@ -662,6 +664,7 @@ extension CallingSDKWrapper {
             callingEventsHandler.assign(localUserDiagnosticsFeature)
             callingEventsHandler.assign(captionsFeature)
             callingEventsHandler.assign(capabilitiesFeature)
+            callingEventsHandler.assign(raiseHandFeature)
             if callConfiguration.compositeCallType == .oneToOneIncoming && call.state == .connected {
                 // If call is accepted from CallKit
                 // call state can already be accepted, thus call state change will be missed

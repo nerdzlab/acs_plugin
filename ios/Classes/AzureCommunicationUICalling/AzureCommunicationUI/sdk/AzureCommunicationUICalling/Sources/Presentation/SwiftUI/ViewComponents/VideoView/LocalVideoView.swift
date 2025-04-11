@@ -81,48 +81,66 @@ struct LocalVideoView: View {
         
         Group {
             GeometryReader { geometry in
-                if viewModel.cameraOperationalStatus == .on,
-                   let streamId = localVideoStreamId,
-                   let rendererView = viewManager.getLocalVideoRendererView(streamId) {
+                ZStack(alignment: .bottomLeading) {
                     
-                    ZStack(alignment: viewType.cameraSwitchButtonAlignment) {
-                        VideoRendererView(rendererView: rendererView)
-                            .frame(width: geometry.size.width,
-                                   height: geometry.size.height)
-                        if viewType.hasGradient {
-                            GradientView()
-                        }
-                        if !viewModel.isInPip {
-                            cameraSwitchButton
-                        }
-                    }
-                } else {
-                    VStack(alignment: .center, spacing: 5) {
-                    
+                    // MARK: - Main content depending on camera status
+                    if viewModel.cameraOperationalStatus == .on,
+                       let streamId = localVideoStreamId,
+                       let rendererView = viewManager.getLocalVideoRendererView(streamId) {
                         
-                        CompositeAvatar(displayName: $viewModel.displayName,
-                                        avatarImage: Binding.constant(avatarManager
-                                            .localParticipantViewData?
-                                            .avatarImage),
-                                        isSpeaking: false,
-                                        avatarSize: viewType.avatarSize,
-                                        fontSize: viewType.initialFontSize
+                        ZStack(alignment: viewType.cameraSwitchButtonAlignment) {
+                            VideoRendererView(rendererView: rendererView)
+                                .frame(width: geometry.size.width,
+                                       height: geometry.size.height)
+                            
+                            if viewType.hasGradient {
+                                GradientView()
+                            }
+                            
+                            if !viewModel.isInPip {
+                                cameraSwitchButton
+                            }
+                        }
+                        
+                    } else {
+                        VStack(alignment: .center, spacing: 5) {
+                            CompositeAvatar(
+                                displayName: $viewModel.displayName,
+                                avatarImage: Binding.constant(
+                                    avatarManager.localParticipantViewData?.avatarImage
+                                ),
+                                isSpeaking: false,
+                                avatarSize: viewType.avatarSize,
+                                fontSize: viewType.initialFontSize
+                            )
+                        }
+                        .frame(width: geometry.size.width,
+                               height: geometry.size.height)
+                        .accessibilityElement(children: .combine)
+                    }
+
+                    // MARK: - Always show title in bottom leading
+                    if viewType.showDisplayNameTitleView {
+                        ParticipantTitleView(
+                            displayName: Binding.constant(
+                                viewModel.localizationProvider.getLocalizedString(
+                                    .localeParticipantWithSuffix,
+                                    viewModel.displayName ?? ""
+                                )
+                            ),
+                            isMuted: $viewModel.isMuted,
+                            isHold: .constant(false),
+                            titleFont: AppFont.CircularStd.book.font(size: 13),
+                            mutedIconSize: 16
                         )
-                        
-                        if viewType.showDisplayNameTitleView {
-                            Spacer().frame(height: 10)
-                            ParticipantTitleView(displayName: $viewModel.displayName,
-                                                 isMuted: $viewModel.isMuted,
-                                                 isHold: .constant(false),
-                                                 titleFont: Fonts.caption1.font,
-                                                 mutedIconSize: 16)
-                        }
+                        .padding(.vertical, 2)
+                        .background(viewModel.cameraOperationalStatus == .on ? Color.white : .clear)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .padding([.leading, .bottom], 8)
                     }
-                    .frame(width: geometry.size.width,
-                           height: geometry.size.height)
-                    .accessibilityElement(children: .combine)
                 }
             }
+
         }.onReceive(viewModel.$localVideoStreamId) {
             viewManager.updateDisplayedLocalVideoStream($0)
             if localVideoStreamId != $0 {
@@ -132,7 +150,7 @@ struct LocalVideoView: View {
     }
     
     var cameraSwitchButton: some View {
-        let cameraSwitchButtonPaddingPip: CGFloat = -4
+        let cameraSwitchButtonPaddingPip: CGFloat = 8
         let cameraSwitchButtonPaddingFull: CGFloat = 4
         return Group {
             switch viewType {

@@ -34,7 +34,7 @@ struct ParticipantGridCellVideoView: View {
             ParticipantTitleView(displayName: $displayName,
                                  isMuted: $isMuted,
                                  isHold: .constant(false),
-                                 titleFont: AppFont.CircularStd.bold.font(size: 13),
+                                 titleFont: AppFont.CircularStd.book.font(size: 13),
                                  mutedIconSize: 14)
                 .padding(.vertical, 2)
                 .background(Color.white)

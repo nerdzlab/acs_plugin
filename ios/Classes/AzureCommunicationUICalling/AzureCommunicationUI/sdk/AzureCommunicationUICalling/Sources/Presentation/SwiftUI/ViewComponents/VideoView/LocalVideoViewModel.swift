@@ -8,7 +8,6 @@ import Foundation
 
 class LocalVideoViewModel: ObservableObject {
     private let logger: Logger
-    private let localizationProvider: LocalizationProviderProtocol
     private let dispatch: ActionDispatch
 
     @Published var localVideoStreamId: String?
@@ -16,6 +15,8 @@ class LocalVideoViewModel: ObservableObject {
     @Published var isMuted = false
     @Published var cameraOperationalStatus: LocalUserState.CameraOperationalStatus = .off
     @Published var isInPip = false
+    
+    let localizationProvider: LocalizationProviderProtocol
 
     var cameraSwitchButtonPipViewModel: IconButtonViewModel!
     var cameraSwitchButtonFullViewModel: IconButtonViewModel!
@@ -29,18 +30,18 @@ class LocalVideoViewModel: ObservableObject {
         self.dispatch = dispatchAction
 
         cameraSwitchButtonPipViewModel = compositeViewModelFactory.makeIconButtonViewModel(
-            iconName: .cameraSwitch,
+            iconName: .switchCameraFilled,
             buttonType: .cameraSwitchButtonPip,
-            isDisabled: false, renderAsOriginal: false) { [weak self] in
+            isDisabled: false, renderAsOriginal: true) { [weak self] in
                 guard let self = self else {
                     return
                 }
                 self.toggleCameraSwitchTapped()
         }
         cameraSwitchButtonFullViewModel = compositeViewModelFactory.makeIconButtonViewModel(
-            iconName: .cameraSwitch,
+            iconName: .switchCameraFilled,
             buttonType: .cameraSwitchButtonFull,
-            isDisabled: false, renderAsOriginal: false) { [weak self] in
+            isDisabled: false, renderAsOriginal: true) { [weak self] in
                 guard let self = self else {
                     return
                 }

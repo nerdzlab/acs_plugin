@@ -15,6 +15,8 @@ struct IconButton: View {
             return 16
         case .roundedRectButton:
             return 24
+        case .cameraSwitchButtonPip:
+            return 28
         default:
             return 32
         }
@@ -30,9 +32,10 @@ struct IconButton: View {
             return iconImageSize
         case .dismissButton:
             return 32
-        case .cameraSwitchButtonFull,
-                .cameraSwitchButtonPip:
-            return 36
+        case .cameraSwitchButtonFull:
+            return 32
+        case .cameraSwitchButtonPip:
+            return 28
         }
     }
     var height: CGFloat {
@@ -46,9 +49,10 @@ struct IconButton: View {
             return iconImageSize
         case .dismissButton:
             return 32
-        case .cameraSwitchButtonFull,
-                .cameraSwitchButtonPip:
-            return 36
+        case .cameraSwitchButtonFull:
+            return 32
+        case .cameraSwitchButtonPip:
+            return 28
         }
     }
     var buttonBackgroundColor: Color {
@@ -62,7 +66,7 @@ struct IconButton: View {
             return .clear
         case .cameraSwitchButtonFull,
                 .cameraSwitchButtonPip:
-            return Color(StyleProvider.color.surfaceLightColor)
+            return .clear
         }
     }
     
@@ -79,8 +83,7 @@ struct IconButton: View {
     
     var tappableWidth: CGFloat {
         switch viewModel.buttonType {
-        case .cameraSwitchButtonPip,
-                .cameraSwitchButtonFull,
+        case .cameraSwitchButtonFull,
                 .infoButton:
             return 44
         default:
@@ -90,8 +93,7 @@ struct IconButton: View {
     
     var tappableHeight: CGFloat {
         switch viewModel.buttonType {
-        case .cameraSwitchButtonPip,
-                .cameraSwitchButtonFull,
+        case .cameraSwitchButtonFull,
                 .infoButton:
             return 44
         default:
