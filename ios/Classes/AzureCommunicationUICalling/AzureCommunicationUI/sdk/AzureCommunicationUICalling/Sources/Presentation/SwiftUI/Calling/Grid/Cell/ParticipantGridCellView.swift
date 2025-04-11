@@ -85,29 +85,49 @@ struct ParticipantGridCellView: View {
     }
 
     var avatarView: some View {
-        return VStack(alignment: .center, spacing: 5) {
-            CompositeAvatar(displayName: $viewModel.avatarDisplayName,
-                            avatarImage: $avatarImage,
-                            
-                            isSpeaking: viewModel.isSpeaking && !viewModel.isMuted, avatarSize: avatarSize, fontSize: initialsFontSize)
-            .frame(width: avatarSize, height: avatarSize)
-            .opacity(viewModel.isHold ? 0.6 : 1)
-            Spacer().frame(height: 10)
-            ParticipantTitleView(displayName: $viewModel.displayName,
-                                 isMuted: $viewModel.isMuted,
-                                 isHold: $viewModel.isHold,
-                                 titleFont: Fonts.caption1.font,
-                                 mutedIconSize: 16)
-            .opacity(viewModel.isHold ? 0.6 : 1)
-            if viewModel.isHold {
-                Text(viewModel.getOnHoldString())
-                    .font(Fonts.caption1.font)
-                    .lineLimit(1)
-                    .foregroundColor(Color(StyleProvider.color.onBackground))
-                    .padding(.top, 8)
+        GeometryReader { geometry in
+            ZStack(alignment: .bottomLeading) {
+                // Centered avatar in full area
+                VStack {
+                    Spacer()
+                    CompositeAvatar(
+                        displayName: $viewModel.avatarDisplayName,
+                        avatarImage: $avatarImage,
+                        isSpeaking: viewModel.isSpeaking && !viewModel.isMuted,
+                        avatarSize: avatarSize,
+                        fontSize: initialsFontSize
+                    )
+                    .frame(width: avatarSize, height: avatarSize)
+                    .opacity(viewModel.isHold ? 0.6 : 1)
+                    Spacer()
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+
+                // Title view in bottom-leading
+                VStack(alignment: .leading, spacing: 0) {
+                    ParticipantTitleView(
+                        displayName: $viewModel.displayName,
+                        isMuted: $viewModel.isMuted,
+                        isHold: $viewModel.isHold,
+                        titleFont: AppFont.CircularStd.book.font(size: 13),
+                        mutedIconSize: 16
+                    )
+                    .padding(.vertical, 2)
+                    .opacity(viewModel.isHold ? 0.6 : 1)
+
+                    if viewModel.isHold {
+                        Text(viewModel.getOnHoldString())
+                            .font(Fonts.caption1.font)
+                            .lineLimit(1)
+                            .foregroundColor(Color(StyleProvider.color.onBackground))
+                            .padding(.top, 8)
+                    }
+                }
+                .padding([.leading, .bottom], 8)
             }
         }
     }
+
 
 }
 
