@@ -83,8 +83,7 @@ struct IconButton: View {
     
     var tappableWidth: CGFloat {
         switch viewModel.buttonType {
-        case .cameraSwitchButtonFull,
-                .infoButton:
+        case .cameraSwitchButtonFull:
             return 44
         default:
             return width
@@ -93,8 +92,7 @@ struct IconButton: View {
     
     var tappableHeight: CGFloat {
         switch viewModel.buttonType {
-        case .cameraSwitchButtonFull,
-                .infoButton:
+        case .cameraSwitchButtonFull:
             return 44
         default:
             return height

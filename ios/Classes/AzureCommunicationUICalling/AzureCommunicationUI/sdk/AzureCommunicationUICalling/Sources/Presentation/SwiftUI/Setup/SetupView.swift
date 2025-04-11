@@ -85,7 +85,7 @@ struct SetupView: View {
                                 }
                                 .background(Color.white)
                                 .clipShape(RoundedCorner(radius: 12, corners: [.topLeft, .topRight]))
-                                .shadow(color: .black.opacity(0.05), radius: 8, y: -2)
+                                .shadow(color: .black.opacity(0.05), radius: 1, y: -2)
                                 .offset(y: -keyboard.currentHeight) // 👈 apply here outside the fixed frame
                                 .animation(.easeOut(duration: 0.3), value: keyboard.currentHeight)
                             }

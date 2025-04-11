@@ -10,6 +10,7 @@ struct InfoHeaderView: View {
     @ObservedObject var viewModel: InfoHeaderViewModel
     @Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
     @State var participantsListButtonSourceView = UIView()
+    @State var chatButtonSourceView = UIView()
     @State var participantMenuSourceView = UIView()
     /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
     @State var customButton1SourceView = UIView()
@@ -121,12 +122,14 @@ struct InfoHeaderView: View {
                     .accessibilityFocused($focusedOnCustomButton2, equals: true)
             }
             /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
+            chatButton
+                .padding(.trailing, 0)
             participantListButton
         }
-        .padding(EdgeInsets(top: 4,
-                            leading: 4,
-                            bottom: 4,
-                            trailing: 4))
+        .padding(EdgeInsets(top: 8,
+                            leading: 8,
+                            bottom: 8,
+                            trailing: 8))
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: Constants.shapeCornerRadius))
         .padding(.bottom, Constants.hStackBottomPadding)
@@ -137,6 +140,11 @@ struct InfoHeaderView: View {
     var participantListButton: some View {
         IconButton(viewModel: viewModel.participantListButtonViewModel)
             .background(SourceViewSpace(sourceView: participantsListButtonSourceView))
+            .accessibilityFocused($focusedOnParticipantList, equals: true)
+    }
+    
+    var chatButton: some View {
+        IconButton(viewModel: viewModel.chatButtonViewModel)
             .accessibilityFocused($focusedOnParticipantList, equals: true)
     }
 }

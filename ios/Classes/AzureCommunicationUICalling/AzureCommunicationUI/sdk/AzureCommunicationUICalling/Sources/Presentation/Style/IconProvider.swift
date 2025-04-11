@@ -47,6 +47,7 @@ enum CompositeIcon: String {
     case captionsError = "ic_fluent_error_circle_16_regular"
     case noiseSuppresion = "noise_suppresion"
     case switchCameraFilled = "filled_switch_camera"
+    case chatIcon = "chat_icon"
 }
 
 struct IconProvider {

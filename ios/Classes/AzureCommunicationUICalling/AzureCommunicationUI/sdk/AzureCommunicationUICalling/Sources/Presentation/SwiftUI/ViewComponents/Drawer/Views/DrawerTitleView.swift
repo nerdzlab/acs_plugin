@@ -16,17 +16,17 @@ internal struct DrawerTitleView: View {
         HStack {
             Spacer()
             Text(item.title)
-                .foregroundColor(.primary)
+                .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                 .padding(.leading, DrawerListConstants.textPaddingLeading)
-                .font(.headline)
+                .font(AppFont.CircularStd.bold.font(size: 20))
                 .accessibilityAddTraits(.isHeader)
             Spacer()
         }
         .padding(.horizontal, DrawerListConstants.optionPaddingHorizontal)
-        .padding(.vertical, DrawerListConstants.optionPaddingVertical)
+        .padding(.vertical, 0)
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
         .accessibilityIdentifier(item.accessibilityIdentifier)
-        .background(Color(StyleProvider.color.drawerColor))
+        .background(Color.white)
     }
 }

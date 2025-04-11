@@ -27,13 +27,13 @@ internal struct DrawerGenericItemView: View {
             }
             VStack(alignment: .leading) {
                 Text(item.title)
-                    .foregroundColor(item.isEnabled ? .primary : .gray)
+                    .foregroundColor(item.isEnabled ? Color(UIColor.compositeColor(.textPrimary)) : .gray)
                     .padding(.leading, DrawerListConstants.textPaddingLeading)
-                    .font(.body)
+                    .font(AppFont.CircularStd.book.font(size: 16))
                 if let subtitle = item.subtitle, !subtitle.isEmpty {
                     Text(subtitle)
-                        .font(.subheadline)
-                        .foregroundColor(Color(StyleProvider.color.textSecondary))
+                        .font(AppFont.CircularStd.book.font(size: 16))
+                        .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                         .padding(.leading, DrawerListConstants.textPaddingLeading)
                 }
             }
