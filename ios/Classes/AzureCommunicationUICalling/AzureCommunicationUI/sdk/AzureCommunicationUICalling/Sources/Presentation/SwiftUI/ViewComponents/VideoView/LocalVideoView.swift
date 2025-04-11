@@ -10,12 +10,13 @@ enum LocalVideoViewType {
     case preview
     case localVideoPip
     case localVideofull
+    case systemLocalVideoPip
     
     var cameraSwitchButtonAlignment: Alignment {
         switch self {
         case .localVideoPip:
             return .topTrailing
-        case .localVideofull:
+        case .localVideofull, .systemLocalVideoPip:
             return .bottomTrailing
         case .preview:
             return .trailing
@@ -27,6 +28,8 @@ enum LocalVideoViewType {
         case .localVideofull,
                 .preview:
             return 80
+        case .systemLocalVideoPip:
+            return 24
         case .localVideoPip:
             return 48
         }
@@ -37,6 +40,8 @@ enum LocalVideoViewType {
         case .localVideofull,
                 .preview:
             return 32
+        case .systemLocalVideoPip:
+            return 8
         case .localVideoPip:
             return 20
         }
@@ -47,6 +52,8 @@ enum LocalVideoViewType {
         case .localVideoPip,
                 .preview:
             return false
+        case .systemLocalVideoPip:
+            return false
         case .localVideofull:
             return true
         }
@@ -54,7 +61,7 @@ enum LocalVideoViewType {
     
     var hasGradient: Bool {
         switch self {
-        case .localVideoPip,
+        case .localVideoPip, .systemLocalVideoPip,
                 .localVideofull:
             return false
         case .preview:
