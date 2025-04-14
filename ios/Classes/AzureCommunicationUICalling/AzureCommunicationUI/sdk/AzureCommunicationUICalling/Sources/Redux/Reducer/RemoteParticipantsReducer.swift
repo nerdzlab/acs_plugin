@@ -59,6 +59,7 @@ extension Reducer where State == RemoteParticipantsState,
             
         case .remoteParticipantsAction(.pinParticipant(participantId: let participantId)):
             pinnedParticipantId = participantId
+            lastUpdateTimeStamp = Date()
             
             participantInfoList = updateDerivedParticipantFields(
                 list: participantInfoList,
@@ -68,6 +69,7 @@ extension Reducer where State == RemoteParticipantsState,
             
         case .remoteParticipantsAction(.unpinParticipant(participantId: let participantId)):
             pinnedParticipantId = nil
+            lastUpdateTimeStamp = Date()
             
             participantInfoList = updateDerivedParticipantFields(
                 list: participantInfoList,
@@ -77,6 +79,7 @@ extension Reducer where State == RemoteParticipantsState,
             
         case .remoteParticipantsAction(.showParticipantVideo(participantId: let participantId)):
             listOfDisabledVideoParticipants.remove(participantId)
+            lastUpdateTimeStamp = Date()
             
             participantInfoList = updateDerivedParticipantFields(
                 list: participantInfoList,
@@ -86,6 +89,7 @@ extension Reducer where State == RemoteParticipantsState,
             
         case .remoteParticipantsAction(.hideParticipantVideo(participantId: let participantId)):
             listOfDisabledVideoParticipants.insert(participantId)
+            lastUpdateTimeStamp = Date()
             
             participantInfoList = updateDerivedParticipantFields(
                 list: participantInfoList,

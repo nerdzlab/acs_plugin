@@ -25,6 +25,8 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
     @Published var isMuted: Bool
     @Published var isHold: Bool
     @Published var participantIdentifier: String
+    @Published var isPinned: Bool
+    @Published var isVideoEnableForLocalUser: Bool
 
     private var isScreenSharing = false
     private var participantName: String
@@ -58,6 +60,8 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
         self.participantIdentifier = participantModel.userIdentifier
         self.isMuted = participantModel.isMuted && participantModel.status == .connected
         self.isCameraEnabled = isCameraEnabled
+        self.isVideoEnableForLocalUser = participantModel.isVideoOnForMe
+        self.isPinned = participantModel.isPinned
         self.videoViewModel = getDisplayingVideoStreamModel(participantModel)
         self.accessibilityLabel = getAccessibilityLabel(participantModel: participantModel)
     }
@@ -111,6 +115,14 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
         if self.isHold != isOnHold {
             self.isHold = isOnHold
             postParticipantStatusAccessibilityAnnouncements(isHold: self.isHold, participantModel: participantModel)
+        }
+        
+        if self.isVideoEnableForLocalUser != participantModel.isVideoOnForMe {
+            self.isVideoEnableForLocalUser = participantModel.isVideoOnForMe
+        }
+        
+        if self.isPinned != participantModel.isPinned {
+            self.isPinned = participantModel.isPinned
         }
     }
 

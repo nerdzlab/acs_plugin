@@ -25,7 +25,7 @@ struct ParticipantGridCellView: View {
         Group {
             GeometryReader { geometry in
                 if let videoStreamId = displayedVideoStreamId,
-                   let rendererViewInfo = getRendererViewInfo(for: videoStreamId) {
+                   let rendererViewInfo = getRendererViewInfo(for: videoStreamId), viewModel.isVideoEnableForLocalUser {
                     let zoomable = viewModel.videoViewModel?.videoStreamType == .screenSharing
                     ParticipantGridCellVideoView(videoRendererViewInfo: rendererViewInfo,
                                                  rendererViewManager: rendererViewManager,
@@ -61,9 +61,10 @@ struct ParticipantGridCellView: View {
     }
 
     func getRendererViewInfo(for videoStreamId: String) -> ParticipantRendererViewInfo? {
-        guard !videoStreamId.isEmpty else {
+        if videoStreamId.isEmpty {
             return nil
         }
+       
         let remoteParticipantVideoViewId = RemoteParticipantVideoViewId(userIdentifier: viewModel.participantIdentifier,
                                                                         videoStreamIdentifier: videoStreamId)
         return rendererViewManager?.getRemoteParticipantVideoRendererView(remoteParticipantVideoViewId)
