@@ -28,7 +28,7 @@ extension Reducer where State == LocalUserState,
         
         var noiseSuppressionStatus = localUserState.noiseSuppressionState.operation
         var incomingAudioStatus = localUserState.incomingAudioState.operation
-
+        
         switch action {
         case .cameraPreviewOnTriggered:
             cameraTransmissionStatus = .local

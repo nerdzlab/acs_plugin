@@ -22,7 +22,7 @@ internal struct ParticipantMenuView: View {
         let _ = Self._printChanges()
 #endif
         
-        DrawerListView(sections: [DrawerListSection(header: nil, items: viewModel.items)],
+        DrawerListView(sections: [DrawerListSection(header: nil, items: viewModel.items)], withDivider: true,
                        avatarManager: avatarManager)
     }
 }

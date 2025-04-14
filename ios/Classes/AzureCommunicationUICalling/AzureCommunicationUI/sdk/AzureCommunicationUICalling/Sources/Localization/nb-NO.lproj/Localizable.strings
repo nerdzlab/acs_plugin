@@ -104,6 +104,11 @@
 "AzureCommunicationUICalling.CallingView.Overlay.Cancel"="Avbryt";
 "AzureCommunicationUICalling.CallingView.LeaveCallList.Header.LeaveCall"="Vil du forlate samtalen?";
 
+"AzureCommunicationUICalling.CallingView.Participants.Options.Pin"="Pin for me";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Unpin"="Unpin";
+"AzureCommunicationUICalling.CallingView.Participants.Options.ShowVideo"="Show video";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Don'tShowVideo"="Don't show video";
+
 "AzureCommunicationUICalling.CallingView.Button.More.AccessibilityLabel" = "Mer";
 "AzureCommunicationUICalling.CallingView.MoreCallOptionsList.ShareDiagnosticsInfo" = "Del diagnoseinformasjon";
 "AzureCommunicationUICalling.CallingView.GridView.Calling"="Calling...";

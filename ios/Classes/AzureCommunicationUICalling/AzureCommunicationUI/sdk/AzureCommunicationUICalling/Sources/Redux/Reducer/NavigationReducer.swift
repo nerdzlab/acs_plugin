@@ -42,6 +42,9 @@ extension Reducer where State == NavigationState,
         case .showParticipantActions(let participant):
             drawerVisibility = .participantActionsVisible
             selectedParticipant = participant
+        case .showParticipantOptions(let participant):
+            drawerVisibility = .participantOptionsVisible
+            selectedParticipant = participant
         case .showCaptionsListView:
             drawerVisibility = .captionsViewVisible
         case .showSpokenLanguageView:
@@ -97,7 +100,7 @@ extension Reducer where State == NavigationState,
                                supportShareSheetVisible: drawerVisibility.isSupportShareSheetVisible,
                                participantsVisible: drawerVisibility.isParticipantsVisible,
                                participantActionsVisible: drawerVisibility.isParticipantActionsVisible,
-                               selectedParticipant: selectedParticipant)
+                               participantOptionsVisible: drawerVisibility.isParticipantOptionsVisible, selectedParticipant: selectedParticipant)
     }
     enum DrawerVisibility {
         case hidden
@@ -111,6 +114,7 @@ extension Reducer where State == NavigationState,
         case captionsViewVisible
         case captionsLangaugeViewVisible
         case spokenLanguageViewVisible
+        case participantOptionsVisible
 
         var isSupportFormVisible: Bool { self == .supportFormVisible }
         var isSupportShareSheetVisible: Bool { self == .supportShareSheetVisible }
@@ -122,6 +126,7 @@ extension Reducer where State == NavigationState,
         var isCaptionsViewVisible: Bool { self == .captionsViewVisible }
         var isCaptionsLangauageViewVisible: Bool { self == .captionsLangaugeViewVisible }
         var isSpokenLanguageViewVisible: Bool { self == .spokenLanguageViewVisible}
+        var isParticipantOptionsVisible: Bool { self == .participantOptionsVisible}
     }
 
     static func getDrawerVisibility(state: NavigationState) -> DrawerVisibility {
@@ -134,6 +139,7 @@ extension Reducer where State == NavigationState,
         state.captionsViewVisible ? .captionsViewVisible :
         state.captionsLanguageViewVisible ? .captionsLangaugeViewVisible :
         state.spokenLanguageViewVisible ? .spokenLanguageViewVisible :
+        state.participantOptionsVisible ? .participantOptionsVisible :
         state.moreOptionsVisible ? .moreOptionsVisible : .hidden
     }
 

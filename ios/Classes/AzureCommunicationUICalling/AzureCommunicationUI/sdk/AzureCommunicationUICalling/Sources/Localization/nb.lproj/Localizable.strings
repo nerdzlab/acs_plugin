@@ -108,6 +108,11 @@
 "AzureCommunicationUICalling.CallingView.BannerTitle.RecordingStopped"="Opptaket blir lagret.";
 "AzureCommunicationUICalling.CallingView.BannerTitle.RecordingAndTranscribingStopped"="Opptak og transkripsjon lagres.";
 
+"AzureCommunicationUICalling.CallingView.Participants.Options.Pin"="Pin for me";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Unpin"="Unpin";
+"AzureCommunicationUICalling.CallingView.Participants.Options.ShowVideo"="Show video";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Don'tShowVideo"="Don't show video";
+
 /* ComplianceBanner body */
 "AzureCommunicationUICalling.CallingView.BannerBody.Consent"="Ved å bli med gir du samtykke til at dette møtet kan transkriberes.";
 "AzureCommunicationUICalling.CallingView.BannerBody.Recording"="Du tar nå bare opp dette møtet.";

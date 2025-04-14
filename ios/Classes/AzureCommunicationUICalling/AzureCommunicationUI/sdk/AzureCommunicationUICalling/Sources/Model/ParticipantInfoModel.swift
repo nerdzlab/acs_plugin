@@ -20,6 +20,8 @@ struct ParticipantInfoModel: Hashable, Equatable {
     let displayName: String
     let isSpeaking: Bool
     let isMuted: Bool
+    let isPinned: Bool
+    let isVideoOnForMe: Bool
 
     let isRemoteUser: Bool
     let userIdentifier: String

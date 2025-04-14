@@ -432,9 +432,36 @@ extension CompositeViewModelFactory {
                                   dispatchAction: dispatchAction,
                                   localizationProvider: localizationProvider,
                                   onUserClicked: { participant in
-            dispatchAction(Action.showParticipantActions(participant))
+            dispatchAction(Action.showParticipantOptions(participant))
         },
         avatarManager: avatarManager)
+    }
+    
+    func makeParticipantOptionsViewModel(
+        localUserState: LocalUserState,
+        isDisplayed: Bool,
+        dispatchAction: @escaping ActionDispatch
+    ) -> ParticipantOptionsViewModel {
+        ParticipantOptionsViewModel(
+            localUserState: localUserState,
+            localizationProvider: localizationProvider,
+            onPinUser: { participant in
+                dispatchAction(.remoteParticipantsAction(.pinParticipant(participantId: participant.userIdentifier)))
+                dispatchAction(.hideDrawer)
+            },
+            onUnpinUser: { participant in
+                dispatchAction(.remoteParticipantsAction(.unpinParticipant(participantId: participant.userIdentifier)))
+                dispatchAction(.hideDrawer)
+            },
+            onShowVieo: { participant in
+                dispatchAction(.remoteParticipantsAction(.showParticipantVideo(participantId: participant.userIdentifier)))
+                dispatchAction(.hideDrawer)
+            },
+            onHideVideo: { participant in
+                dispatchAction(.remoteParticipantsAction(.hideParticipantVideo(participantId: participant.userIdentifier)))
+                dispatchAction(.hideDrawer)
+            },
+            isDisplayed: isDisplayed)
     }
 
     func makeParticipantMenuViewModel(localUserState: LocalUserState,

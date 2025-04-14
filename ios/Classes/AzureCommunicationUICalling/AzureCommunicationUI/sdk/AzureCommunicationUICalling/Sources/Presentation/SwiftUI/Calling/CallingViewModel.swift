@@ -34,6 +34,7 @@ internal class CallingViewModel: ObservableObject {
     let leaveCallConfirmationViewModel: LeaveCallConfirmationViewModel
     let participantListViewModel: ParticipantsListViewModel
     let participantActionViewModel: ParticipantMenuViewModel
+    let participantOptionsViewModel: ParticipantOptionsViewModel
     var onHoldOverlayViewModel: OnHoldOverlayViewModel!
     let isRightToLeft: Bool
 
@@ -139,6 +140,12 @@ internal class CallingViewModel: ObservableObject {
                 localUserState: store.state.localUserState,
                 isDisplayed: store.state.navigationState.participantsVisible,
                 dispatchAction: store.dispatch)
+        
+        participantOptionsViewModel = compositeViewModelFactory
+            .makeParticipantOptionsViewModel(
+                localUserState: store.state.localUserState,
+                isDisplayed: store.state.navigationState.participantOptionsVisible,
+                dispatchAction: store.dispatch)
 
         participantActionViewModel = compositeViewModelFactory
             .makeParticipantMenuViewModel(
@@ -235,6 +242,8 @@ internal class CallingViewModel: ObservableObject {
         participantListViewModel.update(localUserState: state.localUserState,
                                         remoteParticipantsState: state.remoteParticipantsState,
                                         isDisplayed: state.navigationState.participantsVisible)
+        
+        participantOptionsViewModel.update(localUserState: state.localUserState, isDisplayed: state.navigationState.participantOptionsVisible, participantInfoModel: state.navigationState.selectedParticipant)
 
         participantActionViewModel.update(localUserState: state.localUserState,
                                           isDisplayed: state.navigationState.participantActionsVisible,

@@ -20,8 +20,11 @@ extension AzureCommunicationCalling.RemoteParticipant {
         return ParticipantInfoModel(displayName: displayName,
                                     isSpeaking: isSpeaking,
                                     isMuted: isMuted,
+                                    isPinned: false,
+                                    isVideoOnForMe: true,
                                     isRemoteUser: true,
                                     userIdentifier: identifier.rawId,
+                                    
                                     status: state.toCompositeParticipantStatus(),
                                     screenShareVideoStreamModel: screenShareVideoStreamModel,
                                     cameraVideoStreamModel: cameraVideoStreamModel)

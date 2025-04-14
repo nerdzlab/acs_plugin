@@ -103,6 +103,10 @@
 "AzureCommunicationUICalling.CallingView.Overlay.LeaveCall"="Leave";
 "AzureCommunicationUICalling.CallingView.Overlay.Cancel"="Cancel";
 "AzureCommunicationUICalling.CallingView.LeaveCallList.Header.LeaveCall"="Leave call?";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Pin"="Pin for me";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Unpin"="Unpin";
+"AzureCommunicationUICalling.CallingView.Participants.Options.ShowVideo"="Show video";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Don'tShowVideo"="Don't show video";
 
 "AzureCommunicationUICalling.CallingView.Button.More.AccessibilityLabel" = "More";
 "AzureCommunicationUICalling.CallingView.MoreCallOptionsList.ShareDiagnosticsInfo" = "Share diagnostics info";

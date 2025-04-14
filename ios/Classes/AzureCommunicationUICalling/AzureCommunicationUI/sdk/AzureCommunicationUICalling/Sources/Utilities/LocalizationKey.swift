@@ -148,6 +148,11 @@ enum LocalizationKey: String {
             "AzureCommunicationUICalling.CallingView.BannerTitle.RecordingStopped"
     case bannerTitleRecordingAndTranscribingStopped =
             "AzureCommunicationUICalling.CallingView.BannerTitle.RecordingAndTranscribingStopped"
+    
+    case participantOptionsPin = "AzureCommunicationUICalling.CallingView.Participants.Options.Pin"
+    case participantOptionsUnpin = "AzureCommunicationUICalling.CallingView.Participants.Options.Unpin"
+    case participantOptionsShowVideo = "AzureCommunicationUICalling.CallingView.Participants.Options.ShowVideo"
+    case participantOptionsHideVideo = "AzureCommunicationUICalling.CallingView.Participants.Options.Don'tShowVideo"
 
     /* ComplianceBanner body */
     case bannerBodyConsent = "AzureCommunicationUICalling.CallingView.BannerBody.Consent"

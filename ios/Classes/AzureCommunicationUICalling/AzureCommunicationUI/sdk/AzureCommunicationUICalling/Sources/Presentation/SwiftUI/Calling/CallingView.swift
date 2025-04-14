@@ -123,6 +123,12 @@ struct CallingView: View {
                     viewModel: viewModel.leaveCallConfirmationViewModel,
                     avatarManager: avatarManager)
             }
+            
+            BottomDrawer(isPresented: viewModel.participantOptionsViewModel.isDisplayed,
+                         hideDrawer: viewModel.dismissDrawer) {
+                ParticipantOptionsView(viewModel: viewModel.participantOptionsViewModel,
+                                     avatarManager: avatarManager)
+            }
         }
     }
 

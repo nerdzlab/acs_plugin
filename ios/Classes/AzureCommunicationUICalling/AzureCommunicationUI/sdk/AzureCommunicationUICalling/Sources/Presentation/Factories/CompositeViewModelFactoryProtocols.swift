@@ -88,6 +88,11 @@ protocol CompositeViewModelFactoryProtocol {
                                        isDisplayed: Bool,
                                        dispatchAction: @escaping ActionDispatch) -> ParticipantsListViewModel
     
+    func makeParticipantOptionsViewModel(localUserState: LocalUserState,
+                                         isDisplayed: Bool,
+                                         dispatchAction: @escaping ActionDispatch
+    ) -> ParticipantOptionsViewModel
+    
     func makeParticipantMenuViewModel(localUserState: LocalUserState,
                                       isDisplayed: Bool,
                                       dispatchAction: @escaping ActionDispatch) -> ParticipantMenuViewModel

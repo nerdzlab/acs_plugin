@@ -15,7 +15,7 @@ class ParticipantsListCellViewModel: BaseDrawerItemViewModel {
     let confirmTitle: String?
     let confirmAccept: String?
     let confirmDeny: String?
-    let accept: (() -> Void)?
+    var accept: (() -> Void)?
     let deny: (() -> Void)?
     private let displayName: String
 

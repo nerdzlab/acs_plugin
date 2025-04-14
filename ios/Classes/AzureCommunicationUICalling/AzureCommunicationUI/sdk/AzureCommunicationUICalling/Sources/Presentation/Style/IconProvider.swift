@@ -48,6 +48,7 @@ enum CompositeIcon: String {
     case noiseSuppresion = "noise_suppresion"
     case switchCameraFilled = "filled_switch_camera"
     case chatIcon = "chat_icon"
+    case pinIcon = "pin_icon"
 }
 
 struct IconProvider {

@@ -36,6 +36,7 @@ internal struct ParticipantsListView: View {
                 items: viewModel.meetingParticipants))
 
         return DrawerListView(sections: sections,
-                       avatarManager: avatarManager)
+                              withDivider: false,
+                              avatarManager: avatarManager)
     }
 }

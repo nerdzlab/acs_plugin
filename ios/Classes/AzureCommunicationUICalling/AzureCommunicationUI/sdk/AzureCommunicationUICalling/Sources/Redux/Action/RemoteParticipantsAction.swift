@@ -8,6 +8,11 @@ import Foundation
 enum RemoteParticipantsAction: Equatable {
     case dominantSpeakersUpdated(speakers: [String])
     case participantListUpdated(participants: [ParticipantInfoModel])
+    case pinParticipant(participantId: String)
+    case unpinParticipant(participantId: String)
+    //Only for local user
+    case showParticipantVideo(participantId: String)
+    case hideParticipantVideo(participantId: String)
     case admitAll
     case declineAll
     case admit(participantId: String)

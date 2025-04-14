@@ -109,6 +109,11 @@
 "AzureCommunicationUICalling.CallingView.MoreCallOptionsList.ShareDiagnosticsInfo" = "Diagnostische gegevens delen";
 "AzureCommunicationUICalling.CallingView.GridView.Calling"="Calling...";
 
+"AzureCommunicationUICalling.CallingView.Participants.Options.Pin"="Pin for me";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Unpin"="Unpin";
+"AzureCommunicationUICalling.CallingView.Participants.Options.ShowVideo"="Show video";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Don'tShowVideo"="Don't show video";
+
 
 /* ComplianceBanner title */
 "AzureCommunicationUICalling.CallingView.BannerTitle.RecordingAndTranscribingStarted"="Opname en transcriptie zijn gestart.";

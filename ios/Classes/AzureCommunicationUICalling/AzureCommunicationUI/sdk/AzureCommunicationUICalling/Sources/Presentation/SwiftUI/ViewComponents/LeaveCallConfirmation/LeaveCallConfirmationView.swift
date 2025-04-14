@@ -21,7 +21,7 @@ internal struct LeaveCallConfirmationView: View {
         let _ = Self._printChanges()
 #endif
         
-        DrawerListView(sections: [DrawerListSection(header: nil, items: viewModel.options)],
+        DrawerListView(sections: [DrawerListSection(header: nil, items: viewModel.options)], withDivider: false,
                        avatarManager: avatarManager)
     }
 }
