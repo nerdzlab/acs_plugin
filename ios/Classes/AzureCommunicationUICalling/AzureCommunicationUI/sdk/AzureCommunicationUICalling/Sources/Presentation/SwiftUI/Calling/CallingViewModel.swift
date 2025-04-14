@@ -95,9 +95,12 @@ internal class CallingViewModel: ObservableObject {
         supportFormViewModel = compositeViewModelFactory.makeSupportFormViewModel()
 
         localVideoViewModel = compositeViewModelFactory.makeLocalVideoViewModel(dispatchAction: actionDispatch)
+        
         participantGridsViewModel = compositeViewModelFactory.makeParticipantGridsViewModel(
             isIpadInterface: isIpadInterface,
-            rendererViewManager: rendererViewManager)
+            rendererViewManager: rendererViewManager
+        )
+        
         bannerViewModel = compositeViewModelFactory.makeBannerViewModel(dispatchAction: store.dispatch)
         lobbyOverlayViewModel = compositeViewModelFactory.makeLobbyOverlayViewModel()
         loadingOverlayViewModel = compositeViewModelFactory.makeLoadingOverlayViewModel()
@@ -243,7 +246,10 @@ internal class CallingViewModel: ObservableObject {
                                         remoteParticipantsState: state.remoteParticipantsState,
                                         isDisplayed: state.navigationState.participantsVisible)
         
-        participantOptionsViewModel.update(localUserState: state.localUserState, isDisplayed: state.navigationState.participantOptionsVisible, participantInfoModel: state.navigationState.selectedParticipant)
+        let selectedParticipent = state.remoteParticipantsState.participantInfoList.first(where: {$0.userIdentifier == state.navigationState.selectedParticipant?.userIdentifier})
+        
+        participantOptionsViewModel.update(localUserState: state.localUserState, isDisplayed: state.navigationState.participantOptionsVisible, participantInfoModel: selectedParticipent
+        )
 
         participantActionViewModel.update(localUserState: state.localUserState,
                                           isDisplayed: state.navigationState.participantActionsVisible,

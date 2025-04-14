@@ -27,18 +27,21 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
     @Published var participantIdentifier: String
     @Published var isPinned: Bool
     @Published var isVideoEnableForLocalUser: Bool
-
+    
     private var isScreenSharing = false
     private var participantName: String
     private var renderDisplayName: String?
     private var isCameraEnabled: Bool
     private var participantStatus: ParticipantStatus?
     private var callType: CompositeCallType
+    
+    let onUserClicked: () -> Void
 
     init(localizationProvider: LocalizationProviderProtocol,
          accessibilityProvider: AccessibilityProviderProtocol,
          participantModel: ParticipantInfoModel,
          isCameraEnabled: Bool,
+         onUserClicked: @escaping () -> Void,
          callType: CompositeCallType) {
         self.localizationProvider = localizationProvider
         self.accessibilityProvider = accessibilityProvider
@@ -62,6 +65,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
         self.isCameraEnabled = isCameraEnabled
         self.isVideoEnableForLocalUser = participantModel.isVideoOnForMe
         self.isPinned = participantModel.isPinned
+        self.onUserClicked = onUserClicked
         self.videoViewModel = getDisplayingVideoStreamModel(participantModel)
         self.accessibilityLabel = getAccessibilityLabel(participantModel: participantModel)
     }

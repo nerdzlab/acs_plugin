@@ -11,11 +11,14 @@ struct ParticipantGridCellVideoView: View {
     var videoRendererViewInfo: ParticipantRendererViewInfo!
     let rendererViewManager: RendererViewManager?
     let zoomable: Bool
+    let onUserClicked: () -> Void
+    
     @Binding var isSpeaking: Bool
     @Binding var displayName: String?
     @Binding var isMuted: Bool
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
     @State var show = true
+    
     var body: some View {
 #if DEBUG
         let _ = Self._printChanges()
@@ -42,6 +45,9 @@ struct ParticipantGridCellVideoView: View {
                 .padding(.leading, 8)
                 .padding(.bottom, screenSizeClass == .iphoneLandscapeScreenSize
                     && UIDevice.current.hasHomeBar ? 16 : 8)
+                .onTapGesture {
+                    onUserClicked()
+                }
 
         }.overlay(
             isSpeaking && !isMuted ? RoundedRectangle(cornerRadius: 12)

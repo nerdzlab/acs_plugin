@@ -411,11 +411,13 @@ extension CompositeViewModelFactory {
                                      accessibilityProvider: accessibilityProvider,
                                      participantModel: participantModel,
                                      isCameraEnabled: localOptions?.audioVideoMode != .audioOnly,
+                                     onUserClicked: { [weak self] in
+            self?.store.dispatch(action: Action.showParticipantOptions(participantModel))
+        },
                                      callType: callType)
     }
 
-    func makeParticipantGridsViewModel(isIpadInterface: Bool,
-                                       rendererViewManager: RendererViewManager) -> ParticipantGridViewModel {
+    func makeParticipantGridsViewModel(isIpadInterface: Bool, rendererViewManager: RendererViewManager) -> ParticipantGridViewModel {
         ParticipantGridViewModel(compositeViewModelFactory: self,
                                  localizationProvider: localizationProvider,
                                  accessibilityProvider: accessibilityProvider,
@@ -446,20 +448,20 @@ extension CompositeViewModelFactory {
             localUserState: localUserState,
             localizationProvider: localizationProvider,
             onPinUser: { participant in
-                dispatchAction(.remoteParticipantsAction(.pinParticipant(participantId: participant.userIdentifier)))
                 dispatchAction(.hideDrawer)
+                dispatchAction(.remoteParticipantsAction(.pinParticipant(participantId: participant.userIdentifier)))
             },
             onUnpinUser: { participant in
-                dispatchAction(.remoteParticipantsAction(.unpinParticipant(participantId: participant.userIdentifier)))
                 dispatchAction(.hideDrawer)
+                dispatchAction(.remoteParticipantsAction(.unpinParticipant(participantId: participant.userIdentifier)))
             },
             onShowVieo: { participant in
-                dispatchAction(.remoteParticipantsAction(.showParticipantVideo(participantId: participant.userIdentifier)))
                 dispatchAction(.hideDrawer)
+                dispatchAction(.remoteParticipantsAction(.showParticipantVideo(participantId: participant.userIdentifier)))
             },
             onHideVideo: { participant in
-                dispatchAction(.remoteParticipantsAction(.hideParticipantVideo(participantId: participant.userIdentifier)))
                 dispatchAction(.hideDrawer)
+                dispatchAction(.remoteParticipantsAction(.hideParticipantVideo(participantId: participant.userIdentifier)))
             },
             isDisplayed: isDisplayed)
     }

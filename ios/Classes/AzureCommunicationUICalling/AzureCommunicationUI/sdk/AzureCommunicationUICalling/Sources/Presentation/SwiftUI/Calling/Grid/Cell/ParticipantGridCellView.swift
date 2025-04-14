@@ -16,7 +16,7 @@ struct ParticipantGridCellView: View {
     @State var isVideoChanging = false
     let avatarSize: CGFloat = 56
     let initialsFontSize: CGFloat = 20
-
+    
     var body: some View {
 #if DEBUG
         let _ = Self._printChanges()
@@ -29,9 +29,12 @@ struct ParticipantGridCellView: View {
                     let zoomable = viewModel.videoViewModel?.videoStreamType == .screenSharing
                     ParticipantGridCellVideoView(videoRendererViewInfo: rendererViewInfo,
                                                  rendererViewManager: rendererViewManager,
-                                                 zoomable: zoomable,
+                                                 zoomable: zoomable, onUserClicked: {
+                        viewModel.onUserClicked()
+                    },
                                                  isSpeaking: $viewModel.isSpeaking,
                                                  displayName: $viewModel.displayName,
+                                                 
                                                  isMuted: $viewModel.isMuted)
                 } else {
                     avatarView
@@ -55,21 +58,21 @@ struct ParticipantGridCellView: View {
             guard $0 == viewModel.participantIdentifier else {
                 return
             }
-
+            
             updateParticipantViewData(for: viewModel.participantIdentifier)
         }
     }
-
+    
     func getRendererViewInfo(for videoStreamId: String) -> ParticipantRendererViewInfo? {
         if videoStreamId.isEmpty {
             return nil
         }
-       
+        
         let remoteParticipantVideoViewId = RemoteParticipantVideoViewId(userIdentifier: viewModel.participantIdentifier,
                                                                         videoStreamIdentifier: videoStreamId)
         return rendererViewManager?.getRemoteParticipantVideoRendererView(remoteParticipantVideoViewId)
     }
-
+    
     private func updateParticipantViewData(for identifier: String) {
         guard let participantViewData =
                 avatarViewManager.avatarStorage.value(forKey: identifier) else {
@@ -77,14 +80,14 @@ struct ParticipantGridCellView: View {
             viewModel.updateParticipantNameIfNeeded(with: nil)
             return
         }
-
+        
         if avatarImage !== participantViewData.avatarImage {
             avatarImage = participantViewData.avatarImage
         }
-
+        
         viewModel.updateParticipantNameIfNeeded(with: participantViewData.displayName)
     }
-
+    
     var avatarView: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottomLeading) {
@@ -103,7 +106,7 @@ struct ParticipantGridCellView: View {
                     Spacer()
                 }
                 .frame(width: geometry.size.width, height: geometry.size.height)
-
+                
                 // Title view in bottom-leading
                 VStack(alignment: .leading, spacing: 0) {
                     ParticipantTitleView(
@@ -115,7 +118,10 @@ struct ParticipantGridCellView: View {
                     )
                     .padding(.vertical, 2)
                     .opacity(viewModel.isHold ? 0.6 : 1)
-
+                    .onTapGesture {
+                        viewModel.onUserClicked()
+                    }
+                    
                     if viewModel.isHold {
                         Text(viewModel.getOnHoldString())
                             .font(Fonts.caption1.font)
@@ -128,8 +134,8 @@ struct ParticipantGridCellView: View {
             }
         }
     }
-
-
+    
+    
 }
 
 struct ParticipantTitleView: View {
@@ -142,10 +148,10 @@ struct ParticipantTitleView: View {
     private var isEmpty: Bool {
         return !isMuted && displayName?.trimmingCharacters(in: .whitespaces).isEmpty == true
     }
-
+    
     private enum Constants {
         static let hSpace: CGFloat = 4
-
+        
         // MARK: Font Minimum Scale Factor
         // Under accessibility mode, the largest size is 35
         // so the scale factor would be 9/35 or 0.2
@@ -155,7 +161,7 @@ struct ParticipantTitleView: View {
         // so min scale factor should be 9/12 or 0.75 as default.
         static let defaultFontScale: CGFloat = 0.75
     }
-
+    
     var body: some View {
 #if DEBUG
         let _ = Self._printChanges()

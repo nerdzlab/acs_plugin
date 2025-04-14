@@ -79,8 +79,7 @@ protocol CompositeViewModelFactoryProtocol {
                                          dispatchAction: @escaping ActionDispatch) -> LobbyWaitingHeaderViewModel
     func makeLobbyActionErrorViewModel(localUserState: LocalUserState,
                                        dispatchAction: @escaping ActionDispatch) -> LobbyErrorHeaderViewModel
-    func makeParticipantGridsViewModel(isIpadInterface: Bool,
-                                       rendererViewManager: RendererViewManager) -> ParticipantGridViewModel
+    func makeParticipantGridsViewModel(isIpadInterface: Bool, rendererViewManager: RendererViewManager) -> ParticipantGridViewModel
     
     func makeParticipantCellViewModel(participantModel: ParticipantInfoModel) -> ParticipantGridCellViewModel
     
