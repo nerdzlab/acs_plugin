@@ -21,6 +21,7 @@ class ParticipantGridViewModel: ObservableObject {
     private var visibilityStatus: VisibilityStatus = .visible
     private var appStatus: AppStatus = .foreground
     private(set) var participantsCellViewModelArr: [ParticipantGridCellViewModel] = []
+    private var remoteParticipantsState: RemoteParticipantsState?
 
     @Published var gridsCount: Int = 0
     @Published var displayedParticipantInfoModelArr: [ParticipantInfoModel] = []
@@ -31,6 +32,7 @@ class ParticipantGridViewModel: ObservableObject {
          localizationProvider: LocalizationProviderProtocol,
          accessibilityProvider: AccessibilityProviderProtocol,
          isIpadInterface: Bool,
+         remoteParticipantsState: RemoteParticipantsState,
          callType: CompositeCallType,
          rendererViewManager: RendererViewManager) {
         self.compositeViewModelFactory = compositeViewModelFactory
@@ -39,6 +41,7 @@ class ParticipantGridViewModel: ObservableObject {
         self.isIpadInterface = isIpadInterface
         self.callType = callType
         self.rendererViewManager = rendererViewManager
+        self.remoteParticipantsState = remoteParticipantsState
     }
 
     func update(callingState: CallingState,
@@ -49,7 +52,7 @@ class ParticipantGridViewModel: ObservableObject {
         guard lastUpdateTimeStamp != remoteParticipantsState.lastUpdateTimeStamp
                 || lastDominantSpeakersUpdatedTimestamp != remoteParticipantsState.dominantSpeakersModifiedTimestamp
                 || visibilityStatus != visibilityState.currentStatus
-                || appStatus != lifeCycleState.currentStatus
+                || appStatus != lifeCycleState.currentStatus || self.remoteParticipantsState?.pinnedParticipantId != remoteParticipantsState.pinnedParticipantId
         else {
             return
         }
@@ -69,7 +72,7 @@ class ParticipantGridViewModel: ObservableObject {
         let orderedInfoModelArr = sortDisplayedInfoModels(newDisplayedInfoModelArr,
                                                           removedModels: removedModels,
                                                           addedModels: addedModels)
-        updateCellViewModel(for: orderedInfoModelArr, lifeCycleState: lifeCycleState)
+        updateCellViewModel(for: orderedInfoModelArr + makeMockParticipants(count: 1) , lifeCycleState: lifeCycleState)
 
         displayedParticipantInfoModelArr = orderedInfoModelArr
         if callingState.status == .connected
@@ -193,18 +196,48 @@ class ParticipantGridViewModel: ObservableObject {
 
     private func updateCellViewModel(for displayedRemoteParticipants: [ParticipantInfoModel],
                                      lifeCycleState: LifeCycleState) {
+        
         if participantsCellViewModelArr.count == displayedRemoteParticipants.count {
             updateOrderedCellViewModels(for: displayedRemoteParticipants, lifeCycleState: lifeCycleState)
         } else {
             updateAndReorderCellViewModels(for: displayedRemoteParticipants, lifeCycleState: lifeCycleState)
         }
     }
+    
+    func makeMockParticipants(count: Int, pinIndex: Int? = nil) -> [ParticipantInfoModel] {
+        var participants: [ParticipantInfoModel] = []
+        
+        for index in 0..<count {
+            let isSpeaking = false
+            let isMuted = index % 2 == 0
+            let isPinned = pinIndex == index
+            let isVideoOnForMe = false
+            let userIdentifier = "user\(index + 1)"
+            
+            let participant = ParticipantInfoModel(
+                displayName: "User \(index + 1)",
+                isSpeaking: isSpeaking,
+                isMuted: isMuted,
+                isPinned: isPinned,
+                isVideoOnForMe: isVideoOnForMe,
+                isRemoteUser: true,
+                userIdentifier: userIdentifier,
+                status: .connected,
+                screenShareVideoStreamModel: nil,
+                cameraVideoStreamModel: nil
+            )
+            
+            participants.append(participant)
+        }
+        
+        return participants
+    }
 
     private func updateOrderedCellViewModels(for displayedRemoteParticipants: [ParticipantInfoModel],
                                              lifeCycleState: LifeCycleState) {
-        guard participantsCellViewModelArr.count == displayedRemoteParticipants.count else {
-            return
-        }
+//        guard participantsCellViewModelArr.count == displayedRemoteParticipants.count else {
+//            return
+//        }
         for (index, infoModel) in displayedRemoteParticipants.enumerated() {
             let cellViewModel = participantsCellViewModelArr[index]
             cellViewModel.update(participantModel: infoModel)

@@ -422,6 +422,7 @@ extension CompositeViewModelFactory {
                                  localizationProvider: localizationProvider,
                                  accessibilityProvider: accessibilityProvider,
                                  isIpadInterface: isIpadInterface,
+                                 remoteParticipantsState: store.state.remoteParticipantsState,
                                  callType: callType,
                                  rendererViewManager: rendererViewManager)
     }

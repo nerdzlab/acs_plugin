@@ -187,3 +187,34 @@ struct ParticipantTitleView: View {
         .animation(.default, value: true)
     }
 }
+
+struct MoreParticipantView: View {
+    let avatarSize: CGFloat = 56
+    let initialsFontSize: CGFloat = 20
+    var moreParticipantCount: Int
+    private let backgroundColor = Color(UIColor.compositeColor(.textSecondary))
+    private let textColor = Color.white
+    
+    private var text: String {
+        return "+\(moreParticipantCount)".uppercased()
+    }
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .bottomLeading) {
+                // Centered avatar in full area
+                VStack {
+                    Spacer()
+                    Text(text)
+                        .font(AppFont.CircularStd.medium.font(size: initialsFontSize))
+                        .foregroundColor(textColor)
+                        .frame(width: avatarSize, height: avatarSize)
+                        .background(backgroundColor)
+                        .clipShape(Circle())
+                    Spacer()
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+        }
+    }
+}

@@ -6,7 +6,7 @@
 import SwiftUI
 
 struct ParticipantGridView: View {
-    let viewModel: ParticipantGridViewModel
+    @ObservedObject var viewModel: ParticipantGridViewModel
     let avatarViewManager: AvatarViewManagerProtocol
     let screenSize: ScreenSizeClassType
     @State var gridsCount: Int = 0
@@ -16,7 +16,7 @@ struct ParticipantGridView: View {
 #endif
         
         return Group {
-            ParticipantGridLayoutView(cellViewModels: viewModel.participantsCellViewModelArr,
+            ParticipantGridLayoutView(viewModel: viewModel,
                                       rendererViewManager: viewModel.rendererViewManager,
                                       avatarViewManager: avatarViewManager,
                                       screenSize: screenSize)

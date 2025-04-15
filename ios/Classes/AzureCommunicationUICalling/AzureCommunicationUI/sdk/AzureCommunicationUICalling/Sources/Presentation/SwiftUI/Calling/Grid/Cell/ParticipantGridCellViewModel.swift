@@ -27,7 +27,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
     @Published var participantIdentifier: String
     @Published var isPinned: Bool
     @Published var isVideoEnableForLocalUser: Bool
-    
+        
     private var isScreenSharing = false
     private var participantName: String
     private var renderDisplayName: String?

@@ -17,6 +17,7 @@ enum CompositeColor: String {
     case filledFill = "filledFill"
     case filledBorder = "filledBorder"
     case errorColor = "errorColor"
+    case textSecondary = "textSecondary"
 }
 
 extension UIColor {

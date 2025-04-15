@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:acs_plugin/acs_plugin.dart';
+import 'package:safe_device/safe_device.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,18 +37,27 @@ class CallScreen extends StatefulWidget {
 class _CallScreenState extends State<CallScreen> {
   String _platformVersion = 'Unknown';
   final _acsPlugin = AcsPlugin();
+  bool isRealDevice = false;
 
   StreamSubscription? _eventsSubscription;
 
   // Configuration constants - move to a config file in a real app
-  static const String _acsToken =
-      "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDQ2MTQzNzUiLCJleHAiOjE3NDQ3MDA3NzUsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDQ2MTQzNzV9.jlY-dAFce8crlW-FBOSCA1_ENAP2ieBkXEBeH9UMm1HTCGqONazr-Um3b5wy4j0b5iGwzI9OMtcFV9AHX0lgwULKCfso2NsBLLxt5Nmmtw-41kpnAZjuXZQBhRc21mQKHySqXPhfZC4fFpDAfG-M6RdEsE9OoiRO_AVp6P8ZkbGRdu3SbMv2CYJaPFVif2iQcG0bEZs_mSfL4LIJAyztL3jCHOxwgcAUTY44BKXj8bp-1460EvnVmcKpY6TVNDjKIB0nodA8tQfV0zJlJZ0RsryAqLdqZdWBR3K6ghBSG96P5RiO7hbiRVnpsT1t2KLuxluhfkiP2Th_xoFDMFEE3w";
-  static const String _roomId = "99571647357114886";
+  String get _acsToken {
+    if (isRealDevice) {
+      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDQ2OTc2MzciLCJleHAiOjE3NDQ3ODQwMzcsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDQ2OTc2Mzd9.tgkpy2EkMgz0eurdgaMkslfu35QyR3Q3GOm2Di-7y2MaMt5-N9rZ-l4j7MQsGVtc1xnS8jfeWVz-MkBDlktoJpwAZ1BSCDXZT1yp5MlvAamY6JD0XO7qPLAU1wzc8dDDsKmCgnhFUANqeFivhA0UmYbGhvlEI0DkiIIuXOPCkDuYxTEfYEZ3vN3ltNr9IkGvkLWVP2sSdJuwNZV27YMmIHDK0G4znvwVMj2mgT3qGoq16LqDFHJi3C_Qa0AsG2qwcVfinr_0lsdSI88DFMYX1LWAl_O9vlhwyTvgMOJQOTAo0TkJmrirPtyR2pRd8ibnX2evTTCvDv3-yW4tX7h31g";
+    } else {
+      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi05MWFmLWU3YWEtM2Y4Mi1hZjNhMGQwMGIzZDIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDQ2OTc1ODIiLCJleHAiOjE3NDQ3ODM5ODIsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDQ2OTc1ODJ9.ad4mEs8J746cyr2Kkq6LiqBetv5W5FjYscAsNIWCL86gs0oqqOVYJsLnbT35Q9FUKay6t9nbYj2JXZ8R67CV3j1tdQgYj8YcNGMSbuHpoq7KBzqu7xhc4fQkbHOLGKGXCU2wxWf3cNrSi-puJssCHJdKqQlC31E91dXOKDY003Bhnqcv-GAM5k2sOabNsQkoygq4X1gxI4WZCPnityQtZLNwIFkQAZLAj36y_uF1pnmEFzNrNMA9K1GDDmygyoutmRAJU-kPP-A1Nmn0QJmChDuFgoM_08PFzyPoxaLxsHWI8FS7ry7BZoJG-BR2JdZHzhEFalQ0Bv5N3OsYO5u0ZA";
+    }
+  }
+
+  static const String _roomId = "99576955716639260";
 
   @override
   initState() {
     super.initState();
     _getPlatformVersion();
+
+    _setDeviceType();
 
     // Subscribe to event stream
     _eventsSubscription = _acsPlugin.eventStream.listen(
@@ -55,6 +65,10 @@ class _CallScreenState extends State<CallScreen> {
       onError: _handleError,
       cancelOnError: false,
     );
+  }
+
+  _setDeviceType() async {
+    isRealDevice = await SafeDevice.isRealDevice;
   }
 
 // Handle incoming events
