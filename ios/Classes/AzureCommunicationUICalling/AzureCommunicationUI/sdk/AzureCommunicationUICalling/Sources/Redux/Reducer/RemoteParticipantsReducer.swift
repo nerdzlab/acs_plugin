@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import SwiftUICore
 
 extension Reducer where State == RemoteParticipantsState,
                         Actions == Action {
@@ -37,7 +38,8 @@ extension Reducer where State == RemoteParticipantsState,
             }
             
             participantInfoList = updateDerivedParticipantFields(
-                list: newParticipants,
+                updatedList: newParticipants,
+                currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
                 listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
             )
@@ -62,7 +64,8 @@ extension Reducer where State == RemoteParticipantsState,
             lastUpdateTimeStamp = Date()
             
             participantInfoList = updateDerivedParticipantFields(
-                list: participantInfoList,
+                updatedList: participantInfoList,
+                currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
                 listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
             )
@@ -72,7 +75,8 @@ extension Reducer where State == RemoteParticipantsState,
             lastUpdateTimeStamp = Date()
             
             participantInfoList = updateDerivedParticipantFields(
-                list: participantInfoList,
+                updatedList: participantInfoList,
+                currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
                 listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
             )
@@ -82,7 +86,8 @@ extension Reducer where State == RemoteParticipantsState,
             lastUpdateTimeStamp = Date()
             
             participantInfoList = updateDerivedParticipantFields(
-                list: participantInfoList,
+                updatedList: participantInfoList,
+                currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
                 listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
             )
@@ -92,7 +97,8 @@ extension Reducer where State == RemoteParticipantsState,
             lastUpdateTimeStamp = Date()
             
             participantInfoList = updateDerivedParticipantFields(
-                list: participantInfoList,
+                updatedList: participantInfoList,
+                currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
                 listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
             )
@@ -112,14 +118,26 @@ extension Reducer where State == RemoteParticipantsState,
     }
 }
 
-private func updateDerivedParticipantFields(list: [ParticipantInfoModel], pinnedParticipantId: String?, listOfDisabledVideoParticipants: Set<String>) -> [ParticipantInfoModel] {
-    list.map { participant in
-        ParticipantInfoModel(
+private func updateDerivedParticipantFields(
+    updatedList: [ParticipantInfoModel],
+    currentList: [ParticipantInfoModel],
+    pinnedParticipantId: String?,
+    listOfDisabledVideoParticipants: Set<String>
+) -> [ParticipantInfoModel] {
+    updatedList.map { participant in
+        // Find existing participant in current list
+        let existingParticipant = currentList.first(where: { $0.userIdentifier == participant.userIdentifier })
+
+        // Use existing color or assign new random one
+        let avatarColor = existingParticipant?.avatarColor ?? Color(UIColor.avatarColors.randomElement() ?? UIColor.compositeColor(.purpleBlue))
+
+        return ParticipantInfoModel(
             displayName: participant.displayName,
             isSpeaking: participant.isSpeaking,
             isMuted: participant.isMuted,
             isPinned: participant.userIdentifier == pinnedParticipantId,
             isVideoOnForMe: !listOfDisabledVideoParticipants.contains(participant.userIdentifier),
+            avatarColor: avatarColor,
             isRemoteUser: participant.isRemoteUser,
             userIdentifier: participant.userIdentifier,
             status: participant.status,

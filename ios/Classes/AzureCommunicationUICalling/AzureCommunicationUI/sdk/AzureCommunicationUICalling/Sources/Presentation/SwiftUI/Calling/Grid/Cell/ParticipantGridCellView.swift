@@ -97,6 +97,7 @@ struct ParticipantGridCellView: View {
                     CompositeAvatar(
                         displayName: $viewModel.avatarDisplayName,
                         avatarImage: $avatarImage,
+                        backgroundColor: viewModel.avatarColor,
                         isSpeaking: viewModel.isSpeaking && !viewModel.isMuted,
                         avatarSize: avatarSize,
                         fontSize: initialsFontSize

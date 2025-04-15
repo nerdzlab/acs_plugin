@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum ParticipantStatus: Int {
     case idle
@@ -22,6 +23,7 @@ struct ParticipantInfoModel: Hashable, Equatable {
     let isMuted: Bool
     let isPinned: Bool
     let isVideoOnForMe: Bool
+    let avatarColor: Color
 
     let isRemoteUser: Bool
     let userIdentifier: String

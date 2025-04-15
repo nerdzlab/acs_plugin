@@ -5,11 +5,11 @@ import SwiftUI
 struct CompositeAvatar: View {
     @Binding var displayName: String?
     @Binding var avatarImage: UIImage?
+    var backgroundColor: Color
     var isSpeaking: Bool
 
     var avatarSize: CGFloat = 80
     var fontSize: CGFloat
-    private let backgroundColor = Color(UIColor.compositeColor(.purpleBlue))
     private let textColor = Color.white
     private let ringColor = Color(UIColor.compositeColor(.purpleBlue))
 

@@ -5,6 +5,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 struct ParticipantVideoViewInfoModel {
     let videoStreamType: VideoStreamInfoModel.MediaStreamType?
@@ -27,7 +28,9 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
     @Published var participantIdentifier: String
     @Published var isPinned: Bool
     @Published var isVideoEnableForLocalUser: Bool
-        
+    
+    @State var avatarColor: Color
+    
     private var isScreenSharing = false
     private var participantName: String
     private var renderDisplayName: String?
@@ -66,6 +69,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
         self.isVideoEnableForLocalUser = participantModel.isVideoOnForMe
         self.isPinned = participantModel.isPinned
         self.onUserClicked = onUserClicked
+        self.avatarColor = participantModel.avatarColor
         self.videoViewModel = getDisplayingVideoStreamModel(participantModel)
         self.accessibilityLabel = getAccessibilityLabel(participantModel: participantModel)
     }
@@ -127,6 +131,10 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
         
         if self.isPinned != participantModel.isPinned {
             self.isPinned = participantModel.isPinned
+        }
+        
+        if self.avatarColor != participantModel.avatarColor {
+            self.avatarColor = participantModel.avatarColor
         }
     }
 

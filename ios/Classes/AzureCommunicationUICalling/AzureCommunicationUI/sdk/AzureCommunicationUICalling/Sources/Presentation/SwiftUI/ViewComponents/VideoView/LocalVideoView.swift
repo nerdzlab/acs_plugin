@@ -116,6 +116,7 @@ struct LocalVideoView: View {
                                 avatarImage: Binding.constant(
                                     avatarManager.localParticipantViewData?.avatarImage
                                 ),
+                                backgroundColor: Color(UIColor.compositeColor(.purpleBlue)),
                                 isSpeaking: false,
                                 avatarSize: viewType.avatarSize,
                                 fontSize: viewType.initialFontSize

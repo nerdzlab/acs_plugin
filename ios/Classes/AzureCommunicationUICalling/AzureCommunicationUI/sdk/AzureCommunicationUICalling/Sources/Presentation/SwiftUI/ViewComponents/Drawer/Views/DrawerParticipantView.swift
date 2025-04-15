@@ -30,6 +30,7 @@ internal struct DrawerParticipantView: View {
                     avatarManager.localParticipantViewData?.avatarImage :
                         avatarManager.avatarStorage.value(forKey: item.participantId ?? "")?.avatarImage
                 ),
+                backgroundColor: item.avatarColor,
                 isSpeaking: false,
                 avatarSize: 40,
                 fontSize: 12

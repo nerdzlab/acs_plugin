@@ -5,6 +5,7 @@
 
 import AzureCommunicationCalling
 import Foundation
+import SwiftUI
 
 extension AzureCommunicationCalling.RemoteParticipant {
     func toParticipantInfoModel() -> ParticipantInfoModel {
@@ -22,6 +23,7 @@ extension AzureCommunicationCalling.RemoteParticipant {
                                     isMuted: isMuted,
                                     isPinned: false,
                                     isVideoOnForMe: true,
+                                    avatarColor: Color(UIColor.avatarColors.randomElement() ?? UIColor.compositeColor(.purpleBlue)),
                                     isRemoteUser: true,
                                     userIdentifier: identifier.rawId,
                                     

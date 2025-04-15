@@ -10,6 +10,7 @@ struct CaptionsInfoCellView: View {
     var caption: CallCompositeCaptionsData
     @State private var avatarImage: UIImage?
     @State private var displayName: String?
+    
     @State private var isRTL = false
 
     init(caption: CallCompositeCaptionsData, avatarViewManager: AvatarViewManagerProtocol) {
@@ -56,6 +57,7 @@ struct CaptionsInfoCellView: View {
     private var avatarView: some View {
         CompositeAvatar(displayName: $displayName,
                         avatarImage: $avatarImage,
+                        backgroundColor: Color(UIColor.compositeColor(.purpleBlue)),
                         isSpeaking: false,
                         avatarSize: 24,
                         fontSize: 10

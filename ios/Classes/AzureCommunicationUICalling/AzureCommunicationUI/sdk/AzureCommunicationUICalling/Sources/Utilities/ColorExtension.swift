@@ -18,6 +18,9 @@ enum CompositeColor: String {
     case filledBorder = "filledBorder"
     case errorColor = "errorColor"
     case textSecondary = "textSecondary"
+    case violet = "violet"
+    case orange = "orange"
+    case blue = "blue"
 }
 
 extension UIColor {
@@ -34,4 +37,6 @@ extension UIColor {
             preconditionFailure("invalid asset color")
         }
     }
+    
+    static let avatarColors: [UIColor] = [compositeColor(.orange), compositeColor(.blue), compositeColor(.violet), compositeColor(.purpleBlue)]
 }

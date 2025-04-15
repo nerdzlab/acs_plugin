@@ -100,7 +100,7 @@ class ParticipantsListViewModel: ObservableObject {
                 participants: localParticipantVM + remoteParticipantVMs,
                 avatarManager: avatarManager)
             
-            meetingParticipantsTitle = BodyTextDrawerListItemViewModel(
+            meetingParticipantsTitle = TitleDrawerListItemViewModel(
                 title: String(format: getInTheCall(), meetingParticipants.count),
                 accessibilityIdentifier: "??")
             

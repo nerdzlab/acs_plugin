@@ -5,6 +5,7 @@
 
 import Foundation
 import Combine
+import SwiftUICore
 
 class ParticipantGridViewModel: ObservableObject {
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
@@ -220,6 +221,7 @@ class ParticipantGridViewModel: ObservableObject {
                 isMuted: isMuted,
                 isPinned: isPinned,
                 isVideoOnForMe: isVideoOnForMe,
+                avatarColor: Color(UIColor.avatarColors.randomElement()!),
                 isRemoteUser: true,
                 userIdentifier: userIdentifier,
                 status: .connected,
