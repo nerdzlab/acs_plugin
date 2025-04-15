@@ -1,11 +1,12 @@
 //
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  Licensed under the MIT License.
+//  DebugInfoSharingActivityViewModel 2.swift
+//  Pods
+//
+//  Created by Yriy Malyts on 15.04.2025.
 //
 
-import Foundation
 
-class DebugInfoSharingActivityViewModel: InfoSharingAccessible {
+class ShareMeetingInfoActivityViewModel: InfoSharingAccessible {
     let accessibilityProvider: AccessibilityProviderProtocol
     let debugInfoManager: DebugInfoManagerProtocol
     let dismissDrawer: () -> Void
@@ -19,9 +20,6 @@ class DebugInfoSharingActivityViewModel: InfoSharingAccessible {
     }
 
     func getShareInfo() -> String {
-        let debugInfo = debugInfoManager.getDebugInfo()
-        let callId = debugInfo.callHistoryRecords.last?.callIds.last ??
-            StringConstants.defaultCallIdDebugInfoValue
-        return "\(StringConstants.callIdDebugInfoTitle) \"\(callId)\""
+        return "www.google.com"
     }
 }

@@ -50,6 +50,7 @@ enum CompositeIcon: String {
     case chatIcon = "chat_icon"
     case pinIcon = "pin_icon"
     case unpinIcon = "unpin_icon"
+    case shareIcon = "share_icon"
 }
 
 struct IconProvider {

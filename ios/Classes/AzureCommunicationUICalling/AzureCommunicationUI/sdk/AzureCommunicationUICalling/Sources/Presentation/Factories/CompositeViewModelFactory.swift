@@ -429,6 +429,7 @@ extension CompositeViewModelFactory {
 
     func makeParticipantsListViewModel(localUserState: LocalUserState,
                                        isDisplayed: Bool,
+                                       showSharingViewAction: @escaping () -> Void,
                                        dispatchAction: @escaping ActionDispatch) -> ParticipantsListViewModel {
         ParticipantsListViewModel(compositeViewModelFactory: self,
                                   localUserState: localUserState,
@@ -437,6 +438,7 @@ extension CompositeViewModelFactory {
                                   onUserClicked: { participant in
             dispatchAction(Action.showParticipantOptions(participant))
         },
+                                  onShowShareSheetMeetingLink: showSharingViewAction,
         avatarManager: avatarManager)
     }
     
@@ -556,6 +558,13 @@ extension CompositeViewModelFactory {
 
     func makeDebugInfoSharingActivityViewModel() -> DebugInfoSharingActivityViewModel {
         DebugInfoSharingActivityViewModel(accessibilityProvider: accessibilityProvider,
+                                          debugInfoManager: debugInfoManager) {
+            self.store.dispatch(action: .hideDrawer)
+        }
+    }
+    
+    func makeShareMeetingInfoActivityViewModel() -> ShareMeetingInfoActivityViewModel {
+        ShareMeetingInfoActivityViewModel(accessibilityProvider: accessibilityProvider,
                                           debugInfoManager: debugInfoManager) {
             self.store.dispatch(action: .hideDrawer)
         }

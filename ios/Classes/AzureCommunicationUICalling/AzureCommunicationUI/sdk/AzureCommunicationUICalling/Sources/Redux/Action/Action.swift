@@ -29,6 +29,7 @@ enum Action: Equatable {
     case showAudioSelection
     case showMoreOptions
     case showSupportShare
+    case showShareSheetMeetingLink
     case showParticipants
     case showParticipantActions(ParticipantInfoModel)
     case showParticipantOptions(ParticipantInfoModel)

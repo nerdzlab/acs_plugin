@@ -81,6 +81,7 @@
 
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.WaitingInLobby"="Waiting in lobby (%d)";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.InTheCall"="Participants (%d)";
+"AzureCommunicationUICalling.CallingView.ParticipantDrawer.Share"="Share meeting link";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.AdmitAll"="Admit all";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.Confirm.Title.AdmitAll"="Admit all participants?";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.Confirm.Title.AdmitParticipant"="Admit %@?";

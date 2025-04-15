@@ -11,6 +11,7 @@ class ParticipantsListViewModel: ObservableObject {
     @Published var lobbyParticipants: [BaseDrawerItemViewModel] = []
     @Published var meetingParticipantsTitle: BaseDrawerItemViewModel?
     @Published var lobbyParticipantsTitle: BaseDrawerItemViewModel?
+    @Published var shareMeetingLink: BaseDrawerItemViewModel?
     
     private var lastParticipantRole: ParticipantRoleEnum?
     private let dispatch: ActionDispatch
@@ -18,6 +19,7 @@ class ParticipantsListViewModel: ObservableObject {
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
     
     private let onUserClicked: (ParticipantInfoModel) -> Void
+    private let onShowShareSheetMeetingLink: () -> Void
     private let avatarManager: AvatarViewManagerProtocol
     
     var isDisplayed: Bool
@@ -29,6 +31,7 @@ class ParticipantsListViewModel: ObservableObject {
          dispatchAction: @escaping ActionDispatch,
          localizationProvider: LocalizationProviderProtocol,
          onUserClicked: @escaping (ParticipantInfoModel) -> Void,
+         onShowShareSheetMeetingLink: @escaping () -> Void,
          avatarManager: AvatarViewManagerProtocol
     ) {
         self.compositeViewModelFactory = compositeViewModelFactory
@@ -38,6 +41,7 @@ class ParticipantsListViewModel: ObservableObject {
         self.isDisplayed = false
         self.onUserClicked = onUserClicked
         self.avatarManager = avatarManager
+        self.onShowShareSheetMeetingLink = onShowShareSheetMeetingLink
     }
     
     func update(localUserState: LocalUserState,
@@ -97,7 +101,7 @@ class ParticipantsListViewModel: ObservableObject {
                 }
             
             meetingParticipants = sortParticipants(
-                participants: localParticipantVM + remoteParticipantVMs,
+                participants: localParticipantVM + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs,
                 avatarManager: avatarManager)
             
             meetingParticipantsTitle = TitleDrawerListItemViewModel(
@@ -118,6 +122,13 @@ class ParticipantsListViewModel: ObservableObject {
                 accept: { self.admitAll() },
                 deny: { self.declineAll() }
             )
+            
+            shareMeetingLink = DrawerListItemViewModel(title:  localizationProvider.getLocalizedString(.shareMeetingLinkTitle),
+                                                       icon: .shareIcon,
+                                                       action: { [weak self] in
+                self?.onShowShareSheetMeetingLink()
+            },
+                                                    isEnabled: true)
             
             // Append + More item
             let plusMoreCount =

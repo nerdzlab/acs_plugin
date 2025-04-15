@@ -91,6 +91,7 @@ extension Reducer where State == CallingState,
                 .toastNotificationAction,
                 .callScreenInfoHeaderAction,
                 .setTotalParticipantCount,
+                .showShareSheetMeetingLink,
                 .buttonViewDataAction:
             return callingState
         }

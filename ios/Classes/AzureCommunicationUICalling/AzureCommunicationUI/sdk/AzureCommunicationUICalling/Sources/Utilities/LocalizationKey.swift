@@ -100,6 +100,8 @@ enum LocalizationKey: String {
     case participantListLobbyAction = "AzureCommunicationUICalling.CallingView.ParticipantDrawer.LobbyAction"
     case participantListWaitingInLobby = "AzureCommunicationUICalling.CallingView.ParticipantDrawer.WaitingInLobby"
     case participantListInTheCall = "AzureCommunicationUICalling.CallingView.ParticipantDrawer.InTheCall"
+    case shareMeetingLinkTitle = "AzureCommunicationUICalling.CallingView.ParticipantDrawer.Share"
+
     case participantListAdmitAll = "AzureCommunicationUICalling.CallingView.ParticipantDrawer.AdmitAll"
     case participantListConfirmTitleAdmitAll =
             "AzureCommunicationUICalling.CallingView.ParticipantDrawer.Confirm.Title.AdmitAll"

@@ -13,6 +13,7 @@ internal class CallingViewModel: ObservableObject {
     @Published var isInPip = false
     @Published var allowLocalCameraPreview = false
     @Published var captionsStarted = false
+    @Published var isShareMeetingLinkDisplayed = false
 
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
     private let store: Store<AppState, Action>
@@ -36,6 +37,7 @@ internal class CallingViewModel: ObservableObject {
     let participantActionViewModel: ParticipantMenuViewModel
     let participantOptionsViewModel: ParticipantOptionsViewModel
     var onHoldOverlayViewModel: OnHoldOverlayViewModel!
+    var shareMeetingLinkViewModel: ShareMeetingInfoActivityViewModel!
     let isRightToLeft: Bool
 
     var controlBarViewModel: ControlBarViewModel!
@@ -77,6 +79,7 @@ internal class CallingViewModel: ObservableObject {
         self.callType = callType
         self.captionsOptions = captionsOptions
         self.callScreenOptions = callScreenOptions
+        self.shareMeetingLinkViewModel = compositeViewModelFactory.makeShareMeetingInfoActivityViewModel()
 
         let actionDispatch: ActionDispatch = store.dispatch
 
@@ -142,6 +145,9 @@ internal class CallingViewModel: ObservableObject {
             .makeParticipantsListViewModel(
                 localUserState: store.state.localUserState,
                 isDisplayed: store.state.navigationState.participantsVisible,
+                showSharingViewAction: {
+                    store.dispatch(action: .showShareSheetMeetingLink)
+                },
                 dispatchAction: store.dispatch)
         
         participantOptionsViewModel = compositeViewModelFactory
@@ -242,6 +248,8 @@ internal class CallingViewModel: ObservableObject {
         guard state.visibilityState.currentStatus != .hidden else {
             return
         }
+        isShareMeetingLinkDisplayed = state.navigationState.shareMeetingLinkVisible
+        
         participantListViewModel.update(localUserState: state.localUserState,
                                         remoteParticipantsState: state.remoteParticipantsState,
                                         isDisplayed: state.navigationState.participantsVisible)

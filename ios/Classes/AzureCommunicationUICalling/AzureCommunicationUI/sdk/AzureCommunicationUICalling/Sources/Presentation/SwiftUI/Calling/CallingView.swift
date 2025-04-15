@@ -40,6 +40,7 @@ struct CallingView: View {
     @Environment(\.verticalSizeClass) var heightSizeClass: UserInterfaceSizeClass?
 
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
+    @State var debugInfoSourceView = UIView()
 
     var safeAreaIgnoreArea: Edge.Set {
         return getSizeClass() != .iphoneLandscapeScreenSize ? [] : [/* .bottom */]
@@ -211,6 +212,11 @@ struct CallingView: View {
                     .accessibilityElement(children: .contain)
                     .accessibilityHidden(!viewModel.onHoldOverlayViewModel.isDisplayed)
             })
+            .modifier(PopupModalView(isPresented: viewModel.isShareMeetingLinkDisplayed) {
+                shareActivityView
+                    .accessibilityElement(children: .contain)
+                    .accessibilityAddTraits(.isModal)
+            })
             .accessibilityElement(children: .contain)
         }
     }
@@ -271,6 +277,17 @@ struct CallingView: View {
             }
             .padding(.top, Constants.topAlertAreaViewTopPadding)
             .accessibilityElement(children: .contain)
+        }
+    }
+    
+    var shareActivityView: some View {
+        return Group {
+            SharingActivityView(viewModel: viewModel.shareMeetingLinkViewModel,
+                                applicationActivities: nil,
+                                sourceView: debugInfoSourceView,
+                                isPresented: $viewModel.isShareMeetingLinkDisplayed)
+            .edgesIgnoringSafeArea(.all)
+            .modifier(LockPhoneOrientation())
         }
     }
 

@@ -22,7 +22,7 @@ struct RemoteParticipantsState {
          dominantSpeakers: [String] = [],
          dominantSpeakersModifiedTimestamp: Date = Date(),
          lobbyError: LobbyError? = nil,
-         totalParticipantCount: Int = 0,
+         totalParticipantCount: Int,
          pinnedParticipantId: String? = nil,
          listOfDisabledVideoParticipants: Set<String> = []
     ) {

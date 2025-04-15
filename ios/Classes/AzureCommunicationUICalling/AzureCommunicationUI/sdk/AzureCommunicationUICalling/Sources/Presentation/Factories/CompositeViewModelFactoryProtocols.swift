@@ -85,6 +85,7 @@ protocol CompositeViewModelFactoryProtocol {
     
     func makeParticipantsListViewModel(localUserState: LocalUserState,
                                        isDisplayed: Bool,
+                                       showSharingViewAction: @escaping () -> Void,
                                        dispatchAction: @escaping ActionDispatch) -> ParticipantsListViewModel
     
     func makeParticipantOptionsViewModel(localUserState: LocalUserState,
@@ -113,6 +114,8 @@ protocol CompositeViewModelFactoryProtocol {
                                    showCaptionsLanguage: @escaping () -> Void,
                                    isDisplayed: Bool) -> CaptionsListViewModel
     func makeDebugInfoSharingActivityViewModel() -> DebugInfoSharingActivityViewModel
+    
+    func makeShareMeetingInfoActivityViewModel() -> ShareMeetingInfoActivityViewModel
     
     func makeToggleListItemViewModel(title: String,
                                      isToggleOn: Binding<Bool>,
