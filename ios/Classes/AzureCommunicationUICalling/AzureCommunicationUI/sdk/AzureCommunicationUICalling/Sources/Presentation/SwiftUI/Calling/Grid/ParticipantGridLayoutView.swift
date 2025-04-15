@@ -229,6 +229,7 @@ struct ParticipantGridLayoutView: View {
     // MARK: - Layouts
     
     var vGridLayout: some View {
+        
         if let pinned = pinnedParticipant {
             let maxVisible = 2
             let visibleCount = min(unpinnedParticipants.count, maxVisible)
@@ -250,6 +251,7 @@ struct ParticipantGridLayoutView: View {
                         rendererViewManager: rendererViewManager,
                         avatarViewManager: avatarViewManager
                     )
+                    .id(pinned.id)
                     .frame(height: UIScreen.main.bounds.height * 0.60)
                     .background(Color(UIColor.compositeColor(.lightPurple)))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -336,6 +338,7 @@ struct ParticipantGridLayoutView: View {
                     .background(Color(UIColor.compositeColor(.lightPurple)))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .accessibilityElement(children: .contain)
+                    .id(cellsViewModel[index].id)
                 }
             }
         }

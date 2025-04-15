@@ -36,6 +36,8 @@ struct ParticipantGridCellView: View {
                                                  displayName: $viewModel.displayName,
                                                  
                                                  isMuted: $viewModel.isMuted)
+                    .id(videoStreamId)
+                    
                 } else {
                     avatarView
                         .frame(width: geometry.size.width,

@@ -101,7 +101,7 @@ class ParticipantsListViewModel: ObservableObject {
                 }
             
             meetingParticipants = sortParticipants(
-                participants: localParticipantVM + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs + remoteParticipantVMs,
+                participants: localParticipantVM + remoteParticipantVMs,
                 avatarManager: avatarManager)
             
             meetingParticipantsTitle = TitleDrawerListItemViewModel(

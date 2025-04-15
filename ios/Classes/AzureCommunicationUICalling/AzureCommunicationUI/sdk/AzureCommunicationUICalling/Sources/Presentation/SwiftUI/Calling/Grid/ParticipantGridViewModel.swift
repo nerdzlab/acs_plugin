@@ -16,7 +16,7 @@ class ParticipantGridViewModel: ObservableObject {
     private var maximumParticipantsDisplayed: Int {
         return  self.visibilityStatus == .pipModeEntered ? 1 : isIpadInterface ? 9 : 6
     }
-
+    
     private var lastUpdateTimeStamp = Date()
     private var lastDominantSpeakersUpdatedTimestamp = Date()
     private var visibilityStatus: VisibilityStatus = .visible
@@ -57,6 +57,7 @@ class ParticipantGridViewModel: ObservableObject {
         else {
             return
         }
+                
         lastUpdateTimeStamp = remoteParticipantsState.lastUpdateTimeStamp
         lastDominantSpeakersUpdatedTimestamp = remoteParticipantsState.dominantSpeakersModifiedTimestamp
         visibilityStatus = visibilityState.currentStatus
@@ -73,7 +74,7 @@ class ParticipantGridViewModel: ObservableObject {
         let orderedInfoModelArr = sortDisplayedInfoModels(newDisplayedInfoModelArr,
                                                           removedModels: removedModels,
                                                           addedModels: addedModels)
-        updateCellViewModel(for: orderedInfoModelArr + makeMockParticipants(count: 1) , lifeCycleState: lifeCycleState)
+        updateCellViewModel(for: orderedInfoModelArr , lifeCycleState: lifeCycleState)
 
         displayedParticipantInfoModelArr = orderedInfoModelArr
         if callingState.status == .connected
@@ -210,8 +211,8 @@ class ParticipantGridViewModel: ObservableObject {
         
         for index in 0..<count {
             let isSpeaking = false
-            let isMuted = index % 2 == 0
-            let isPinned = pinIndex == index
+            let isMuted = false
+            let isPinned = false
             let isVideoOnForMe = false
             let userIdentifier = "user\(index + 1)"
             
@@ -237,6 +238,7 @@ class ParticipantGridViewModel: ObservableObject {
 
     private func updateOrderedCellViewModels(for displayedRemoteParticipants: [ParticipantInfoModel],
                                              lifeCycleState: LifeCycleState) {
+        //MTODO
 //        guard participantsCellViewModelArr.count == displayedRemoteParticipants.count else {
 //            return
 //        }
