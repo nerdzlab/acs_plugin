@@ -19,7 +19,8 @@ struct ParticipantGridView: View {
             ParticipantGridLayoutView(viewModel: viewModel,
                                       rendererViewManager: viewModel.rendererViewManager,
                                       avatarViewManager: avatarViewManager,
-                                      screenSize: screenSize)
+                                      screenSize: screenSize,
+                                      previousSpeaker: viewModel.previousSpeaker)
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
             .id(gridsCount)
             .onReceive(viewModel.$gridsCount) {

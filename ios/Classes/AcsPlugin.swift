@@ -113,8 +113,12 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         let localOptions = LocalOptions(cameraOn: true, microphoneOn: true, callScreenOptions: callScreenOptions)
         
         GlobalCompositeManager.callComposite = callComposite
+
         
-        callComposite.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
+                callComposite.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
+//        callComposite.launch(locator: .teamsMeeting(teamsLink: "https://teams.live.com/meet/933457426728?p=lVHQKf4g7JBBpW0zcH"), localOptions: localOptions)
+        
+        
     }
     
     private func leaveRoomCall(result: @escaping FlutterResult) {

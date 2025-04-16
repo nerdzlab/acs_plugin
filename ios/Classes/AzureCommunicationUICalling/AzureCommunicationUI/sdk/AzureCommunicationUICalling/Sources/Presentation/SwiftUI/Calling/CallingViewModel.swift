@@ -318,7 +318,10 @@ internal class CallingViewModel: ObservableObject {
                                          callingState: state.callingState)
         participantGridsViewModel.update(callingState: state.callingState,
                                          remoteParticipantsState: state.remoteParticipantsState,
-                                         visibilityState: state.visibilityState, lifeCycleState: state.lifeCycleState)
+                                         
+                                         visibilityState: state.visibilityState,
+                                         localUserState: state.localUserState,
+                                         lifeCycleState: state.lifeCycleState)
         bannerViewModel.update(callingState: state.callingState,
                                visibilityState: state.visibilityState)
         lobbyOverlayViewModel.update(callingStatus: state.callingState.status)

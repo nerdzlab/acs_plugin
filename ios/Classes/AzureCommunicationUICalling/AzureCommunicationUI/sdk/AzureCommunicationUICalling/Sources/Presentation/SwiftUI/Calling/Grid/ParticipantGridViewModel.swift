@@ -23,9 +23,12 @@ class ParticipantGridViewModel: ObservableObject {
     private var appStatus: AppStatus = .foreground
     private(set) var participantsCellViewModelArr: [ParticipantGridCellViewModel] = []
     private var remoteParticipantsState: RemoteParticipantsState?
+    
+    var previousSpeaker: ParticipantGridCellViewModel?
 
     @Published var gridsCount: Int = 0
     @Published var displayedParticipantInfoModelArr: [ParticipantInfoModel] = []
+    @Published var meetingLayoutState: LocalUserState.MeetingLayoutState = LocalUserState.MeetingLayoutState.init(operation: .grid)
 
     let rendererViewManager: RendererViewManager
 
@@ -48,12 +51,13 @@ class ParticipantGridViewModel: ObservableObject {
     func update(callingState: CallingState,
                 remoteParticipantsState: RemoteParticipantsState,
                 visibilityState: VisibilityState,
+                localUserState: LocalUserState,
                 lifeCycleState: LifeCycleState) {
 
         guard lastUpdateTimeStamp != remoteParticipantsState.lastUpdateTimeStamp
                 || lastDominantSpeakersUpdatedTimestamp != remoteParticipantsState.dominantSpeakersModifiedTimestamp
                 || visibilityStatus != visibilityState.currentStatus
-                || appStatus != lifeCycleState.currentStatus || self.remoteParticipantsState?.pinnedParticipantId != remoteParticipantsState.pinnedParticipantId
+                || appStatus != lifeCycleState.currentStatus || self.remoteParticipantsState?.pinnedParticipantId != remoteParticipantsState.pinnedParticipantId || meetingLayoutState.operation != localUserState.meetingLayoutState.operation
         else {
             return
         }
@@ -74,7 +78,10 @@ class ParticipantGridViewModel: ObservableObject {
         let orderedInfoModelArr = sortDisplayedInfoModels(newDisplayedInfoModelArr,
                                                           removedModels: removedModels,
                                                           addedModels: addedModels)
-        updateCellViewModel(for: orderedInfoModelArr , lifeCycleState: lifeCycleState)
+        //MTODO
+//      vbvfv
+        
+        updateCellViewModel(for:orderedInfoModelArr , lifeCycleState: lifeCycleState)
 
         displayedParticipantInfoModelArr = orderedInfoModelArr
         if callingState.status == .connected
@@ -90,6 +97,30 @@ class ParticipantGridViewModel: ObservableObject {
 
         if gridsCount != displayedParticipantInfoModelArr.count {
             gridsCount = displayedParticipantInfoModelArr.count
+        }
+        
+        // Try to find the current active speaker (the one who is speaking).
+        let activeSpeaker = participantsCellViewModelArr.first(where: { $0.isSpeaking })
+
+        // Check if the current speaker is the same as the previous speaker by comparing their identifiers.
+        // If the previous speaker is not found, it means the active speaker has changed, and we may need to reset it.
+        let isPreviousSpeaker = remoteParticipantsState.participantInfoList.first(where: { $0.userIdentifier == previousSpeaker?.participantIdentifier })
+
+        // If the previous speaker is not found in the list, reset the previous speaker.
+        if isPreviousSpeaker == nil {
+            previousSpeaker = nil
+        }
+
+        // If there is a new active speaker, update the previous speaker to the current active speaker.
+        if let activeSpeaker = activeSpeaker {
+            previousSpeaker = activeSpeaker
+        }
+        
+        // If the meeting layout state has changed (i.e., the operation differs from the current state),
+        // reset the previous speaker and update the meeting layout state accordingly.
+        if meetingLayoutState.operation != localUserState.meetingLayoutState.operation {
+            previousSpeaker = nil  // Reset the previous speaker since the layout has changed.
+            self.meetingLayoutState = localUserState.meetingLayoutState  // Update the layout state to the new state.
         }
     }
 

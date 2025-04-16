@@ -12,7 +12,7 @@ struct ParticipantVideoViewInfoModel {
     let videoStreamId: String?
 }
 
-class ParticipantGridCellViewModel: ObservableObject, Identifiable {
+class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     private let localizationProvider: LocalizationProviderProtocol
     private let accessibilityProvider: AccessibilityProviderProtocol
 
@@ -209,4 +209,8 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
             localizationProvider.getLocalizedString(.participantResumeAccessibilityLabel, participantModel.displayName)
         accessibilityProvider.postQueuedAnnouncement(holdResumeAccessibilityAnnouncement)
     }
+    
+    static func ==(lhs: ParticipantGridCellViewModel, rhs: ParticipantGridCellViewModel) -> Bool {
+        return lhs.participantIdentifier == rhs.participantIdentifier // or use participantIdentifier if it's more suitable
+        }
 }
