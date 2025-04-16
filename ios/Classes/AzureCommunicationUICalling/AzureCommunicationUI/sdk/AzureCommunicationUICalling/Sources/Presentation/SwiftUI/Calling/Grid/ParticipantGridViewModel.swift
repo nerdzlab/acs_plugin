@@ -98,7 +98,7 @@ class ParticipantGridViewModel: ObservableObject {
            let videoCacheIds: [RemoteParticipantVideoViewId] = displayedRemoteInfoModelArr.compactMap {
                let screenShareVideoStreamIdentifier = $0.screenShareVideoStreamModel?.videoStreamIdentifier
                let cameraVideoStreamIdentifier = $0.cameraVideoStreamModel?.videoStreamIdentifier
-               guard let videoStreamIdentifier = screenShareVideoStreamIdentifier ?? cameraVideoStreamIdentifier, $0.isVideoOnForMe else {
+               guard let videoStreamIdentifier = screenShareVideoStreamIdentifier ?? cameraVideoStreamIdentifier else {
                    return nil
                }
                return RemoteParticipantVideoViewId(userIdentifier: $0.userIdentifier,

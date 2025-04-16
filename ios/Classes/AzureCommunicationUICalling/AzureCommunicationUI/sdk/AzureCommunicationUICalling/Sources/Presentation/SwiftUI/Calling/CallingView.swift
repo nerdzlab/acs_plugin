@@ -130,6 +130,10 @@ struct CallingView: View {
                 ParticipantOptionsView(viewModel: viewModel.participantOptionsViewModel,
                                      avatarManager: avatarManager)
             }
+            BottomDrawer(isPresented: viewModel.layoutOptionsViewModel.isDisplayed,
+                         hideDrawer: viewModel.dismissDrawer) {
+                LayoutOptionsView(viewModel: viewModel.layoutOptionsViewModel, avatarManager: avatarManager)
+            }
         }
     }
 

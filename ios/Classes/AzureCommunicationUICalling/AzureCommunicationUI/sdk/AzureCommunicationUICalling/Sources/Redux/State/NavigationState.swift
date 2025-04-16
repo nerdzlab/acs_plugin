@@ -26,6 +26,7 @@ struct NavigationState: Equatable {
     let participantActionsVisible: Bool
     let participantOptionsVisible: Bool
     let shareMeetingLinkVisible: Bool
+    let layoutOptionsVisible: Bool
     
     // When showing Participant Menu, this provides
     // context on who we are shoing it for
@@ -43,6 +44,7 @@ struct NavigationState: Equatable {
          participantActionsVisible: Bool = false,
          participantOptionsVisible: Bool = false,
          shareMeetingLinkVisible: Bool = false,
+         layoutOptionsVisible: Bool = false,
          selectedParticipant: ParticipantInfoModel? = nil
     ) {
         self.status = status
@@ -58,6 +60,7 @@ struct NavigationState: Equatable {
         self.participantActionsVisible = participantActionsVisible
         self.selectedParticipant = selectedParticipant
         self.participantOptionsVisible = participantOptionsVisible
+        self.layoutOptionsVisible = layoutOptionsVisible
         self.shareMeetingLinkVisible = shareMeetingLinkVisible
     }
     
@@ -75,6 +78,7 @@ struct NavigationState: Equatable {
         && lhs.participantActionsVisible == rhs.participantActionsVisible
         && lhs.selectedParticipant == rhs.selectedParticipant
         && lhs.participantOptionsVisible == rhs.participantOptionsVisible
+        && lhs.layoutOptionsVisible == rhs.layoutOptionsVisible
         && lhs.shareMeetingLinkVisible == rhs.shareMeetingLinkVisible
     }
 }

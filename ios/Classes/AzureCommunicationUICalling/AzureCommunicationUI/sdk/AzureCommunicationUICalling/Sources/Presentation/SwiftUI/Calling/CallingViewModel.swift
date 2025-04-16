@@ -36,6 +36,7 @@ internal class CallingViewModel: ObservableObject {
     let participantListViewModel: ParticipantsListViewModel
     let participantActionViewModel: ParticipantMenuViewModel
     let participantOptionsViewModel: ParticipantOptionsViewModel
+    let layoutOptionsViewModel: LayoutOptionsViewModel
     var onHoldOverlayViewModel: OnHoldOverlayViewModel!
     var shareMeetingLinkViewModel: ShareMeetingInfoActivityViewModel!
     let isRightToLeft: Bool
@@ -146,7 +147,9 @@ internal class CallingViewModel: ObservableObject {
                 localUserState: store.state.localUserState,
                 isDisplayed: store.state.navigationState.participantsVisible,
                 showSharingViewAction: {
-                    store.dispatch(action: .showShareSheetMeetingLink)
+                    //MTODO
+                    store.dispatch(action: .showLayoutOptions)
+//                    store.dispatch(action: .showShareSheetMeetingLink)
                 },
                 dispatchAction: store.dispatch)
         
@@ -155,6 +158,16 @@ internal class CallingViewModel: ObservableObject {
                 localUserState: store.state.localUserState,
                 isDisplayed: store.state.navigationState.participantOptionsVisible,
                 dispatchAction: store.dispatch)
+        
+        layoutOptionsViewModel = compositeViewModelFactory
+            .makeLayoutOptionsViewModel(
+                localUserState: store.state.localUserState,
+                isDisplayed: store.state.navigationState.layoutOptionsVisible, onGridSelect: {
+                    store.dispatch(action: .localUserAction(.gridLayoutSelected))
+                }, onSpeakerSelect: {
+                    store.dispatch(action: .localUserAction(.speakerLayoutSelected))
+                })
+        
 
         participantActionViewModel = compositeViewModelFactory
             .makeParticipantMenuViewModel(
@@ -257,6 +270,11 @@ internal class CallingViewModel: ObservableObject {
         let selectedParticipent = state.remoteParticipantsState.participantInfoList.first(where: {$0.userIdentifier == state.navigationState.selectedParticipant?.userIdentifier})
         
         participantOptionsViewModel.update(localUserState: state.localUserState, isDisplayed: state.navigationState.participantOptionsVisible, participantInfoModel: selectedParticipent
+        )
+        
+        layoutOptionsViewModel.update(
+            localUserState: state.localUserState,
+            isDisplayed: state.navigationState.layoutOptionsVisible
         )
 
         participantActionViewModel.update(localUserState: state.localUserState,

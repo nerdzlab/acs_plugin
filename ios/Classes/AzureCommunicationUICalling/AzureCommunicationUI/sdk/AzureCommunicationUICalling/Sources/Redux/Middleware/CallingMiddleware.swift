@@ -119,6 +119,8 @@ private func handleLocalUserAction(_ action: LocalUserAction,
             .audioDeviceChangeSucceeded,
             .audioDeviceChangeFailed,
             .changeDisplayNameRequested,
+            .gridLayoutSelected,
+            .speakerLayoutSelected,
             .participantRoleChanged:
         break
     }

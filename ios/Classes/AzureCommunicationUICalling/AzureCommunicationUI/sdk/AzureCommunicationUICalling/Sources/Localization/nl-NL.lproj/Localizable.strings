@@ -12,9 +12,13 @@
 "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.Bluetooth"="Bluetooth";
 "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.MuteIncomingAudio"= "Turn off the audio";
 "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.AccessibilityLabel"= "%@ selected";
-"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.ChooseAudioHeader"= "Choose audio";
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.ChooseAudioHeader"= "Audio settings";
 "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.SelectNoiseSuppression"= "Noise suppression";
 
+//Layout options
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.Title"= "Meeting view";
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.GridOption"= "Gallery view";
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.SpeakerOption"= "Speaker view";
 
 /* SetupView */
 "AzureCommunicationUICalling.SetupView.Title"="Configuratie";

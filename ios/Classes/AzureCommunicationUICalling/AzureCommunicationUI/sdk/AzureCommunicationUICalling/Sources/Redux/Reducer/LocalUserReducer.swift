@@ -28,6 +28,7 @@ extension Reducer where State == LocalUserState,
         
         var noiseSuppressionStatus = localUserState.noiseSuppressionState.operation
         var incomingAudioStatus = localUserState.incomingAudioState.operation
+        var meetingLayoutStatus = localUserState.meetingLayoutState.operation
         
         switch action {
         case .cameraPreviewOnTriggered:
@@ -97,6 +98,10 @@ extension Reducer where State == LocalUserState,
             incomingAudioStatus = .muted
         case .changeDisplayNameRequested(displayName: let name):
             updatedDisplayName = name
+        case .gridLayoutSelected:
+            meetingLayoutStatus = .grid
+        case .speakerLayoutSelected:
+            meetingLayoutStatus = .speaker
         }
 
         let cameraState = LocalUserState.CameraState(operation: cameraStatus,
@@ -111,6 +116,8 @@ extension Reducer where State == LocalUserState,
         
         let incomingAudioState = LocalUserState.IncomingAudioState(operation: incomingAudioStatus)
         
+        let meetingLayoutState = LocalUserState.MeetingLayoutState(operation: meetingLayoutStatus)
+        
         return LocalUserState(cameraState: cameraState,
                               audioState: audioState,
                               initialDisplayName: initialDisplayName,
@@ -119,7 +126,8 @@ extension Reducer where State == LocalUserState,
                               participantRole: participantRole,
                               capabilities: capabilities,
                               currentCapabilitiesAreDefault: currentCapabilitiesAreDefault,
-                              noiseSuppressionState: noiseSuppressionState, incomingAudioState: incomingAudioState
+                              noiseSuppressionState: noiseSuppressionState, incomingAudioState: incomingAudioState,
+                              meetingLayoutState: meetingLayoutState
         )
     }
 }

@@ -39,6 +39,8 @@ extension Reducer where State == NavigationState,
             drawerVisibility = .supportShareSheetVisible
         case .showShareSheetMeetingLink:
             drawerVisibility = .shareMeetingLinkVisible
+        case .showLayoutOptions:
+            drawerVisibility = .layoutOptionsVisible
         case .showParticipants:
             drawerVisibility = .participantsVisible
         case .showParticipantActions(let participant):
@@ -56,6 +58,10 @@ extension Reducer where State == NavigationState,
         case .localUserAction(.audioDeviceChangeRequested):
             drawerVisibility = .hidden
         case .localUserAction(.muteIncomingAudioOnPreviewRequested):
+            drawerVisibility = .hidden
+        case .localUserAction(.gridLayoutSelected):
+            drawerVisibility = .hidden
+        case .localUserAction(.speakerLayoutSelected):
             drawerVisibility = .hidden
         case .captionsAction(.setSpokenLanguageRequested(language: let language)),
                 .captionsAction(.setCaptionLanguageRequested(language: let language)):
@@ -102,7 +108,7 @@ extension Reducer where State == NavigationState,
                                supportShareSheetVisible: drawerVisibility.isSupportShareSheetVisible,
                                participantsVisible: drawerVisibility.isParticipantsVisible,
                                participantActionsVisible: drawerVisibility.isParticipantActionsVisible,
-                               participantOptionsVisible: drawerVisibility.isParticipantOptionsVisible, shareMeetingLinkVisible: drawerVisibility.isShareSheetMeetingLinkVisible, selectedParticipant: selectedParticipant
+                               participantOptionsVisible: drawerVisibility.isParticipantOptionsVisible, shareMeetingLinkVisible: drawerVisibility.isShareSheetMeetingLinkVisible, layoutOptionsVisible: drawerVisibility.isLayoutOptionsVisible, selectedParticipant: selectedParticipant
         )
     }
     enum DrawerVisibility {
@@ -119,6 +125,7 @@ extension Reducer where State == NavigationState,
         case spokenLanguageViewVisible
         case participantOptionsVisible
         case shareMeetingLinkVisible
+        case layoutOptionsVisible
 
         var isSupportFormVisible: Bool { self == .supportFormVisible }
         var isSupportShareSheetVisible: Bool { self == .supportShareSheetVisible }
@@ -132,6 +139,7 @@ extension Reducer where State == NavigationState,
         var isSpokenLanguageViewVisible: Bool { self == .spokenLanguageViewVisible}
         var isParticipantOptionsVisible: Bool { self == .participantOptionsVisible}
         var isShareSheetMeetingLinkVisible: Bool { self == .shareMeetingLinkVisible }
+        var isLayoutOptionsVisible: Bool { self == .layoutOptionsVisible }
     }
 
     static func getDrawerVisibility(state: NavigationState) -> DrawerVisibility {
@@ -146,6 +154,7 @@ extension Reducer where State == NavigationState,
         state.spokenLanguageViewVisible ? .spokenLanguageViewVisible :
         state.participantOptionsVisible ? .participantOptionsVisible :
         state.shareMeetingLinkVisible ? .shareMeetingLinkVisible :
+        state.layoutOptionsVisible ? .layoutOptionsVisible :
         state.moreOptionsVisible ? .moreOptionsVisible : .hidden
     }
 

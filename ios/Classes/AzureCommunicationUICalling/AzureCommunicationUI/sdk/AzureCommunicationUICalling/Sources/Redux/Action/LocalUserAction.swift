@@ -40,6 +40,9 @@ enum LocalUserAction: Equatable {
     
     case muteIncomingAudioOnPreviewRequested
     
+    case gridLayoutSelected
+    case speakerLayoutSelected
+    
     case changeDisplayNameRequested(displayName: String?)
 
     case audioDeviceChangeRequested(device: AudioDeviceType)
@@ -73,6 +76,8 @@ enum LocalUserAction: Equatable {
             (.microphonePreviewOn, .microphonePreviewOn),
             (.noiseSuppressionPreviewOn, .noiseSuppressionPreviewOn),
             (.noiseSuppressionPreviewOff, .noiseSuppressionPreviewOff),
+            (.gridLayoutSelected, .gridLayoutSelected),
+            (.speakerLayoutSelected, .speakerLayoutSelected),
             (.muteIncomingAudioOnPreviewRequested, .muteIncomingAudioOnPreviewRequested),
             (.microphonePreviewOff, .microphonePreviewOff):
             return true

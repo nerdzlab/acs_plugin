@@ -250,6 +250,19 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                   localUserState: localUserState,
                                   localizationProvider: localizationProvider)
     }
+    
+    func makeLayoutOptionsViewModel(
+        localUserState: LocalUserState,
+        isDisplayed: Bool,
+        onGridSelect: @escaping () -> Void,
+        onSpeakerSelect: @escaping () -> Void
+    ) -> LayoutOptionsViewModel {
+        LayoutOptionsViewModel(localUserState: localUserState,
+                               localizationProvider: localizationProvider,
+                               onGridSelected: onGridSelect,
+                               onSpeakerSelected: onSpeakerSelect,
+                               isDisplayed: isDisplayed)
+    }
 
     func makeCaptionsLanguageListViewModel(dispatchAction: @escaping ActionDispatch,
                                            state: AppState

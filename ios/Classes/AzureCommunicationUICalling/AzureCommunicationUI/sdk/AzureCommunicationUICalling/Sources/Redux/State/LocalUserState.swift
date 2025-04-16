@@ -94,6 +94,22 @@ struct LocalUserState {
         }
     }
     
+    enum MeetingLayoutType: Equatable {
+        case grid
+        case speaker
+
+        static func == (lhs: LocalUserState.MeetingLayoutType,
+                        rhs: LocalUserState.MeetingLayoutType) -> Bool {
+            switch (lhs, rhs) {
+            case (.grid, .grid),
+                (.speaker, .speaker):
+                return true
+            default:
+                return false
+            }
+        }
+    }
+    
     enum IncomingAudioOperationalStatus: Equatable {
         case muted
         case unmuted
@@ -165,6 +181,10 @@ struct LocalUserState {
         var error: Error?
     }
     
+    struct MeetingLayoutState {
+        let operation: MeetingLayoutType
+    }
+    
     struct IncomingAudioState {
         let operation: IncomingAudioOperationalStatus
         var error: Error?
@@ -174,6 +194,7 @@ struct LocalUserState {
     let audioState: AudioState
     let incomingAudioState: IncomingAudioState
     let noiseSuppressionState: NoiseSuppressionState
+    let meetingLayoutState: MeetingLayoutState
     let initialDisplayName: String?
     let updatedDisplayName: String?
     let userId: String?
@@ -195,7 +216,8 @@ struct LocalUserState {
          capabilities: Set<ParticipantCapabilityType> = [.unmuteMicrophone, .turnVideoOn],
          currentCapabilitiesAreDefault: Bool = true,
          noiseSuppressionState: NoiseSuppressionState = NoiseSuppressionState(operation: .off, error: nil),
-         incomingAudioState: IncomingAudioState = IncomingAudioState(operation: .unmuted, error: nil)
+         incomingAudioState: IncomingAudioState = IncomingAudioState(operation: .unmuted, error: nil),
+         meetingLayoutState: MeetingLayoutState = MeetingLayoutState(operation: .grid)
     ) {
         self.cameraState = cameraState
         self.noiseSuppressionState = noiseSuppressionState
@@ -208,5 +230,6 @@ struct LocalUserState {
         self.capabilities = capabilities
         self.currentCapabilitiesAreDefault = currentCapabilitiesAreDefault
         self.incomingAudioState = incomingAudioState
+        self.meetingLayoutState = meetingLayoutState
     }
 }

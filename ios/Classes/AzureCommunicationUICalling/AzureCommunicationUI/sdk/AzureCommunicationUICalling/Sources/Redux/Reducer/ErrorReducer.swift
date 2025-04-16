@@ -74,6 +74,7 @@ extension Reducer where State == ErrorState,
                 .callScreenInfoHeaderAction,
                 .setTotalParticipantCount,
                 .showShareSheetMeetingLink,
+                .showLayoutOptions,
                 .buttonViewDataAction:
             return state
         }

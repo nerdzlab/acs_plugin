@@ -97,6 +97,13 @@ protocol CompositeViewModelFactoryProtocol {
                                       isDisplayed: Bool,
                                       dispatchAction: @escaping ActionDispatch) -> ParticipantMenuViewModel
     
+    func makeLayoutOptionsViewModel(
+        localUserState: LocalUserState,
+        isDisplayed: Bool,
+        onGridSelect: @escaping () -> Void,
+        onSpeakerSelect: @escaping () -> Void
+    ) -> LayoutOptionsViewModel
+    
     func makeBannerViewModel(dispatchAction: @escaping ActionDispatch) -> BannerViewModel
     func makeBannerTextViewModel() -> BannerTextViewModel
     func makeMoreCallOptionsListViewModel(
