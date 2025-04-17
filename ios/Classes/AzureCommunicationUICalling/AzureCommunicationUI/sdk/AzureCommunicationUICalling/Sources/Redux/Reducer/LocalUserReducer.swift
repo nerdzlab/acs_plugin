@@ -30,6 +30,9 @@ extension Reducer where State == LocalUserState,
         var incomingAudioStatus = localUserState.incomingAudioState.operation
         var meetingLayoutStatus = localUserState.meetingLayoutState.operation
         
+        var raiseHandStatus = localUserState.raiseHandState.operation
+        var shareScreenStatus = localUserState.shareScreenState.operation
+        
         switch action {
         case .cameraPreviewOnTriggered:
             cameraTransmissionStatus = .local
@@ -118,6 +121,9 @@ extension Reducer where State == LocalUserState,
         
         let meetingLayoutState = LocalUserState.MeetingLayoutState(operation: meetingLayoutStatus)
         
+        let raiseHandState = LocalUserState.RaiseHandState(operation: raiseHandStatus)
+        let shareScreenState = LocalUserState.ShareScreenState(operation: shareScreenStatus)
+        
         return LocalUserState(cameraState: cameraState,
                               audioState: audioState,
                               initialDisplayName: initialDisplayName,
@@ -127,7 +133,9 @@ extension Reducer where State == LocalUserState,
                               capabilities: capabilities,
                               currentCapabilitiesAreDefault: currentCapabilitiesAreDefault,
                               noiseSuppressionState: noiseSuppressionState, incomingAudioState: incomingAudioState,
-                              meetingLayoutState: meetingLayoutState
+                              meetingLayoutState: meetingLayoutState,
+                              raiseHandState: raiseHandState,
+                              shareScreenState: shareScreenState
         )
     }
 }

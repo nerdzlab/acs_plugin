@@ -183,13 +183,13 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
     func makeIconWithLabelButtonViewModel<T: ButtonState>(
         selectedButtonState: T,
         localizationProvider: LocalizationProviderProtocol,
-        buttonTypeColor: IconWithLabelButtonViewModel<T>.ButtonTypeColor,
+        buttonColor: Color,
         isDisabled: Bool,
         action: @escaping (() -> Void)) -> IconWithLabelButtonViewModel<T> {
             IconWithLabelButtonViewModel(
                 selectedButtonState: selectedButtonState,
                 localizationProvider: localizationProvider,
-                buttonTypeColor: buttonTypeColor,
+                buttonColor: buttonColor,
                 isDisabled: isDisabled,
                 action: action)
     }

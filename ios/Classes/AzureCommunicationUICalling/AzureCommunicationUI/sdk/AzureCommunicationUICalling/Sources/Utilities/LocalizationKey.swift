@@ -209,6 +209,16 @@ enum LocalizationKey: String {
             "AzureCommunicationUICalling.Diagnostics.Button.Dismiss.AccessibilityLabel"
     case callDiagnosticsDismissAccessibilityHint =
             "AzureCommunicationUICalling.Diagnostics.Button.Dismiss.AccessibilityHint"
+    
+    /*Meeting options*/
+    case chatTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.Chat"
+    case participantsTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.Participants"
+    case effectsTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.Effects"
+    case raiseHandTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.RaiseHand"
+    case lowerHandTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.LowerHand"
+    case changeViewTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.ChangeView"
+    case shareScreenTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.ShareScreen"
+    case stopShareScreenTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.StopShareScreen"
 
     /* Support Form */
     case supportFormReportIssueTitle = "AzureCommunicationUICalling.ReportIssue.Title"

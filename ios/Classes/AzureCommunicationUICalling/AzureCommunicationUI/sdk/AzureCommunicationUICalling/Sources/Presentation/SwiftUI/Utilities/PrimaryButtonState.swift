@@ -17,8 +17,6 @@ protocol PrimaryButtonState: Equatable {
     var iconName: CompositeIcon { get }
 }
 
-
-
 enum CameraButtonState: PrimaryButtonState {
     case videoOn
     case videoOff
@@ -33,6 +31,66 @@ enum CameraButtonState: PrimaryButtonState {
     }
 }
 
+enum RaiseHandButtonState: ButtonState {
+    case raiseHand
+    case lowerHand
+    
+    var iconName: CompositeIcon {
+        switch self {
+        case .raiseHand:
+            return .handUp
+        case .lowerHand:
+            return .handDown
+        }
+    }
+    
+    var localizationKey: LocalizationKey {
+        switch self {
+        case .raiseHand:
+            return .raiseHandTitle
+        case .lowerHand:
+            return .lowerHandTitle
+        }
+    }
+}
+
+enum LayoutOptionsButtonState: ButtonState {
+    case gridLayout
+    case speakerLayout
+    
+    var iconName: CompositeIcon {
+        switch self {
+        case .gridLayout:
+            return .gridIcon
+        case .speakerLayout:
+            return .speakerIcon
+        }
+    }
+    
+    var localizationKey: LocalizationKey {
+        return .changeViewTitle
+    }
+}
+
+enum ShareScreenButtonState: ButtonState {
+    case shareOn
+    case shareOff
+    
+    var iconName: CompositeIcon {
+        return .shareIcon
+    }
+    
+    var localizationKey: LocalizationKey {
+        switch self {
+        case .shareOn:
+            return .shareScreenTitle
+        case .shareOff:
+            return .stopShareScreenTitle
+        }
+    }
+}
+
+
 enum MicButtonState: PrimaryButtonState {
     case micOn
     case micOff
@@ -46,6 +104,43 @@ enum MicButtonState: PrimaryButtonState {
         }
     }
 }
+
+enum ChatButtonState: ButtonState {
+    case `default`
+    
+    var iconName: CompositeIcon {
+        return .chatIcon
+    }
+    
+    var localizationKey: LocalizationKey {
+        return .chatTitle
+    }
+}
+
+enum ParticipantsButtonState: ButtonState {
+    case `default`
+    
+    var iconName: CompositeIcon {
+        return .showParticipant
+    }
+    
+    var localizationKey: LocalizationKey {
+        return .participantsTitle
+    }
+}
+
+enum EffectsButtonState: ButtonState {
+    case `default`
+    
+    var iconName: CompositeIcon {
+        return .backgroundEffectOn
+    }
+    
+    var localizationKey: LocalizationKey {
+        return .effectsTitle
+    }
+}
+
 
 enum BackgroundEffectButtonState: PrimaryButtonState {
     case on

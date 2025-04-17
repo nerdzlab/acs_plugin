@@ -53,6 +53,8 @@ enum CompositeIcon: String {
     case shareIcon = "share_icon"
     case speakerIcon = "speaker_icon"
     case gridIcon = "grid_icon"
+    case handUp = "hand_up"
+    case handDown = "hand_down"
 }
 
 struct IconProvider {

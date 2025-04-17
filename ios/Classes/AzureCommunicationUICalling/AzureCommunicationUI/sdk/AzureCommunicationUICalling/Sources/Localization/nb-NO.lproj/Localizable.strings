@@ -20,6 +20,16 @@
 "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.GridOption"= "Gallery view";
 "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.SpeakerOption"= "Speaker view";
 
+/*Meeting options*/
+"AzureCommunicationUICalling.CallingView.MeetingOptions.Chat"="Chat";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.Participants"="Participants";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.Effects"="Effects";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.RaiseHand"="Raise hand";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.LowerHand"="Lower hand";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.ChangeView"="Change view";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.ShareScreen"="Share screen";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.StopShareScreen"="Stop sharing";
+
 /* SetupView */
 "AzureCommunicationUICalling.SetupView.Title"="Oppsett";
 "AzureCommunicationUICalling.SetupView.SubTitle"="Check your video and audio.";

@@ -17,15 +17,6 @@ struct IconWithLabelButton<T: ButtonState>: View {
     let height: CGFloat = 85
     let buttonDisabledColor = Color(StyleProvider.color.disableColor)
 
-    var buttonForegroundColor: Color {
-        switch viewModel.buttonTypeColor {
-        case .colorThemedWhite:
-            return Color(StyleProvider.color.onSurfaceColor)
-        case .white:
-            return Color(.white)
-        }
-    }
-
     var body: some View {
 #if DEBUG
         let _ = Self._printChanges()
@@ -47,7 +38,7 @@ struct IconWithLabelButton<T: ButtonState>: View {
             }
         }
         .disabled(viewModel.isDisabled)
-        .foregroundColor(viewModel.isDisabled ? buttonDisabledColor : buttonForegroundColor)
+        .foregroundColor(viewModel.isDisabled ? buttonDisabledColor : viewModel.buttonColor)
         .frame(width: width, height: height, alignment: .top)
         .accessibilityLabel(Text(viewModel.accessibilityLabel ?? ""))
         .accessibilityValue(Text(viewModel.accessibilityValue ?? ""))

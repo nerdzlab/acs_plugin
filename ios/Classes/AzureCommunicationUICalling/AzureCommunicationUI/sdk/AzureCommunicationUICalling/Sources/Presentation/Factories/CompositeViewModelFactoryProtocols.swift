@@ -32,7 +32,7 @@ protocol CompositeViewModelFactoryProtocol {
     func makeIconWithLabelButtonViewModel<ButtonStateType>(
         selectedButtonState: ButtonStateType,
         localizationProvider: LocalizationProviderProtocol,
-        buttonTypeColor: IconWithLabelButtonViewModel<ButtonStateType>.ButtonTypeColor,
+        buttonColor: Color,
         isDisabled: Bool,
         action: @escaping (() -> Void)) -> IconWithLabelButtonViewModel<ButtonStateType>
     
