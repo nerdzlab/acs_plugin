@@ -36,7 +36,8 @@ struct ParticipantGridCellView: View {
                                                  isSpeaking: $viewModel.isSpeaking,
                                                  displayName: $viewModel.displayName,
                                                  isMuted: $viewModel.isMuted,
-                                                 isHandRaised: $viewModel.isHandRaised)
+                                                 isHandRaised: $viewModel.isHandRaised,
+                                                 isPinned: $viewModel.isPinned)
                     .id(videoStreamId)
                     
                 } else {
@@ -122,6 +123,7 @@ struct ParticipantGridCellView: View {
                         isMuted: $viewModel.isMuted,
                         isHold: $viewModel.isHold,
                         isHandRaised: $viewModel.isHandRaised,
+                        isPinned: $viewModel.isPinned,
                         titleFont: AppFont.CircularStd.book.font(size: 13),
                         mutedIconSize: 16
                     )
@@ -152,6 +154,7 @@ struct ParticipantTitleView: View {
     @Binding var isMuted: Bool
     @Binding var isHold: Bool
     @Binding var isHandRaised: Bool
+    @Binding var isPinned: Bool
     @Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
     let titleFont: Font
     let mutedIconSize: CGFloat
@@ -195,6 +198,11 @@ struct ParticipantTitleView: View {
             }
             if isMuted && !isHold {
                 Icon(name: .micOff, size: mutedIconSize, renderAsOriginal: false)
+                    .accessibility(hidden: true)
+            }
+            
+            if isPinned {
+                Icon(name: .pinInfo, size: mutedIconSize, renderAsOriginal: true)
                     .accessibility(hidden: true)
             }
         })

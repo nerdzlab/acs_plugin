@@ -17,6 +17,7 @@ struct ParticipantGridCellVideoView: View {
     @Binding var displayName: String?
     @Binding var isMuted: Bool
     @Binding var isHandRaised: Bool
+    @Binding var isPinned: Bool
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
     @State var show = true
     
@@ -39,6 +40,7 @@ struct ParticipantGridCellVideoView: View {
                                  isMuted: $isMuted,
                                  isHold: .constant(false),
                                  isHandRaised: $isHandRaised,
+                                 isPinned: $isPinned,
                                  titleFont: AppFont.CircularStd.book.font(size: 13),
                                  mutedIconSize: 14)
                 .padding(.vertical, 2)

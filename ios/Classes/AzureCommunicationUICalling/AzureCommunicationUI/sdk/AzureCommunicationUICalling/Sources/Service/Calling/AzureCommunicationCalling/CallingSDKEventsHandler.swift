@@ -482,7 +482,14 @@ extension CallingSDKEventsHandler: CallDelegate,
     func raiseHandCallFeature(_ raiseHandCallFeature: RaiseHandCallFeature, didRaiseHand args: RaisedHandChangedEventArgs) {
         print("Participant \(args.identifier) raised their hand.")
         
-        AudioPlayerManager.shared.playRaiseHandSound()
+        let identifier = args.identifier.rawId
+            let currentList = participantsInfoListSubject.value
+
+            if let participant = currentList.first(where: { $0.userIdentifier == identifier }),
+               participant.isRemoteUser == true {
+                AudioPlayerManager.shared.playRaiseHandSound()
+            }
+        
         updateHandRaisedStatus(for: args.identifier.rawId, isRaised: true)
     }
     

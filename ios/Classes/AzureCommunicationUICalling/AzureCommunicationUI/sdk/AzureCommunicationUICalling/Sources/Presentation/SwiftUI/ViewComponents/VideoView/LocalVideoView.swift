@@ -139,6 +139,7 @@ struct LocalVideoView: View {
                             isMuted: $viewModel.isMuted,
                             isHold: .constant(false),
                             isHandRaised: .constant(false),
+                            isPinned: .constant(false),
                             titleFont: AppFont.CircularStd.book.font(size: 13),
                             mutedIconSize: 16
                         )
