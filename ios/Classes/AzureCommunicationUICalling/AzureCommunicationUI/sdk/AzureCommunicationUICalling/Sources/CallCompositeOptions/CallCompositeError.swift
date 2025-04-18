@@ -49,6 +49,12 @@ public struct CallCompositeErrorCode {
 
     /// Communication token credential not set.
     public static let communicationTokenCredentialNotSet: String = "communicationTokenCredentialNotSet"
+    
+    /// Error when local user raise hand.
+    public static let raiseHand: String = "raiseHand"
+    
+    /// Error when local user lower hand.
+    public static let lowerHand: String = "lowerHand"
 }
 
 /// The error thrown after Call Composite launching.

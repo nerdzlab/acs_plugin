@@ -134,6 +134,11 @@ struct CallingView: View {
                          hideDrawer: viewModel.dismissDrawer) {
                 LayoutOptionsView(viewModel: viewModel.layoutOptionsViewModel, avatarManager: avatarManager)
             }
+            
+            MeetingOptionsDrawer(isPresented: viewModel.meetingOptionsViewModel.isDisplayed,
+                         hideDrawer: viewModel.dismissDrawer) {
+                MeetingOptionsView(viewModel: viewModel.meetingOptionsViewModel)
+            }
         }
     }
 

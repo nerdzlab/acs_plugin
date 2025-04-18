@@ -37,6 +37,7 @@ internal class CallingViewModel: ObservableObject {
     let participantActionViewModel: ParticipantMenuViewModel
     let participantOptionsViewModel: ParticipantOptionsViewModel
     let layoutOptionsViewModel: LayoutOptionsViewModel
+    let meetingOptionsViewModel: MeetingOptionsViewModel
     var onHoldOverlayViewModel: OnHoldOverlayViewModel!
     var shareMeetingLinkViewModel: ShareMeetingInfoActivityViewModel!
     let isRightToLeft: Bool
@@ -147,9 +148,7 @@ internal class CallingViewModel: ObservableObject {
                 localUserState: store.state.localUserState,
                 isDisplayed: store.state.navigationState.participantsVisible,
                 showSharingViewAction: {
-                    //MTODO
-                    store.dispatch(action: .showLayoutOptions)
-//                    store.dispatch(action: .showShareSheetMeetingLink)
+                    store.dispatch(action: .showShareSheetMeetingLink)
                 },
                 dispatchAction: store.dispatch)
         
@@ -174,6 +173,36 @@ internal class CallingViewModel: ObservableObject {
                 localUserState: store.state.localUserState,
                 isDisplayed: store.state.navigationState.participantActionsVisible,
                 dispatchAction: store.dispatch)
+        
+        meetingOptionsViewModel = compositeViewModelFactory.makeMeetingOptionsViewModel(
+            localUserState: store.state.localUserState,
+            localizationProvider: localizationProvider,
+            onShareScreen: {
+                print("On share screen")
+            },
+            onStopShareScreen: {
+                print("On stop share screen")
+            },
+            onChat: {
+                print("On chat screen")
+            },
+            onParticipants: {
+                store.dispatch(action: .showParticipants)
+            },
+            onRaiseHand: {
+                store.dispatch(action: .localUserAction(.raiseHandRequested))
+            },
+            onLowerHand: {
+                store.dispatch(action: .localUserAction(.lowerHandRequested))
+            },
+            onEffects: {
+                print("On effects screen")
+            },
+            onLayoutOptions: {
+                store.dispatch(action: .showLayoutOptions)
+            },
+            isDisplayed: store.state.navigationState.meetignOptionsVisible
+        )
 
         controlBarViewModel = compositeViewModelFactory
             .makeControlBarViewModel(dispatchAction: actionDispatch, onEndCallTapped: { [weak self] in
@@ -270,6 +299,11 @@ internal class CallingViewModel: ObservableObject {
         let selectedParticipent = state.remoteParticipantsState.participantInfoList.first(where: {$0.userIdentifier == state.navigationState.selectedParticipant?.userIdentifier})
         
         participantOptionsViewModel.update(localUserState: state.localUserState, isDisplayed: state.navigationState.participantOptionsVisible, participantInfoModel: selectedParticipent
+        )
+        
+        meetingOptionsViewModel.update(
+            localUserState: state.localUserState,
+            isDisplayed: state.navigationState.meetignOptionsVisible
         )
         
         layoutOptionsViewModel.update(

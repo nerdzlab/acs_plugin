@@ -41,6 +41,8 @@ extension Reducer where State == NavigationState,
             drawerVisibility = .shareMeetingLinkVisible
         case .showLayoutOptions:
             drawerVisibility = .layoutOptionsVisible
+        case .showMeetingOptions:
+            drawerVisibility = .meetingOptionsVisible
         case .showParticipants:
             drawerVisibility = .participantsVisible
         case .showParticipantActions(let participant):
@@ -62,6 +64,10 @@ extension Reducer where State == NavigationState,
         case .localUserAction(.gridLayoutSelected):
             drawerVisibility = .hidden
         case .localUserAction(.speakerLayoutSelected):
+            drawerVisibility = .hidden
+        case .localUserAction(.raiseHandFailed):
+            drawerVisibility = .hidden
+        case .localUserAction(.lowerHandFailed):
             drawerVisibility = .hidden
         case .captionsAction(.setSpokenLanguageRequested(language: let language)),
                 .captionsAction(.setCaptionLanguageRequested(language: let language)):
@@ -108,7 +114,7 @@ extension Reducer where State == NavigationState,
                                supportShareSheetVisible: drawerVisibility.isSupportShareSheetVisible,
                                participantsVisible: drawerVisibility.isParticipantsVisible,
                                participantActionsVisible: drawerVisibility.isParticipantActionsVisible,
-                               participantOptionsVisible: drawerVisibility.isParticipantOptionsVisible, shareMeetingLinkVisible: drawerVisibility.isShareSheetMeetingLinkVisible, layoutOptionsVisible: drawerVisibility.isLayoutOptionsVisible, selectedParticipant: selectedParticipant
+                               participantOptionsVisible: drawerVisibility.isParticipantOptionsVisible, shareMeetingLinkVisible: drawerVisibility.isShareSheetMeetingLinkVisible, layoutOptionsVisible: drawerVisibility.isLayoutOptionsVisible, meetignOptionsVisible: drawerVisibility.isMeetingOptionsVisible, selectedParticipant: selectedParticipant
         )
     }
     enum DrawerVisibility {
@@ -126,6 +132,7 @@ extension Reducer where State == NavigationState,
         case participantOptionsVisible
         case shareMeetingLinkVisible
         case layoutOptionsVisible
+        case meetingOptionsVisible
 
         var isSupportFormVisible: Bool { self == .supportFormVisible }
         var isSupportShareSheetVisible: Bool { self == .supportShareSheetVisible }
@@ -140,6 +147,7 @@ extension Reducer where State == NavigationState,
         var isParticipantOptionsVisible: Bool { self == .participantOptionsVisible}
         var isShareSheetMeetingLinkVisible: Bool { self == .shareMeetingLinkVisible }
         var isLayoutOptionsVisible: Bool { self == .layoutOptionsVisible }
+        var isMeetingOptionsVisible: Bool { self == .meetingOptionsVisible }
     }
 
     static func getDrawerVisibility(state: NavigationState) -> DrawerVisibility {
@@ -155,6 +163,7 @@ extension Reducer where State == NavigationState,
         state.participantOptionsVisible ? .participantOptionsVisible :
         state.shareMeetingLinkVisible ? .shareMeetingLinkVisible :
         state.layoutOptionsVisible ? .layoutOptionsVisible :
+        state.meetignOptionsVisible ? .meetingOptionsVisible :
         state.moreOptionsVisible ? .moreOptionsVisible : .hidden
     }
 

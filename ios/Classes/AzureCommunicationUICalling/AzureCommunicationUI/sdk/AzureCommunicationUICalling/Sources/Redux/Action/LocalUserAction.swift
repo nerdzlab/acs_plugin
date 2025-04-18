@@ -29,6 +29,14 @@ enum LocalUserAction: Equatable {
 
     case microphoneOffTriggered
     case microphoneOffFailed(error: Error)
+    
+    case raiseHandRequested
+    case raiseHandFailed(error: Error)
+    case raiseHandSucceeded
+    
+    case lowerHandRequested
+    case lowerHandFailed(error: Error)
+    case lowerHandSucceeded
 
     case microphoneMuteStateUpdated(isMuted: Bool)
 

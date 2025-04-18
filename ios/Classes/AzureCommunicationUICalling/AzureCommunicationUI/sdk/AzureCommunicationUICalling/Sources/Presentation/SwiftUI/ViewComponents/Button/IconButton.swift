@@ -17,6 +17,8 @@ struct IconButton: View {
             return 24
         case .cameraSwitchButtonPip:
             return 28
+        case .infoButton:
+            return 26
         default:
             return 32
         }

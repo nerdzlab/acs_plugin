@@ -18,6 +18,8 @@ enum CallCompositeInternalError: Error, Equatable {
     case callJoinFailedByMicPermission
     case cameraSwitchFailed
     case cameraOnFailed
+    case raiseHandFailed
+    case lowerHandFailed
     case networkConnectionNotAvailable
     case micNotAvailable
     case captionsNotActive
@@ -46,6 +48,10 @@ enum CallCompositeInternalError: Error, Equatable {
             return CallCompositeErrorCode.captionsStartFailedCallNotConnected
         case .captionsStartFailedSpokenLanguageNotSupported:
             return CallCompositeErrorCode.captionsStartFailedSpokenLanguageNotSupported
+        case .raiseHandFailed:
+            return CallCompositeErrorCode.raiseHand
+        case .lowerHandFailed:
+            return CallCompositeErrorCode.lowerHand
         case .callHoldFailed,
                 .callResumeFailed,
                 .callEvicted,
@@ -75,6 +81,8 @@ enum CallCompositeInternalError: Error, Equatable {
                 .captionsNotActive,
                 .captionsStartFailedCallNotConnected,
                 .captionsStartFailedSpokenLanguageNotSupported,
+                .raiseHandFailed,
+                .lowerHandFailed,
                 .callJoinConnectionFailed:
             return false
         }
@@ -98,6 +106,8 @@ extension CallCompositeInternalError {
             (.cameraOnFailed, .cameraOnFailed),
             (.micNotAvailable, .micNotAvailable),
             (.captionsNotActive, .captionsNotActive),
+            (.raiseHandFailed, .raiseHandFailed),
+            (.lowerHandFailed, .lowerHandFailed),
             (.captionsStartFailedSpokenLanguageNotSupported, .captionsStartFailedSpokenLanguageNotSupported),
             (.captionsStartFailedCallNotConnected, .captionsStartFailedCallNotConnected):
             return true

@@ -89,6 +89,10 @@ protocol CallingSDKWrapperProtocol {
     func callStartTime() -> Date?
     </CALL_START_TIME> */
     func getLogFiles() -> [URL]
+    
+    func getRaiseHands() -> [RaisedHand]
+    func lowerHand() async throws
+    func raiseHand() async throws
 
     var callingEventsHandler: CallingSDKEventsHandling { get }
     func dispose()

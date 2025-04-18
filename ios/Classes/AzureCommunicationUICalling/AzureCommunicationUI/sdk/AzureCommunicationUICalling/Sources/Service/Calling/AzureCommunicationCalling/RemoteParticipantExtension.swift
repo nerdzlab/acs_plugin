@@ -21,6 +21,7 @@ extension AzureCommunicationCalling.RemoteParticipant {
         return ParticipantInfoModel(displayName: displayName,
                                     isSpeaking: isSpeaking,
                                     isMuted: isMuted,
+                                    isHandRaised: false,
                                     isPinned: false,
                                     isVideoOnForMe: true,
                                     avatarColor: Color(UIColor.avatarColors.randomElement() ?? UIColor.compositeColor(.purpleBlue)),

@@ -38,9 +38,9 @@ enum RaiseHandButtonState: ButtonState {
     var iconName: CompositeIcon {
         switch self {
         case .raiseHand:
-            return .handUp
-        case .lowerHand:
             return .handDown
+        case .lowerHand:
+            return .handUp
         }
     }
     
@@ -83,9 +83,9 @@ enum ShareScreenButtonState: ButtonState {
     var localizationKey: LocalizationKey {
         switch self {
         case .shareOn:
-            return .shareScreenTitle
-        case .shareOff:
             return .stopShareScreenTitle
+        case .shareOff:
+            return .shareScreenTitle
         }
     }
 }

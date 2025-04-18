@@ -93,6 +93,7 @@ extension Reducer where State == CallingState,
                 .setTotalParticipantCount,
                 .showShareSheetMeetingLink,
                 .showLayoutOptions,
+                .showMeetingOptions,
                 .buttonViewDataAction:
             return callingState
         }

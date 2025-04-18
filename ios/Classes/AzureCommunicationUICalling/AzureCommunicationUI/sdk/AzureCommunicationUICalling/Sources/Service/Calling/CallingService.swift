@@ -64,6 +64,9 @@ protocol CallingServiceProtocol {
     func setCaptionsCaptionLanguage(_ language: String) async throws
     func removeParticipant(_ participantId: String) async throws
     func getCapabilities() async throws -> Set<ParticipantCapabilityType>
+    
+    func raiseHand() async throws
+    func lowerHand() async throws
     /* <CALL_START_TIME>
     func callStartTime() -> Date?
     </CALL_START_TIME> */
@@ -226,5 +229,13 @@ class CallingService: NSObject, CallingServiceProtocol {
 
     func getCapabilities() async throws -> Set<ParticipantCapabilityType> {
         try await callingSDKWrapper.getCapabilities()
+    }
+    
+    func raiseHand() async throws {
+        try await callingSDKWrapper.raiseHand()
+    }
+    
+    func lowerHand() async throws {
+        try await callingSDKWrapper.lowerHand()
     }
 }

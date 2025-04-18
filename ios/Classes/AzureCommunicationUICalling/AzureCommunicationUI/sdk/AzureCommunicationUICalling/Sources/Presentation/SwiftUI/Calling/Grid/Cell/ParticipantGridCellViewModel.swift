@@ -28,6 +28,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     @Published var participantIdentifier: String
     @Published var isPinned: Bool
     @Published var isVideoEnableForLocalUser: Bool
+    @Published var isHandRaised: Bool
     
     @State var avatarColor: Color
     
@@ -70,6 +71,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         self.isPinned = participantModel.isPinned
         self.onUserClicked = onUserClicked
         self.avatarColor = participantModel.avatarColor
+        self.isHandRaised = participantModel.isHandRaised
         self.videoViewModel = getDisplayingVideoStreamModel(participantModel)
         self.accessibilityLabel = getAccessibilityLabel(participantModel: participantModel)
     }
@@ -135,6 +137,10 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         
         if self.avatarColor != participantModel.avatarColor {
             self.avatarColor = participantModel.avatarColor
+        }
+        
+        if self.isHandRaised != participantModel.isHandRaised {
+            self.isHandRaised = participantModel.isHandRaised
         }
     }
 

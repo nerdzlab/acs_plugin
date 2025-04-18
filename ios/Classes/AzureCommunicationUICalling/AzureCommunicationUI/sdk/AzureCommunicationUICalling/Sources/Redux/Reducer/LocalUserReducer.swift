@@ -31,6 +31,7 @@ extension Reducer where State == LocalUserState,
         var meetingLayoutStatus = localUserState.meetingLayoutState.operation
         
         var raiseHandStatus = localUserState.raiseHandState.operation
+        var raiseHandError = localUserState.raiseHandState.error
         var shareScreenStatus = localUserState.shareScreenState.operation
         
         switch action {
@@ -105,6 +106,24 @@ extension Reducer where State == LocalUserState,
             meetingLayoutStatus = .grid
         case .speakerLayoutSelected:
             meetingLayoutStatus = .speaker
+        case .raiseHandRequested:
+            raiseHandStatus = .panding
+            raiseHandError = nil
+        case .raiseHandSucceeded:
+            raiseHandStatus = .handIsRise
+            raiseHandError = nil
+        case .lowerHandRequested:
+            raiseHandStatus = .panding
+            raiseHandError = nil
+        case .lowerHandSucceeded:
+            raiseHandStatus = .handIsLower
+            raiseHandError = nil
+        case .raiseHandFailed(let error):
+            raiseHandStatus = raiseHandStatus
+            raiseHandError = error
+        case .lowerHandFailed(let error):
+            raiseHandStatus = raiseHandStatus
+            raiseHandError = error
         }
 
         let cameraState = LocalUserState.CameraState(operation: cameraStatus,
@@ -121,7 +140,7 @@ extension Reducer where State == LocalUserState,
         
         let meetingLayoutState = LocalUserState.MeetingLayoutState(operation: meetingLayoutStatus)
         
-        let raiseHandState = LocalUserState.RaiseHandState(operation: raiseHandStatus)
+        let raiseHandState = LocalUserState.RaiseHandState(operation: raiseHandStatus, error: raiseHandError)
         let shareScreenState = LocalUserState.ShareScreenState(operation: shareScreenStatus)
         
         return LocalUserState(cameraState: cameraState,

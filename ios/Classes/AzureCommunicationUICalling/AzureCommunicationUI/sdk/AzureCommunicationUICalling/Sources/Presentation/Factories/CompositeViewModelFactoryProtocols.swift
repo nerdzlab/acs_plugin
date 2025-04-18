@@ -97,6 +97,18 @@ protocol CompositeViewModelFactoryProtocol {
                                       isDisplayed: Bool,
                                       dispatchAction: @escaping ActionDispatch) -> ParticipantMenuViewModel
     
+    func makeMeetingOptionsViewModel(localUserState: LocalUserState,
+                                     localizationProvider: LocalizationProviderProtocol,
+                                     onShareScreen: @escaping () -> Void,
+                                     onStopShareScreen: @escaping () -> Void,
+                                     onChat: @escaping () -> Void,
+                                     onParticipants: @escaping () -> Void,
+                                     onRaiseHand: @escaping () -> Void,
+                                     onLowerHand: @escaping () -> Void,
+                                     onEffects: @escaping () -> Void,
+                                     onLayoutOptions: @escaping () -> Void,
+                                     isDisplayed: Bool) -> MeetingOptionsViewModel
+    
     func makeLayoutOptionsViewModel(
         localUserState: LocalUserState,
         isDisplayed: Bool,
@@ -114,12 +126,14 @@ protocol CompositeViewModelFactoryProtocol {
         showCaptionsViewAction: @escaping () -> Void,
         buttonViewDataState: ButtonViewDataState,
         dispatchAction: @escaping ActionDispatch) -> MoreCallOptionsListViewModel
+    
     func makeCaptionsListViewModel(state: AppState,
                                    captionsOptions: CaptionsOptions,
                                    dispatchAction: @escaping ActionDispatch,
                                    showSpokenLanguage: @escaping () -> Void,
                                    showCaptionsLanguage: @escaping () -> Void,
                                    isDisplayed: Bool) -> CaptionsListViewModel
+    
     func makeDebugInfoSharingActivityViewModel() -> DebugInfoSharingActivityViewModel
     
     func makeShareMeetingInfoActivityViewModel() -> ShareMeetingInfoActivityViewModel

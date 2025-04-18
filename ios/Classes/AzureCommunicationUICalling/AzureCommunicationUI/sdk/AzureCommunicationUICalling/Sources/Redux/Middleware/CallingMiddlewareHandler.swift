@@ -107,6 +107,18 @@ protocol CallingMiddlewareHandling {
     func removeParticipant(state: AppState,
                            dispatch: @escaping ActionDispatch,
                            participantId: String) -> Task<Void, Never>
+    
+    @discardableResult
+    func requestLowerHand(
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
+    
+    @discardableResult
+    func requestRaiseHand(
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
 }
 
 // swiftlint:disable type_body_length
@@ -358,6 +370,28 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
                 dispatch(.localUserAction(.cameraSwitchSucceeded(cameraDevice: device)))
             } catch {
                 dispatch(.localUserAction(.cameraSwitchFailed(previousCamera: currentCamera, error: error)))
+            }
+        }
+    }
+    
+    func requestRaiseHand(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            do {
+                try await callingService.raiseHand()
+                dispatch(.localUserAction(.raiseHandSucceeded))
+            } catch {
+                dispatch(.localUserAction(.raiseHandFailed(error: error)))
+            }
+        }
+    }
+
+    func requestLowerHand(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            do {
+                try await callingService.lowerHand()
+                dispatch(.localUserAction(.lowerHandSucceeded))
+            } catch {
+                dispatch(.localUserAction(.lowerHandFailed(error: error)))
             }
         }
     }

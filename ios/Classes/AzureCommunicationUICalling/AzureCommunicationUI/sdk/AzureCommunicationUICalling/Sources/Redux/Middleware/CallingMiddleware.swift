@@ -99,6 +99,11 @@ private func handleLocalUserAction(_ action: LocalUserAction,
         actionHandler.setCapabilities(capabilities: capabilities, state: getState(), dispatch: dispatch)
     case .onCapabilitiesChanged(let event):
         actionHandler.onCapabilitiesChanged(event: event, state: getState(), dispatch: dispatch)
+    case .raiseHandRequested:
+        actionHandler.requestRaiseHand(state: getState(), dispatch: dispatch)
+    case .lowerHandRequested:
+        actionHandler.requestLowerHand(state: getState(), dispatch: dispatch)
+        
     case .cameraOnSucceeded,
             .cameraOnFailed,
             .cameraOffSucceeded,
@@ -121,6 +126,10 @@ private func handleLocalUserAction(_ action: LocalUserAction,
             .changeDisplayNameRequested,
             .gridLayoutSelected,
             .speakerLayoutSelected,
+            .raiseHandFailed,
+            .lowerHandFailed,
+            .raiseHandSucceeded,
+            .lowerHandSucceeded,
             .participantRoleChanged:
         break
     }

@@ -224,7 +224,7 @@ class ControlBarViewModel: ObservableObject {
             object: nil, queue: .main) { _ in
             self.onDrawerViewDidDisappearBlock?()
         }
-        dispatch(.showMoreOptions)
+        dispatch(.showMeetingOptions)
     }
     func isMoreButtonDisabled() -> Bool {
             isBypassLoadingOverlay()

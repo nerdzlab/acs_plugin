@@ -22,9 +22,9 @@ internal class MeetingOptionsViewModel: ObservableObject {
     private(set) var participantsButtonViewModel: IconWithLabelButtonViewModel<ParticipantsButtonState>!
     private(set) var effectsButtonViewModel: IconWithLabelButtonViewModel<EffectsButtonState>!
     
-    private(set) var raiseHandButtonViewModel: IconWithLabelButtonViewModel<RaiseHandButtonState>!
-    private(set) var shareScreenViewModel: IconWithLabelButtonViewModel<ShareScreenButtonState>!
-    private(set) var layoutOptionsButtonViewModel: IconWithLabelButtonViewModel<LayoutOptionsButtonState>!
+    @Published private(set) var raiseHandButtonViewModel: IconWithLabelButtonViewModel<RaiseHandButtonState>!
+    @Published private(set) var shareScreenViewModel: IconWithLabelButtonViewModel<ShareScreenButtonState>!
+    @Published private(set) var layoutOptionsButtonViewModel: IconWithLabelButtonViewModel<LayoutOptionsButtonState>!
     
     var isDisplayed: Bool
     
@@ -124,14 +124,25 @@ internal class MeetingOptionsViewModel: ObservableObject {
     func update(localUserState: LocalUserState, isDisplayed: Bool) {
         self.isDisplayed = isDisplayed
         
+        let previousState = raiseHandButtonViewModel.selectedButtonState
+        let operation = localUserState.raiseHandState.operation
+        let error = localUserState.raiseHandState.error
+        let selectedState: RaiseHandButtonState
+
+        if error != nil || operation == .panding {
+            selectedState = previousState
+        } else {
+            selectedState = (operation == .handIsLower ? .raiseHand : .lowerHand)
+        }
+                
         raiseHandButtonViewModel = IconWithLabelButtonViewModel(
-            selectedButtonState: localUserState.raiseHandState.operation == .handIsLower ? RaiseHandButtonState.raiseHand : RaiseHandButtonState.lowerHand,
+            selectedButtonState: selectedState,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
             isDisabled: localUserState.cameraState.operation == .off,
             isVisible: true,
             action: { [weak self] in
-                if localUserState.raiseHandState.operation == .handIsLower {
+                if operation == .handIsLower {
                     self?.onRaiseHand()
                 } else {
                     self?.onLowerHand()
@@ -192,4 +203,11 @@ internal class MeetingOptionsViewModel: ObservableObject {
                 self?.onEffects()
             })
     }
+    
+//    private func get(localUserState: LocalUserState) -> RaiseHandButtonState {
+//        switch localUserState.raiseHandState.operation {
+//        case .panding
+//        }
+//        localUserState.raiseHandState.operation == .handIsLower ? RaiseHandButtonState.raiseHand : RaiseHandButtonState.lowerHand,
+//    }
 }

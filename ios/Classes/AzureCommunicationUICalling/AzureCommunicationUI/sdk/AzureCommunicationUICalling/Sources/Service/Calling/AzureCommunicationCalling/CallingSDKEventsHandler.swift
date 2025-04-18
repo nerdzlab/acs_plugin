@@ -161,13 +161,17 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
                     $0.identifier.rawId == infoModel.userIdentifier
                 })
             }
-        participantsInfoListSubject.send(remoteParticipantsInfoList)
+        
+        let updatedList = updateHandRaisedParticipants(remoteParticipantsInfoList)
+        
+        participantsInfoListSubject.send(updatedList)
     }
 
     private func addRemoteParticipants(
         _ remoteParticipants: [AzureCommunicationCalling.RemoteParticipant]
     ) {
         var remoteParticipantsInfoList = participantsInfoListSubject.value
+        
         for participant in remoteParticipants {
             let userIdentifier = participant.identifier.rawId
             if self.remoteParticipants.value(forKey: userIdentifier) == nil {
@@ -177,20 +181,42 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
                 remoteParticipantsInfoList.append(infoModel)
             }
         }
-        participantsInfoListSubject.send(remoteParticipantsInfoList)
+        
+        let updatedList = updateHandRaisedParticipants(remoteParticipantsInfoList)
+        
+        participantsInfoListSubject.send(updatedList)
     }
 
     private func updateRemoteParticipant(userIdentifier: String) {
         var remoteParticipantsInfoList = participantsInfoListSubject.value
+        
         if let remoteParticipant = remoteParticipants.value(forKey: userIdentifier),
            let index = remoteParticipantsInfoList.firstIndex(where: {
                $0.userIdentifier == userIdentifier
            }) {
             let newInfoModel = remoteParticipant.toParticipantInfoModel()
             remoteParticipantsInfoList[index] = newInfoModel
+            
+            let updatedList = updateHandRaisedParticipants(remoteParticipantsInfoList)
 
-            participantsInfoListSubject.send(remoteParticipantsInfoList)
+            participantsInfoListSubject.send(updatedList)
         }
+    }
+    
+    private func updateHandRaisedParticipants(_ remoteParticipantsInfoList: [ParticipantInfoModel]) -> [ParticipantInfoModel] {
+        let raisedHandsIdentifiers = raiseHandFeature?.raisedHands.map { $0.identifier.rawId } ?? []
+        
+        var updatedList = remoteParticipantsInfoList
+
+        for (index, participant) in updatedList.enumerated() {
+            let isHandRaised = raisedHandsIdentifiers.contains(participant.userIdentifier)
+            
+            if participant.isHandRaised != isHandRaised {
+                updatedList[index] = participant.copy(isHandRaised: isHandRaised)
+            }
+        }
+        
+        return updatedList
     }
 
     private func wasCallConnected() -> Bool {
@@ -455,12 +481,27 @@ extension CallingSDKEventsHandler: CallDelegate,
     
     func raiseHandCallFeature(_ raiseHandCallFeature: RaiseHandCallFeature, didRaiseHand args: RaisedHandChangedEventArgs) {
         print("Participant \(args.identifier) raised their hand.")
-        // Update UI accordingly
+        
+        AudioPlayerManager.shared.playRaiseHandSound()
+        updateHandRaisedStatus(for: args.identifier.rawId, isRaised: true)
     }
     
     func raiseHandCallFeature(_ raiseHandCallFeature: RaiseHandCallFeature, didLowerHand args: LoweredHandChangedEventArgs) {
         print("Participant \(args.identifier) lowered their hand.")
-       // Update UI accordingly
+        
+        updateHandRaisedStatus(for: args.identifier.rawId, isRaised: false)
+    }
+    
+    private func updateHandRaisedStatus(for identifier: String, isRaised: Bool) {
+        var currentList = participantsInfoListSubject.value 
+        
+        if let index = currentList.firstIndex(where: { $0.userIdentifier == identifier }) {
+            let participant = currentList[index]
+            if participant.isHandRaised != isRaised {
+                currentList[index] = participant.copy(isHandRaised: isRaised)
+                participantsInfoListSubject.send(currentList)
+            }
+        }
     }
 }
 

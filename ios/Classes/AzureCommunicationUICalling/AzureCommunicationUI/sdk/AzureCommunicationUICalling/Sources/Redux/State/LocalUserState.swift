@@ -97,11 +97,13 @@ public struct LocalUserState {
     enum RaiseHandOperationalStatus: Equatable {
         case handIsRise
         case handIsLower
+        case panding
         
         static func == (lhs: LocalUserState.RaiseHandOperationalStatus,
                         rhs: LocalUserState.RaiseHandOperationalStatus) -> Bool {
             switch (lhs, rhs) {
             case (.handIsRise, .handIsRise),
+                (.panding, .panding),
                 (.handIsLower, .handIsLower):
                 return true
             default:

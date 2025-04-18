@@ -79,6 +79,12 @@ class ErrorInfoViewModel: ObservableObject {
         case .micNotAvailable:
             title = localizationProvider.getLocalizedString(.snackBarErrorOnHoldTitle) + "\n" +
             localizationProvider.getLocalizedString(.snackBarErrorOnHoldSubtitle) + "."
+        case .raiseHandFailed:
+            //MTODO
+            title = "Error during raise hand"
+//            title = localizationProvider.getLocalizedString() + "\n" +
+        case .lowerHandFailed:
+            title = "Error during lower hand"
         default:
             title = localizationProvider.getLocalizedString(.snackBarError)
         }

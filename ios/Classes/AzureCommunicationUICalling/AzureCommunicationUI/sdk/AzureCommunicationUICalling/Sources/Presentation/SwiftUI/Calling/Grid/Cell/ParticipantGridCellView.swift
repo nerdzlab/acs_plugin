@@ -34,8 +34,8 @@ struct ParticipantGridCellView: View {
                     },
                                                  isSpeaking: $viewModel.isSpeaking,
                                                  displayName: $viewModel.displayName,
-                                                 
-                                                 isMuted: $viewModel.isMuted)
+                                                 isMuted: $viewModel.isMuted,
+                                                 isHandRaised: $viewModel.isHandRaised)
                     .id(videoStreamId)
                     
                 } else {
@@ -101,6 +101,7 @@ struct ParticipantGridCellView: View {
                         avatarImage: $avatarImage,
                         backgroundColor: viewModel.avatarColor,
                         isSpeaking: viewModel.isSpeaking && !viewModel.isMuted,
+                        isHandRaised: viewModel.isHandRaised,
                         avatarSize: avatarSize,
                         fontSize: initialsFontSize
                     )
@@ -116,6 +117,7 @@ struct ParticipantGridCellView: View {
                         displayName: $viewModel.displayName,
                         isMuted: $viewModel.isMuted,
                         isHold: $viewModel.isHold,
+                        isHandRaised: $viewModel.isHandRaised,
                         titleFont: AppFont.CircularStd.book.font(size: 13),
                         mutedIconSize: 16
                     )
@@ -145,6 +147,7 @@ struct ParticipantTitleView: View {
     @Binding var displayName: String?
     @Binding var isMuted: Bool
     @Binding var isHold: Bool
+    @Binding var isHandRaised: Bool
     @Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
     let titleFont: Font
     let mutedIconSize: CGFloat
@@ -171,6 +174,11 @@ struct ParticipantTitleView: View {
 #endif
         
         HStack(alignment: .center, spacing: Constants.hSpace, content: {
+            if isHandRaised {
+                Text("✋")
+                    .font(titleFont)
+                    .lineLimit(1)
+            }
             if let displayName = displayName,
                !displayName.trimmingCharacters(in: .whitespaces).isEmpty {
                 Text(displayName)

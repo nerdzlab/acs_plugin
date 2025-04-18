@@ -251,6 +251,7 @@ class ParticipantGridViewModel: ObservableObject {
                 displayName: "User \(index + 1)",
                 isSpeaking: isSpeaking,
                 isMuted: isMuted,
+                isHandRaised: false,
                 isPinned: isPinned,
                 isVideoOnForMe: isVideoOnForMe,
                 avatarColor: Color(UIColor.avatarColors.randomElement()!),

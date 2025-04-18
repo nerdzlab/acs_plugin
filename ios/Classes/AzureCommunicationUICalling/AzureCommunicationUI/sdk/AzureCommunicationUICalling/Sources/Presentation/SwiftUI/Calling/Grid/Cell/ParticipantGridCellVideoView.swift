@@ -16,6 +16,7 @@ struct ParticipantGridCellVideoView: View {
     @Binding var isSpeaking: Bool
     @Binding var displayName: String?
     @Binding var isMuted: Bool
+    @Binding var isHandRaised: Bool
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
     @State var show = true
     
@@ -37,6 +38,7 @@ struct ParticipantGridCellVideoView: View {
             ParticipantTitleView(displayName: $displayName,
                                  isMuted: $isMuted,
                                  isHold: .constant(false),
+                                 isHandRaised: $isHandRaised,
                                  titleFont: AppFont.CircularStd.book.font(size: 13),
                                  mutedIconSize: 14)
                 .padding(.vertical, 2)
@@ -50,6 +52,12 @@ struct ParticipantGridCellVideoView: View {
                 }
 
         }.overlay(
+            isHandRaised ? RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(Color(UIColor.compositeColor(.orange)), lineWidth: 4) : nil
+        )
+        .animation(.default, value: show)
+        
+        .overlay(
             isSpeaking && !isMuted ? RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(Color(UIColor.compositeColor(.purpleBlue)), lineWidth: 4) : nil
         ).animation(.default, value: show)

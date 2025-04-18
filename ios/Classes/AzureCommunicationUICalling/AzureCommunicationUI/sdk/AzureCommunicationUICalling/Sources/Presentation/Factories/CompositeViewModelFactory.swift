@@ -205,6 +205,32 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                 isDisabled: isDisabled,
                 action: action)
     }
+    
+    func makeMeetingOptionsViewModel(localUserState: LocalUserState,
+                                     localizationProvider: LocalizationProviderProtocol,
+                                     onShareScreen: @escaping () -> Void,
+                                     onStopShareScreen: @escaping () -> Void,
+                                     onChat: @escaping () -> Void,
+                                     onParticipants: @escaping () -> Void,
+                                     onRaiseHand: @escaping () -> Void,
+                                     onLowerHand: @escaping () -> Void,
+                                     onEffects: @escaping () -> Void,
+                                     onLayoutOptions: @escaping () -> Void,
+                                     isDisplayed: Bool) -> MeetingOptionsViewModel {
+        MeetingOptionsViewModel(
+            localUserState: localUserState,
+            localizationProvider: localizationProvider,
+            onShareScreen: onShareScreen,
+            onStopShareScreen: onStopShareScreen,
+            onChat: onChat,
+            onParticipants: onParticipants,
+            onRaiseHand: onRaiseHand,
+            onLowerHand: onLowerHand,
+            onEffects: onEffects,
+            onLayoutOptions: onLayoutOptions,
+            isDisplayed: isDisplayed
+        )
+    }
 
     func makeLocalVideoViewModel(dispatchAction: @escaping ActionDispatch) -> LocalVideoViewModel {
         LocalVideoViewModel(compositeViewModelFactory: self,

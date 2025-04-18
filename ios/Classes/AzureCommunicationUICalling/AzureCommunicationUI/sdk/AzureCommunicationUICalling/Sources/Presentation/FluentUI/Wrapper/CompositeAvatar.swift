@@ -7,6 +7,7 @@ struct CompositeAvatar: View {
     @Binding var avatarImage: UIImage?
     var backgroundColor: Color
     var isSpeaking: Bool
+    var isHandRaised: Bool
 
     var avatarSize: CGFloat = 80
     var fontSize: CGFloat
@@ -39,6 +40,12 @@ struct CompositeAvatar: View {
                     .frame(width: avatarSize, height: avatarSize)
                     .background(backgroundColor)
                     .clipShape(Circle())
+            }
+            
+            if isHandRaised {
+                Circle()
+                    .stroke(Color(UIColor.compositeColor(.orange)), lineWidth: 4)
+                    .frame(width: avatarSize + 8, height: avatarSize + 8)
             }
 
             if isSpeaking {

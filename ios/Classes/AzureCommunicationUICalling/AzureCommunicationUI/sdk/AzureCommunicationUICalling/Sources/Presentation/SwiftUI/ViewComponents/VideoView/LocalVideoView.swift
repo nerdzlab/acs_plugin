@@ -118,6 +118,7 @@ struct LocalVideoView: View {
                                 ),
                                 backgroundColor: Color(UIColor.compositeColor(.purpleBlue)),
                                 isSpeaking: false,
+                                isHandRaised: false,
                                 avatarSize: viewType.avatarSize,
                                 fontSize: viewType.initialFontSize
                             )
@@ -138,6 +139,7 @@ struct LocalVideoView: View {
                             ),
                             isMuted: $viewModel.isMuted,
                             isHold: .constant(false),
+                            isHandRaised: .constant(false),
                             titleFont: AppFont.CircularStd.book.font(size: 13),
                             mutedIconSize: 16
                         )

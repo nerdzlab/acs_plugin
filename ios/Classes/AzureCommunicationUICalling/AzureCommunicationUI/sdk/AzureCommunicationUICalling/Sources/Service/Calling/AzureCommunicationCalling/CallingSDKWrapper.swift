@@ -601,6 +601,47 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         
         return Set(filtered)
     }
+    
+    func raiseHand() async throws {
+        guard let call = call else {
+            return
+        }
+        
+        let raisehandFeature =  call.feature(Features.raisedHands)
+        
+        do {
+            try await raisehandFeature.raiseHand()
+            logger.debug("Set raise hand successfully")
+        } catch {
+            logger.error("ERROR: It was not possible to raise hand \(error)")
+            throw error
+        }
+    }
+    
+    func lowerHand() async throws {
+        guard let call = call else {
+            return
+        }
+        
+        let raisehandFeature =  call.feature(Features.raisedHands)
+        
+        do {
+            try await raisehandFeature.lowerHand()
+            logger.debug("Set lower hand successfully")
+        } catch {
+            logger.error("ERROR: It was not possible to lower hand \(error)")
+            throw error
+        }
+    }
+    
+    func getRaiseHands() -> [RaisedHand] {
+        guard let call = call else {
+            return []
+        }
+        
+        let raisehandFeature =  call.feature(Features.raisedHands)
+        return raisehandFeature.raisedHands
+    }
 }
 
 extension CallingSDKWrapper {
