@@ -13,17 +13,11 @@ public class AudioPlayerManager {
     var player: AVAudioPlayer?
 
     func playRaiseHandSound() {
-        guard let path = Bundle.main.path(forResource: "raise_hand", ofType:"mp3") else {
-            return }
-        
-        let url = URL(fileURLWithPath: path)
-
-        do {
-            player = try AVAudioPlayer(contentsOf: url)
+        let bundleURL = Bundle(for: AcsPlugin.self).url(forResource: "raise_hand", withExtension: "mp3")
+                
+        if let bundleURL {
+            player = try? AVAudioPlayer(contentsOf: bundleURL)
             player?.play()
-            
-        } catch let error {
-            print(error.localizedDescription)
         }
     }
 }

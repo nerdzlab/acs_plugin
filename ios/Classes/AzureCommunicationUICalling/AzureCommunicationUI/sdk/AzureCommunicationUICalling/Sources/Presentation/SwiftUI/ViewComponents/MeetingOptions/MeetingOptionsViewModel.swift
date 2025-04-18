@@ -56,7 +56,6 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: localUserState.raiseHandState.operation == .handIsLower ? RaiseHandButtonState.raiseHand : RaiseHandButtonState.lowerHand,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-            isDisabled: localUserState.cameraState.operation == .off,
             isVisible: true,
             action: { [weak self] in
                 if localUserState.raiseHandState.operation == .handIsLower {
@@ -139,7 +138,6 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: selectedState,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-            isDisabled: localUserState.cameraState.operation == .off,
             isVisible: true,
             action: { [weak self] in
                 if operation == .handIsLower {
