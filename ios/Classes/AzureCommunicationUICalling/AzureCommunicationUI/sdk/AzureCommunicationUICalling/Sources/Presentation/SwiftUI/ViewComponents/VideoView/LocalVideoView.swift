@@ -118,7 +118,6 @@ struct LocalVideoView: View {
                                 ),
                                 backgroundColor: Color(UIColor.compositeColor(.purpleBlue)),
                                 isSpeaking: false,
-                                isHandRaised: false,
                                 avatarSize: viewType.avatarSize,
                                 fontSize: viewType.initialFontSize
                             )

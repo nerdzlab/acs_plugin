@@ -14,6 +14,7 @@ struct ParticipantGridCellView: View {
     @State var avatarImage: UIImage?
     @State var displayedVideoStreamId: String?
     @State var isVideoChanging = false
+    @State var show = true
     let avatarSize: CGFloat = 56
     let initialsFontSize: CGFloat = 20
     
@@ -63,6 +64,10 @@ struct ParticipantGridCellView: View {
             
             updateParticipantViewData(for: viewModel.participantIdentifier)
         }
+        .overlay(
+            viewModel.isHandRaised ? RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(Color(UIColor.compositeColor(.orange)), lineWidth: 4) : nil
+        ).animation(.default, value: show)
     }
     
     func getRendererViewInfo(for videoStreamId: String) -> ParticipantRendererViewInfo? {
@@ -101,7 +106,6 @@ struct ParticipantGridCellView: View {
                         avatarImage: $avatarImage,
                         backgroundColor: viewModel.avatarColor,
                         isSpeaking: viewModel.isSpeaking && !viewModel.isMuted,
-                        isHandRaised: viewModel.isHandRaised,
                         avatarSize: avatarSize,
                         fontSize: initialsFontSize
                     )

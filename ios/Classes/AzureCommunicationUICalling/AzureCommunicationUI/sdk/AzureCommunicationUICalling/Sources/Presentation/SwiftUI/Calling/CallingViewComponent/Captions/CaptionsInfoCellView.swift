@@ -59,7 +59,6 @@ struct CaptionsInfoCellView: View {
                         avatarImage: $avatarImage,
                         backgroundColor: Color(UIColor.compositeColor(.purpleBlue)),
                         isSpeaking: false,
-                        isHandRaised: false,
                         avatarSize: 24,
                         fontSize: 10
         )

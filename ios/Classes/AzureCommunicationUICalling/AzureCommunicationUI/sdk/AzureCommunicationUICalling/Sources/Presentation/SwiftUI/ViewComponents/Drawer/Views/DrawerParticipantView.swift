@@ -32,7 +32,6 @@ internal struct DrawerParticipantView: View {
                 ),
                 backgroundColor: item.avatarColor,
                 isSpeaking: false,
-                isHandRaised: false,
                 avatarSize: 40,
                 fontSize: 12
             )
