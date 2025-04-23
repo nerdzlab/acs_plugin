@@ -39,7 +39,7 @@ internal struct FullScreenModalView<Content: View>: View {
                         UIAccessibility.post(notification: .screenChanged, argument: nil)
                     }
                     .offset(y: modalState == .visible ? 0 : UIScreen.main.bounds.height)
-                    .animation(.easeInOut(duration: 0.25), value: modalState)
+                    .animation(.easeInOut(duration: 0), value: modalState)
             }
         }
         .ignoresSafeArea()
@@ -53,7 +53,7 @@ internal struct FullScreenModalView<Content: View>: View {
                 withAnimation {
                     modalState = .hidden
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                DispatchQueue.main.asyncAfter(deadline: .now()) {
                     modalState = .gone
                 }
             }

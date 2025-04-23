@@ -20,7 +20,7 @@ class PreviewAreaViewModel: ObservableObject {
     init(compositeViewModelFactory: CompositeViewModelFactoryProtocol,
          dispatchAction: @escaping ActionDispatch,
          localizationProvider: LocalizationProviderProtocol) {
-        localVideoViewModel = compositeViewModelFactory.makeLocalVideoViewModel(dispatchAction: dispatchAction)
+        localVideoViewModel = compositeViewModelFactory.makeLocalVideoViewModel(dispatchAction: dispatchAction, isPreviewEnable: true)
         self.localizationProvider = localizationProvider
 
         goToSettingsButtonViewModel = compositeViewModelFactory.makePrimaryButtonViewModel(
@@ -66,7 +66,7 @@ class PreviewAreaViewModel: ObservableObject {
         self.cameraPermission = permissionState.cameraPermission
         self.audioPermission = permissionState.audioPermission
         updatePermissionsState()
-        localVideoViewModel.update(localUserState: localUserState, visibilityState: visibilityState)
+        localVideoViewModel.update(localUserState: localUserState, visibilityState: visibilityState, isPreviewEnabled: true)
     }
 
     private func updatePermissionsState() {

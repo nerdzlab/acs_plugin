@@ -147,7 +147,9 @@ struct CallingView: View {
         FullScreenModalView(isPresented: viewModel.meetingOptionsViewModel.isDisplayed,
                             hideModal: viewModel.dismissDrawer) {
             EffectsPickerView(
-                viewModel: viewModel.effectsPickerViewModel
+                viewModel: viewModel.effectsPickerViewModel,
+                avatarManager: avatarManager,
+                viewManager: viewManager
             )
         }
     }

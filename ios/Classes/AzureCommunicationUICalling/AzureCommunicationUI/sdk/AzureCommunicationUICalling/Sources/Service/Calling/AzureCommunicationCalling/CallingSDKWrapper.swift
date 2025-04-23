@@ -22,6 +22,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
     private var newVideoDeviceAddedHandler: ((VideoDeviceInfo) -> Void)?
     private var callKitRemoteInfo: CallKitRemoteInfo?
     private var callingSDKInitializer: CallingSDKInitializer
+    private var replacementEffect: BackgroundReplacementEffect
     
     init(logger: Logger,
          callingEventsHandler: CallingSDKEventsHandling,
@@ -33,6 +34,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         self.callConfiguration = callConfiguration
         self.callKitRemoteInfo = callKitRemoteInfo
         self.callingSDKInitializer = callingSDKInitializer
+        self.replacementEffect = BackgroundReplacementEffect()
         super.init()
     }
     
@@ -653,7 +655,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             videoEffectsFeature.disable(effect: BackgroundBlurEffect())
             videoEffectsFeature.disable(effect: BackgroundReplacementEffect())
             
-        case .blure:
+        case .blur:
             let blurEffect = BackgroundBlurEffect()
             
             if videoEffectsFeature.isSupported(effect: blurEffect) {

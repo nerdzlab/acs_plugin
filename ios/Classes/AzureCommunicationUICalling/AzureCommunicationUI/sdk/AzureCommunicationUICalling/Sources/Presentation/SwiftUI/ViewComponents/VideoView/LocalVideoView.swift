@@ -11,12 +11,13 @@ enum LocalVideoViewType {
     case localVideoPip
     case localVideofull
     case systemLocalVideoPip
+    case effectsPreview
     
     var cameraSwitchButtonAlignment: Alignment {
         switch self {
         case .localVideoPip:
             return .topTrailing
-        case .localVideofull, .systemLocalVideoPip:
+        case .localVideofull, .systemLocalVideoPip, .effectsPreview:
             return .bottomTrailing
         case .preview:
             return .trailing
@@ -26,7 +27,7 @@ enum LocalVideoViewType {
     var avatarSize: CGFloat {
         switch self {
         case .localVideofull,
-                .preview:
+                .preview, .effectsPreview:
             return 80
         case .systemLocalVideoPip:
             return 24
@@ -38,7 +39,7 @@ enum LocalVideoViewType {
     var initialFontSize: CGFloat {
         switch self {
         case .localVideofull,
-                .preview:
+                .preview, .effectsPreview:
             return 32
         case .systemLocalVideoPip:
             return 8
@@ -50,7 +51,7 @@ enum LocalVideoViewType {
     var showDisplayNameTitleView: Bool {
         switch self {
         case .localVideoPip,
-                .preview:
+                .preview, .effectsPreview:
             return false
         case .systemLocalVideoPip:
             return false
@@ -62,7 +63,7 @@ enum LocalVideoViewType {
     var hasGradient: Bool {
         switch self {
         case .localVideoPip, .systemLocalVideoPip,
-                .localVideofull:
+                .localVideofull, .effectsPreview:
             return false
         case .preview:
             return true
@@ -93,18 +94,17 @@ struct LocalVideoView: View {
                     // MARK: - Main content depending on camera status
                     if viewModel.cameraOperationalStatus == .on,
                        let streamId = localVideoStreamId,
-                       let rendererView = viewManager.getLocalVideoRendererView(streamId) {
+                       let rendererView = viewManager.getLocalVideoRendererView(streamId), viewModel.isPreviewEnable {
                         
                         ZStack(alignment: viewType.cameraSwitchButtonAlignment) {
                             VideoRendererView(rendererView: rendererView)
                                 .frame(width: geometry.size.width,
                                        height: geometry.size.height)
-                            
                             if viewType.hasGradient {
                                 GradientView()
                             }
                             
-                            if !viewModel.isInPip {
+                            if !viewModel.isInPip || viewType != .effectsPreview {
                                 cameraSwitchButton
                             }
                         }
@@ -126,7 +126,7 @@ struct LocalVideoView: View {
                                height: geometry.size.height)
                         .accessibilityElement(children: .combine)
                     }
-
+                    
                     // MARK: - Always show title in bottom leading
                     if viewType.showDisplayNameTitleView {
                         ParticipantTitleView(
@@ -150,12 +150,13 @@ struct LocalVideoView: View {
                     }
                 }
             }
-
+            
         }.onReceive(viewModel.$localVideoStreamId) {
             viewManager.updateDisplayedLocalVideoStream($0)
             if localVideoStreamId != $0 {
                 localVideoStreamId = $0
             }
+            
         }.accessibilityIgnoresInvertColors(true)
     }
     

@@ -13,6 +13,7 @@ public class EffectsPickerViewModel: ObservableObject {
     
     let title: String
     let onEffects: (LocalUserState.BackgroundEffectType) -> Void
+    let videoEffectsPreviewViewModel: VideoEffectsPreviewViewModel
     
     private let onDismiss: () -> Void
     
@@ -26,6 +27,7 @@ public class EffectsPickerViewModel: ObservableObject {
     init(
         localUserState: LocalUserState,
         localizationProvider: LocalizationProviderProtocol,
+        videoEffectsPreviewViewModel: VideoEffectsPreviewViewModel,
         onDismiss: @escaping () -> Void,
         onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
         isDisplayed: Bool
@@ -36,6 +38,7 @@ public class EffectsPickerViewModel: ObservableObject {
         self.onEffects = onEffects
         self.title = localizationProvider.getLocalizedString(.effectsTitle)
         self.selectedEffect = localUserState.backgroundEffectsState.effect
+        self.videoEffectsPreviewViewModel = videoEffectsPreviewViewModel
         
         dismissButtonViewModel = IconButtonViewModel(
             iconName: .closeEffects,
@@ -51,83 +54,5 @@ public class EffectsPickerViewModel: ObservableObject {
     func update(localUserState: LocalUserState, isDisplayed: Bool) {
         self.isDisplayed = isDisplayed
         self.selectedEffect = localUserState.backgroundEffectsState.effect
-        
-//        let previousState = raiseHandButtonViewModel.selectedButtonState
-//        let operation = localUserState.raiseHandState.operation
-//        let error = localUserState.raiseHandState.error
-//        let selectedState: RaiseHandButtonState
-//
-//        if error != nil || operation == .panding {
-//            selectedState = previousState
-//        } else {
-//            selectedState = (operation == .handIsLower ? .raiseHand : .lowerHand)
-//        }
-//                
-//        raiseHandButtonViewModel = IconWithLabelButtonViewModel(
-//            selectedButtonState: selectedState,
-//            localizationProvider: localizationProvider,
-//            buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-//            isVisible: true,
-//            action: { [weak self] in
-//                if operation == .handIsLower {
-//                    self?.onRaiseHand()
-//                } else {
-//                    self?.onLowerHand()
-//                }
-//            })
-//        
-//        shareScreenViewModel = IconWithLabelButtonViewModel(
-//            selectedButtonState: localUserState.shareScreenState.operation == .screenIsSharing ? ShareScreenButtonState.shareOn : ShareScreenButtonState.shareOff,
-//            localizationProvider: localizationProvider,
-//            buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-//            isDisabled: false,
-//            isVisible: true,
-//            action: { [weak self] in
-//                if localUserState.shareScreenState.operation == .screenIsSharing {
-//                    self?.onStopShareScreen()
-//                } else {
-//                    self?.onShareScreen()
-//                }
-//            })
-//        
-//        layoutOptionsButtonViewModel = IconWithLabelButtonViewModel(
-//            selectedButtonState: localUserState.meetingLayoutState.operation == .speaker ? LayoutOptionsButtonState.speakerLayout : LayoutOptionsButtonState.gridLayout,
-//            localizationProvider: localizationProvider,
-//            buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-//            isDisabled: false,
-//            isVisible: true,
-//            action: { [weak self] in
-//                self?.onLayoutOptions()
-//            })
-//        
-//        chatButtonViewModel = IconWithLabelButtonViewModel(
-//            selectedButtonState: ChatButtonState.default,
-//            localizationProvider: localizationProvider,
-//            buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-//            isDisabled: false,
-//            isVisible: true,
-//            action: { [weak self] in
-//                self?.onChat()
-//            })
-//        
-//        participantsButtonViewModel = IconWithLabelButtonViewModel(
-//            selectedButtonState: ParticipantsButtonState.default,
-//            localizationProvider: localizationProvider,
-//            buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-//            isDisabled: false,
-//            isVisible: true,
-//            action: { [weak self] in
-//                self?.onParticipants()
-//            })
-//        
-//        effectsButtonViewModel = IconWithLabelButtonViewModel(
-//            selectedButtonState: EffectsButtonState.default,
-//            localizationProvider: localizationProvider,
-//            buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-//            isDisabled: false,
-//            isVisible: true,
-//            action: { [weak self] in
-//                self?.onEffects()
-//            })
     }
 }

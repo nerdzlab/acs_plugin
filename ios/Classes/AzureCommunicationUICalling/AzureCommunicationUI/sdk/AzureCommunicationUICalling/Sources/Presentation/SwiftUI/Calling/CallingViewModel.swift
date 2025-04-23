@@ -28,6 +28,7 @@ internal class CallingViewModel: ObservableObject {
     private var callClientRequested = false
 
     let localVideoViewModel: LocalVideoViewModel
+    let videoEffectsPreviewViewModel: VideoEffectsPreviewViewModel
     let participantGridsViewModel: ParticipantGridViewModel
     let bannerViewModel: BannerViewModel
     let lobbyOverlayViewModel: LobbyOverlayViewModel
@@ -100,7 +101,9 @@ internal class CallingViewModel: ObservableObject {
         captionsErrorViewModel = compositeViewModelFactory.makeCaptionsErrorViewModel(dispatchAction: actionDispatch)
         supportFormViewModel = compositeViewModelFactory.makeSupportFormViewModel()
 
-        localVideoViewModel = compositeViewModelFactory.makeLocalVideoViewModel(dispatchAction: actionDispatch)
+        localVideoViewModel = compositeViewModelFactory.makeLocalVideoViewModel(dispatchAction: actionDispatch, isPreviewEnable: true)
+        
+        videoEffectsPreviewViewModel = VideoEffectsPreviewViewModel()
         
         participantGridsViewModel = compositeViewModelFactory.makeParticipantGridsViewModel(
             isIpadInterface: isIpadInterface,
@@ -208,6 +211,7 @@ internal class CallingViewModel: ObservableObject {
         effectsPickerViewModel = compositeViewModelFactory.makeEffectsPickerViewModel(
             localUserState: store.state.localUserState,
             localizationProvider: localizationProvider,
+            videoEffectsPreviewViewModel: videoEffectsPreviewViewModel,
             onDismiss: {
                 store.dispatch(action: .hideDrawer)
             },
@@ -354,8 +358,7 @@ internal class CallingViewModel: ObservableObject {
                                    buttonViewDataState: state.buttonViewDataState
                                    /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
                                    )
-        localVideoViewModel.update(localUserState: state.localUserState,
-                                   visibilityState: state.visibilityState)
+        
         lobbyWaitingHeaderViewModel.update(localUserState: state.localUserState,
                                            remoteParticipantsState: state.remoteParticipantsState,
                                            callingState: state.callingState,
@@ -383,6 +386,13 @@ internal class CallingViewModel: ObservableObject {
             localUserState: state.localUserState,
             isDisplayed: state.navigationState.backgroundEffectsViewVisible
         )
+        
+        if state.navigationState.meetignOptionsVisible {
+            videoEffectsPreviewViewModel.update(localUserState: state.localUserState, visibilityState: state.visibilityState)
+        }
+        
+        localVideoViewModel.update(localUserState: state.localUserState,
+                                   visibilityState: state.visibilityState, isPreviewEnabled: !state.navigationState.meetignOptionsVisible)
 
         receiveExtension(state)
     }

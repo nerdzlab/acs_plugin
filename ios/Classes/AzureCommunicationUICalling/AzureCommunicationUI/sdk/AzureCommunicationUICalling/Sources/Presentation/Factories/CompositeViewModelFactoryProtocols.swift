@@ -42,7 +42,7 @@ protocol CompositeViewModelFactoryProtocol {
         isDisabled: Bool,
         action: @escaping (() -> Void)) -> PrimaryIconButtonViewModel<ButtonStateType>
     
-    func makeLocalVideoViewModel(dispatchAction: @escaping ActionDispatch) -> LocalVideoViewModel
+    func makeLocalVideoViewModel(dispatchAction: @escaping ActionDispatch, isPreviewEnable: Bool) -> LocalVideoViewModel
     func makePrimaryButtonViewModel(buttonStyle: FluentUI.ButtonStyle,
                                     buttonLabel: String,
                                     iconName: CompositeIcon?,
@@ -110,7 +110,8 @@ protocol CompositeViewModelFactoryProtocol {
                                      isDisplayed: Bool) -> MeetingOptionsViewModel
     
     func makeEffectsPickerViewModel(localUserState: LocalUserState,
-                                     localizationProvider: LocalizationProviderProtocol,
+                                    localizationProvider: LocalizationProviderProtocol,
+                                    videoEffectsPreviewViewModel: VideoEffectsPreviewViewModel,
                                     onDismiss: @escaping () -> Void,
                                     onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
                                     isDisplayed: Bool) -> EffectsPickerViewModel

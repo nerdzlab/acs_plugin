@@ -261,7 +261,7 @@ public struct LocalUserState {
     
     enum BackgroundEffectType: Equatable, CaseIterable {
         case none
-        case blure
+        case blur
         case backgroundOne
         case backgroundTwo
         case backgroundThree
@@ -273,7 +273,7 @@ public struct LocalUserState {
                         rhs: LocalUserState.BackgroundEffectType) -> Bool {
             switch (lhs, rhs) {
             case (.none, .none),
-                (.blure, .blure),
+                (.blur, .blur),
                 (.backgroundOne, .backgroundOne),
                 (.backgroundTwo, .backgroundTwo),
                 (.backgroundThree, .backgroundThree),
@@ -290,7 +290,7 @@ public struct LocalUserState {
             switch self {
             case .none:
                 return ImageProvider().getImage(for: .noneBackground)
-            case .blure:
+            case .blur:
                 return ImageProvider().getImage(for: .blurBackground)
             case .backgroundOne:
                 return ImageProvider().getImage(for: .backgroundOne)
@@ -311,7 +311,7 @@ public struct LocalUserState {
             switch self {
             case .none:
                 return ImageProvider().getUIImage(for: .noneBackground)
-            case .blure:
+            case .blur:
                 return ImageProvider().getUIImage(for: .blurBackground)
             case .backgroundOne:
                 return ImageProvider().getUIImage(for: .backgroundOne)
