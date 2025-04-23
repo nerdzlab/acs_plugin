@@ -38,6 +38,8 @@ struct IconButton: View {
             return 32
         case .cameraSwitchButtonPip:
             return 28
+        default:
+            return 32
         }
     }
     var height: CGFloat {
@@ -55,6 +57,8 @@ struct IconButton: View {
             return 32
         case .cameraSwitchButtonPip:
             return 28
+        default:
+            return 32
         }
     }
     var buttonBackgroundColor: Color {
@@ -68,6 +72,8 @@ struct IconButton: View {
             return .clear
         case .cameraSwitchButtonFull,
                 .cameraSwitchButtonPip:
+            return .clear
+        default:
             return .clear
         }
     }

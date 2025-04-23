@@ -119,6 +119,13 @@ protocol CallingMiddlewareHandling {
         state: AppState,
         dispatch: @escaping ActionDispatch
     ) -> Task<Void, Never>
+    
+    @discardableResult
+    func requestBackgroundEffect(
+        effect: LocalUserState.BackgroundEffectType,
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
 }
 
 // swiftlint:disable type_body_length
@@ -752,6 +759,15 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             } catch {
                 dispatch(.remoteParticipantsAction(.removeParticipantError))
             }
+        }
+    }
+    
+    func requestBackgroundEffect(
+        effect: LocalUserState.BackgroundEffectType,
+        state: AppState, dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never> {
+        return Task {
+            callingService.setBackgroundEffect(effect)
         }
     }
 }

@@ -103,6 +103,8 @@ private func handleLocalUserAction(_ action: LocalUserAction,
         actionHandler.requestRaiseHand(state: getState(), dispatch: dispatch)
     case .lowerHandRequested:
         actionHandler.requestLowerHand(state: getState(), dispatch: dispatch)
+    case .backgroundEffectRequested(let effect):
+        actionHandler.requestBackgroundEffect(effect: effect, state: getState(), dispatch: dispatch)
         
     case .cameraOnSucceeded,
             .cameraOnFailed,
@@ -130,6 +132,8 @@ private func handleLocalUserAction(_ action: LocalUserAction,
             .lowerHandFailed,
             .raiseHandSucceeded,
             .lowerHandSucceeded,
+            .backgroundEffectSetFailed,
+            .backgroundEffectSetSucceeded,
             .participantRoleChanged:
         break
     }

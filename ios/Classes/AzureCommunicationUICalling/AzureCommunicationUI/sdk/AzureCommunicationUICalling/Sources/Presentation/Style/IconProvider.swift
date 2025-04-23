@@ -56,6 +56,16 @@ enum CompositeIcon: String {
     case handUp = "hand_up"
     case handDown = "hand_down"
     case pinInfo = "pin_info"
+    case backgroundOne = "background_1"
+    case backgroundTwo = "background_2"
+    case backgroundThree = "background_3"
+    case backgroundFour = "background_4"
+    case backgroundFive = "background_5"
+    case backgroundSix = "background_6"
+    case checkmarkEffects = "checkmark"
+    case closeEffects = "close_effects"
+    case blurBackground = "blur_background"
+    case noneBackground = "none_background"
 }
 
 struct IconProvider {
@@ -64,9 +74,24 @@ struct IconProvider {
                 in: Bundle(for: CallComposite.self),
                 compatibleWith: nil)
     }
+    
     func getImage(for iconName: CompositeIcon) -> Image {
         Image("Icon/\(iconName.rawValue)", bundle: Bundle(for: CallComposite.self))
             .resizable()
             .renderingMode(.template)
+    }
+}
+
+struct ImageProvider {
+    func getImage(for imageName: CompositeIcon) -> Image {
+        Image("Icon/\(imageName.rawValue)",
+              bundle: Bundle(for: CallComposite.self))
+            .resizable()
+    }
+    
+    func getUIImage(for iconName: CompositeIcon) -> UIImage? {
+        UIImage(named: "Icon/\(iconName.rawValue)",
+                in: Bundle(for: CallComposite.self),
+                compatibleWith: nil)
     }
 }

@@ -84,6 +84,7 @@ extension Reducer where State == ErrorState,
                 .showShareSheetMeetingLink,
                 .showLayoutOptions,
                 .showMeetingOptions,
+                .showBackgroundEffectsView,
                 .buttonViewDataAction:
             return state
         }

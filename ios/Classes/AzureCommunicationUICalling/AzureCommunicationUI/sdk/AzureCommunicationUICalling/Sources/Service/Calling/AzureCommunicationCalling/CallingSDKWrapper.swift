@@ -12,7 +12,6 @@ import AVFoundation
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
 class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
-    
     let callingEventsHandler: CallingSDKEventsHandling
     
     private let logger: Logger
@@ -642,6 +641,40 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         let raisehandFeature =  call.feature(Features.raisedHands)
         return raisehandFeature.raisedHands
     }
+    
+    func setBackgroundEffect(_ effect: LocalUserState.BackgroundEffectType) {
+        guard let videoEffectsFeature = localVideoStream?.feature(Features.localVideoEffects) else {
+            return
+        }
+        
+        switch effect {
+        case .none:
+            // Disable both known effect types just to be sure
+            videoEffectsFeature.disable(effect: BackgroundBlurEffect())
+            videoEffectsFeature.disable(effect: BackgroundReplacementEffect())
+            
+        case .blure:
+            let blurEffect = BackgroundBlurEffect()
+            
+            if videoEffectsFeature.isSupported(effect: blurEffect) {
+                videoEffectsFeature.enable(effect: blurEffect)
+            }
+            
+        case .backgroundOne, .backgroundTwo, .backgroundThree, .backgroundFour, .backgroundFive, .backgroundSix:
+            // Assuming your `ImageProvider().getImage(...)` provides access to a `UIImage`
+            guard let image = effect.effectImage,
+                  let imageData = image.jpegData(compressionQuality: 1.0) else {
+                return
+            }
+            
+            let replacementEffect = BackgroundReplacementEffect()
+            replacementEffect.buffer = imageData
+            
+            if videoEffectsFeature.isSupported(effect: replacementEffect) {
+                videoEffectsFeature.enable(effect: replacementEffect)
+            }
+        }
+    }
 }
 
 extension CallingSDKWrapper {
@@ -697,6 +730,7 @@ extension CallingSDKWrapper {
         let captionsFeature = call.feature(Features.captions)
         let capabilitiesFeature = call.feature(Features.capabilities)
         let raiseHandFeature = call.feature(Features.raisedHands)
+        let localVideoEffectsFeature = localVideoStream?.feature(Features.localVideoEffects)
         
         if let callingEventsHandler = self.callingEventsHandler as? CallingSDKEventsHandler {
             callingEventsHandler.assign(recordingCallFeature)
@@ -706,6 +740,8 @@ extension CallingSDKWrapper {
             callingEventsHandler.assign(captionsFeature)
             callingEventsHandler.assign(capabilitiesFeature)
             callingEventsHandler.assign(raiseHandFeature)
+            callingEventsHandler.assign(localVideoEffectsFeature)
+            
             if callConfiguration.compositeCallType == .oneToOneIncoming && call.state == .connected {
                 // If call is accepted from CallKit
                 // call state can already be accepted, thus call state change will be missed

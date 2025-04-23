@@ -61,6 +61,7 @@ struct CallingView: View {
                 
                 errorInfoView
                 bottomDrawer
+                backgroundEffectsView
             }
             .frame(width: geometry.size.width,
                     height: geometry.size.height)
@@ -135,10 +136,19 @@ struct CallingView: View {
                 LayoutOptionsView(viewModel: viewModel.layoutOptionsViewModel, avatarManager: avatarManager)
             }
             
-            MeetingOptionsDrawer(isPresented: viewModel.meetingOptionsViewModel.isDisplayed,
-                         hideDrawer: viewModel.dismissDrawer) {
-                MeetingOptionsView(viewModel: viewModel.meetingOptionsViewModel)
-            }
+//            MeetingOptionsDrawer(isPresented: viewModel.meetingOptionsViewModel.isDisplayed,
+//                         hideDrawer: viewModel.dismissDrawer) {
+//                MeetingOptionsView(viewModel: viewModel.meetingOptionsViewModel)
+//            }
+        }
+    }
+    
+    var backgroundEffectsView: some View {
+        FullScreenModalView(isPresented: viewModel.meetingOptionsViewModel.isDisplayed,
+                            hideModal: viewModel.dismissDrawer) {
+            EffectsPickerView(
+                viewModel: viewModel.effectsPickerViewModel
+            )
         }
     }
 

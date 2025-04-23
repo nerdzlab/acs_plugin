@@ -72,6 +72,8 @@ extension Reducer where State == NavigationState,
         case .captionsAction(.setSpokenLanguageRequested(language: let language)),
                 .captionsAction(.setCaptionLanguageRequested(language: let language)):
             drawerVisibility = .hidden
+        case .showBackgroundEffectsView:
+            drawerVisibility = .captionsLangaugeViewVisible
         case .audioSessionAction,
                 .callingAction(.callIdUpdated),
                 .callingAction(.callStartRequested),
@@ -133,6 +135,7 @@ extension Reducer where State == NavigationState,
         case shareMeetingLinkVisible
         case layoutOptionsVisible
         case meetingOptionsVisible
+        case backgroundEffectsViewVisible
 
         var isSupportFormVisible: Bool { self == .supportFormVisible }
         var isSupportShareSheetVisible: Bool { self == .supportShareSheetVisible }
@@ -148,6 +151,7 @@ extension Reducer where State == NavigationState,
         var isShareSheetMeetingLinkVisible: Bool { self == .shareMeetingLinkVisible }
         var isLayoutOptionsVisible: Bool { self == .layoutOptionsVisible }
         var isMeetingOptionsVisible: Bool { self == .meetingOptionsVisible }
+        var isBackgroundEffectsViewVisible: Bool { self == .backgroundEffectsViewVisible }
     }
 
     static func getDrawerVisibility(state: NavigationState) -> DrawerVisibility {
@@ -164,6 +168,7 @@ extension Reducer where State == NavigationState,
         state.shareMeetingLinkVisible ? .shareMeetingLinkVisible :
         state.layoutOptionsVisible ? .layoutOptionsVisible :
         state.meetignOptionsVisible ? .meetingOptionsVisible :
+        state.backgroundEffectsViewVisible ? .backgroundEffectsViewVisible :
         state.moreOptionsVisible ? .moreOptionsVisible : .hidden
     }
 

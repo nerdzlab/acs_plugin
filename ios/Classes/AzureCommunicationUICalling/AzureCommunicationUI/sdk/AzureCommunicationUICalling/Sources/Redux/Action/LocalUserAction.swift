@@ -37,6 +37,10 @@ enum LocalUserAction: Equatable {
     case lowerHandRequested
     case lowerHandFailed(error: Error)
     case lowerHandSucceeded
+    
+    case backgroundEffectRequested(effect: LocalUserState.BackgroundEffectType)
+    case backgroundEffectSetFailed(error: Error)
+    case backgroundEffectSetSucceeded(effect: LocalUserState.BackgroundEffectType)
 
     case microphoneMuteStateUpdated(isMuted: Bool)
 

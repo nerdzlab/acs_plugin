@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 public struct LocalUserState {
     enum CameraOperationalStatus: Equatable {
@@ -234,8 +235,103 @@ public struct LocalUserState {
         var error: Error?
     }
     
+    struct BackgroundEffectsState {
+        let operation: BackgroundEffectsOperationalStatus
+        let effect: BackgroundEffectType
+        var error: Error?
+    }
+    
+    enum BackgroundEffectsOperationalStatus: Equatable {
+        case on
+        case off
+        case pending
+        
+        static func == (lhs: LocalUserState.BackgroundEffectsOperationalStatus,
+                        rhs: LocalUserState.BackgroundEffectsOperationalStatus) -> Bool {
+            switch (lhs, rhs) {
+            case (.on, .on),
+                (.off, .off),
+                (.pending, .pending):
+                return true
+            default:
+                return false
+            }
+        }
+    }
+    
+    enum BackgroundEffectType: Equatable, CaseIterable {
+        case none
+        case blure
+        case backgroundOne
+        case backgroundTwo
+        case backgroundThree
+        case backgroundFour
+        case backgroundFive
+        case backgroundSix
+        
+        static func == (lhs: LocalUserState.BackgroundEffectType,
+                        rhs: LocalUserState.BackgroundEffectType) -> Bool {
+            switch (lhs, rhs) {
+            case (.none, .none),
+                (.blure, .blure),
+                (.backgroundOne, .backgroundOne),
+                (.backgroundTwo, .backgroundTwo),
+                (.backgroundThree, .backgroundThree),
+                (.backgroundFour, .backgroundFour),
+                (.backgroundFive, .backgroundFive),
+                (.backgroundSix, .backgroundSix):
+                return true
+            default:
+                return false
+            }
+        }
+        
+        var previewImage: Image {
+            switch self {
+            case .none:
+                return ImageProvider().getImage(for: .noneBackground)
+            case .blure:
+                return ImageProvider().getImage(for: .blurBackground)
+            case .backgroundOne:
+                return ImageProvider().getImage(for: .backgroundOne)
+            case .backgroundTwo:
+                return ImageProvider().getImage(for: .backgroundTwo)
+            case .backgroundThree:
+                return ImageProvider().getImage(for: .backgroundThree)
+            case .backgroundFour:
+                return ImageProvider().getImage(for: .backgroundFour)
+            case .backgroundFive:
+                return ImageProvider().getImage(for: .backgroundFive)
+            case .backgroundSix:
+                return ImageProvider().getImage(for: .backgroundSix)
+            }
+        }
+        
+        var effectImage: UIImage? {
+            switch self {
+            case .none:
+                return ImageProvider().getUIImage(for: .noneBackground)
+            case .blure:
+                return ImageProvider().getUIImage(for: .blurBackground)
+            case .backgroundOne:
+                return ImageProvider().getUIImage(for: .backgroundOne)
+            case .backgroundTwo:
+                return ImageProvider().getUIImage(for: .backgroundTwo)
+            case .backgroundThree:
+                return ImageProvider().getUIImage(for: .backgroundThree)
+            case .backgroundFour:
+                return ImageProvider().getUIImage(for: .backgroundFour)
+            case .backgroundFive:
+                return ImageProvider().getUIImage(for: .backgroundFive)
+            case .backgroundSix:
+                return ImageProvider().getUIImage(for: .backgroundSix)
+            }
+        }
+    }
+        
     let cameraState: CameraState
     let audioState: AudioState
+    let backgroundEffectsState: BackgroundEffectsState
     let incomingAudioState: IncomingAudioState
     let noiseSuppressionState: NoiseSuppressionState
     let shareScreenState: ShareScreenState
@@ -265,7 +361,8 @@ public struct LocalUserState {
          incomingAudioState: IncomingAudioState = IncomingAudioState(operation: .unmuted, error: nil),
          meetingLayoutState: MeetingLayoutState = MeetingLayoutState(operation: .grid),
          raiseHandState: RaiseHandState = RaiseHandState(operation: .handIsLower),
-         shareScreenState: ShareScreenState = ShareScreenState(operation: .screenNotShared)
+         shareScreenState: ShareScreenState = ShareScreenState(operation: .screenNotShared),
+         backgroundEffectsState: BackgroundEffectsState = BackgroundEffectsState(operation: .off, effect: .none)
     ) {
         self.cameraState = cameraState
         self.noiseSuppressionState = noiseSuppressionState
@@ -281,5 +378,6 @@ public struct LocalUserState {
         self.meetingLayoutState = meetingLayoutState
         self.raiseHandState = raiseHandState
         self.shareScreenState = shareScreenState
+        self.backgroundEffectsState = backgroundEffectsState
     }
 }

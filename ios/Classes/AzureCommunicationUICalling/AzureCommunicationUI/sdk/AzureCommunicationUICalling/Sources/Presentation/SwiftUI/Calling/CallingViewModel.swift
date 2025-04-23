@@ -38,6 +38,7 @@ internal class CallingViewModel: ObservableObject {
     let participantOptionsViewModel: ParticipantOptionsViewModel
     let layoutOptionsViewModel: LayoutOptionsViewModel
     let meetingOptionsViewModel: MeetingOptionsViewModel
+    let effectsPickerViewModel: EffectsPickerViewModel
     var onHoldOverlayViewModel: OnHoldOverlayViewModel!
     var shareMeetingLinkViewModel: ShareMeetingInfoActivityViewModel!
     let isRightToLeft: Bool
@@ -196,12 +197,24 @@ internal class CallingViewModel: ObservableObject {
                 store.dispatch(action: .localUserAction(.lowerHandRequested))
             },
             onEffects: {
-                print("On effects screen")
+                store.dispatch(action: .showBackgroundEffectsView)
             },
             onLayoutOptions: {
                 store.dispatch(action: .showLayoutOptions)
             },
             isDisplayed: store.state.navigationState.meetignOptionsVisible
+        )
+        
+        effectsPickerViewModel = compositeViewModelFactory.makeEffectsPickerViewModel(
+            localUserState: store.state.localUserState,
+            localizationProvider: localizationProvider,
+            onDismiss: {
+                store.dispatch(action: .hideDrawer)
+            },
+            onEffects: { effect in
+                store.dispatch(action: .localUserAction(.backgroundEffectRequested(effect: effect)))
+            },
+            isDisplayed: store.state.navigationState.backgroundEffectsViewVisible
         )
 
         controlBarViewModel = compositeViewModelFactory
@@ -365,6 +378,11 @@ internal class CallingViewModel: ObservableObject {
         moreCallOptionsListViewModel.update(navigationState: state.navigationState,
                                             visibilityState: state.visibilityState,
                                             buttonViewDataState: state.buttonViewDataState)
+        
+        effectsPickerViewModel.update(
+            localUserState: state.localUserState,
+            isDisplayed: state.navigationState.backgroundEffectsViewVisible
+        )
 
         receiveExtension(state)
     }

@@ -50,6 +50,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
     private var communicationCaptions: CommunicationCaptions?
     private var capabilitiesCallFeature: CapabilitiesCallFeature?
     private var raiseHandFeature: RaiseHandCallFeature?
+    private var backgroundEffectFeature: LocalVideoEffectsFeature?
 
     private var previousCallingStatus: CallingStatus = .none
     private var remoteParticipants = MappedSequence<String, AzureCommunicationCalling.RemoteParticipant>()
@@ -100,6 +101,11 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         self.raiseHandFeature = raiseHandFeature
         raiseHandFeature.delegate = self
     }
+    
+    func assign(_ localVideoEffectsFeature: LocalVideoEffectsFeature?) {
+        self.backgroundEffectFeature = localVideoEffectsFeature
+        self.backgroundEffectFeature?.delegate = self
+    }
 
     func setupProperties() {
         participantsInfoListSubject.value.removeAll()
@@ -112,6 +118,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         previousCallingStatus = .none
         capabilitiesCallFeature = nil
         raiseHandFeature = nil
+        backgroundEffectFeature = nil
     }
 
     private func setupRemoteParticipantEventsAdapter() {
@@ -234,7 +241,8 @@ extension CallingSDKEventsHandler: CallDelegate,
     NetworkDiagnosticsDelegate,
     CaptionsCallFeatureDelegate,
     CapabilitiesCallFeatureDelegate,
-    RaiseHandCallFeatureDelegate
+    RaiseHandCallFeatureDelegate,
+    LocalVideoEffectsFeatureDelegate
 {
     func call(_ call: Call, didChangeId args: PropertyChangedEventArgs) {
         callIdSubject.send(call.id)
@@ -509,6 +517,18 @@ extension CallingSDKEventsHandler: CallDelegate,
                 participantsInfoListSubject.send(currentList)
             }
         }
+    }
+    
+    func localVideoEffectsFeature(_ videoEffectsLocalVideoStreamFeature: LocalVideoEffectsFeature, didEnableVideoEffect args: VideoEffectEnabledEventArgs) {
+        print("Video Effect Enabled, VideoEffectName: \(args.videoEffectName)")
+    }
+
+    func localVideoEffectsFeature(_ videoEffectsLocalVideoStreamFeature: LocalVideoEffectsFeature, didDisableVideoEffect args: VideoEffectDisabledEventArgs) {
+        print("Video Effect Disabled, VideoEffectName: \(args.videoEffectName)")
+    }
+
+    func localVideoEffectsFeature(_ videoEffectsLocalVideoStreamFeature: LocalVideoEffectsFeature, didReceiveVideoEffectError args: VideoEffectErrorEventArgs) {
+        print("Video Effect Error, VideoEffectName: \(args.videoEffectName), Code: \(args.code), Message: \(args.message)")
     }
 }
 

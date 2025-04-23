@@ -8,7 +8,7 @@ import Foundation
 import SwiftUI
 
 // swiftlint:disable file_length
-class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {    
+class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
     private let logger: Logger
     private let store: Store<AppState, Action>
     private let networkManager: NetworkManager
@@ -33,7 +33,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
     private let themeOptions: ThemeOptions
     /* </CUSTOM_COLOR_FEATURE> */
     private let updatableOptionsManager: UpdatableOptionsManagerProtocol
-
+    
     init(logger: Logger,
          store: Store<AppState, Action>,
          networkManager: NetworkManager,
@@ -57,7 +57,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
          /* </CUSTOM_COLOR_FEATURE> */
          updatableOptionsManager: UpdatableOptionsManagerProtocol,
          retrieveLogFiles: @escaping () -> [URL]
-         ) {
+    ) {
         self.logger = logger
         self.store = store
         self.networkManager = networkManager
@@ -81,27 +81,27 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
         self.avatarManager = avatarManager
         self.updatableOptionsManager = updatableOptionsManager
     }
-
+    
     func makeLeaveCallConfirmationViewModel(
         endCall: @escaping (() -> Void),
         dismissConfirmation: @escaping (() -> Void)) -> LeaveCallConfirmationViewModel {
-        return LeaveCallConfirmationViewModel(
-            state: store.state,
-            localizationProvider: localizationProvider,
-            endCall: endCall,
-            dismissConfirmation: dismissConfirmation)
-    }
-
+            return LeaveCallConfirmationViewModel(
+                state: store.state,
+                localizationProvider: localizationProvider,
+                endCall: endCall,
+                dismissConfirmation: dismissConfirmation)
+        }
+    
     func makeSupportFormViewModel() -> SupportFormViewModel {
         return SupportFormViewModel(
             isDisplayed: store.state.navigationState.supportFormVisible
             && store.state.visibilityState.currentStatus == .visible,
             dispatchAction: store.dispatch,
-                                    events: events,
-                                    localizationProvider: localizationProvider,
-                                    getDebugInfo: { [self] in self.debugInfoManager.getDebugInfo() })
+            events: events,
+            localizationProvider: localizationProvider,
+            getDebugInfo: { [self] in self.debugInfoManager.getDebugInfo() })
     }
-
+    
     // MARK: CompositeViewModels
     func getSetupViewModel() -> SetupViewModel {
         guard let viewModel = self.setupViewModel else {
@@ -119,7 +119,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
         }
         return viewModel
     }
-
+    
     func getCallingViewModel(rendererViewManager: RendererViewManager) -> CallingViewModel {
         guard let viewModel = self.callingViewModel else {
             let viewModel = CallingViewModel(compositeViewModelFactory: self,
@@ -128,7 +128,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                              accessibilityProvider: accessibilityProvider,
                                              isIpadInterface: UIDevice.current.userInterfaceIdiom == .pad,
                                              allowLocalCameraPreview: localOptions?.audioVideoMode
-                                                != CallCompositeAudioVideoMode.audioOnly,
+                                             != CallCompositeAudioVideoMode.audioOnly,
                                              callType: callType,
                                              captionsOptions: localOptions?.captionsOptions ?? CaptionsOptions(),
                                              capabilitiesManager: self.capabilitiesManager,
@@ -140,7 +140,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
         }
         return viewModel
     }
-
+    
     // MARK: ComponentViewModels
     func makeIconButtonViewModel(iconName: CompositeIcon,
                                  buttonType: IconButtonViewModel.ButtonType = .controlButton,
@@ -153,7 +153,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                             renderAsOriginal: renderAsOriginal,
                             action: action)
     }
-
+    
     func makeIconButtonViewModel(iconName: CompositeIcon,
                                  buttonType: IconButtonViewModel.ButtonType = .controlButton,
                                  isDisabled: Bool,
@@ -179,7 +179,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                             action: action)
     }
     /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
-
+    
     func makeIconWithLabelButtonViewModel<T: ButtonState>(
         selectedButtonState: T,
         localizationProvider: LocalizationProviderProtocol,
@@ -192,7 +192,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                 buttonColor: buttonColor,
                 isDisabled: isDisabled,
                 action: action)
-    }
+        }
     
     func makePrimaryIconButtonViewModel<T: PrimaryButtonState>(
         selectedButtonState: T,
@@ -204,7 +204,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                 localizationProvider: localizationProvider,
                 isDisabled: isDisabled,
                 action: action)
-    }
+        }
     
     func makeMeetingOptionsViewModel(localUserState: LocalUserState,
                                      localizationProvider: LocalizationProviderProtocol,
@@ -231,14 +231,27 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
             isDisplayed: isDisplayed
         )
     }
-
+    
+    func makeEffectsPickerViewModel(localUserState: LocalUserState,
+                                    localizationProvider: LocalizationProviderProtocol,
+                                    onDismiss: @escaping () -> Void,
+                                    onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
+                                    isDisplayed: Bool) -> EffectsPickerViewModel {
+        EffectsPickerViewModel(localUserState: localUserState,
+                               localizationProvider: localizationProvider,
+                               onDismiss: onDismiss,
+                               onEffects: onEffects,
+                               isDisplayed: isDisplayed
+        )
+    }
+    
     func makeLocalVideoViewModel(dispatchAction: @escaping ActionDispatch) -> LocalVideoViewModel {
         LocalVideoViewModel(compositeViewModelFactory: self,
                             logger: logger,
                             localizationProvider: localizationProvider,
                             dispatchAction: dispatchAction)
     }
-
+    
     func makePrimaryButtonViewModel(buttonStyle: FluentUI.ButtonStyle,
                                     buttonLabel: String,
                                     iconName: CompositeIcon?,
@@ -261,14 +274,14 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                        paddings: AppCompositeButton.Paddings? = nil,
                                        action: @escaping (() -> Void)) -> AppPrimaryButtonViewModel {
         AppPrimaryButtonViewModel(buttonStyle: buttonStyle,
-                               buttonLabel: buttonLabel,
-                               iconName: iconName,
-                               isDisabled: isDisabled,
-                               paddings: paddings,
-                               themeOptions: themeOptions,
-                               action: action)
+                                  buttonLabel: buttonLabel,
+                                  iconName: iconName,
+                                  isDisabled: isDisabled,
+                                  paddings: paddings,
+                                  themeOptions: themeOptions,
+                                  action: action)
     }
-
+    
     func makeAudioDevicesListViewModel(dispatchAction: @escaping ActionDispatch,
                                        localUserState: LocalUserState) -> AudioDevicesListViewModel {
         AudioDevicesListViewModel(compositeViewModelFactory: self,
@@ -289,7 +302,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                onSpeakerSelected: onSpeakerSelect,
                                isDisplayed: isDisplayed)
     }
-
+    
     func makeCaptionsLanguageListViewModel(dispatchAction: @escaping ActionDispatch,
                                            state: AppState
     ) -> CaptionsLanguageListViewModel {
@@ -298,14 +311,14 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                       state: state,
                                       localizationProvider: localizationProvider)
     }
-
+    
     func makeCaptionsListViewModel(state: AppState,
                                    captionsOptions: CaptionsOptions,
                                    dispatchAction: @escaping ActionDispatch,
                                    showSpokenLanguage: @escaping () -> Void,
                                    showCaptionsLanguage: @escaping () -> Void,
                                    isDisplayed: Bool) -> CaptionsListViewModel {
-
+        
         return CaptionsListViewModel(compositeViewModelFactory: self,
                                      localizationProvider: localizationProvider,
                                      captionsOptions: captionsOptions,
@@ -316,34 +329,34 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                      isDisplayed: store.state.navigationState.captionsViewVisible
                                      && store.state.visibilityState.currentStatus == .visible)
     }
-
+    
     func makeCaptionsInfoViewModel(state: AppState) -> CaptionsInfoViewModel {
         return CaptionsInfoViewModel(state: state,
                                      captionsManager: captionsViewManager,
                                      localizationProvider: localizationProvider)
     }
-
+    
     func makeCaptionsErrorViewModel(dispatchAction: @escaping ActionDispatch)
     -> CaptionsErrorViewModel {
         return CaptionsErrorViewModel(compositeViewModelFactory: self,
-                                  logger: logger,
-                                  localizationProvider: localizationProvider,
-                                  accessibilityProvider: accessibilityProvider,
-                                  dispatchAction: dispatchAction)
+                                      logger: logger,
+                                      localizationProvider: localizationProvider,
+                                      accessibilityProvider: accessibilityProvider,
+                                      dispatchAction: dispatchAction)
     }
-
+    
     func makeCaptionsLangaugeCellViewModel(title: String,
                                            isSelected: Bool,
                                            accessibilityLabel: String,
                                            onSelectedAction: @escaping (() -> Void)) -> DrawerSelectableItemViewModel {
         return DrawerSelectableItemViewModel(icon: nil,
-                                      title: title,
-                                      accessibilityIdentifier: "",
+                                             title: title,
+                                             accessibilityIdentifier: "",
                                              accessibilityLabel: accessibilityLabel,
-                                      isSelected: isSelected,
-                                      action: onSelectedAction)
+                                             isSelected: isSelected,
+                                             action: onSelectedAction)
     }
-
+    
     func makeErrorInfoViewModel(title: String,
                                 subtitle: String) -> ErrorInfoViewModel {
         ErrorInfoViewModel(localizationProvider: localizationProvider,
@@ -398,7 +411,7 @@ extension CompositeViewModelFactory {
                             controlBarOptions: callScreenOptions?.controlBarOptions,
                             buttonViewDataState: buttonViewDataState)
     }
-
+    
     func makeInfoHeaderViewModel(dispatchAction: @escaping ActionDispatch,
                                  localUserState: LocalUserState,
                                  callScreenInfoHeaderState: CallScreenInfoHeaderState
@@ -424,7 +437,7 @@ extension CompositeViewModelFactory {
                             /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
         )
     }
-
+    
     func makeLobbyWaitingHeaderViewModel(localUserState: LocalUserState,
                                          dispatchAction: @escaping ActionDispatch) -> LobbyWaitingHeaderViewModel {
         LobbyWaitingHeaderViewModel(compositeViewModelFactory: self,
@@ -434,7 +447,7 @@ extension CompositeViewModelFactory {
                                     accessibilityProvider: accessibilityProvider,
                                     dispatchAction: dispatchAction)
     }
-
+    
     func makeLobbyActionErrorViewModel(localUserState: LocalUserState,
                                        dispatchAction: @escaping ActionDispatch) -> LobbyErrorHeaderViewModel {
         LobbyErrorHeaderViewModel(compositeViewModelFactory: self,
@@ -444,7 +457,7 @@ extension CompositeViewModelFactory {
                                   accessibilityProvider: accessibilityProvider,
                                   dispatchAction: dispatchAction)
     }
-
+    
     func makeParticipantCellViewModel(participantModel: ParticipantInfoModel) -> ParticipantGridCellViewModel {
         ParticipantGridCellViewModel(localizationProvider: localizationProvider,
                                      accessibilityProvider: accessibilityProvider,
@@ -455,7 +468,7 @@ extension CompositeViewModelFactory {
         },
                                      callType: callType)
     }
-
+    
     func makeParticipantGridsViewModel(isIpadInterface: Bool, rendererViewManager: RendererViewManager) -> ParticipantGridViewModel {
         ParticipantGridViewModel(compositeViewModelFactory: self,
                                  localizationProvider: localizationProvider,
@@ -465,7 +478,7 @@ extension CompositeViewModelFactory {
                                  callType: callType,
                                  rendererViewManager: rendererViewManager)
     }
-
+    
     func makeParticipantsListViewModel(localUserState: LocalUserState,
                                        isDisplayed: Bool,
                                        showSharingViewAction: @escaping () -> Void,
@@ -478,7 +491,7 @@ extension CompositeViewModelFactory {
             dispatchAction(Action.showParticipantOptions(participant))
         },
                                   onShowShareSheetMeetingLink: showSharingViewAction,
-        avatarManager: avatarManager)
+                                  avatarManager: avatarManager)
     }
     
     func makeParticipantOptionsViewModel(
@@ -507,7 +520,7 @@ extension CompositeViewModelFactory {
             },
             isDisplayed: isDisplayed)
     }
-
+    
     func makeParticipantMenuViewModel(localUserState: LocalUserState,
                                       isDisplayed: Bool,
                                       dispatchAction: @escaping ActionDispatch) -> ParticipantMenuViewModel {
@@ -521,16 +534,16 @@ extension CompositeViewModelFactory {
         },
                                  isDisplayed: isDisplayed)
     }
-
+    
     func makeBannerViewModel(dispatchAction: @escaping ActionDispatch) -> BannerViewModel {
         BannerViewModel(compositeViewModelFactory: self, dispatchAction: dispatchAction)
     }
-
+    
     func makeBannerTextViewModel() -> BannerTextViewModel {
         BannerTextViewModel(accessibilityProvider: accessibilityProvider,
                             localizationProvider: localizationProvider)
     }
-
+    
     func makeMoreCallOptionsListViewModel(
         isCaptionsAvailable: Bool,
         controlBarOptions: CallScreenControlBarOptions?,
@@ -539,20 +552,20 @@ extension CompositeViewModelFactory {
         showCaptionsViewAction: @escaping () -> Void,
         buttonViewDataState: ButtonViewDataState,
         dispatchAction: @escaping ActionDispatch) -> MoreCallOptionsListViewModel {
-
-        // events.onUserReportedIssue
-        return MoreCallOptionsListViewModel(compositeViewModelFactory: self,
-                                            localizationProvider: localizationProvider,
-                                            showSharingViewAction: showSharingViewAction,
-                                            showSupportFormAction: showSupportFormAction,
-                                            showCaptionsViewAction: showCaptionsViewAction,
-                                            controlBarOptions: controlBarOptions,
-                                            isCaptionsAvailable: isCaptionsAvailable,
-                                            isSupportFormAvailable: events.onUserReportedIssue != nil,
-                                            buttonViewDataState: buttonViewDataState,
-                                            dispatchAction: dispatchAction)
-    }
-
+            
+            // events.onUserReportedIssue
+            return MoreCallOptionsListViewModel(compositeViewModelFactory: self,
+                                                localizationProvider: localizationProvider,
+                                                showSharingViewAction: showSharingViewAction,
+                                                showSupportFormAction: showSupportFormAction,
+                                                showCaptionsViewAction: showCaptionsViewAction,
+                                                controlBarOptions: controlBarOptions,
+                                                isCaptionsAvailable: isCaptionsAvailable,
+                                                isSupportFormAvailable: events.onUserReportedIssue != nil,
+                                                buttonViewDataState: buttonViewDataState,
+                                                dispatchAction: dispatchAction)
+        }
+    
     func makeLanguageListItemViewModel(title: String,
                                        subtitle: String?,
                                        accessibilityIdentifier: String,
@@ -561,15 +574,15 @@ extension CompositeViewModelFactory {
                                        isEnabled: Bool,
                                        action: @escaping (() -> Void)) -> DrawerGenericItemViewModel {
         DrawerGenericItemViewModel(title: title,
-                                subtitle: subtitle,
-                                accessibilityIdentifier: accessibilityIdentifier,
+                                   subtitle: subtitle,
+                                   accessibilityIdentifier: accessibilityIdentifier,
                                    accessibilityTraits: .isButton,
                                    action: action,
                                    startCompositeIcon: startIcon,
                                    endIcon: endIcon,
                                    isEnabled: isEnabled)
     }
-
+    
     func makeToggleListItemViewModel(title: String,
                                      isToggleOn: Binding<Bool>,
                                      showToggle: Bool,
@@ -585,16 +598,16 @@ extension CompositeViewModelFactory {
                                    isToggleOn: isToggleOn,
                                    isEnabled: isEnabled)
     }
-
+    
     func makeDrawerListItemViewModel(icon: CompositeIcon,
                                      title: String,
                                      accessibilityIdentifier: String) -> DrawerGenericItemViewModel {
         DrawerGenericItemViewModel(title: title,
-                                accessibilityIdentifier: accessibilityIdentifier,
-                                action: nil,
-                                startCompositeIcon: icon)
+                                   accessibilityIdentifier: accessibilityIdentifier,
+                                   action: nil,
+                                   startCompositeIcon: icon)
     }
-
+    
     func makeDebugInfoSharingActivityViewModel() -> DebugInfoSharingActivityViewModel {
         DebugInfoSharingActivityViewModel(accessibilityProvider: accessibilityProvider,
                                           debugInfoManager: debugInfoManager) {
@@ -608,7 +621,7 @@ extension CompositeViewModelFactory {
             self.store.dispatch(action: .hideDrawer)
         }
     }
-
+    
     func makeBottomToastViewModel(toastNotificationState: ToastNotificationState,
                                   dispatchAction: @escaping ActionDispatch) -> BottomToastViewModel {
         BottomToastViewModel(dispatchAction: dispatchAction,
@@ -616,19 +629,19 @@ extension CompositeViewModelFactory {
                              accessibilityProvider: accessibilityProvider,
                              toastNotificationState: toastNotificationState)
     }
-
+    
     // MARK: SetupViewModels
     func makePreviewAreaViewModel(dispatchAction: @escaping ActionDispatch) -> PreviewAreaViewModel {
         PreviewAreaViewModel(compositeViewModelFactory: self,
                              dispatchAction: dispatchAction,
                              localizationProvider: localizationProvider)
     }
-
+    
     func makeSetupControlBarViewModel(dispatchAction: @escaping ActionDispatch,
                                       localUserState: LocalUserState,
                                       buttonViewDataState: ButtonViewDataState) -> SetupControlBarViewModel {
         let audioVideoMode = localOptions?.audioVideoMode ?? CallCompositeAudioVideoMode.audioAndVideo
-
+        
         return SetupControlBarViewModel(compositeViewModelFactory: self,
                                         logger: logger,
                                         dispatchAction: dispatchAction,
@@ -639,7 +652,7 @@ extension CompositeViewModelFactory {
                                         setupScreenOptions: setupScreenOptions,
                                         buttonViewDataState: buttonViewDataState)
     }
-
+    
     func makeJoiningCallActivityViewModel() -> JoiningCallActivityViewModel {
         JoiningCallActivityViewModel(title: self.localizationProvider.getLocalizedString(LocalizationKey.joiningCall))
     }

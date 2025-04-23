@@ -201,11 +201,4 @@ internal class MeetingOptionsViewModel: ObservableObject {
                 self?.onEffects()
             })
     }
-    
-//    private func get(localUserState: LocalUserState) -> RaiseHandButtonState {
-//        switch localUserState.raiseHandState.operation {
-//        case .panding
-//        }
-//        localUserState.raiseHandState.operation == .handIsLower ? RaiseHandButtonState.raiseHand : RaiseHandButtonState.lowerHand,
-//    }
 }

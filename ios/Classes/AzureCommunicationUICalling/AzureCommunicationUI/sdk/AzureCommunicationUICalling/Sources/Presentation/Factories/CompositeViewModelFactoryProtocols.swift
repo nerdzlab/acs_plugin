@@ -109,6 +109,13 @@ protocol CompositeViewModelFactoryProtocol {
                                      onLayoutOptions: @escaping () -> Void,
                                      isDisplayed: Bool) -> MeetingOptionsViewModel
     
+    func makeEffectsPickerViewModel(localUserState: LocalUserState,
+                                     localizationProvider: LocalizationProviderProtocol,
+                                    onDismiss: @escaping () -> Void,
+                                    onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
+                                    isDisplayed: Bool) -> EffectsPickerViewModel
+    
+    
     func makeLayoutOptionsViewModel(
         localUserState: LocalUserState,
         isDisplayed: Bool,

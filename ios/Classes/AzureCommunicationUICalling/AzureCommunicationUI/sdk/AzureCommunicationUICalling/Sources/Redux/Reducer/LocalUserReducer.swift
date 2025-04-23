@@ -18,6 +18,10 @@ extension Reducer where State == LocalUserState,
         var audioOperationStatus = localUserState.audioState.operation
         var audioDeviceStatus = localUserState.audioState.device
         var audioError = localUserState.audioState.error
+        
+        var backgroundEffectsOperationStatus = localUserState.backgroundEffectsState.operation
+        var backgroundEffectsSelectedType = localUserState.backgroundEffectsState.effect
+        var backgroundEffectsError = localUserState.backgroundEffectsState.error
 
         let initialDisplayName = localUserState.initialDisplayName
         var updatedDisplayName = localUserState.updatedDisplayName
@@ -124,6 +128,15 @@ extension Reducer where State == LocalUserState,
         case .lowerHandFailed(let error):
             raiseHandStatus = raiseHandStatus
             raiseHandError = error
+        case .backgroundEffectRequested(effect: let effect):
+            backgroundEffectsOperationStatus = .pending
+            backgroundEffectsSelectedType = effect
+        case .backgroundEffectSetSucceeded(effect: let effect):
+            backgroundEffectsOperationStatus = effect == .none ? .off : .on
+            backgroundEffectsSelectedType = effect
+        case .backgroundEffectSetFailed(error: let error):
+            backgroundEffectsOperationStatus = backgroundEffectsOperationStatus
+            backgroundEffectsError = error
         }
 
         let cameraState = LocalUserState.CameraState(operation: cameraStatus,
@@ -143,6 +156,12 @@ extension Reducer where State == LocalUserState,
         let raiseHandState = LocalUserState.RaiseHandState(operation: raiseHandStatus, error: raiseHandError)
         let shareScreenState = LocalUserState.ShareScreenState(operation: shareScreenStatus)
         
+        let backgroundEffectsState = LocalUserState.BackgroundEffectsState(
+            operation: backgroundEffectsOperationStatus,
+            effect: backgroundEffectsSelectedType,
+            error: backgroundEffectsError
+        )
+        
         return LocalUserState(cameraState: cameraState,
                               audioState: audioState,
                               initialDisplayName: initialDisplayName,
@@ -154,7 +173,8 @@ extension Reducer where State == LocalUserState,
                               noiseSuppressionState: noiseSuppressionState, incomingAudioState: incomingAudioState,
                               meetingLayoutState: meetingLayoutState,
                               raiseHandState: raiseHandState,
-                              shareScreenState: shareScreenState
+                              shareScreenState: shareScreenState,
+                              backgroundEffectsState: backgroundEffectsState
         )
     }
 }
