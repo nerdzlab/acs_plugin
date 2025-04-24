@@ -101,6 +101,8 @@ private func handleLocalUserAction(_ action: LocalUserAction,
         actionHandler.onCapabilitiesChanged(event: event, state: getState(), dispatch: dispatch)
     case .raiseHandRequested:
         actionHandler.requestRaiseHand(state: getState(), dispatch: dispatch)
+    case .sendReaction(let reaction):
+        actionHandler.sendReaction(reaction, state: getState(), dispatch: dispatch)
     case .lowerHandRequested:
         actionHandler.requestLowerHand(state: getState(), dispatch: dispatch)
     case .backgroundEffectRequested(let effect):

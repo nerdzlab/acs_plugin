@@ -36,7 +36,7 @@ struct ParticipantGridCellView: View {
                                                  isSpeaking: $viewModel.isSpeaking,
                                                  displayName: $viewModel.displayName,
                                                  isMuted: $viewModel.isMuted,
-                                                 isHandRaised: $viewModel.isHandRaised,
+                                                 isHandRaised: $viewModel.isHandRaised, selectedReaction: $viewModel.selectedReaction,
                                                  isPinned: $viewModel.isPinned)
                     .id(videoStreamId)
                     

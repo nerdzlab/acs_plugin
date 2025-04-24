@@ -624,7 +624,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             return
         }
         
-        let raisehandFeature =  call.feature(Features.raisedHands)
+        let raisehandFeature = call.feature(Features.raisedHands)
         
         do {
             try await raisehandFeature.lowerHand()
@@ -675,6 +675,34 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             if videoEffectsFeature.isSupported(effect: replacementEffect) {
                 videoEffectsFeature.enable(effect: replacementEffect)
             }
+        }
+    }
+    
+    func sendReaction(_ reaction: ReactionType) async throws {
+        guard let call = call else {
+            return
+        }
+        
+        let options = DataChannelSenderOptions()
+        options.channelId = 1000
+        options.bitrateInKbps = 32
+        options.priority = DataChannelPriority.normal
+        options.reliability = DataChannelReliability.lossy
+        
+        let dataChannelCallFeature = call.feature(Features.dataChannel)
+        let sender = dataChannelCallFeature.getDataChannelSender(options: options)
+        
+        let localUser = GlobalCompositeManager.callComposite?.localUserId
+        
+        let payload = ReactionPayload(reaction: reaction)
+        let message: ReactionMessage = [localUser ?? "": payload]
+        
+        do {
+            let jsonData = try JSONEncoder().encode(message)
+            sender.sendMessage(data: jsonData)
+        } catch {
+            print("❌ Failed to encode reaction: \(error)")
+            throw error
         }
     }
 }
@@ -733,6 +761,7 @@ extension CallingSDKWrapper {
         let capabilitiesFeature = call.feature(Features.capabilities)
         let raiseHandFeature = call.feature(Features.raisedHands)
         let localVideoEffectsFeature = localVideoStream?.feature(Features.localVideoEffects)
+        let dataChannelCallFeature = call.feature(Features.dataChannel)
         
         if let callingEventsHandler = self.callingEventsHandler as? CallingSDKEventsHandler {
             callingEventsHandler.assign(recordingCallFeature)
@@ -743,6 +772,7 @@ extension CallingSDKWrapper {
             callingEventsHandler.assign(capabilitiesFeature)
             callingEventsHandler.assign(raiseHandFeature)
             callingEventsHandler.assign(localVideoEffectsFeature)
+            callingEventsHandler.assign(dataChannelCallFeature)
             
             if callConfiguration.compositeCallType == .oneToOneIncoming && call.state == .connected {
                 // If call is accepted from CallKit

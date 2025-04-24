@@ -53,6 +53,15 @@ class _CallScreenState extends State<CallScreen> {
 
   static const String _roomId = "9958333897200100";
 
+  String get _userId {
+    if (isRealDevice) {
+      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000026-71d2-b1be-a7ac-473a0d0006c2";
+    } else {
+      // return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi05MWFmLWU3YWEtM2Y4Mi1hZjNhMGQwMGIzZDIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDU0Nzc3MjMiLCJleHAiOjE3NDU1NjQxMjMsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDU0Nzc3MjN9.pq-pd4OnhPNZH0l1BILiVfHBnXU1TeLs45xU8z6ocF4-ZK6VBSSvBcyKJdv6NMO3t8APoC3mVGY_G5FSGYtu-oGPVSYxBtoj5fKfwHhl80eyGyAheDx5UqVs50mCA-stEEYPw4SYABr7jQg8vJW4nO3tY56Ay3utwJye3jDZ_ji0VK9p2-cG2aQUPDH9Aov0cWiOq5J2Ly7mP9eb80g2qUi9wly1gMCE4_FVz8oqmcLVU3BN_wQV32Ds_YuXDERQW7478eXthkGk49uK8qxXpJtBm_wKWQaZVR9eunth2BEiacJzfqvqkhjtEQcojxkivwte9eYFN8dd8E183JnTQw";
+      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000026-b93e-ecc9-a7ac-473a0d006a1a";
+    }
+  }
+
   @override
   initState() {
     super.initState();
@@ -166,7 +175,8 @@ class _CallScreenState extends State<CallScreen> {
   // Call management methods
   Future<void> initializeRoomCall() async {
     try {
-      await _acsPlugin.initializeRoomCall(token: _acsToken, roomId: _roomId);
+      await _acsPlugin.initializeRoomCall(
+          token: _acsToken, roomId: _roomId, userId: _userId);
       log('Room call initialized successfully');
       _shwoSnacBar('Room call initialized successfully');
     } on PlatformException catch (error) {

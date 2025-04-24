@@ -136,6 +136,7 @@ private func updateDerivedParticipantFields(
             isSpeaking: participant.isSpeaking,
             isMuted: participant.isMuted,
             isHandRaised: participant.isHandRaised,
+            selectedReaction: participant.selectedReaction,
             isPinned: participant.userIdentifier == pinnedParticipantId,
             isVideoOnForMe: !listOfDisabledVideoParticipants.contains(participant.userIdentifier),
             avatarColor: avatarColor,

@@ -17,10 +17,12 @@ class AcsPlugin {
   Future<void> initializeRoomCall({
     required String token,
     required String roomId,
+    required String userId,
   }) async {
     await AcsPluginPlatform.instance.initializeRoomCall(
       token: token,
       roomId: roomId,
+      userId: userId,
     );
   }
 

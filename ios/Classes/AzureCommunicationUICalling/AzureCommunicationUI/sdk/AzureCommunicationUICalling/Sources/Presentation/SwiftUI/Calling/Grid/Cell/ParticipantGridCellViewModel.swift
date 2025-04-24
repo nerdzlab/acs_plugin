@@ -29,6 +29,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     @Published var isPinned: Bool
     @Published var isVideoEnableForLocalUser: Bool
     @Published var isHandRaised: Bool
+    @Published var selectedReaction: ReactionType?
     
     @State var avatarColor: Color
     
@@ -74,6 +75,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         self.isHandRaised = participantModel.isHandRaised
         self.videoViewModel = getDisplayingVideoStreamModel(participantModel)
         self.accessibilityLabel = getAccessibilityLabel(participantModel: participantModel)
+        self.selectedReaction = participantModel.selectedReaction
     }
 
     func update(participantModel: ParticipantInfoModel) {
@@ -141,6 +143,10 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         
         if self.isHandRaised != participantModel.isHandRaised {
             self.isHandRaised = participantModel.isHandRaised
+        }
+        
+        if self.selectedReaction != participantModel.selectedReaction {
+            self.selectedReaction = participantModel.selectedReaction
         }
     }
 

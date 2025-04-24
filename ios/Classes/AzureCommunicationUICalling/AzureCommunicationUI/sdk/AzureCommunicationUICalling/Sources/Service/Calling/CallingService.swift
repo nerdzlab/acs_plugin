@@ -70,6 +70,8 @@ protocol CallingServiceProtocol {
     func lowerHand() async throws
     
     func setBackgroundEffect(_ effect: LocalUserState.BackgroundEffectType)
+    
+    func sendReaction(_ reaction: ReactionType) async throws
     /* <CALL_START_TIME>
     func callStartTime() -> Date?
     </CALL_START_TIME> */
@@ -247,5 +249,9 @@ class CallingService: NSObject, CallingServiceProtocol {
     
     func setBackgroundEffect(_ effect: LocalUserState.BackgroundEffectType) {
         callingSDKWrapper.setBackgroundEffect(effect)
+    }
+    
+    func sendReaction(_ reaction: ReactionType) async throws {
+        try await callingSDKWrapper.sendReaction(reaction)
     }
 }

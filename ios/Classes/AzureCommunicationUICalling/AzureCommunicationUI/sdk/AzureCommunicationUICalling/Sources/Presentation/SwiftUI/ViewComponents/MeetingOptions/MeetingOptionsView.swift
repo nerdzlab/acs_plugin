@@ -16,10 +16,14 @@ struct MeetingOptionsView: View {
             Spacer()
             HStack {
                 Spacer()
-                ForEach(["👍", "❤️", "👏", "😆", "😲"], id: \.self) { emoji in
-                    Text(emoji)
-                        .font(AppFont.CircularStd.medium.font(size: 36))
-                        .frame(width: 36, height: 36)
+                ForEach(ReactionType.allCases, id: \.self) { reaction in
+                    Button(action: {
+                            viewModel.sendReaction(reaction)
+                        }) {
+                            Text(reaction.emoji)
+                                .font(AppFont.CircularStd.medium.font(size: 36))
+                                .frame(width: 36, height: 36)
+                        }
                     Spacer()
                 }
             }
