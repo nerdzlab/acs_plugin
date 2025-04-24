@@ -44,10 +44,6 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('initializeRoomCall() has not been implemented.');
   }
 
-  Future<void> leaveRoomCall() {
-    throw UnimplementedError('leaveRoomCall() has not been implemented.');
-  }
-
   Stream<Map<String, dynamic>> get eventStream {
     throw UnimplementedError('eventStream has not been implemented.');
   }

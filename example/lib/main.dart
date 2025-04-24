@@ -175,17 +175,6 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
-  Future<void> _leaveRoom() async {
-    try {
-      await _acsPlugin.leaveRoomCall();
-      log('Left room successfully');
-      _shwoSnacBar('Left room successfully');
-    } on PlatformException catch (error) {
-      log('Failed to leave room: ${error.message}');
-      _shwoSnacBar('Failed to leave room: ${error.message}');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -220,16 +209,6 @@ class _CallScreenState extends State<CallScreen> {
                   label: 'Init room call',
                   onTap: initializeRoomCall,
                   icon: Icons.cloud,
-                ),
-              ]),
-              // Call Management Section
-              _buildSectionHeader('Call Management'),
-              _buildButtonGrid([
-                ButtonConfig(
-                  label: 'Leave Room',
-                  onTap: _leaveRoom,
-                  icon: Icons.call_end,
-                  backgroundColor: Colors.red,
                 ),
               ]),
             ],

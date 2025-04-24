@@ -24,11 +24,6 @@ class AcsPlugin {
     );
   }
 
-  // End a call
-  Future<void> leaveRoomCall() async {
-    await AcsPluginPlatform.instance.leaveRoomCall();
-  }
-
 // Stream to listen for events
   Stream<Map<String, dynamic>> get eventStream {
     return AcsPluginPlatform.instance.eventStream;

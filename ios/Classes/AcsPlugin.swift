@@ -64,9 +64,6 @@ public class AcsPlugin: NSObject, FlutterPlugin {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
             
-        case "leaveRoomCall":
-            leaveRoomCall(result: result)
-            
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -121,15 +118,6 @@ public class AcsPlugin: NSObject, FlutterPlugin {
 //                callComposite.launch(locator: .teamsMeeting(teamsLink: "https://teams.microsoft.com/l/meetup-join/19%3ameeting_YWE4NzBkZTEtOGYzZC00ZWYyLWIzMTItYTc0ODgwODQ1ODk3%40thread.v2/0?context=%7b%22Tid%22%3a%22e16f27b3-237b-4547-9aa2-7f2dc7fc9aaf%22%2c%22Oid%22%3a%22843c6f37-5ffc-48e0-9d01-e8e5126b4f6f%22%7d"), localOptions: localOptions)
         
         
-    }
-    
-    private func leaveRoomCall(result: @escaping FlutterResult) {
-        if !callService.initialized {
-            result(FlutterError(code: "Azur error", message: "Azur is not initialized", details: nil))
-            return
-        }
-        
-        callService.leaveRoomCall(result: result)
     }
     
     private static func registerCustomFont(withName name: String, fileExtension: String = "ttf") {

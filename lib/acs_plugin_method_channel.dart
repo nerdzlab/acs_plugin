@@ -64,9 +64,4 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       },
     );
   }
-
-  @override
-  Future<void> leaveRoomCall() async {
-    await methodChannel.invokeMethod('leaveRoomCall');
-  }
 }
