@@ -11,40 +11,38 @@ struct IconWithLabelButton<T: ButtonState>: View {
 
     @ObservedObject var viewModel: IconWithLabelButtonViewModel<T>
 
-    let iconImageSize: CGFloat = 25
+    let iconImageSize: CGFloat = 26
     let verticalSpacing: CGFloat = 8
-    let width: CGFloat = 85
-    let height: CGFloat = 85
+    let width: CGFloat = 88
+    let height: CGFloat = 78
     let buttonDisabledColor = Color(StyleProvider.color.disableColor)
 
-    var buttonForegroundColor: Color {
-        switch viewModel.buttonTypeColor {
-        case .colorThemedWhite:
-            return Color(StyleProvider.color.onSurfaceColor)
-        case .white:
-            return Color(.white)
-        }
-    }
-
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Button(action: viewModel.action) {
             VStack(alignment: .center, spacing: verticalSpacing) {
-                Icon(name: viewModel.iconName, size: iconImageSize)
+                Icon(name: viewModel.iconName, size: iconImageSize, renderAsOriginal: false)
+                    .foregroundColor(viewModel.isDisabled ? buttonDisabledColor : viewModel.buttonColor)
                     .accessibilityHidden(true)
                 if let buttonLabel = viewModel.buttonLabel {
                     if sizeCategory >= ContentSizeCategory.accessibilityMedium {
                         Text(buttonLabel)
                             .font(Fonts.button2Accessibility.font)
+                            .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                     } else {
                         Text(buttonLabel)
-                            .font(Fonts.button2.font)
+                            .font(AppFont.CircularStd.book.font(size: 15))
+                            .foregroundColor(viewModel.isDisabled ? buttonDisabledColor : Color(UIColor.compositeColor(.textPrimary)))
+                            .lineLimit(1)
                     }
                 }
             }
         }
         .disabled(viewModel.isDisabled)
-        .foregroundColor(viewModel.isDisabled ? buttonDisabledColor : buttonForegroundColor)
-        .frame(width: width, height: height, alignment: .top)
+        .frame(width: width, height: height, alignment: .center)
         .accessibilityLabel(Text(viewModel.accessibilityLabel ?? ""))
         .accessibilityValue(Text(viewModel.accessibilityValue ?? ""))
         .accessibilityHint(Text(viewModel.accessibilityHint ?? ""))

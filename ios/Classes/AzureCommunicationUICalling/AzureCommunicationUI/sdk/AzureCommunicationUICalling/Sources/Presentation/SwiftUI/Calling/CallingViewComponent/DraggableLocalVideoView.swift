@@ -17,6 +17,10 @@ struct DraggableLocalVideoView: View {
     let screenSize: ScreenSizeClassType
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         return GeometryReader { geometry in
             let size = getPipSize(parentSize: geometry.size)
             localVideoPipView
@@ -53,14 +57,15 @@ struct DraggableLocalVideoView: View {
     }
 
     var localVideoPipView: some View {
-        let shapeCornerRadius: CGFloat = 4
+        let shapeCornerRadius: CGFloat = 8
         return Group {
             LocalVideoView(viewModel: viewModel.localVideoViewModel,
                            viewManager: viewManager,
-                           viewType: .localVideoPip,
+                           viewType: viewModel.isInPip ? .systemLocalVideoPip : .localVideoPip,
                            avatarManager: avatarManager)
-            .background(Color(StyleProvider.color.backgroundColor))
+            .background(Color(UIColor.compositeColor(.lightPurple)))
             .clipShape(RoundedRectangle(cornerRadius: shapeCornerRadius))
+            .shadow(color: Color.black.opacity(0.4), radius: 6, x: 0, y: 2)
         }
     }
 
@@ -72,7 +77,7 @@ struct DraggableLocalVideoView: View {
 
     private func getContainerBounds(bounds: CGRect) -> CGRect {
         let pipSize = getPipSize(parentSize: bounds.size)
-        let padding = viewModel.isInPip ? 0.0 : 12.0
+        let padding = viewModel.isInPip ? 4 : 12.0
         let containerBounds = bounds.inset(by: UIEdgeInsets(
             top: pipSize.height / 2.0 + padding,
             left: pipSize.width / 2.0 + padding,
@@ -131,8 +136,8 @@ struct DraggableLocalVideoView: View {
         }
 
         func defaultPipSize() -> CGSize {
-            let width = isPortraitMode ? 72 : 104
-            let height = isPortraitMode ? 104 : 72
+            let width = isPortraitMode ? 104 : 160
+            let height = isPortraitMode ? 160 : 104
             let size = CGSize(width: width, height: height)
             return size
         }

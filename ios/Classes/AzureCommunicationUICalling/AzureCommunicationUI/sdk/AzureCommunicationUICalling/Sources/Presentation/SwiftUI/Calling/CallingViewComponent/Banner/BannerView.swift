@@ -9,6 +9,10 @@ struct BannerView: View {
     @ObservedObject var viewModel: BannerViewModel
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         if viewModel.isBannerDisplayed {
             HStack(alignment: .top) {
                 BannerTextView(viewModel: viewModel.bannerTextViewModel)

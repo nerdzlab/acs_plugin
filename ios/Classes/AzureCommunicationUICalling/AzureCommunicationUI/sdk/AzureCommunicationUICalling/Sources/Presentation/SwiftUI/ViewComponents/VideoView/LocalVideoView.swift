@@ -10,48 +10,66 @@ enum LocalVideoViewType {
     case preview
     case localVideoPip
     case localVideofull
-
+    case systemLocalVideoPip
+    case effectsPreview
+    
     var cameraSwitchButtonAlignment: Alignment {
         switch self {
         case .localVideoPip:
             return .topTrailing
-        case .localVideofull:
+        case .localVideofull, .systemLocalVideoPip, .effectsPreview:
             return .bottomTrailing
         case .preview:
             return .trailing
         }
     }
-
-    var avatarSize: MSFAvatarSize {
+    
+    var avatarSize: CGFloat {
         switch self {
         case .localVideofull,
-             .preview:
-            return .size72
+                .preview, .effectsPreview:
+            return 80
+        case .systemLocalVideoPip:
+            return 24
         case .localVideoPip:
-            return .size40
+            return 48
         }
     }
-
+    
+    var initialFontSize: CGFloat {
+        switch self {
+        case .localVideofull,
+                .preview, .effectsPreview:
+            return 32
+        case .systemLocalVideoPip:
+            return 8
+        case .localVideoPip:
+            return 20
+        }
+    }
+    
     var showDisplayNameTitleView: Bool {
         switch self {
         case .localVideoPip,
-             .preview:
+                .preview, .effectsPreview:
+            return false
+        case .systemLocalVideoPip:
             return false
         case .localVideofull:
             return true
         }
     }
-
+    
     var hasGradient: Bool {
         switch self {
-        case .localVideoPip,
-             .localVideofull:
+        case .localVideoPip, .systemLocalVideoPip,
+                .localVideofull, .effectsPreview:
             return false
         case .preview:
             return true
         }
     }
-
+    
 }
 
 struct LocalVideoView: View {
@@ -60,64 +78,90 @@ struct LocalVideoView: View {
     let viewType: LocalVideoViewType
     let avatarManager: AvatarViewManagerProtocol
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
-
+    
     @State private var avatarImage: UIImage?
     @State private var localVideoStreamId: String?
-
+    
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Group {
             GeometryReader { geometry in
-                if viewModel.cameraOperationalStatus == .on,
-                   let streamId = localVideoStreamId,
-                   let rendererView = viewManager.getLocalVideoRendererView(streamId) {
-
-                    ZStack(alignment: viewType.cameraSwitchButtonAlignment) {
-                        VideoRendererView(rendererView: rendererView)
-                            .frame(width: geometry.size.width,
-                                   height: geometry.size.height)
-                        if viewType.hasGradient {
-                            GradientView()
+                ZStack(alignment: .bottomLeading) {
+                    
+                    // MARK: - Main content depending on camera status
+                    if viewModel.cameraOperationalStatus == .on,
+                       let streamId = localVideoStreamId,
+                       let rendererView = viewManager.getLocalVideoRendererView(streamId), viewModel.isPreviewEnable {
+                        
+                        ZStack(alignment: viewType.cameraSwitchButtonAlignment) {
+                            VideoRendererView(rendererView: rendererView)
+                                .frame(width: geometry.size.width,
+                                       height: geometry.size.height)
+                            if viewType.hasGradient {
+                                GradientView()
+                            }
+                            
+                            if !viewModel.isInPip || viewType != .effectsPreview {
+                                cameraSwitchButton
+                            }
                         }
-                        if !viewModel.isInPip {
-                            cameraSwitchButton
+                        
+                    } else {
+                        VStack(alignment: .center, spacing: 5) {
+                            CompositeAvatar(
+                                displayName: $viewModel.displayName,
+                                avatarImage: Binding.constant(
+                                    avatarManager.localParticipantViewData?.avatarImage
+                                ),
+                                backgroundColor: Color(UIColor.compositeColor(.purpleBlue)),
+                                isSpeaking: false,
+                                avatarSize: viewType.avatarSize,
+                                fontSize: viewType.initialFontSize
+                            )
                         }
+                        .frame(width: geometry.size.width,
+                               height: geometry.size.height)
+                        .accessibilityElement(children: .combine)
                     }
-                } else {
-                    VStack(alignment: .center, spacing: 5) {
-                        CompositeAvatar(displayName: $viewModel.displayName,
-                                        avatarImage: Binding.constant(avatarManager
-                                            .localParticipantViewData?
-                                            .avatarImage),
-                                        isSpeaking: false,
-                                        avatarSize: viewType.avatarSize)
-
-                        if viewType.showDisplayNameTitleView {
-                            Spacer().frame(height: 10)
-                            ParticipantTitleView(displayName: $viewModel.displayName,
-                                                 isMuted: $viewModel.isMuted,
-                                                 isHold: .constant(false),
-                                                 titleFont: Fonts.caption1.font,
-                                                 mutedIconSize: 16)
-                        } else if screenSizeClass == .iphonePortraitScreenSize {
-                            Spacer()
-                                .frame(height: 20)
-                        }
+                    
+                    // MARK: - Always show title in bottom leading
+                    if viewType.showDisplayNameTitleView {
+                        ParticipantTitleView(
+                            displayName: Binding.constant(
+                                viewModel.localizationProvider.getLocalizedString(
+                                    .localeParticipantWithSuffix,
+                                    viewModel.displayName ?? ""
+                                )
+                            ),
+                            isMuted: $viewModel.isMuted,
+                            isHold: .constant(false),
+                            isHandRaised: .constant(false),
+                            isPinned: .constant(false),
+                            titleFont: AppFont.CircularStd.book.font(size: 13),
+                            mutedIconSize: 16
+                        )
+                        .padding(.vertical, 2)
+                        .background(viewModel.cameraOperationalStatus == .on ? Color.white : .clear)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .padding([.leading, .bottom], 8)
                     }
-                    .frame(width: geometry.size.width,
-                           height: geometry.size.height)
-                    .accessibilityElement(children: .combine)
                 }
             }
+            
         }.onReceive(viewModel.$localVideoStreamId) {
             viewManager.updateDisplayedLocalVideoStream($0)
             if localVideoStreamId != $0 {
                 localVideoStreamId = $0
             }
+            
         }.accessibilityIgnoresInvertColors(true)
     }
-
+    
     var cameraSwitchButton: some View {
-        let cameraSwitchButtonPaddingPip: CGFloat = -4
+        let cameraSwitchButtonPaddingPip: CGFloat = 8
         let cameraSwitchButtonPaddingFull: CGFloat = 4
         return Group {
             switch viewType {

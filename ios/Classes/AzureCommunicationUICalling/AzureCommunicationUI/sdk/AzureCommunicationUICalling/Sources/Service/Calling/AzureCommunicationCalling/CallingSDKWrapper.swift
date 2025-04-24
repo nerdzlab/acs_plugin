@@ -7,13 +7,13 @@ import AzureCommunicationCalling
 
 import Combine
 import Foundation
+import AVFoundation
 
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
 class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
-
     let callingEventsHandler: CallingSDKEventsHandling
-
+    
     private let logger: Logger
     private let callConfiguration: CallConfiguration
     private var call: Call?
@@ -22,7 +22,8 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
     private var newVideoDeviceAddedHandler: ((VideoDeviceInfo) -> Void)?
     private var callKitRemoteInfo: CallKitRemoteInfo?
     private var callingSDKInitializer: CallingSDKInitializer
-
+    private var replacementEffect: BackgroundReplacementEffect
+    
     init(logger: Logger,
          callingEventsHandler: CallingSDKEventsHandling,
          callConfiguration: CallConfiguration,
@@ -33,22 +34,32 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         self.callConfiguration = callConfiguration
         self.callKitRemoteInfo = callKitRemoteInfo
         self.callingSDKInitializer = callingSDKInitializer
+        self.replacementEffect = BackgroundReplacementEffect()
         super.init()
     }
-
+    
     deinit {
         logger.debug("CallingSDKWrapper deallocated")
     }
-
+    
     func dispose() {
         call = nil
     }
-
+    
     func setupCall() async throws {
         try await setupCallClientAndDeviceManager()
     }
-
-    func startCall(isCameraPreferred: Bool, isAudioPreferred: Bool) async throws {
+    
+    func updateDisplayName(_ displayName: String?) {
+        callingSDKInitializer.updateDisplayName(displayName)
+    }
+    
+    func startCall(
+        isCameraPreferred: Bool,
+        isMicrophonePreferred: Bool,
+        isNoiseSuppressionPreferred: Bool,
+        isMuteIncomingAudio: Bool
+    ) async throws {
         logger.debug("Reset Subjects in callingEventsHandler")
         if let callingEventsHandler = self.callingEventsHandler
             as? CallingSDKEventsHandler {
@@ -58,44 +69,55 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         if callConfiguration.compositeCallType == .groupCall ||
             callConfiguration.compositeCallType == .teamsMeeting ||
             callConfiguration.compositeCallType == .roomsCall {
-            try await joinCall(isCameraPreferred: isCameraPreferred, isAudioPreferred: isAudioPreferred)
+            try await joinCall(isCameraPreferred: isCameraPreferred, isMicrophonePreferred: isMicrophonePreferred, isNoiceSuppressionPreferred: isNoiseSuppressionPreferred, isMuteIncomingAudio: isMuteIncomingAudio)
         } else if callConfiguration.compositeCallType == .oneToNOutgoing {
-            try await outgoingCall(isCameraPreferred: isCameraPreferred, isAudioPreferred: isAudioPreferred)
+            try await outgoingCall(isCameraPreferred: isCameraPreferred, isMicrophonePreferred: isMicrophonePreferred)
         } else if callConfiguration.compositeCallType == .oneToOneIncoming {
-            try await incomingCall(isCameraPreferred: isCameraPreferred, isAudioPreferred: isAudioPreferred)
+            try await incomingCall(isCameraPreferred: isCameraPreferred, isMicrophonePreferred: isMicrophonePreferred)
         } else {
             logger.error("Unknown calltype access")
             throw CallCompositeInternalError.callJoinFailed
         }
     }
-
-    func joinCall(isCameraPreferred: Bool, isAudioPreferred: Bool) async throws {
+    
+    func joinCall(isCameraPreferred: Bool, isMicrophonePreferred: Bool, isNoiceSuppressionPreferred: Bool, isMuteIncomingAudio: Bool) async throws {
         logger.debug( "Joining call")
         let joinCallOptions = JoinCallOptions()
-
+        
         // to fix iOS 15 issue
         // by default on iOS 15 calling SDK incoming type is raw video
         // because of this on iOS 15 remote video start event is not received
         let incomingVideoOptions = IncomingVideoOptions()
         incomingVideoOptions.streamType = .remoteIncoming
-
+        
         if isCameraPreferred,
            let localVideoStream = localVideoStream {
             let localVideoStreamArray = [localVideoStream]
-
+            
             let videoOptions = OutgoingVideoOptions()
             videoOptions.streams = localVideoStreamArray
             joinCallOptions.outgoingVideoOptions = videoOptions
         }
-
+        
         joinCallOptions.outgoingAudioOptions = OutgoingAudioOptions()
-        joinCallOptions.outgoingAudioOptions?.muted = !isAudioPreferred
+        
+        if isNoiceSuppressionPreferred {
+            let filters = OutgoingAudioFilters()
+            filters.noiseSuppressionMode = NoiseSuppressionMode.high
+            filters.analogAutomaticGainControlEnabled = true
+            filters.digitalAutomaticGainControlEnabled = true
+            filters.musicModeEnabled = true
+            filters.acousticEchoCancellationEnabled = true
+            joinCallOptions.outgoingAudioOptions?.filters = filters
+        }
+        
+        joinCallOptions.outgoingAudioOptions?.muted = !isMicrophonePreferred
         joinCallOptions.incomingVideoOptions = incomingVideoOptions
         if let remoteInfo = callKitRemoteInfo {
             let callKitRemoteInfo = AzureCommunicationCalling.CallKitRemoteInfo()
-                callKitRemoteInfo.displayName = remoteInfo.displayName
-                callKitRemoteInfo.handle = remoteInfo.handle
-                joinCallOptions.callKitRemoteInfo = callKitRemoteInfo
+            callKitRemoteInfo.displayName = remoteInfo.displayName
+            callKitRemoteInfo.handle = remoteInfo.handle
+            joinCallOptions.callKitRemoteInfo = callKitRemoteInfo
         }
         var joinLocator: JoinMeetingLocator
         if callConfiguration.compositeCallType == .groupCall,
@@ -106,9 +128,9 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             joinLocator = TeamsMeetingLinkLocator(
                 meetingLink: meetingLink.trimmingCharacters(in: .whitespacesAndNewlines))
         } else if callConfiguration.compositeCallType == .teamsMeeting,
-            let meetingId = callConfiguration.meetingId?.trimmingCharacters(in: .whitespacesAndNewlines),
-            let meetingPasscode = callConfiguration.meetingPasscode?.trimmingCharacters(in: .whitespacesAndNewlines) {
-             joinLocator = TeamsMeetingIdLocator(with: meetingId, passcode: meetingPasscode)
+                  let meetingId = callConfiguration.meetingId?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  let meetingPasscode = callConfiguration.meetingPasscode?.trimmingCharacters(in: .whitespacesAndNewlines) {
+            joinLocator = TeamsMeetingIdLocator(with: meetingId, passcode: meetingPasscode)
         } else if callConfiguration.compositeCallType == .roomsCall,
                   let roomId = callConfiguration.roomId {
             joinLocator = RoomCallLocator(roomId: roomId.trimmingCharacters(in: .whitespacesAndNewlines))
@@ -116,11 +138,16 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             logger.error("Invalid groupID / meeting link")
             throw CallCompositeInternalError.callJoinFailed
         }
-
+        
         do {
             let callAgent = try await callingSDKInitializer.setupCallAgent()
+            
+            if isMuteIncomingAudio {
+                joinCallOptions.incomingAudioOptions?.muted = isMuteIncomingAudio
+            }
+            
             //MTODO: Displayname
-//            callAgent.
+            //            callAgent.
             let joinedCall = try await callAgent.join(with: joinLocator, joinCallOptions: joinCallOptions)
             if let callingEventsHandler = self.callingEventsHandler as? CallingSDKEventsHandler {
                 joinedCall.delegate = callingEventsHandler
@@ -132,34 +159,34 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw CallCompositeInternalError.callJoinFailed
         }
     }
-
-    func outgoingCall(isCameraPreferred: Bool, isAudioPreferred: Bool) async throws {
+    
+    func outgoingCall(isCameraPreferred: Bool, isMicrophonePreferred: Bool) async throws {
         logger.debug( "Starting outgoing call")
         let startCallOptions = StartCallOptions()
-
+        
         // to fix iOS 15 issue
         // by default on iOS 15 calling SDK incoming type is raw video
         // because of this on iOS 15 remote video start event is not received
         let incomingVideoOptions = IncomingVideoOptions()
         incomingVideoOptions.streamType = .remoteIncoming
-
+        
         if isCameraPreferred,
            let localVideoStream = localVideoStream {
             let localVideoStreamArray = [localVideoStream]
-
+            
             let videoOptions = OutgoingVideoOptions()
             videoOptions.streams = localVideoStreamArray
             startCallOptions.outgoingVideoOptions = videoOptions
         }
-
+        
         startCallOptions.outgoingAudioOptions = OutgoingAudioOptions()
-        startCallOptions.outgoingAudioOptions?.muted = !isAudioPreferred
+        startCallOptions.outgoingAudioOptions?.muted = !isMicrophonePreferred
         startCallOptions.incomingVideoOptions = incomingVideoOptions
         if let remoteInfo = callKitRemoteInfo {
             let callKitRemoteInfo = AzureCommunicationCalling.CallKitRemoteInfo()
-                callKitRemoteInfo.displayName = remoteInfo.displayName
-                callKitRemoteInfo.handle = remoteInfo.handle
-                startCallOptions.callKitRemoteInfo = callKitRemoteInfo
+            callKitRemoteInfo.displayName = remoteInfo.displayName
+            callKitRemoteInfo.handle = remoteInfo.handle
+            startCallOptions.callKitRemoteInfo = callKitRemoteInfo
         }
         do {
             let callAgent = try await callingSDKInitializer.setupCallAgent()
@@ -180,8 +207,8 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw CallCompositeInternalError.callJoinFailed
         }
     }
-
-    func incomingCall(isCameraPreferred: Bool, isAudioPreferred: Bool) async throws {
+    
+    func incomingCall(isCameraPreferred: Bool, isMicrophonePreferred: Bool) async throws {
         logger.debug( "incoming call")
         do {
             let callAgent = try await callingSDKInitializer.setupCallAgent()
@@ -192,22 +219,22 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
                 let options = AcceptCallOptions()
                 let incomingVideoOptions = IncomingVideoOptions()
                 incomingVideoOptions.streamType = .remoteIncoming
-
+                
                 if isCameraPreferred,
                    let localVideoStream = localVideoStream {
                     let localVideoStreamArray = [localVideoStream]
-
+                    
                     let videoOptions = OutgoingVideoOptions()
                     videoOptions.streams = localVideoStreamArray
                     options.outgoingVideoOptions = videoOptions
                 }
                 options.outgoingAudioOptions = OutgoingAudioOptions()
-                options.outgoingAudioOptions?.muted = !isAudioPreferred
+                options.outgoingAudioOptions?.muted = !isMicrophonePreferred
                 options.incomingVideoOptions = incomingVideoOptions
                 if let remoteInfo = callKitRemoteInfo {
                     let callKitRemoteInfo = AzureCommunicationCalling.CallKitRemoteInfo()
-                        callKitRemoteInfo.displayName = remoteInfo.displayName
-                        callKitRemoteInfo.handle = remoteInfo.handle
+                    callKitRemoteInfo.displayName = remoteInfo.displayName
+                    callKitRemoteInfo.handle = remoteInfo.handle
                     options.callKitRemoteInfo = callKitRemoteInfo
                 }
                 if let incomngCall = callingSDKInitializer.getIncomingCall() {
@@ -227,7 +254,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             }
             callingSDKInitializer.onIncomingCallAccpeted()
             if let callingEventsHandler = self.callingEventsHandler as? CallingSDKEventsHandler,
-            let call = call {
+               let call = call {
                 call.delegate = callingEventsHandler
             }
             setupFeatures()
@@ -236,7 +263,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw CallCompositeInternalError.callJoinFailed
         }
     }
-
+    
     func endCall() async throws {
         guard call != nil else {
             throw CallCompositeInternalError.callEndFailed
@@ -249,13 +276,13 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func getRemoteParticipant<ParticipantType, StreamType>(_ identifier: String)
     -> CompositeRemoteParticipant<ParticipantType, StreamType>? {
         guard let remote = findParticipant(identifier: identifier) else {
             return nil
         }
-
+        
         let remoteParticipant = AzureCommunicationCalling.RemoteParticipant
             .toCompositeRemoteParticipant(acsRemoteParticipant: remote)
         guard let castValue = remoteParticipant as? CompositeRemoteParticipant<ParticipantType, StreamType> else {
@@ -263,14 +290,14 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         }
         return castValue
     }
-
+    
     private func findParticipant(identifier: String) -> AzureCommunicationCalling.RemoteParticipant? {
         call?.remoteParticipants.first(where: { $0.identifier.rawId == identifier })
     }
-
+    
     func getLocalVideoStream<LocalVideoStreamType>(_ identifier: String)
     -> CompositeLocalVideoStream<LocalVideoStreamType>? {
-
+        
         guard getLocalVideoStreamIdentifier() == identifier else {
             return nil
         }
@@ -286,12 +313,12 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             wrappedObject: castVideoStream
         )
     }
-
+    
     func startCallLocalVideoStream() async throws -> String {
         let stream = await getValidLocalVideoStream()
         return try await startCallVideoStream(stream)
     }
-
+    
     func stopLocalVideoStream() async throws {
         guard let call = self.call,
               let videoStream = self.localVideoStream else {
@@ -306,7 +333,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func switchCamera() async throws -> CameraDevice {
         guard let videoStream = localVideoStream else {
             let error = CallCompositeInternalError.cameraSwitchFailed
@@ -315,17 +342,17 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         }
         let currentCamera = videoStream.source
         let flippedFacing: CameraFacing = currentCamera.cameraFacing == .front ? .back : .front
-
+        
         let deviceInfo = await getVideoDeviceInfo(flippedFacing)
         try await change(videoStream, source: deviceInfo)
         return flippedFacing.toCameraDevice()
     }
-
+    
     func startPreviewVideoStream() async throws -> String {
         _ = await getValidLocalVideoStream()
         return getLocalVideoStreamIdentifier() ?? ""
     }
-
+    
     func muteLocalMic() async throws {
         guard let call = call else {
             return
@@ -334,7 +361,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             logger.warning("muteOutgoingAudio is skipped as outgoing audio already muted")
             return
         }
-
+        
         do {
             try await call.muteOutgoingAudio()
         } catch {
@@ -343,7 +370,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         }
         logger.debug("Mute successful")
     }
-
+    
     func unmuteLocalMic() async throws {
         guard let call = call else {
             return
@@ -352,7 +379,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             logger.warning("unmuteOutgoingAudio is skipped as outgoing audio already muted")
             return
         }
-
+        
         do {
             try await call.unmuteOutgoingAudio()
         } catch {
@@ -361,12 +388,12 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         }
         logger.debug("Unmute successful")
     }
-
+    
     func holdCall() async throws {
         guard let call = call else {
             return
         }
-
+        
         do {
             try await call.hold()
             logger.debug("Hold Call successful")
@@ -375,12 +402,12 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func resumeCall() async throws {
         guard let call = call else {
             return
         }
-
+        
         do {
             try await call.resume()
             logger.debug("Resume Call successful")
@@ -389,7 +416,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func getLogFiles() -> [URL] {
         // First lets check if any blog files exist
         // Edge case this is called before any CallClient can cause crash
@@ -397,7 +424,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         let cacheDir = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
         let blogFiles = try? fileManager.contentsOfDirectory(at: cacheDir, includingPropertiesForKeys: nil, options: [])
             .filter { $0.pathExtension == "blog" }
-
+        
         // If we have Blog Files, this is safe to call
         if let blogFiles = blogFiles, !blogFiles.isEmpty {
             return callingSDKInitializer.setupCallClient().debugInfo.supportFiles
@@ -405,26 +432,26 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             return []
         }
     }
-
+    
     /* <CALL_START_TIME>
-    func callStartTime() -> Date? {
-        guard let call = call else {
-            return nil
-        }
-
-        if call.state == .connecting {
-            return nil
-        }
-
-        return call.startTime
-    }
-    </CALL_START_TIME> */
-
+     func callStartTime() -> Date? {
+     guard let call = call else {
+     return nil
+     }
+     
+     if call.state == .connecting {
+     return nil
+     }
+     
+     return call.startTime
+     }
+     </CALL_START_TIME> */
+    
     func admitAllLobbyParticipants() async throws {
         guard let call = call else {
             return
         }
-
+        
         do {
             try await call.callLobby.admitAll()
             logger.debug("Admit All participants successful")
@@ -433,14 +460,14 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func admitLobbyParticipant(_ participantId: String) async throws {
         guard let call = call else {
             return
         }
-
+        
         let identifier = createCommunicationIdentifier(fromRawId: participantId)
-
+        
         do {
             try await call.callLobby.admit(identifiers: [identifier])
             logger.debug("Admit participants successful")
@@ -449,14 +476,14 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func declineLobbyParticipant(_ participantId: String) async throws {
         guard let call = call else {
             return
         }
-
+        
         let identifier = createCommunicationIdentifier(fromRawId: participantId)
-
+        
         do {
             try await call.callLobby.reject(identifier: identifier)
             logger.debug("Reject lobby participants successful")
@@ -465,12 +492,12 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func startCaptions(_ language: String) async throws {
         guard let call = call else {
             return
         }
-
+        
         let captionsFeature = call.feature(Features.captions)
         let options = StartCaptionsOptions()
         if !language.isEmpty {
@@ -485,13 +512,13 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func removeParticipant(_ participantId: String) async throws {
         guard let participantToRemove = call?.remoteParticipants
             .first(where: {$0.identifier.rawId == participantId}) else {
             return
         }
-
+        
         do {
             try await call?.remove(participant: participantToRemove)
             logger.debug("Participant remove successful")
@@ -500,15 +527,15 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func stopCaptions() async throws {
         guard let call = call else {
             return
         }
-
+        
         let captionsFeature = call.feature(Features.captions)
         do {
-
+            
             let captions = try await captionsFeature.getCaptions()
             try await captions.stopCaptions()
             logger.debug("Stop captions successfully")
@@ -517,15 +544,15 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func setCaptionsSpokenLanguage(_ language: String) async throws {
         guard let call = call else {
             return
         }
-
+        
         let captionsFeature = call.feature(Features.captions)
         do {
-
+            
             let captions = try await captionsFeature.getCaptions()
             try await captions.set(spokenLanguage: language)
             logger.debug("Set captions spoken language successfully")
@@ -534,33 +561,33 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func setCaptionsCaptionLanguage(_ language: String) async throws {
         guard let call = call else {
             return
         }
-
+        
         let captionsFeature = call.feature(Features.captions)
         do {
-
+            
             let captions = try await captionsFeature.getCaptions()
             if let teamsCaptions = captions as? TeamsCaptions {
                 try await teamsCaptions.set(captionLanguage: language)
             }
-
+            
             logger.debug("Set captions caption language successfully")
         } catch {
             logger.error("ERROR: It was not possible to set captions caption language \(error)")
             throw error
         }
-
+        
     }
-
+    
     func getCapabilities() async throws -> Set<ParticipantCapabilityType> {
         guard let capabilitiesFeature = call?.feature(Features.capabilities) else {
             return []
         }
-
+        
         let capabilities = capabilitiesFeature.capabilities
         for capability in capabilities {
             print(capability)
@@ -568,12 +595,87 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         let filtered = capabilities.compactMap { $0.toParticipantCapability() }
             .filter { $0.allowed }
             .map { $0.type }
-
+        
         for capability in filtered {
             print(capability)
         }
-
+        
         return Set(filtered)
+    }
+    
+    func raiseHand() async throws {
+        guard let call = call else {
+            return
+        }
+        
+        let raisehandFeature =  call.feature(Features.raisedHands)
+        
+        do {
+            try await raisehandFeature.raiseHand()
+            logger.debug("Set raise hand successfully")
+        } catch {
+            logger.error("ERROR: It was not possible to raise hand \(error)")
+            throw error
+        }
+    }
+    
+    func lowerHand() async throws {
+        guard let call = call else {
+            return
+        }
+        
+        let raisehandFeature =  call.feature(Features.raisedHands)
+        
+        do {
+            try await raisehandFeature.lowerHand()
+            logger.debug("Set lower hand successfully")
+        } catch {
+            logger.error("ERROR: It was not possible to lower hand \(error)")
+            throw error
+        }
+    }
+    
+    func getRaiseHands() -> [RaisedHand] {
+        guard let call = call else {
+            return []
+        }
+        
+        let raisehandFeature =  call.feature(Features.raisedHands)
+        return raisehandFeature.raisedHands
+    }
+    
+    func setBackgroundEffect(_ effect: LocalUserState.BackgroundEffectType) {
+        guard let videoEffectsFeature = localVideoStream?.feature(Features.localVideoEffects) else {
+            return
+        }
+        
+        switch effect {
+        case .none:
+            // Disable both known effect types just to be sure
+            videoEffectsFeature.disable(effect: BackgroundBlurEffect())
+            videoEffectsFeature.disable(effect: BackgroundReplacementEffect())
+            
+        case .blur:
+            let blurEffect = BackgroundBlurEffect()
+            
+            if videoEffectsFeature.isSupported(effect: blurEffect) {
+                videoEffectsFeature.enable(effect: blurEffect)
+            }
+            
+        case .backgroundOne, .backgroundTwo, .backgroundThree, .backgroundFour, .backgroundFive, .backgroundSix:
+            // Assuming your `ImageProvider().getImage(...)` provides access to a `UIImage`
+            guard let image = effect.effectImage,
+                  let imageData = image.jpegData(compressionQuality: 1.0) else {
+                return
+            }
+            
+            let replacementEffect = BackgroundReplacementEffect()
+            replacementEffect.buffer = imageData
+            
+            if videoEffectsFeature.isSupported(effect: replacementEffect) {
+                videoEffectsFeature.enable(effect: replacementEffect)
+            }
+        }
     }
 }
 
@@ -587,7 +689,7 @@ extension CallingSDKWrapper {
             throw CallCompositeInternalError.deviceManagerFailed(error)
         }
     }
-
+    
     private func startCallVideoStream(
         _ videoStream: AzureCommunicationCalling.LocalVideoStream
     ) async throws -> String {
@@ -606,7 +708,7 @@ extension CallingSDKWrapper {
             throw error
         }
     }
-
+    
     private func change(
         _ videoStream: AzureCommunicationCalling.LocalVideoStream, source: VideoDeviceInfo
     ) async throws {
@@ -618,7 +720,7 @@ extension CallingSDKWrapper {
             throw error
         }
     }
-
+    
     private func setupFeatures() {
         guard let call = call else {
             return
@@ -629,6 +731,9 @@ extension CallingSDKWrapper {
         let localUserDiagnosticsFeature = call.feature(Features.localUserDiagnostics)
         let captionsFeature = call.feature(Features.captions)
         let capabilitiesFeature = call.feature(Features.capabilities)
+        let raiseHandFeature = call.feature(Features.raisedHands)
+        let localVideoEffectsFeature = localVideoStream?.feature(Features.localVideoEffects)
+        
         if let callingEventsHandler = self.callingEventsHandler as? CallingSDKEventsHandler {
             callingEventsHandler.assign(recordingCallFeature)
             callingEventsHandler.assign(transcriptionCallFeature)
@@ -636,6 +741,9 @@ extension CallingSDKWrapper {
             callingEventsHandler.assign(localUserDiagnosticsFeature)
             callingEventsHandler.assign(captionsFeature)
             callingEventsHandler.assign(capabilitiesFeature)
+            callingEventsHandler.assign(raiseHandFeature)
+            callingEventsHandler.assign(localVideoEffectsFeature)
+            
             if callConfiguration.compositeCallType == .oneToOneIncoming && call.state == .connected {
                 // If call is accepted from CallKit
                 // call state can already be accepted, thus call state change will be missed
@@ -643,7 +751,7 @@ extension CallingSDKWrapper {
             }
         }
     }
-
+    
     private func getLocalVideoStreamIdentifier() -> String? {
         guard localVideoStream != nil else {
             return nil
@@ -659,7 +767,7 @@ extension CallingSDKWrapper: DeviceManagerDelegate {
             newVideoDeviceAddedHandler?(newDevice)
         }
     }
-
+    
     private func getVideoDeviceInfo(_ cameraFacing: CameraFacing) async -> VideoDeviceInfo {
         // If we have a camera, return the value right away
         await withCheckedContinuation({ continuation in
@@ -676,12 +784,12 @@ extension CallingSDKWrapper: DeviceManagerDelegate {
             }
         })
     }
-
+    
     private func getValidLocalVideoStream() async -> AzureCommunicationCalling.LocalVideoStream {
         if let existingVideoStream = localVideoStream {
             return existingVideoStream
         }
-
+        
         let videoDevice = await getVideoDeviceInfo(.front)
         let videoStream = AzureCommunicationCalling.LocalVideoStream(camera: videoDevice)
         localVideoStream = videoStream

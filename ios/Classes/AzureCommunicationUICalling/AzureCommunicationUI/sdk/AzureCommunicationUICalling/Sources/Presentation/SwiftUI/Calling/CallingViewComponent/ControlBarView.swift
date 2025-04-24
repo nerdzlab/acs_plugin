@@ -18,16 +18,22 @@ struct ControlBarView: View {
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         if viewModel.isDisplayed {
             Group {
                 if screenSizeClass == .ipadScreenSize || viewModel.totalButtonCount < 5 {
                     centeredStack
                 } else {
                     nonCenteredStack
+                        .padding(.bottom, 10)
+                        .frame(height: 92)
                 }
             }
-            .padding()
-            .background(Color(StyleProvider.color.backgroundColor))
+            .padding(.horizontal, 16)
+            .background(Color.white)
             .onAppear {
                 viewModel.onDrawerViewDidDisappearBlock = {
                     self.focusedOnMoreButton = true
@@ -77,9 +83,9 @@ struct ControlBarView: View {
         Group {
             if screenSizeClass != .iphoneLandscapeScreenSize {
                 HStack {
-                    cameraButton
-                    Spacer(minLength: 0)
                     micButton
+                    Spacer(minLength: 0)
+                    cameraButton
                     Spacer(minLength: 0)
                     audioDeviceButton
                     Spacer(minLength: 0)

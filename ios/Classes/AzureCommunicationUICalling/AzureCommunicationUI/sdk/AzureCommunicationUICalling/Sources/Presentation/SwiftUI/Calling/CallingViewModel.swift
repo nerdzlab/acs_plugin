@@ -13,6 +13,7 @@ internal class CallingViewModel: ObservableObject {
     @Published var isInPip = false
     @Published var allowLocalCameraPreview = false
     @Published var captionsStarted = false
+    @Published var isShareMeetingLinkDisplayed = false
 
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
     private let store: Store<AppState, Action>
@@ -27,6 +28,7 @@ internal class CallingViewModel: ObservableObject {
     private var callClientRequested = false
 
     let localVideoViewModel: LocalVideoViewModel
+    let videoEffectsPreviewViewModel: VideoEffectsPreviewViewModel
     let participantGridsViewModel: ParticipantGridViewModel
     let bannerViewModel: BannerViewModel
     let lobbyOverlayViewModel: LobbyOverlayViewModel
@@ -34,7 +36,12 @@ internal class CallingViewModel: ObservableObject {
     let leaveCallConfirmationViewModel: LeaveCallConfirmationViewModel
     let participantListViewModel: ParticipantsListViewModel
     let participantActionViewModel: ParticipantMenuViewModel
+    let participantOptionsViewModel: ParticipantOptionsViewModel
+    let layoutOptionsViewModel: LayoutOptionsViewModel
+    let meetingOptionsViewModel: MeetingOptionsViewModel
+    let effectsPickerViewModel: EffectsPickerViewModel
     var onHoldOverlayViewModel: OnHoldOverlayViewModel!
+    var shareMeetingLinkViewModel: ShareMeetingInfoActivityViewModel!
     let isRightToLeft: Bool
 
     var controlBarViewModel: ControlBarViewModel!
@@ -76,6 +83,7 @@ internal class CallingViewModel: ObservableObject {
         self.callType = callType
         self.captionsOptions = captionsOptions
         self.callScreenOptions = callScreenOptions
+        self.shareMeetingLinkViewModel = compositeViewModelFactory.makeShareMeetingInfoActivityViewModel()
 
         let actionDispatch: ActionDispatch = store.dispatch
 
@@ -93,10 +101,15 @@ internal class CallingViewModel: ObservableObject {
         captionsErrorViewModel = compositeViewModelFactory.makeCaptionsErrorViewModel(dispatchAction: actionDispatch)
         supportFormViewModel = compositeViewModelFactory.makeSupportFormViewModel()
 
-        localVideoViewModel = compositeViewModelFactory.makeLocalVideoViewModel(dispatchAction: actionDispatch)
+        localVideoViewModel = compositeViewModelFactory.makeLocalVideoViewModel(dispatchAction: actionDispatch, isPreviewEnable: true)
+        
+        videoEffectsPreviewViewModel = VideoEffectsPreviewViewModel()
+        
         participantGridsViewModel = compositeViewModelFactory.makeParticipantGridsViewModel(
             isIpadInterface: isIpadInterface,
-            rendererViewManager: rendererViewManager)
+            rendererViewManager: rendererViewManager
+        )
+        
         bannerViewModel = compositeViewModelFactory.makeBannerViewModel(dispatchAction: store.dispatch)
         lobbyOverlayViewModel = compositeViewModelFactory.makeLobbyOverlayViewModel()
         loadingOverlayViewModel = compositeViewModelFactory.makeLoadingOverlayViewModel()
@@ -138,13 +151,75 @@ internal class CallingViewModel: ObservableObject {
             .makeParticipantsListViewModel(
                 localUserState: store.state.localUserState,
                 isDisplayed: store.state.navigationState.participantsVisible,
+                showSharingViewAction: {
+                    store.dispatch(action: .showShareSheetMeetingLink)
+                },
                 dispatchAction: store.dispatch)
+        
+        participantOptionsViewModel = compositeViewModelFactory
+            .makeParticipantOptionsViewModel(
+                localUserState: store.state.localUserState,
+                isDisplayed: store.state.navigationState.participantOptionsVisible,
+                dispatchAction: store.dispatch)
+        
+        layoutOptionsViewModel = compositeViewModelFactory
+            .makeLayoutOptionsViewModel(
+                localUserState: store.state.localUserState,
+                isDisplayed: store.state.navigationState.layoutOptionsVisible, onGridSelect: {
+                    store.dispatch(action: .localUserAction(.gridLayoutSelected))
+                }, onSpeakerSelect: {
+                    store.dispatch(action: .localUserAction(.speakerLayoutSelected))
+                })
+        
 
         participantActionViewModel = compositeViewModelFactory
             .makeParticipantMenuViewModel(
                 localUserState: store.state.localUserState,
                 isDisplayed: store.state.navigationState.participantActionsVisible,
                 dispatchAction: store.dispatch)
+        
+        meetingOptionsViewModel = compositeViewModelFactory.makeMeetingOptionsViewModel(
+            localUserState: store.state.localUserState,
+            localizationProvider: localizationProvider,
+            onShareScreen: {
+                print("On share screen")
+            },
+            onStopShareScreen: {
+                print("On stop share screen")
+            },
+            onChat: {
+                print("On chat screen")
+            },
+            onParticipants: {
+                store.dispatch(action: .showParticipants)
+            },
+            onRaiseHand: {
+                store.dispatch(action: .localUserAction(.raiseHandRequested))
+            },
+            onLowerHand: {
+                store.dispatch(action: .localUserAction(.lowerHandRequested))
+            },
+            onEffects: {
+                store.dispatch(action: .showBackgroundEffectsView)
+            },
+            onLayoutOptions: {
+                store.dispatch(action: .showLayoutOptions)
+            },
+            isDisplayed: store.state.navigationState.meetignOptionsVisible
+        )
+        
+        effectsPickerViewModel = compositeViewModelFactory.makeEffectsPickerViewModel(
+            localUserState: store.state.localUserState,
+            localizationProvider: localizationProvider,
+            videoEffectsPreviewViewModel: videoEffectsPreviewViewModel,
+            onDismiss: {
+                store.dispatch(action: .hideDrawer)
+            },
+            onEffects: { effect in
+                store.dispatch(action: .localUserAction(.backgroundEffectRequested(effect: effect)))
+            },
+            isDisplayed: store.state.navigationState.backgroundEffectsViewVisible
+        )
 
         controlBarViewModel = compositeViewModelFactory
             .makeControlBarViewModel(dispatchAction: actionDispatch, onEndCallTapped: { [weak self] in
@@ -232,9 +307,26 @@ internal class CallingViewModel: ObservableObject {
         guard state.visibilityState.currentStatus != .hidden else {
             return
         }
+        isShareMeetingLinkDisplayed = state.navigationState.shareMeetingLinkVisible
+        
         participantListViewModel.update(localUserState: state.localUserState,
                                         remoteParticipantsState: state.remoteParticipantsState,
                                         isDisplayed: state.navigationState.participantsVisible)
+        
+        let selectedParticipent = state.remoteParticipantsState.participantInfoList.first(where: {$0.userIdentifier == state.navigationState.selectedParticipant?.userIdentifier})
+        
+        participantOptionsViewModel.update(localUserState: state.localUserState, isDisplayed: state.navigationState.participantOptionsVisible, participantInfoModel: selectedParticipent
+        )
+        
+        meetingOptionsViewModel.update(
+            localUserState: state.localUserState,
+            isDisplayed: state.navigationState.meetignOptionsVisible
+        )
+        
+        layoutOptionsViewModel.update(
+            localUserState: state.localUserState,
+            isDisplayed: state.navigationState.layoutOptionsVisible
+        )
 
         participantActionViewModel.update(localUserState: state.localUserState,
                                           isDisplayed: state.navigationState.participantActionsVisible,
@@ -242,6 +334,7 @@ internal class CallingViewModel: ObservableObject {
         audioDeviceListViewModel.update(
             audioDeviceStatus: state.localUserState.audioState.device,
             navigationState: state.navigationState,
+            localUserState: state.localUserState,
             visibilityState: state.visibilityState)
         leaveCallConfirmationViewModel.update(state: state)
         supportFormViewModel.update(state: state)
@@ -265,8 +358,7 @@ internal class CallingViewModel: ObservableObject {
                                    buttonViewDataState: state.buttonViewDataState
                                    /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
                                    )
-        localVideoViewModel.update(localUserState: state.localUserState,
-                                   visibilityState: state.visibilityState)
+        
         lobbyWaitingHeaderViewModel.update(localUserState: state.localUserState,
                                            remoteParticipantsState: state.remoteParticipantsState,
                                            callingState: state.callingState,
@@ -276,7 +368,10 @@ internal class CallingViewModel: ObservableObject {
                                          callingState: state.callingState)
         participantGridsViewModel.update(callingState: state.callingState,
                                          remoteParticipantsState: state.remoteParticipantsState,
-                                         visibilityState: state.visibilityState, lifeCycleState: state.lifeCycleState)
+                                         
+                                         visibilityState: state.visibilityState,
+                                         localUserState: state.localUserState,
+                                         lifeCycleState: state.lifeCycleState)
         bannerViewModel.update(callingState: state.callingState,
                                visibilityState: state.visibilityState)
         lobbyOverlayViewModel.update(callingStatus: state.callingState.status)
@@ -286,6 +381,18 @@ internal class CallingViewModel: ObservableObject {
         moreCallOptionsListViewModel.update(navigationState: state.navigationState,
                                             visibilityState: state.visibilityState,
                                             buttonViewDataState: state.buttonViewDataState)
+        
+        effectsPickerViewModel.update(
+            localUserState: state.localUserState,
+            isDisplayed: state.navigationState.backgroundEffectsViewVisible
+        )
+        
+        if state.navigationState.backgroundEffectsViewVisible {
+            videoEffectsPreviewViewModel.update(localUserState: state.localUserState, visibilityState: state.visibilityState)
+        }
+        
+        localVideoViewModel.update(localUserState: state.localUserState,
+                                   visibilityState: state.visibilityState, isPreviewEnabled: !state.navigationState.backgroundEffectsViewVisible)
 
         receiveExtension(state)
     }
@@ -324,7 +431,7 @@ internal class CallingViewModel: ObservableObject {
 
     private func updateIsLocalCameraOn(with state: AppState) {
         let isLocalCameraOn = state.localUserState.cameraState.operation == .on
-        let displayName = state.localUserState.displayName ?? ""
+        let displayName = state.localUserState.updatedDisplayName ?? state.localUserState.initialDisplayName ?? ""
         let isLocalUserInfoNotEmpty = isLocalCameraOn || !displayName.isEmpty
         isVideoGridViewAccessibilityAvailable = !lobbyOverlayViewModel.isDisplayed
         && !onHoldOverlayViewModel.isDisplayed

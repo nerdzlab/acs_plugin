@@ -13,6 +13,10 @@ internal struct DrawerParticipantView: View {
     var isConfirming = false
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         let participantViewData = item.getParticipantViewData(from: avatarManager)
         let name = item.getParticipantName(with: participantViewData)
         let displayName = item.getCellDisplayName(with: participantViewData)
@@ -26,19 +30,21 @@ internal struct DrawerParticipantView: View {
                     avatarManager.localParticipantViewData?.avatarImage :
                         avatarManager.avatarStorage.value(forKey: item.participantId ?? "")?.avatarImage
                 ),
+                backgroundColor: item.avatarColor,
                 isSpeaking: false,
-                avatarSize: .size40
+                avatarSize: 40,
+                fontSize: 12
             )
             Text(displayName)
-                .foregroundColor(.primary)
+                .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                 .padding(.leading, DrawerListConstants.textPaddingLeading)
-                .font(.body)
+                .font(AppFont.CircularStd.book.font(size: 16))
             Spacer()
             if item.isHold {
                 Text("On Hold")
             } else {
                 Icon(name: item.isMuted ? .micOff : .micOn,
-                     size: DrawerListConstants.iconSize)
+                     size: DrawerListConstants.iconSize, renderAsOriginal: false)
                 .opacity(DrawerListConstants.micIconOpacity)
             }
         }

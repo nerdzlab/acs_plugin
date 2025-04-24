@@ -17,13 +17,17 @@ struct OverlayView: View {
     let viewModel: OverlayViewModelProtocol
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Color(viewModel.background)
             .overlay(
                 ZStack(alignment: .bottom) {
                     VStack(spacing: 0) {
                         Spacer()
                         Group {
-                            Icon(name: .clock, size: iconImageSize)
+                            Icon(name: .clock, size: iconImageSize, renderAsOriginal: false)
                                 .accessibility(hidden: true)
                                 .padding(.bottom, verticalIconPaddingSize)
 

@@ -31,6 +31,10 @@ internal struct LobbyWaitingHeaderView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         ZStack {
             if viewModel.isDisplayed {
                 lobbyHeader
@@ -69,7 +73,7 @@ internal struct LobbyWaitingHeaderView: View {
     }
 
     var addParticipantIcon: some View {
-        Icon(name: .addParticipant, size: 24)
+        Icon(name: .addParticipant, size: 24, renderAsOriginal: false)
             .foregroundColor(.white)
             .contentShape(Rectangle())
     }

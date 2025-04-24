@@ -15,6 +15,10 @@ struct MessageBarDiagnosticView: View {
     private let height: CGFloat = 48
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         if viewModel.isDisplayed {
             HStack(alignment: .center) {
                 if let icon = viewModel.icon {

@@ -10,6 +10,10 @@ struct BannerTextView: View {
     @ObservedObject var viewModel: BannerTextViewModel
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Group {
             Text(viewModel.title).bold()
             + Text(" ")

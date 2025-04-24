@@ -29,11 +29,32 @@ enum LocalUserAction: Equatable {
 
     case microphoneOffTriggered
     case microphoneOffFailed(error: Error)
+    
+    case raiseHandRequested
+    case raiseHandFailed(error: Error)
+    case raiseHandSucceeded
+    
+    case lowerHandRequested
+    case lowerHandFailed(error: Error)
+    case lowerHandSucceeded
+    
+    case backgroundEffectRequested(effect: LocalUserState.BackgroundEffectType)
+    case backgroundEffectSetFailed(error: Error)
 
     case microphoneMuteStateUpdated(isMuted: Bool)
 
     case microphonePreviewOn
     case microphonePreviewOff
+    
+    case noiseSuppressionPreviewOn
+    case noiseSuppressionPreviewOff
+    
+    case muteIncomingAudioOnPreviewRequested
+    
+    case gridLayoutSelected
+    case speakerLayoutSelected
+    
+    case changeDisplayNameRequested(displayName: String?)
 
     case audioDeviceChangeRequested(device: AudioDeviceType)
     case audioDeviceChangeSucceeded(device: AudioDeviceType)
@@ -64,6 +85,11 @@ enum LocalUserAction: Equatable {
             (.microphoneOnTriggered, .microphoneOnTriggered),
             (.microphoneOffTriggered, .microphoneOffTriggered),
             (.microphonePreviewOn, .microphonePreviewOn),
+            (.noiseSuppressionPreviewOn, .noiseSuppressionPreviewOn),
+            (.noiseSuppressionPreviewOff, .noiseSuppressionPreviewOff),
+            (.gridLayoutSelected, .gridLayoutSelected),
+            (.speakerLayoutSelected, .speakerLayoutSelected),
+            (.muteIncomingAudioOnPreviewRequested, .muteIncomingAudioOnPreviewRequested),
             (.microphonePreviewOff, .microphonePreviewOff):
             return true
 
@@ -75,6 +101,9 @@ enum LocalUserAction: Equatable {
             return lMuted == rMuted
 
         case let (.cameraOnSucceeded(lId), .cameraOnSucceeded(rId)):
+            return lId == rId
+            
+        case let (.changeDisplayNameRequested(lId), .changeDisplayNameRequested(rId)):
             return lId == rId
 
         case let (.cameraSwitchSucceeded(lDev), .cameraSwitchSucceeded(rDev)):

@@ -32,7 +32,7 @@ extension Store where State == AppState, Action == acs_plugin.Action {
             cameraState: cameraState,
             audioState: audioState)
 
-        let localUserState = LocalUserState(displayName: displayName)
+        let localUserState = LocalUserState(initialDisplayName: displayName)
 
         let callingState = skipSetupScreen ?? false ?
                 CallingState(operationStatus: .skipSetupRequested) : CallingState()

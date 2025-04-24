@@ -4,18 +4,20 @@
 //
 
 import Foundation
+import SwiftUICore
 
 class ParticipantsListCellViewModel: BaseDrawerItemViewModel {
     let participantId: String?
     let isMuted: Bool
     let isHold: Bool
     let isLocalParticipant: Bool
+    let avatarColor: Color
     let localizationProvider: LocalizationProviderProtocol
     let isInLobby: Bool
     let confirmTitle: String?
     let confirmAccept: String?
     let confirmDeny: String?
-    let accept: (() -> Void)?
+    var accept: (() -> Void)?
     let deny: (() -> Void)?
     private let displayName: String
 
@@ -23,7 +25,7 @@ class ParticipantsListCellViewModel: BaseDrawerItemViewModel {
          localizationProvider: LocalizationProviderProtocol) {
         participantId = nil
         self.localizationProvider = localizationProvider
-        self.displayName = localUserState.displayName ?? ""
+        self.displayName = localUserState.initialDisplayName ?? ""
         self.isMuted = localUserState.audioState.operation != .on
         self.isLocalParticipant = true
         self.isHold = false
@@ -33,6 +35,7 @@ class ParticipantsListCellViewModel: BaseDrawerItemViewModel {
         self.confirmTitle = nil
         self.confirmAccept = nil
         self.deny = nil
+        self.avatarColor = Color(UIColor.compositeColor(.purpleBlue))
     }
 
     init(participantInfoModel: ParticipantInfoModel,
@@ -55,6 +58,7 @@ class ParticipantsListCellViewModel: BaseDrawerItemViewModel {
         self.confirmTitle = confirmTitle
         self.confirmDeny = confirmDeny
         self.confirmAccept = confirmAccept
+        self.avatarColor = participantInfoModel.avatarColor
     }
 
     func getParticipantViewData(from avatarViewManager: AvatarViewManagerProtocol) -> ParticipantViewData? {

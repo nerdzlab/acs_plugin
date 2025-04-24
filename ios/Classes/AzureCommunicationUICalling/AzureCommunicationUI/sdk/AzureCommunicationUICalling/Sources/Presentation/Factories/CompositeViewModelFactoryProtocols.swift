@@ -15,6 +15,7 @@ protocol CompositeViewModelFactoryProtocol {
     func makeIconButtonViewModel(iconName: CompositeIcon,
                                  buttonType: IconButtonViewModel.ButtonType,
                                  isDisabled: Bool,
+                                 renderAsOriginal: Bool,
                                  action: @escaping (() -> Void)) -> IconButtonViewModel
     func makeIconButtonViewModel(iconName: CompositeIcon,
                                  buttonType: IconButtonViewModel.ButtonType,
@@ -31,7 +32,7 @@ protocol CompositeViewModelFactoryProtocol {
     func makeIconWithLabelButtonViewModel<ButtonStateType>(
         selectedButtonState: ButtonStateType,
         localizationProvider: LocalizationProviderProtocol,
-        buttonTypeColor: IconWithLabelButtonViewModel<ButtonStateType>.ButtonTypeColor,
+        buttonColor: Color,
         isDisabled: Bool,
         action: @escaping (() -> Void)) -> IconWithLabelButtonViewModel<ButtonStateType>
     
@@ -41,7 +42,7 @@ protocol CompositeViewModelFactoryProtocol {
         isDisabled: Bool,
         action: @escaping (() -> Void)) -> PrimaryIconButtonViewModel<ButtonStateType>
     
-    func makeLocalVideoViewModel(dispatchAction: @escaping ActionDispatch) -> LocalVideoViewModel
+    func makeLocalVideoViewModel(dispatchAction: @escaping ActionDispatch, isPreviewEnable: Bool) -> LocalVideoViewModel
     func makePrimaryButtonViewModel(buttonStyle: FluentUI.ButtonStyle,
                                     buttonLabel: String,
                                     iconName: CompositeIcon?,
@@ -78,19 +79,51 @@ protocol CompositeViewModelFactoryProtocol {
                                          dispatchAction: @escaping ActionDispatch) -> LobbyWaitingHeaderViewModel
     func makeLobbyActionErrorViewModel(localUserState: LocalUserState,
                                        dispatchAction: @escaping ActionDispatch) -> LobbyErrorHeaderViewModel
-    func makeParticipantGridsViewModel(isIpadInterface: Bool,
-                                       rendererViewManager: RendererViewManager) -> ParticipantGridViewModel
-
+    func makeParticipantGridsViewModel(isIpadInterface: Bool, rendererViewManager: RendererViewManager) -> ParticipantGridViewModel
+    
     func makeParticipantCellViewModel(participantModel: ParticipantInfoModel) -> ParticipantGridCellViewModel
-
+    
     func makeParticipantsListViewModel(localUserState: LocalUserState,
                                        isDisplayed: Bool,
+                                       showSharingViewAction: @escaping () -> Void,
                                        dispatchAction: @escaping ActionDispatch) -> ParticipantsListViewModel
-
+    
+    func makeParticipantOptionsViewModel(localUserState: LocalUserState,
+                                         isDisplayed: Bool,
+                                         dispatchAction: @escaping ActionDispatch
+    ) -> ParticipantOptionsViewModel
+    
     func makeParticipantMenuViewModel(localUserState: LocalUserState,
                                       isDisplayed: Bool,
                                       dispatchAction: @escaping ActionDispatch) -> ParticipantMenuViewModel
-
+    
+    func makeMeetingOptionsViewModel(localUserState: LocalUserState,
+                                     localizationProvider: LocalizationProviderProtocol,
+                                     onShareScreen: @escaping () -> Void,
+                                     onStopShareScreen: @escaping () -> Void,
+                                     onChat: @escaping () -> Void,
+                                     onParticipants: @escaping () -> Void,
+                                     onRaiseHand: @escaping () -> Void,
+                                     onLowerHand: @escaping () -> Void,
+                                     onEffects: @escaping () -> Void,
+                                     onLayoutOptions: @escaping () -> Void,
+                                     isDisplayed: Bool) -> MeetingOptionsViewModel
+    
+    func makeEffectsPickerViewModel(localUserState: LocalUserState,
+                                    localizationProvider: LocalizationProviderProtocol,
+                                    videoEffectsPreviewViewModel: VideoEffectsPreviewViewModel,
+                                    onDismiss: @escaping () -> Void,
+                                    onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
+                                    isDisplayed: Bool) -> EffectsPickerViewModel
+    
+    
+    func makeLayoutOptionsViewModel(
+        localUserState: LocalUserState,
+        isDisplayed: Bool,
+        onGridSelect: @escaping () -> Void,
+        onSpeakerSelect: @escaping () -> Void
+    ) -> LayoutOptionsViewModel
+    
     func makeBannerViewModel(dispatchAction: @escaping ActionDispatch) -> BannerViewModel
     func makeBannerTextViewModel() -> BannerTextViewModel
     func makeMoreCallOptionsListViewModel(
@@ -101,14 +134,18 @@ protocol CompositeViewModelFactoryProtocol {
         showCaptionsViewAction: @escaping () -> Void,
         buttonViewDataState: ButtonViewDataState,
         dispatchAction: @escaping ActionDispatch) -> MoreCallOptionsListViewModel
+    
     func makeCaptionsListViewModel(state: AppState,
                                    captionsOptions: CaptionsOptions,
                                    dispatchAction: @escaping ActionDispatch,
                                    showSpokenLanguage: @escaping () -> Void,
                                    showCaptionsLanguage: @escaping () -> Void,
                                    isDisplayed: Bool) -> CaptionsListViewModel
+    
     func makeDebugInfoSharingActivityViewModel() -> DebugInfoSharingActivityViewModel
-
+    
+    func makeShareMeetingInfoActivityViewModel() -> ShareMeetingInfoActivityViewModel
+    
     func makeToggleListItemViewModel(title: String,
                                      isToggleOn: Binding<Bool>,
                                      showToggle: Bool,
@@ -116,7 +153,7 @@ protocol CompositeViewModelFactoryProtocol {
                                      startIcon: CompositeIcon,
                                      isEnabled: Bool,
                                      action: @escaping (() -> Void)) -> DrawerGenericItemViewModel
-
+    
     func makeLanguageListItemViewModel(title: String,
                                        subtitle: String?,
                                        accessibilityIdentifier: String,
@@ -131,7 +168,7 @@ protocol CompositeViewModelFactoryProtocol {
     func makeLeaveCallConfirmationViewModel(
         endCall: @escaping (() -> Void),
         dismissConfirmation: @escaping (() -> Void)) -> LeaveCallConfirmationViewModel
-
+    
     func makeSupportFormViewModel() -> SupportFormViewModel
     func makeCallDiagnosticsViewModel(dispatchAction: @escaping ActionDispatch) -> CallDiagnosticsViewModel
     func makeBottomToastViewModel(toastNotificationState: ToastNotificationState,
@@ -142,6 +179,13 @@ protocol CompositeViewModelFactoryProtocol {
                                       localUserState: LocalUserState,
                                       buttonViewDataState: ButtonViewDataState) -> SetupControlBarViewModel
     func makeJoiningCallActivityViewModel(title: String) -> JoiningCallActivityViewModel
+    
+    func makeAppPrimaryButtonViewModel(buttonStyle: AppCompositeButton.ButtonStyleType,
+                                       buttonLabel: String,
+                                       iconName: CompositeIcon?,
+                                       isDisabled: Bool,
+                                       paddings: AppCompositeButton.Paddings?,
+                                       action: @escaping (() -> Void)) -> AppPrimaryButtonViewModel
 }
 
 extension CompositeViewModelFactoryProtocol {
@@ -157,7 +201,20 @@ extension CompositeViewModelFactoryProtocol {
                                           paddings: nil,
                                           action: action)
     }
-
+    
+    func makeAppPrimaryButtonViewModel(buttonStyle: AppCompositeButton.ButtonStyleType,
+                                       buttonLabel: String,
+                                       iconName: CompositeIcon? = CompositeIcon.none,
+                                       isDisabled: Bool,
+                                       action: @escaping (() -> Void)) -> AppPrimaryButtonViewModel {
+        return makeAppPrimaryButtonViewModel(buttonStyle: buttonStyle,
+                                             buttonLabel: buttonLabel,
+                                             iconName: iconName,
+                                             isDisabled: isDisabled,
+                                             paddings: nil,
+                                             action: action)
+    }
+    
     func makeJoiningCallActivityViewModel(title: String) -> JoiningCallActivityViewModel {
         return JoiningCallActivityViewModel(title: title)
     }

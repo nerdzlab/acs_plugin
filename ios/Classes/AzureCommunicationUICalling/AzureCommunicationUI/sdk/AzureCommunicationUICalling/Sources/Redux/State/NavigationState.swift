@@ -12,7 +12,7 @@ enum NavigationStatus {
 }
 
 struct NavigationState: Equatable {
-
+    
     let status: NavigationStatus
     let supportFormVisible: Bool
     let captionsViewVisible: Bool
@@ -24,7 +24,12 @@ struct NavigationState: Equatable {
     let supportShareSheetVisible: Bool
     let participantsVisible: Bool
     let participantActionsVisible: Bool
-
+    let participantOptionsVisible: Bool
+    let shareMeetingLinkVisible: Bool
+    let layoutOptionsVisible: Bool
+    let meetignOptionsVisible: Bool
+    let backgroundEffectsViewVisible: Bool
+    
     // When showing Participant Menu, this provides
     // context on who we are shoing it for
     let selectedParticipant: ParticipantInfoModel?
@@ -39,6 +44,11 @@ struct NavigationState: Equatable {
          supportShareSheetVisible: Bool = false,
          participantsVisible: Bool = false,
          participantActionsVisible: Bool = false,
+         participantOptionsVisible: Bool = false,
+         shareMeetingLinkVisible: Bool = false,
+         layoutOptionsVisible: Bool = false,
+         meetignOptionsVisible: Bool = false,
+         backgroundEffectsViewVisible: Bool = false,
          selectedParticipant: ParticipantInfoModel? = nil
     ) {
         self.status = status
@@ -53,20 +63,30 @@ struct NavigationState: Equatable {
         self.participantsVisible = participantsVisible
         self.participantActionsVisible = participantActionsVisible
         self.selectedParticipant = selectedParticipant
+        self.participantOptionsVisible = participantOptionsVisible
+        self.layoutOptionsVisible = layoutOptionsVisible
+        self.meetignOptionsVisible = meetignOptionsVisible
+        self.shareMeetingLinkVisible = shareMeetingLinkVisible
+        self.backgroundEffectsViewVisible = backgroundEffectsViewVisible
     }
-
+    
     static func == (lhs: NavigationState, rhs: NavigationState) -> Bool {
         return lhs.status == rhs.status
-            && lhs.supportFormVisible == rhs.supportFormVisible
-            && lhs.captionsLanguageViewVisible == rhs.captionsLanguageViewVisible
-            && lhs.spokenLanguageViewVisible == rhs.spokenLanguageViewVisible
-            && lhs.captionsViewVisible == rhs.captionsViewVisible
-            && lhs.endCallConfirmationVisible == rhs.endCallConfirmationVisible
-            && lhs.audioSelectionVisible == rhs.audioSelectionVisible
-            && lhs.moreOptionsVisible == rhs.moreOptionsVisible
-            && lhs.supportShareSheetVisible == rhs.supportShareSheetVisible
-            && lhs.participantsVisible == rhs.participantsVisible
-            && lhs.participantActionsVisible == rhs.participantActionsVisible
-            && lhs.selectedParticipant == rhs.selectedParticipant
+        && lhs.supportFormVisible == rhs.supportFormVisible
+        && lhs.captionsLanguageViewVisible == rhs.captionsLanguageViewVisible
+        && lhs.spokenLanguageViewVisible == rhs.spokenLanguageViewVisible
+        && lhs.captionsViewVisible == rhs.captionsViewVisible
+        && lhs.endCallConfirmationVisible == rhs.endCallConfirmationVisible
+        && lhs.audioSelectionVisible == rhs.audioSelectionVisible
+        && lhs.moreOptionsVisible == rhs.moreOptionsVisible
+        && lhs.supportShareSheetVisible == rhs.supportShareSheetVisible
+        && lhs.participantsVisible == rhs.participantsVisible
+        && lhs.participantActionsVisible == rhs.participantActionsVisible
+        && lhs.selectedParticipant == rhs.selectedParticipant
+        && lhs.participantOptionsVisible == rhs.participantOptionsVisible
+        && lhs.layoutOptionsVisible == rhs.layoutOptionsVisible
+        && lhs.meetignOptionsVisible == rhs.meetignOptionsVisible
+        && lhs.backgroundEffectsViewVisible == rhs.backgroundEffectsViewVisible
+        && lhs.shareMeetingLinkVisible == rhs.shareMeetingLinkVisible
     }
 }

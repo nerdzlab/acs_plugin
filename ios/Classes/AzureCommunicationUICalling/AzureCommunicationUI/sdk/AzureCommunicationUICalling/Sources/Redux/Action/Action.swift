@@ -29,8 +29,13 @@ enum Action: Equatable {
     case showAudioSelection
     case showMoreOptions
     case showSupportShare
+    case showShareSheetMeetingLink
     case showParticipants
+    case showLayoutOptions
+    case showMeetingOptions
+    case showBackgroundEffectsView
     case showParticipantActions(ParticipantInfoModel)
+    case showParticipantOptions(ParticipantInfoModel)
     // Since we only show one drawer at a time, we can have one hide
     case hideDrawer
 

@@ -16,6 +16,10 @@ struct LoadingOverlayView: View {
     let viewModel: LoadingOverlayViewModel
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         Color(StyleProvider.color.surface)
             .overlay(
                 ZStack(alignment: .bottom) {

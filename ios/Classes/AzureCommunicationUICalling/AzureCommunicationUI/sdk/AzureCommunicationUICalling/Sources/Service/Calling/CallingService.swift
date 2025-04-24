@@ -32,9 +32,17 @@ protocol CallingServiceProtocol {
     var captionsEnabledChanged: CurrentValueSubject<Bool, Never> { get }
     var captionsTypeSubject: CurrentValueSubject<CallCompositeCaptionsType, Never> { get }
     var capabilitiesChangedSubject: PassthroughSubject<CapabilitiesChangedEvent, Never> {get}
+    var videoEffectErrorSubject: PassthroughSubject<String, Never> { get }
 
+    func updateDisplayName(_ displayName: String?)
     func setupCall() async throws
-    func startCall(isCameraPreferred: Bool, isAudioPreferred: Bool) async throws
+    func startCall(
+        isCameraPreferred: Bool,
+        isMicrophonePreferred: Bool,
+        isNoiseSuppressionPreferred: Bool,
+        isMuteIncomingAudio: Bool
+    ) async throws
+    
     func endCall() async throws
 
     func requestCameraPreviewOn() async throws -> String
@@ -57,6 +65,11 @@ protocol CallingServiceProtocol {
     func setCaptionsCaptionLanguage(_ language: String) async throws
     func removeParticipant(_ participantId: String) async throws
     func getCapabilities() async throws -> Set<ParticipantCapabilityType>
+    
+    func raiseHand() async throws
+    func lowerHand() async throws
+    
+    func setBackgroundEffect(_ effect: LocalUserState.BackgroundEffectType)
     /* <CALL_START_TIME>
     func callStartTime() -> Date?
     </CALL_START_TIME> */
@@ -92,6 +105,8 @@ class CallingService: NSObject, CallingServiceProtocol {
     var activeCaptionLanguageSubject: CurrentValueSubject<String, Never>
     var captionsEnabledChanged: CurrentValueSubject<Bool, Never>
     var captionsTypeSubject: CurrentValueSubject<CallCompositeCaptionsType, Never>
+    var videoEffectErrorSubject: PassthroughSubject<String, Never>
+    
     init(logger: Logger,
          callingSDKWrapper: CallingSDKWrapperProtocol ) {
         self.logger = logger
@@ -120,16 +135,27 @@ class CallingService: NSObject, CallingServiceProtocol {
         /* <CALL_START_TIME>
         callStartTimeSubject = callingSDKWrapper.callingEventsHandler.callStartTimeSubject
         </CALL_START_TIME> */
+        videoEffectErrorSubject = callingSDKWrapper.callingEventsHandler.videoEffectError
     }
 
     func setupCall() async throws {
         try await callingSDKWrapper.setupCall()
     }
+    
+    func updateDisplayName(_ displayName: String?) {
+        callingSDKWrapper.updateDisplayName(displayName)
+    }
 
-    func startCall(isCameraPreferred: Bool, isAudioPreferred: Bool) async throws {
+    func startCall(
+        isCameraPreferred: Bool,
+        isMicrophonePreferred: Bool,
+        isNoiseSuppressionPreferred: Bool,
+        isMuteIncomingAudio: Bool
+    ) async throws {
         try await callingSDKWrapper.startCall(
             isCameraPreferred: isCameraPreferred,
-            isAudioPreferred: isAudioPreferred
+            isMicrophonePreferred: isMicrophonePreferred, isNoiseSuppressionPreferred: isNoiseSuppressionPreferred,
+            isMuteIncomingAudio: isMuteIncomingAudio
         )
     }
 
@@ -209,5 +235,17 @@ class CallingService: NSObject, CallingServiceProtocol {
 
     func getCapabilities() async throws -> Set<ParticipantCapabilityType> {
         try await callingSDKWrapper.getCapabilities()
+    }
+    
+    func raiseHand() async throws {
+        try await callingSDKWrapper.raiseHand()
+    }
+    
+    func lowerHand() async throws {
+        try await callingSDKWrapper.lowerHand()
+    }
+    
+    func setBackgroundEffect(_ effect: LocalUserState.BackgroundEffectType) {
+        callingSDKWrapper.setBackgroundEffect(effect)
     }
 }

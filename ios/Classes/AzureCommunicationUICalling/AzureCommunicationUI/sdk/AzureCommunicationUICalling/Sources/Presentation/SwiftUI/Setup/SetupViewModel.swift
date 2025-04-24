@@ -5,6 +5,7 @@
 
 import Combine
 import Foundation
+import SwiftUI
 
 class SetupViewModel: ObservableObject {
     private let logger: Logger
@@ -12,24 +13,28 @@ class SetupViewModel: ObservableObject {
     private let localizationProvider: LocalizationProviderProtocol
     private let callType: CompositeCallType
     private var callingStatus: CallingStatus = .none
-
+    
     let isRightToLeft: Bool
     let previewAreaViewModel: PreviewAreaViewModel
+    let videoEffectsPreviewViewModel: VideoEffectsPreviewViewModel
+    let effectsPickerViewModel: EffectsPickerViewModel
     var title: String
     var subTitle: String?
-
+    var textFieldPLaceholder: String
+    
     var networkManager: NetworkManager
     var audioSessionManager: AudioSessionManagerProtocol
     var errorInfoViewModel: ErrorInfoViewModel
     var dismissButtonViewModel: IconButtonViewModel!
-    var joinCallButtonViewModel: PrimaryButtonViewModel!
+    var joinCallButtonViewModel: AppPrimaryButtonViewModel!
     var setupControlBarViewModel: SetupControlBarViewModel!
     var joiningCallActivityViewModel: JoiningCallActivityViewModel!
     var cancellables = Set<AnyCancellable>()
     var audioDeviceListViewModel: AudioDevicesListViewModel!
-
+    
     @Published var isJoinRequested = false
-
+    var updatedDisplayName: String?
+    
     init(compositeViewModelFactory: CompositeViewModelFactoryProtocol,
          logger: Logger,
          store: Store<AppState, Action>,
@@ -47,7 +52,21 @@ class SetupViewModel: ObservableObject {
         self.isRightToLeft = localizationProvider.isRightToLeft
         self.logger = logger
         self.callType = callType
-
+        self.videoEffectsPreviewViewModel = VideoEffectsPreviewViewModel()
+        
+        effectsPickerViewModel = compositeViewModelFactory.makeEffectsPickerViewModel(
+            localUserState: store.state.localUserState,
+            localizationProvider: localizationProvider,
+            videoEffectsPreviewViewModel: videoEffectsPreviewViewModel,
+            onDismiss: {
+                store.dispatch(action: .hideDrawer)
+            },
+            onEffects: { effect in
+                store.dispatch(action: .localUserAction(.backgroundEffectRequested(effect: effect)))
+            },
+            isDisplayed: store.state.navigationState.backgroundEffectsViewVisible
+        )
+        
         if let title = setupScreenViewData?.title, !title.isEmpty {
             // if title is not nil/empty, use given title and optional subtitle
             self.title = title
@@ -55,9 +74,11 @@ class SetupViewModel: ObservableObject {
         } else {
             // else if title is nil/empty, use default title
             self.title = self.localizationProvider.getLocalizedString(.setupTitle)
-            self.subTitle = nil
+            self.subTitle = self.localizationProvider.getLocalizedString(.setupSubTitle)
         }
-
+        
+        self.textFieldPLaceholder = self.localizationProvider.getLocalizedString(.setupScreenTextfieldPlaceholder)
+        
         previewAreaViewModel = compositeViewModelFactory.makePreviewAreaViewModel(dispatchAction: store.dispatch)
         var joiningButtonLocalization = LocalizationKey.joiningCall
         if self.callType == .oneToNOutgoing {
@@ -67,14 +88,14 @@ class SetupViewModel: ObservableObject {
             title: self.localizationProvider.getLocalizedString(joiningButtonLocalization))
         errorInfoViewModel = compositeViewModelFactory.makeErrorInfoViewModel(title: "",
                                                                               subtitle: "")
-
+        
         audioDeviceListViewModel = compositeViewModelFactory.makeAudioDevicesListViewModel(
             dispatchAction: actionDispatch,
             localUserState: store.state.localUserState)
-
+        
         let callButtonLocalization = LocalizationKey.startCall
-
-        joinCallButtonViewModel = compositeViewModelFactory.makePrimaryButtonViewModel(
+        
+        joinCallButtonViewModel = compositeViewModelFactory.makeAppPrimaryButtonViewModel(
             buttonStyle: .primaryFilled,
             buttonLabel: self.localizationProvider
                 .getLocalizedString(callButtonLocalization).uppercased(),
@@ -82,38 +103,43 @@ class SetupViewModel: ObservableObject {
                 guard let self = self else {
                     return
                 }
+                
+                self.endEditing()
+                store.dispatch(action: .localUserAction(.changeDisplayNameRequested(displayName: updatedDisplayName)))
                 self.joinCallButtonTapped()
-        }
-
+            }
+        
         updateAccessibilityLabel()
         dismissButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .leftArrow,
-            buttonType: .controlButton,
-            isDisabled: false) { [weak self] in
+            buttonType: .backNavigation,
+            isDisabled: false,
+            renderAsOriginal: true) { [weak self] in
                 guard let self = self else {
                     return
                 }
+                self.endEditing()
                 self.dismissButtonTapped()
-        }
+            }
         dismissButtonViewModel.update(
             accessibilityLabel: self.localizationProvider.getLocalizedString(.dismissAccessibilityLabel))
-
+        
         setupControlBarViewModel = compositeViewModelFactory
             .makeSetupControlBarViewModel(dispatchAction: store.dispatch,
                                           localUserState: store.state.localUserState,
                                           buttonViewDataState: store.state.buttonViewDataState)
-
+        
         store.$state
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 self?.receive(state)
             }.store(in: &cancellables)
-
+        
         $isJoinRequested.sink { [weak self] value in
             self?.setupControlBarViewModel.update(isJoinRequested: value)
         }.store(in: &cancellables)
     }
-
+    
     func updateAccessibilityLabel() {
         if joinCallButtonViewModel.isDisabled {
             // Update the accessibility label for the disabled state
@@ -122,19 +148,23 @@ class SetupViewModel: ObservableObject {
                 key = LocalizationKey.startCallDiableStateAccessibilityLabel
             }
             joinCallButtonViewModel.update(accessibilityLabel:
-            self.localizationProvider.getLocalizedString(key))
+                                            self.localizationProvider.getLocalizedString(key))
         } else {
             // Update the accessibility label for the normal state
             var key = LocalizationKey.startCall
-           
+            
             joinCallButtonViewModel.update(accessibilityLabel: self.localizationProvider.getLocalizedString(key))
         }
     }
-
+    
     deinit {
         networkManager.stopMonitor()
     }
-
+    
+    private func endEditing() {
+        UIApplication.shared.endEditing()
+    }
+    
     func joinCallButtonTapped() {
         guard networkManager.isConnected else {
             handleOffline()
@@ -147,27 +177,38 @@ class SetupViewModel: ObservableObject {
         isJoinRequested = true
         store.dispatch(action: .callingAction(.callStartRequested))
     }
-
+    
     func dismissButtonTapped() {
         let isJoining = callingStatus != .none
         let action: Action = isJoining ? .callingAction(.callEndRequested) : .compositeExitAction
         store.dispatch(action: action)
     }
-
+    
     func receive(_ state: AppState) {
         let newCallingStatus = state.callingState.status
         if callingStatus != newCallingStatus,
            newCallingStatus == .none {
             isJoinRequested = false
         }
-
+        
         callingStatus = newCallingStatus
         let localUserState = state.localUserState
         let permissionState = state.permissionState
         let callingState = state.callingState
+        
+        effectsPickerViewModel.update(
+            localUserState: state.localUserState,
+            isDisplayed: state.navigationState.backgroundEffectsViewVisible
+        )
+        
+        if state.navigationState.backgroundEffectsViewVisible {
+            videoEffectsPreviewViewModel.update(localUserState: state.localUserState, visibilityState: state.visibilityState)
+        }
+        
         previewAreaViewModel.update(localUserState: localUserState,
                                     permissionState: permissionState,
-                                    visibilityState: state.visibilityState)
+                                    visibilityState: state.visibilityState, isPreviewEnabled: !state.navigationState.backgroundEffectsViewVisible)
+        
         setupControlBarViewModel.update(localUserState: localUserState,
                                         permissionState: permissionState,
                                         callingState: callingState,
@@ -178,20 +219,21 @@ class SetupViewModel: ObservableObject {
         audioDeviceListViewModel.update(
             audioDeviceStatus: state.localUserState.audioState.device,
             navigationState: state.navigationState,
+            localUserState: state.localUserState,
             visibilityState: state.visibilityState
         )
         objectWillChange.send()
     }
-
+    
     func shouldShowSetupControlBarView() -> Bool {
         let cameraStatus = store.state.localUserState.cameraState.operation
         return cameraStatus == .off || !isJoinRequested
     }
-
-    func dismissAudioDevicesDrawer() {
+    
+    func dismissDrawer() {
         store.dispatch(action: .hideDrawer)
     }
-
+    
     private func handleOffline() {
         store.dispatch(
             action: .errorAction(
@@ -201,7 +243,7 @@ class SetupViewModel: ObservableObject {
         // 1: camera on/off, audio on/off, switch to background/foreground, etc.
         errorInfoViewModel.show()
     }
-
+    
     private func handleMicUnavailableEvent() {
         store.dispatch(action: .errorAction(.statusErrorAndCallReset(internalError: .micNotAvailable,
                                                                      error: nil)))

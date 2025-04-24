@@ -30,6 +30,19 @@ extension Reducer where State == ErrorState,
             errorType = .cameraOnFailed
             error = nil
             errorCategory = .callState
+        case .localUserAction(.raiseHandFailed):
+            errorType = .raiseHandFailed
+            error = nil
+            errorCategory = .callState
+        case .localUserAction(.lowerHandFailed):
+            errorType = .lowerHandFailed
+            error = nil
+            errorCategory = .callState
+        
+        case .localUserAction(.backgroundEffectSetFailed):
+            errorType = .setVideoEffectFailed
+            error = nil
+            errorCategory = .callState
 
             // Exhaustive unimplemented actions
         case .audioSessionAction,
@@ -67,11 +80,16 @@ extension Reducer where State == ErrorState,
                 .showSupportShare,
                 .showParticipants,
                 .showParticipantActions,
+                .showParticipantOptions,
                 .hideDrawer,
                 .visibilityAction,
                 .toastNotificationAction,
                 .callScreenInfoHeaderAction,
                 .setTotalParticipantCount,
+                .showShareSheetMeetingLink,
+                .showLayoutOptions,
+                .showMeetingOptions,
+                .showBackgroundEffectsView,
                 .buttonViewDataAction:
             return state
         }

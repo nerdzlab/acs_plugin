@@ -5,7 +5,7 @@
 
 import Foundation
 
-class DebugInfoSharingActivityViewModel {
+class DebugInfoSharingActivityViewModel: InfoSharingAccessible {
     let accessibilityProvider: AccessibilityProviderProtocol
     let debugInfoManager: DebugInfoManagerProtocol
     let dismissDrawer: () -> Void
@@ -18,7 +18,7 @@ class DebugInfoSharingActivityViewModel {
         self.dismissDrawer = dismissDrawer
     }
 
-    func getDebugInfo() -> String {
+    func getShareInfo() -> String {
         let debugInfo = debugInfoManager.getDebugInfo()
         let callId = debugInfo.callHistoryRecords.last?.callIds.last ??
             StringConstants.defaultCallIdDebugInfoValue

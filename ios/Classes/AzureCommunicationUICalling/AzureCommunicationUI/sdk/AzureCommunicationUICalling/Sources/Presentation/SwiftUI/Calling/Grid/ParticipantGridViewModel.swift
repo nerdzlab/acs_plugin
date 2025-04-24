@@ -5,6 +5,7 @@
 
 import Foundation
 import Combine
+import SwiftUICore
 
 class ParticipantGridViewModel: ObservableObject {
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
@@ -15,15 +16,19 @@ class ParticipantGridViewModel: ObservableObject {
     private var maximumParticipantsDisplayed: Int {
         return  self.visibilityStatus == .pipModeEntered ? 1 : isIpadInterface ? 9 : 6
     }
-
+    
     private var lastUpdateTimeStamp = Date()
     private var lastDominantSpeakersUpdatedTimestamp = Date()
     private var visibilityStatus: VisibilityStatus = .visible
     private var appStatus: AppStatus = .foreground
     private(set) var participantsCellViewModelArr: [ParticipantGridCellViewModel] = []
+    private var remoteParticipantsState: RemoteParticipantsState?
+    
+    var previousSpeaker: ParticipantGridCellViewModel?
 
     @Published var gridsCount: Int = 0
     @Published var displayedParticipantInfoModelArr: [ParticipantInfoModel] = []
+    @Published var meetingLayoutState: LocalUserState.MeetingLayoutState = LocalUserState.MeetingLayoutState.init(operation: .grid)
 
     let rendererViewManager: RendererViewManager
 
@@ -31,6 +36,7 @@ class ParticipantGridViewModel: ObservableObject {
          localizationProvider: LocalizationProviderProtocol,
          accessibilityProvider: AccessibilityProviderProtocol,
          isIpadInterface: Bool,
+         remoteParticipantsState: RemoteParticipantsState,
          callType: CompositeCallType,
          rendererViewManager: RendererViewManager) {
         self.compositeViewModelFactory = compositeViewModelFactory
@@ -39,20 +45,23 @@ class ParticipantGridViewModel: ObservableObject {
         self.isIpadInterface = isIpadInterface
         self.callType = callType
         self.rendererViewManager = rendererViewManager
+        self.remoteParticipantsState = remoteParticipantsState
     }
 
     func update(callingState: CallingState,
                 remoteParticipantsState: RemoteParticipantsState,
                 visibilityState: VisibilityState,
+                localUserState: LocalUserState,
                 lifeCycleState: LifeCycleState) {
 
         guard lastUpdateTimeStamp != remoteParticipantsState.lastUpdateTimeStamp
                 || lastDominantSpeakersUpdatedTimestamp != remoteParticipantsState.dominantSpeakersModifiedTimestamp
                 || visibilityStatus != visibilityState.currentStatus
-                || appStatus != lifeCycleState.currentStatus
+                || appStatus != lifeCycleState.currentStatus || self.remoteParticipantsState?.pinnedParticipantId != remoteParticipantsState.pinnedParticipantId || meetingLayoutState.operation != localUserState.meetingLayoutState.operation
         else {
             return
         }
+                
         lastUpdateTimeStamp = remoteParticipantsState.lastUpdateTimeStamp
         lastDominantSpeakersUpdatedTimestamp = remoteParticipantsState.dominantSpeakersModifiedTimestamp
         visibilityStatus = visibilityState.currentStatus
@@ -69,7 +78,10 @@ class ParticipantGridViewModel: ObservableObject {
         let orderedInfoModelArr = sortDisplayedInfoModels(newDisplayedInfoModelArr,
                                                           removedModels: removedModels,
                                                           addedModels: addedModels)
-        updateCellViewModel(for: orderedInfoModelArr, lifeCycleState: lifeCycleState)
+        //MTODO
+//      vbvfv
+        
+        updateCellViewModel(for:orderedInfoModelArr , lifeCycleState: lifeCycleState)
 
         displayedParticipantInfoModelArr = orderedInfoModelArr
         if callingState.status == .connected
@@ -86,9 +98,34 @@ class ParticipantGridViewModel: ObservableObject {
         if gridsCount != displayedParticipantInfoModelArr.count {
             gridsCount = displayedParticipantInfoModelArr.count
         }
+        
+        // Try to find the current active speaker (the one who is speaking).
+        let activeSpeaker = participantsCellViewModelArr.first(where: { $0.isSpeaking })
+
+        // Check if the current speaker is the same as the previous speaker by comparing their identifiers.
+        // If the previous speaker is not found, it means the active speaker has changed, and we may need to reset it.
+        let isPreviousSpeaker = remoteParticipantsState.participantInfoList.first(where: { $0.userIdentifier == previousSpeaker?.participantIdentifier })
+
+        // If the previous speaker is not found in the list, reset the previous speaker.
+        if isPreviousSpeaker == nil {
+            previousSpeaker = nil
+        }
+
+        // If there is a new active speaker, update the previous speaker to the current active speaker.
+        if let activeSpeaker = activeSpeaker {
+            previousSpeaker = activeSpeaker
+        }
+        
+        // If the meeting layout state has changed (i.e., the operation differs from the current state),
+        // reset the previous speaker and update the meeting layout state accordingly.
+        if meetingLayoutState.operation != localUserState.meetingLayoutState.operation {
+            previousSpeaker = nil  // Reset the previous speaker since the layout has changed.
+            self.meetingLayoutState = localUserState.meetingLayoutState  // Update the layout state to the new state.
+        }
     }
 
     private func updateVideoViewManager(displayedRemoteInfoModelArr: [ParticipantInfoModel]) {
+        
            let videoCacheIds: [RemoteParticipantVideoViewId] = displayedRemoteInfoModelArr.compactMap {
                let screenShareVideoStreamIdentifier = $0.screenShareVideoStreamModel?.videoStreamIdentifier
                let cameraVideoStreamIdentifier = $0.cameraVideoStreamModel?.videoStreamIdentifier
@@ -192,18 +229,51 @@ class ParticipantGridViewModel: ObservableObject {
 
     private func updateCellViewModel(for displayedRemoteParticipants: [ParticipantInfoModel],
                                      lifeCycleState: LifeCycleState) {
+        
         if participantsCellViewModelArr.count == displayedRemoteParticipants.count {
             updateOrderedCellViewModels(for: displayedRemoteParticipants, lifeCycleState: lifeCycleState)
         } else {
             updateAndReorderCellViewModels(for: displayedRemoteParticipants, lifeCycleState: lifeCycleState)
         }
     }
+    
+    func makeMockParticipants(count: Int, pinIndex: Int? = nil) -> [ParticipantInfoModel] {
+        var participants: [ParticipantInfoModel] = []
+        
+        for index in 0..<count {
+            let isSpeaking = false
+            let isMuted = false
+            let isPinned = false
+            let isVideoOnForMe = false
+            let userIdentifier = "user\(index + 1)"
+            
+            let participant = ParticipantInfoModel(
+                displayName: "User \(index + 1)",
+                isSpeaking: isSpeaking,
+                isMuted: isMuted,
+                isHandRaised: false,
+                isPinned: isPinned,
+                isVideoOnForMe: isVideoOnForMe,
+                avatarColor: Color(UIColor.avatarColors.randomElement()!),
+                isRemoteUser: true,
+                userIdentifier: userIdentifier,
+                status: .connected,
+                screenShareVideoStreamModel: nil,
+                cameraVideoStreamModel: nil
+            )
+            
+            participants.append(participant)
+        }
+        
+        return participants
+    }
 
     private func updateOrderedCellViewModels(for displayedRemoteParticipants: [ParticipantInfoModel],
                                              lifeCycleState: LifeCycleState) {
-        guard participantsCellViewModelArr.count == displayedRemoteParticipants.count else {
-            return
-        }
+        //MTODO
+//        guard participantsCellViewModelArr.count == displayedRemoteParticipants.count else {
+//            return
+//        }
         for (index, infoModel) in displayedRemoteParticipants.enumerated() {
             let cellViewModel = participantsCellViewModelArr[index]
             cellViewModel.update(participantModel: infoModel)

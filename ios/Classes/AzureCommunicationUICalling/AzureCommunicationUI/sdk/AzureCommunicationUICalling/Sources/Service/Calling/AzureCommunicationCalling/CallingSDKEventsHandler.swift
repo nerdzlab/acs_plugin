@@ -32,6 +32,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
     var activeCaptionLanguageChanged = CurrentValueSubject<String, Never>("")
     var captionsEnabledChanged = CurrentValueSubject<Bool, Never>(false)
     var captionsTypeChanged = CurrentValueSubject<CallCompositeCaptionsType, Never>(.none)
+    var videoEffectError = PassthroughSubject<String, Never>()
 
     // User Facing Diagnostics Subjects
     var networkQualityDiagnosticsSubject = PassthroughSubject<NetworkQualityDiagnosticModel, Never>()
@@ -49,6 +50,8 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
     private var teamsCaptions: TeamsCaptions?
     private var communicationCaptions: CommunicationCaptions?
     private var capabilitiesCallFeature: CapabilitiesCallFeature?
+    private var raiseHandFeature: RaiseHandCallFeature?
+    private var backgroundEffectFeature: LocalVideoEffectsFeature?
 
     private var previousCallingStatus: CallingStatus = .none
     private var remoteParticipants = MappedSequence<String, AzureCommunicationCalling.RemoteParticipant>()
@@ -94,6 +97,16 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         self.capabilitiesCallFeature = capabilitiesCallFeature
         self.capabilitiesCallFeature?.delegate = self
     }
+    
+    func assign(_ raiseHandFeature: RaiseHandCallFeature) {
+        self.raiseHandFeature = raiseHandFeature
+        raiseHandFeature.delegate = self
+    }
+    
+    func assign(_ localVideoEffectsFeature: LocalVideoEffectsFeature?) {
+        self.backgroundEffectFeature = localVideoEffectsFeature
+        self.backgroundEffectFeature?.delegate = self
+    }
 
     func setupProperties() {
         participantsInfoListSubject.value.removeAll()
@@ -105,6 +118,8 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         remoteParticipants = MappedSequence<String, AzureCommunicationCalling.RemoteParticipant>()
         previousCallingStatus = .none
         capabilitiesCallFeature = nil
+        raiseHandFeature = nil
+        backgroundEffectFeature = nil
     }
 
     private func setupRemoteParticipantEventsAdapter() {
@@ -154,13 +169,17 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
                     $0.identifier.rawId == infoModel.userIdentifier
                 })
             }
-        participantsInfoListSubject.send(remoteParticipantsInfoList)
+        
+        let updatedList = updateHandRaisedParticipants(remoteParticipantsInfoList)
+        
+        participantsInfoListSubject.send(updatedList)
     }
 
     private func addRemoteParticipants(
         _ remoteParticipants: [AzureCommunicationCalling.RemoteParticipant]
     ) {
         var remoteParticipantsInfoList = participantsInfoListSubject.value
+        
         for participant in remoteParticipants {
             let userIdentifier = participant.identifier.rawId
             if self.remoteParticipants.value(forKey: userIdentifier) == nil {
@@ -170,20 +189,42 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
                 remoteParticipantsInfoList.append(infoModel)
             }
         }
-        participantsInfoListSubject.send(remoteParticipantsInfoList)
+        
+        let updatedList = updateHandRaisedParticipants(remoteParticipantsInfoList)
+        
+        participantsInfoListSubject.send(updatedList)
     }
 
     private func updateRemoteParticipant(userIdentifier: String) {
         var remoteParticipantsInfoList = participantsInfoListSubject.value
+        
         if let remoteParticipant = remoteParticipants.value(forKey: userIdentifier),
            let index = remoteParticipantsInfoList.firstIndex(where: {
                $0.userIdentifier == userIdentifier
            }) {
             let newInfoModel = remoteParticipant.toParticipantInfoModel()
             remoteParticipantsInfoList[index] = newInfoModel
+            
+            let updatedList = updateHandRaisedParticipants(remoteParticipantsInfoList)
 
-            participantsInfoListSubject.send(remoteParticipantsInfoList)
+            participantsInfoListSubject.send(updatedList)
         }
+    }
+    
+    private func updateHandRaisedParticipants(_ remoteParticipantsInfoList: [ParticipantInfoModel]) -> [ParticipantInfoModel] {
+        let raisedHandsIdentifiers = raiseHandFeature?.raisedHands.map { $0.identifier.rawId } ?? []
+        
+        var updatedList = remoteParticipantsInfoList
+
+        for (index, participant) in updatedList.enumerated() {
+            let isHandRaised = raisedHandsIdentifiers.contains(participant.userIdentifier)
+            
+            if participant.isHandRaised != isHandRaised {
+                updatedList[index] = participant.copy(isHandRaised: isHandRaised)
+            }
+        }
+        
+        return updatedList
     }
 
     private func wasCallConnected() -> Bool {
@@ -200,7 +241,10 @@ extension CallingSDKEventsHandler: CallDelegate,
     MediaDiagnosticsDelegate,
     NetworkDiagnosticsDelegate,
     CaptionsCallFeatureDelegate,
-    CapabilitiesCallFeatureDelegate {
+    CapabilitiesCallFeatureDelegate,
+    RaiseHandCallFeatureDelegate,
+    LocalVideoEffectsFeatureDelegate
+{
     func call(_ call: Call, didChangeId args: PropertyChangedEventArgs) {
         callIdSubject.send(call.id)
     }
@@ -442,6 +486,52 @@ extension CallingSDKEventsHandler: CallDelegate,
                           didChangeIsSpeakingWhileMicrophoneIsMuted args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .speakingWhileMicrophoneIsMuted, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
+    }
+    
+    func raiseHandCallFeature(_ raiseHandCallFeature: RaiseHandCallFeature, didRaiseHand args: RaisedHandChangedEventArgs) {
+        print("Participant \(args.identifier) raised their hand.")
+        
+        let identifier = args.identifier.rawId
+            let currentList = participantsInfoListSubject.value
+
+            if let participant = currentList.first(where: { $0.userIdentifier == identifier }),
+               participant.isRemoteUser == true {
+                AudioPlayerManager.shared.playRaiseHandSound()
+            }
+        
+        updateHandRaisedStatus(for: args.identifier.rawId, isRaised: true)
+    }
+    
+    func raiseHandCallFeature(_ raiseHandCallFeature: RaiseHandCallFeature, didLowerHand args: LoweredHandChangedEventArgs) {
+        print("Participant \(args.identifier) lowered their hand.")
+        
+        updateHandRaisedStatus(for: args.identifier.rawId, isRaised: false)
+    }
+    
+    private func updateHandRaisedStatus(for identifier: String, isRaised: Bool) {
+        var currentList = participantsInfoListSubject.value 
+        
+        if let index = currentList.firstIndex(where: { $0.userIdentifier == identifier }) {
+            let participant = currentList[index]
+            if participant.isHandRaised != isRaised {
+                currentList[index] = participant.copy(isHandRaised: isRaised)
+                participantsInfoListSubject.send(currentList)
+            }
+        }
+    }
+    
+    func localVideoEffectsFeature(_ videoEffectsLocalVideoStreamFeature: LocalVideoEffectsFeature, didEnableVideoEffect args: VideoEffectEnabledEventArgs) {
+        print("Video Effect Enabled, VideoEffectName: \(args.videoEffectName)")
+    }
+
+    func localVideoEffectsFeature(_ videoEffectsLocalVideoStreamFeature: LocalVideoEffectsFeature, didDisableVideoEffect args: VideoEffectDisabledEventArgs) {
+        print("Video Effect Disabled, VideoEffectName: \(args.videoEffectName)")
+    }
+
+    func localVideoEffectsFeature(_ videoEffectsLocalVideoStreamFeature: LocalVideoEffectsFeature, didReceiveVideoEffectError args: VideoEffectErrorEventArgs) {
+        videoEffectError.send("Video Effect Error, VideoEffectName: \(args.videoEffectName), Code: \(args.code), Message: \(args.message)")
+        
+        print("Video Effect Error, VideoEffectName: \(args.videoEffectName), Code: \(args.code), Message: \(args.message)")
     }
 }
 

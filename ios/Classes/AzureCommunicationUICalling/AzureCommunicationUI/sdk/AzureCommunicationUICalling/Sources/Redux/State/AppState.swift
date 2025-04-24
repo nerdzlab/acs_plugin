@@ -28,7 +28,7 @@ struct AppState {
          lifeCycleState: LifeCycleState = .init(),
          audioSessionState: AudioSessionState = .init(),
          navigationState: NavigationState = .init(),
-         remoteParticipantsState: RemoteParticipantsState = .init(),
+         remoteParticipantsState: RemoteParticipantsState = .init(totalParticipantCount: 0),
          errorState: ErrorState = .init(),
          defaultUserState: DefaultUserState = .init(),
          visibilityState: VisibilityState = .init(),

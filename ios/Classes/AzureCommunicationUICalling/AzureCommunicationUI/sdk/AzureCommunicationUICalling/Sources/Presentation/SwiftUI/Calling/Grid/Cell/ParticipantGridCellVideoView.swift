@@ -11,12 +11,21 @@ struct ParticipantGridCellVideoView: View {
     var videoRendererViewInfo: ParticipantRendererViewInfo!
     let rendererViewManager: RendererViewManager?
     let zoomable: Bool
+    let onUserClicked: () -> Void
+    
     @Binding var isSpeaking: Bool
     @Binding var displayName: String?
     @Binding var isMuted: Bool
+    @Binding var isHandRaised: Bool
+    @Binding var isPinned: Bool
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
     @State var show = true
+    
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         ZStack(alignment: .bottomLeading) {
             VStack(alignment: .center, spacing: 0) {
                 if zoomable {
@@ -30,18 +39,29 @@ struct ParticipantGridCellVideoView: View {
             ParticipantTitleView(displayName: $displayName,
                                  isMuted: $isMuted,
                                  isHold: .constant(false),
-                                 titleFont: Fonts.caption1.font,
+                                 isHandRaised: $isHandRaised,
+                                 isPinned: $isPinned,
+                                 titleFont: AppFont.CircularStd.book.font(size: 13),
                                  mutedIconSize: 14)
                 .padding(.vertical, 2)
-                .background(Color(StyleProvider.color.overlay))
-                .clipShape(RoundedRectangle(cornerRadius: 3))
-                .padding(.leading, 4)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .padding(.leading, 8)
                 .padding(.bottom, screenSizeClass == .iphoneLandscapeScreenSize
-                    && UIDevice.current.hasHomeBar ? 16 : 4)
+                    && UIDevice.current.hasHomeBar ? 16 : 8)
+                .onTapGesture {
+                    onUserClicked()
+                }
 
         }.overlay(
-            isSpeaking && !isMuted ? RoundedRectangle(cornerRadius: 4)
-                .strokeBorder(Color(StyleProvider.color.primaryColor), lineWidth: 4) : nil
+            isHandRaised ? RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(Color(UIColor.compositeColor(.orange)), lineWidth: 4) : nil
+        )
+        .animation(.default, value: show)
+        
+        .overlay(
+            isSpeaking && !isMuted ? RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(Color(UIColor.compositeColor(.purpleBlue)), lineWidth: 4) : nil
         ).animation(.default, value: show)
     }
 

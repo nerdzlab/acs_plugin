@@ -60,8 +60,14 @@ protocol CallingSDKWrapperProtocol {
     -> CompositeLocalVideoStream<LocalVideoStreamType>?
 
     func startPreviewVideoStream() async throws -> String
+    func updateDisplayName(_ displayName: String?)
     func setupCall() async throws
-    func startCall(isCameraPreferred: Bool, isAudioPreferred: Bool) async throws
+    func startCall(
+        isCameraPreferred: Bool,
+        isMicrophonePreferred: Bool,
+        isNoiseSuppressionPreferred: Bool,
+        isMuteIncomingAudio: Bool
+    ) async throws
     func endCall() async throws
     func startCallLocalVideoStream() async throws -> String
     func stopLocalVideoStream() async throws
@@ -83,6 +89,11 @@ protocol CallingSDKWrapperProtocol {
     func callStartTime() -> Date?
     </CALL_START_TIME> */
     func getLogFiles() -> [URL]
+    
+    func getRaiseHands() -> [RaisedHand]
+    func lowerHand() async throws
+    func raiseHand() async throws
+    func setBackgroundEffect(_ effect: LocalUserState.BackgroundEffectType)
 
     var callingEventsHandler: CallingSDKEventsHandling { get }
     func dispose()
@@ -119,6 +130,7 @@ protocol CallingSDKEventsHandling {
     var activeCaptionLanguageChanged: CurrentValueSubject<String, Never> { get }
     var captionsEnabledChanged: CurrentValueSubject<Bool, Never> { get }
     var captionsTypeChanged: CurrentValueSubject<CallCompositeCaptionsType, Never> { get }
+    var videoEffectError: PassthroughSubject<String, Never> { get }
 
     var capabilitiesChangedSubject: PassthroughSubject<CapabilitiesChangedEvent, Never> { get }
 

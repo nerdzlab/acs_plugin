@@ -10,6 +10,7 @@ struct InfoHeaderView: View {
     @ObservedObject var viewModel: InfoHeaderViewModel
     @Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
     @State var participantsListButtonSourceView = UIView()
+    @State var chatButtonSourceView = UIView()
     @State var participantMenuSourceView = UIView()
     /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
     @State var customButton1SourceView = UIView()
@@ -23,12 +24,12 @@ struct InfoHeaderView: View {
     let avatarViewManager: AvatarViewManagerProtocol
 
     private enum Constants {
-        static let shapeCornerRadius: CGFloat = 5
+        static let shapeCornerRadius: CGFloat = 10
         static let infoLabelHorizontalPadding: CGFloat = 16.0
         static let hStackHorizontalPadding: CGFloat = 20.0
         static let hStackBottomPadding: CGFloat = 10.0
         static let hSpace: CGFloat = 4
-        static let foregroundColor: Color = .white
+        static let foregroundColor: Color = Color(UIColor.compositeColor(.textPrimary))
 
         // MARK: Font Minimum Scale Factor
         // Under accessibility mode, the largest size is 35
@@ -41,6 +42,10 @@ struct InfoHeaderView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         ZStack(
             alignment: .leading
         ) {
@@ -83,7 +88,7 @@ struct InfoHeaderView: View {
                     .alignmentGuide(.leading) { d in d[.leading] }
                     .foregroundColor(Constants.foregroundColor)
                     .lineLimit(1)
-                    .font(Fonts.caption1.font)
+                    .font(AppFont.CircularStd.book.font(size: 16))
                     .accessibilityLabel(Text(viewModel.accessibilityLabelTitle))
                     .accessibilitySortPriority(1)
                     .scaledToFit()
@@ -95,7 +100,7 @@ struct InfoHeaderView: View {
                         .alignmentGuide(.leading) { d in d[.leading] }
                         .foregroundColor(Constants.foregroundColor)
                         .lineLimit(1)
-                        .font(Fonts.caption1.font)
+                        .font(AppFont.CircularStd.book.font(size: 10))
                         .accessibilityLabel(Text(viewModel.accessibilityLabelSubtitle))
                         .accessibilitySortPriority(2)
                         .scaledToFit()
@@ -117,21 +122,29 @@ struct InfoHeaderView: View {
                     .accessibilityFocused($focusedOnCustomButton2, equals: true)
             }
             /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
+            chatButton
+                .padding(.trailing, 0)
             participantListButton
         }
-        .padding(EdgeInsets(top: 0,
-                            leading: Constants.hStackHorizontalPadding / 2.0,
-                            bottom: 0,
-                            trailing: 0))
-        .background(Color(StyleProvider.color.surfaceDarkColor))
+        .padding(EdgeInsets(top: 8,
+                            leading: 8,
+                            bottom: 8,
+                            trailing: 8))
+        .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: Constants.shapeCornerRadius))
         .padding(.bottom, Constants.hStackBottomPadding)
         .accessibilityElement(children: .contain)
+        .shadow(color: Color.black.opacity(0.2), radius: 6, x: 0, y: 2)
     }
 
     var participantListButton: some View {
         IconButton(viewModel: viewModel.participantListButtonViewModel)
             .background(SourceViewSpace(sourceView: participantsListButtonSourceView))
+            .accessibilityFocused($focusedOnParticipantList, equals: true)
+    }
+    
+    var chatButton: some View {
+        IconButton(viewModel: viewModel.chatButtonViewModel)
             .accessibilityFocused($focusedOnParticipantList, equals: true)
     }
 }

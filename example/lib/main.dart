@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:acs_plugin/acs_plugin.dart';
+import 'package:safe_device/safe_device.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,18 +37,28 @@ class CallScreen extends StatefulWidget {
 class _CallScreenState extends State<CallScreen> {
   String _platformVersion = 'Unknown';
   final _acsPlugin = AcsPlugin();
+  bool isRealDevice = false;
 
   StreamSubscription? _eventsSubscription;
 
   // Configuration constants - move to a config file in a real app
-  static const String _acsToken =
-      "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY1M0ZEODA0RThBNDhBQzg4Qjg3NTA3M0M4MzRCRDdGNzBCMzBENDUiLCJ4NXQiOiI5VF9ZQk9pa2lzaUxoMUJ6eURTOWYzQ3pEVVUiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDQwOTE4MjgiLCJleHAiOjE3NDQxNzgyMjgsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDQwOTE4Mjh9.y2FuxKDR9QkEYUDIiE4j3k5ddlRi39TKPy70QBdYIRBXzQEcGatXNAiS0gkcYYOmtKaf21627skzst-bBsOmCa2wbwhSP9KVFYejAeHoyJ_Ph7WB9QkW5AqSvUg43cIKmLED2ImdEYYRSKCy8plp93mRlrcxth4t-3rx93fnRbz0OCvBHATEgqr438s8PgzUoV_uPpis69vXk2ccUmlbr3xCCGbviQXrqHND4POvXYMHSKWIxLUVoE2StUdEdZp7UTtt7L5vJeTd6FQIY1z2LRkJZYxn7fKMHyNZsVs29ZYwjwZ35sM0v_lYPT6lJI128X_je2qJXKW69JSqGuQmfA";
-  static const String _roomId = "99547972557015248";
+  String get _acsToken {
+    if (isRealDevice) {
+      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDU0Nzc2OTIiLCJleHAiOjE3NDU1NjQwOTIsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDU0Nzc2OTJ9.potXYt_lbnLDd5mca0q-3cN2aUeIyOkK-U6It_Y4baXAgNZ7X2E-a0I7BgGrlBUeGopoyMqAnpVHniNtNlfBC_JMp6cADikfjrZnwHOGZKX8zyMNIhYPZRbA5wF4Oduh7qCzyup0pjaVIYU3YZJmr8RBXYiPsQnVikw-i5QBPd0GI6yUcc9AO6HhMAlUoZp1SZz9m68O-W_rn5LlcltWwLm4THDQHYNzuppfuC5craVjzGPtvtXbOjzb4OSzYSF0yDRFX0N_qnaRYr1ZUpNWiBhNtAskEJC1ORE_mAUGfTzqB6G4PAY4_vWFs2HXx6SOX76OhOwry-IPw74YrryR2Q";
+    } else {
+      // return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi05MWFmLWU3YWEtM2Y4Mi1hZjNhMGQwMGIzZDIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDU0Nzc3MjMiLCJleHAiOjE3NDU1NjQxMjMsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDU0Nzc3MjN9.pq-pd4OnhPNZH0l1BILiVfHBnXU1TeLs45xU8z6ocF4-ZK6VBSSvBcyKJdv6NMO3t8APoC3mVGY_G5FSGYtu-oGPVSYxBtoj5fKfwHhl80eyGyAheDx5UqVs50mCA-stEEYPw4SYABr7jQg8vJW4nO3tY56Ay3utwJye3jDZ_ji0VK9p2-cG2aQUPDH9Aov0cWiOq5J2Ly7mP9eb80g2qUi9wly1gMCE4_FVz8oqmcLVU3BN_wQV32Ds_YuXDERQW7478eXthkGk49uK8qxXpJtBm_wKWQaZVR9eunth2BEiacJzfqvqkhjtEQcojxkivwte9eYFN8dd8E183JnTQw";
+      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi1iOTNlLWVjYzktYTdhYy00NzNhMGQwMDZhMWEiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDU0Nzc3NDQiLCJleHAiOjE3NDU1NjQxNDQsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDU0Nzc3NDR9.AyTusvjUnTrkCNRGYEQi86_mTFdszugzN0mWPtjDbOSjFA30Wx9lOg9TuiU6uVS7qkFv0nc3Gm2ZUhaQXIJlIQ2-IhzEuBEANdgReC83742RCpWL4So947iV0xA8qOXjImNwklW-U1IshMGiNf69hcY4lXtfg9Bvcz6-TAcMb67zkTwp0H5dDDKAp3ZZyyyhPf3ppXp-9yJLLcHFvGjpYulz3EdpsqGCcVkgXHKQpwIT0ull8D65MD80x5jfSOj6-s0uPCxOIGxZGC3HtLj72L5w-iARiX8nNJ4GG53JyH5mZQoqAMRCEMZFSVinTt4P47Bp0anlxeubmrTQ-tryBA";
+    }
+  }
+
+  static const String _roomId = "9958333897200100";
 
   @override
   initState() {
     super.initState();
     _getPlatformVersion();
+
+    _setDeviceType();
 
     // Subscribe to event stream
     _eventsSubscription = _acsPlugin.eventStream.listen(
@@ -55,6 +66,10 @@ class _CallScreenState extends State<CallScreen> {
       onError: _handleError,
       cancelOnError: false,
     );
+  }
+
+  _setDeviceType() async {
+    isRealDevice = await SafeDevice.isRealDevice;
   }
 
 // Handle incoming events
@@ -160,17 +175,6 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
-  Future<void> _leaveRoom() async {
-    try {
-      await _acsPlugin.leaveRoomCall();
-      log('Left room successfully');
-      _shwoSnacBar('Left room successfully');
-    } on PlatformException catch (error) {
-      log('Failed to leave room: ${error.message}');
-      _shwoSnacBar('Failed to leave room: ${error.message}');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -205,16 +209,6 @@ class _CallScreenState extends State<CallScreen> {
                   label: 'Init room call',
                   onTap: initializeRoomCall,
                   icon: Icons.cloud,
-                ),
-              ]),
-              // Call Management Section
-              _buildSectionHeader('Call Management'),
-              _buildButtonGrid([
-                ButtonConfig(
-                  label: 'Leave Room',
-                  onTap: _leaveRoom,
-                  icon: Icons.call_end,
-                  backgroundColor: Colors.red,
                 ),
               ]),
             ],

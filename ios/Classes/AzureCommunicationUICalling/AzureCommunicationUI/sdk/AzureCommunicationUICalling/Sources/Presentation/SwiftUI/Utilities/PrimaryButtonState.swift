@@ -20,7 +20,7 @@ protocol PrimaryButtonState: Equatable {
 enum CameraButtonState: PrimaryButtonState {
     case videoOn
     case videoOff
-
+    
     var iconName: CompositeIcon {
         switch self {
         case .videoOn:
@@ -31,10 +31,70 @@ enum CameraButtonState: PrimaryButtonState {
     }
 }
 
+enum RaiseHandButtonState: ButtonState {
+    case raiseHand
+    case lowerHand
+    
+    var iconName: CompositeIcon {
+        switch self {
+        case .raiseHand:
+            return .handDown
+        case .lowerHand:
+            return .handUp
+        }
+    }
+    
+    var localizationKey: LocalizationKey {
+        switch self {
+        case .raiseHand:
+            return .raiseHandTitle
+        case .lowerHand:
+            return .lowerHandTitle
+        }
+    }
+}
+
+enum LayoutOptionsButtonState: ButtonState {
+    case gridLayout
+    case speakerLayout
+    
+    var iconName: CompositeIcon {
+        switch self {
+        case .gridLayout:
+            return .gridIcon
+        case .speakerLayout:
+            return .speakerIcon
+        }
+    }
+    
+    var localizationKey: LocalizationKey {
+        return .changeViewTitle
+    }
+}
+
+enum ShareScreenButtonState: ButtonState {
+    case shareOn
+    case shareOff
+    
+    var iconName: CompositeIcon {
+        return .shareIcon
+    }
+    
+    var localizationKey: LocalizationKey {
+        switch self {
+        case .shareOn:
+            return .stopShareScreenTitle
+        case .shareOff:
+            return .shareScreenTitle
+        }
+    }
+}
+
+
 enum MicButtonState: PrimaryButtonState {
     case micOn
     case micOff
-
+    
     var iconName: CompositeIcon {
         switch self {
         case .micOn:
@@ -45,12 +105,67 @@ enum MicButtonState: PrimaryButtonState {
     }
 }
 
+enum ChatButtonState: ButtonState {
+    case `default`
+    
+    var iconName: CompositeIcon {
+        return .chatIcon
+    }
+    
+    var localizationKey: LocalizationKey {
+        return .chatTitle
+    }
+}
+
+enum ParticipantsButtonState: ButtonState {
+    case `default`
+    
+    var iconName: CompositeIcon {
+        return .showParticipant
+    }
+    
+    var localizationKey: LocalizationKey {
+        return .participantsTitle
+    }
+}
+
+enum EffectsButtonState: ButtonState {
+    case `default`
+    
+    var iconName: CompositeIcon {
+        return .backgroundEffectOn
+    }
+    
+    var localizationKey: LocalizationKey {
+        return .effectsTitle
+    }
+}
+
+
+enum BackgroundEffectButtonState: PrimaryButtonState {
+    case on
+    case off
+    
+    var iconName: CompositeIcon {
+        return .backgroundEffectOn
+    }
+}
+
+enum SwitchCameraButtonState: PrimaryButtonState {
+    case `default`
+    
+    var iconName: CompositeIcon {
+        return .cameraSwitch
+    }
+}
+
 enum AudioButtonState: PrimaryButtonState {
     case speaker
     case receiver
     case bluetooth
     case headphones
-
+    case incomingAudioMuted
+    
     var iconName: CompositeIcon {
         switch self {
         case .bluetooth:
@@ -61,9 +176,11 @@ enum AudioButtonState: PrimaryButtonState {
             return .speakerRegular
         case .speaker:
             return .speakerFilled
+        case .incomingAudioMuted:
+            return .volumeOff
         }
     }
-
+    
     var localizationKey: LocalizationKey {
         switch self {
         case .bluetooth:
@@ -74,9 +191,11 @@ enum AudioButtonState: PrimaryButtonState {
             return AudioDeviceType.receiver.name
         case .speaker:
             return AudioDeviceType.speaker.name
+        case .incomingAudioMuted:
+            return AudioDeviceType.speaker.name
         }
     }
-
+    
     static func getButtonState(from audioDeviceStatus: LocalUserState.AudioDeviceSelectionStatus) -> AudioButtonState {
         switch audioDeviceStatus {
         case .speakerSelected,

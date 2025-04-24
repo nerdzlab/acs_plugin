@@ -12,6 +12,10 @@ struct ErrorInfoView: View {
     private let cornerRadius: CGFloat = 12
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         if viewModel.isDisplayed {
             HStack {
                 VStack(alignment: .leading, spacing: 0) {

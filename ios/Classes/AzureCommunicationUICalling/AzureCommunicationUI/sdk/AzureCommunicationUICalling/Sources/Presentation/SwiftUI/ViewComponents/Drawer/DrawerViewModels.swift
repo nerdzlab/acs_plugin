@@ -48,6 +48,13 @@ struct DrawerGenericItemViewModel: BaseDrawerItemViewModel {
     }
 }
 
+struct DrawerListItemViewModel: BaseDrawerItemViewModel {
+    let title: String
+    let icon: CompositeIcon?
+    let action: () -> Void
+    let isEnabled: Bool
+}
+
 struct DrawerSelectableItemViewModel: BaseDrawerItemViewModel {
     let title: String
     let isSelected: Bool

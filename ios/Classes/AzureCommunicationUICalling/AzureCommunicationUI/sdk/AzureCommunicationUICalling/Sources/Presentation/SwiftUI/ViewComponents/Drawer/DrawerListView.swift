@@ -15,36 +15,57 @@ import SwiftUI
 //
 internal struct DrawerListView: View {
     let sections: [DrawerListSection]
-
+    let withDivider: Bool
+    
     // We don't always need this, but we do for Participants or whenever we show an Avatar
     // Provides just in case
     let avatarManager: AvatarViewManagerProtocol
-
+    
     @State
     private var scrollViewContentSize: CGSize = .zero
-
+    
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         let halfScreenHeight = UIScreen.main.bounds.height * 0.5
-
+        
         ScrollView {
             LazyVStack(pinnedViews: .sectionHeaders) {
                 ForEach(0..<sections.count, id: \.self) { sectionIndex in
                     let section = sections[sectionIndex]
-
+                    
                     if let header = section.header {
                         Section(header: inflateView(for: header, avatarManager: avatarManager)
                             .accessibilityElement(children: .combine)) {
-                            ForEach(0..<section.items.count, id: \.self) { itemIndex in
-                                let item = section.items[itemIndex]
-                                inflateView(for: item, avatarManager: avatarManager)
-                                    .accessibilityElement(children: .combine)
+                                ForEach(0..<section.items.count, id: \.self) { itemIndex in
+                                    let item = section.items[itemIndex]
+                                    
+                                    VStack(spacing: 0) {
+                                        inflateView(for: item, avatarManager: avatarManager)
+                                            .accessibilityElement(children: .combine)
+                                        
+                                        if withDivider && itemIndex < section.items.count - 1 {
+                                            Divider()
+                                                .padding(.horizontal, DrawerListConstants.optionPaddingHorizontal)
+                                        }
+                                    }
+                                }
                             }
-                        }
                     } else {
                         ForEach(0..<section.items.count, id: \.self) { itemIndex in
                             let item = section.items[itemIndex]
-                            inflateView(for: item, avatarManager: avatarManager)
-                                .accessibilityElement(children: .combine)
+                            
+                            VStack(spacing: 0) {
+                                inflateView(for: item, avatarManager: avatarManager)
+                                    .accessibilityElement(children: .combine)
+                                
+                                if withDivider && itemIndex < section.items.count - 1 {
+                                    Divider()
+                                        .padding(.horizontal, DrawerListConstants.optionPaddingHorizontal)
+                                }
+                            }
                         }
                     }
                 }
@@ -70,7 +91,7 @@ internal struct DrawerListView: View {
         }
         .frame(maxHeight: min(scrollViewContentSize.height, halfScreenHeight))
     }
-
+    
     func inflateView(for item: BaseDrawerItemViewModel, avatarManager: AvatarViewManagerProtocol) -> some View {
         if let selectableItem = item as? DrawerSelectableItemViewModel {
             return AnyView(DrawerSelectableItemView(item: selectableItem))
@@ -84,6 +105,8 @@ internal struct DrawerListView: View {
             return AnyView(DrawerGenericItemView(item: drawerItem))
         } else if let drawerItem = item as? BodyTextWithActionDrawerListItemViewModel {
             return AnyView(DrawerBodyWithActionTextView(item: drawerItem))
+        } else if let drawerItem = item as? DrawerListItemViewModel {
+            return AnyView(DrawerListItemView(item: drawerItem))
         }
         return AnyView(EmptyView())
     }

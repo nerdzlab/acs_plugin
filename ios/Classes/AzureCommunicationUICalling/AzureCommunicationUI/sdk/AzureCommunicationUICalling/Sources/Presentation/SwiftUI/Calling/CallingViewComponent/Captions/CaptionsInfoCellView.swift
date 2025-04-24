@@ -10,6 +10,7 @@ struct CaptionsInfoCellView: View {
     var caption: CallCompositeCaptionsData
     @State private var avatarImage: UIImage?
     @State private var displayName: String?
+    
     @State private var isRTL = false
 
     init(caption: CallCompositeCaptionsData, avatarViewManager: AvatarViewManagerProtocol) {
@@ -19,6 +20,10 @@ struct CaptionsInfoCellView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack(alignment: .top) {
             avatarView
             VStack(alignment: isRTL ? .trailing : .leading, spacing: 0) {
@@ -52,8 +57,11 @@ struct CaptionsInfoCellView: View {
     private var avatarView: some View {
         CompositeAvatar(displayName: $displayName,
                         avatarImage: $avatarImage,
+                        backgroundColor: Color(UIColor.compositeColor(.purpleBlue)),
                         isSpeaking: false,
-                        avatarSize: .size24)
+                        avatarSize: 24,
+                        fontSize: 10
+        )
     }
 
     // Display text based on caption availability

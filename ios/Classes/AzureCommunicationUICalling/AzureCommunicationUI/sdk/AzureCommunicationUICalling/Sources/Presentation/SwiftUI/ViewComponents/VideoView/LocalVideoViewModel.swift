@@ -8,39 +8,43 @@ import Foundation
 
 class LocalVideoViewModel: ObservableObject {
     private let logger: Logger
-    private let localizationProvider: LocalizationProviderProtocol
     private let dispatch: ActionDispatch
 
+    @Published var isPreviewEnable: Bool
     @Published var localVideoStreamId: String?
     @Published var displayName: String?
     @Published var isMuted = false
     @Published var cameraOperationalStatus: LocalUserState.CameraOperationalStatus = .off
     @Published var isInPip = false
+    
+    let localizationProvider: LocalizationProviderProtocol
 
     var cameraSwitchButtonPipViewModel: IconButtonViewModel!
     var cameraSwitchButtonFullViewModel: IconButtonViewModel!
 
     init(compositeViewModelFactory: CompositeViewModelFactoryProtocol,
          logger: Logger,
+         isPreviewEnable: Bool,
          localizationProvider: LocalizationProviderProtocol,
          dispatchAction: @escaping ActionDispatch) {
         self.logger = logger
         self.localizationProvider = localizationProvider
         self.dispatch = dispatchAction
+        self.isPreviewEnable = isPreviewEnable
 
         cameraSwitchButtonPipViewModel = compositeViewModelFactory.makeIconButtonViewModel(
-            iconName: .cameraSwitch,
+            iconName: .switchCameraFilled,
             buttonType: .cameraSwitchButtonPip,
-            isDisabled: false) { [weak self] in
+            isDisabled: false, renderAsOriginal: true) { [weak self] in
                 guard let self = self else {
                     return
                 }
                 self.toggleCameraSwitchTapped()
         }
         cameraSwitchButtonFullViewModel = compositeViewModelFactory.makeIconButtonViewModel(
-            iconName: .cameraSwitch,
+            iconName: .switchCameraFilled,
             buttonType: .cameraSwitchButtonFull,
-            isDisabled: false) { [weak self] in
+            isDisabled: false, renderAsOriginal: true) { [weak self] in
                 guard let self = self else {
                     return
                 }
@@ -52,13 +56,17 @@ class LocalVideoViewModel: ObservableObject {
         dispatch(.localUserAction(.cameraSwitchTriggered))
     }
 
-    func update(localUserState: LocalUserState, visibilityState: VisibilityState) {
+    func update(localUserState: LocalUserState, visibilityState: VisibilityState, isPreviewEnabled: Bool) {
         if localVideoStreamId != localUserState.localVideoStreamIdentifier {
             localVideoStreamId = localUserState.localVideoStreamIdentifier
         }
+        
+        if self.isPreviewEnable != isPreviewEnabled {
+            self.isPreviewEnable = isPreviewEnabled
+        }
 
-        if displayName != localUserState.displayName {
-            displayName = localUserState.displayName
+        if displayName != localUserState.initialDisplayName {
+            displayName = localUserState.initialDisplayName
         }
 
         if cameraOperationalStatus != localUserState.cameraState.operation {

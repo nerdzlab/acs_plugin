@@ -14,19 +14,26 @@ struct RemoteParticipantsState {
     let dominantSpeakersModifiedTimestamp: Date
     let lobbyError: LobbyError?
     let totalParticipantCount: Int
+    let pinnedParticipantId: String?
+    let listOfDisabledVideoParticipants: Set<String> // 🆕
 
     init(participantInfoList: [ParticipantInfoModel] = [],
          lastUpdateTimeStamp: Date = Date(),
          dominantSpeakers: [String] = [],
          dominantSpeakersModifiedTimestamp: Date = Date(),
          lobbyError: LobbyError? = nil,
-         totalParticipantCount: Int = 0) {
+         totalParticipantCount: Int,
+         pinnedParticipantId: String? = nil,
+         listOfDisabledVideoParticipants: Set<String> = []
+    ) {
         self.participantInfoList = participantInfoList
         self.lastUpdateTimeStamp = lastUpdateTimeStamp
         self.dominantSpeakers = dominantSpeakers
         self.dominantSpeakersModifiedTimestamp = dominantSpeakersModifiedTimestamp
         self.lobbyError = lobbyError
         self.totalParticipantCount = totalParticipantCount
+        self.pinnedParticipantId = pinnedParticipantId
+        self.listOfDisabledVideoParticipants = listOfDisabledVideoParticipants
     }
 }
 

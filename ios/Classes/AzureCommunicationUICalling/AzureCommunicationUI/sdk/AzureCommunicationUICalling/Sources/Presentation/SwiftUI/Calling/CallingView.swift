@@ -11,7 +11,7 @@ struct CallingView: View {
     enum InfoHeaderViewConstants {
         static let horizontalPadding: CGFloat = 8.0
         static let maxWidth: CGFloat = 380.0
-        static let height: CGFloat = 46.0
+        static let height: CGFloat = 100.0
     }
 
     enum ErrorInfoConstants {
@@ -20,7 +20,7 @@ struct CallingView: View {
     }
 
     enum Constants {
-        static let topAlertAreaViewTopPadding: CGFloat = 10.0
+        static let topAlertAreaViewTopPadding: CGFloat = 0.0
     }
 
     enum DiagnosticToastInfoConstants {
@@ -35,17 +35,22 @@ struct CallingView: View {
     @ObservedObject var viewModel: CallingViewModel
     let avatarManager: AvatarViewManagerProtocol
     let viewManager: VideoViewManager
-
+    
     @Environment(\.horizontalSizeClass) var widthSizeClass: UserInterfaceSizeClass?
     @Environment(\.verticalSizeClass) var heightSizeClass: UserInterfaceSizeClass?
 
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
+    @State var debugInfoSourceView = UIView()
 
     var safeAreaIgnoreArea: Edge.Set {
         return getSizeClass() != .iphoneLandscapeScreenSize ? [] : [/* .bottom */]
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         GeometryReader { geometry in
             ZStack {
                 if getSizeClass() != .iphoneLandscapeScreenSize {
@@ -53,9 +58,12 @@ struct CallingView: View {
                 } else {
                     landscapeCallingView
                 }
+                
                 errorInfoView
                 bottomDrawer
-            }.frame(width: geometry.size.width,
+                backgroundEffectsView
+            }
+            .frame(width: geometry.size.width,
                     height: geometry.size.height)
         }
         .environment(\.screenSizeClass, getSizeClass())
@@ -66,6 +74,7 @@ struct CallingView: View {
         }.onAppear {
             resetOrientation()
         }
+        .ignoresSafeArea(edges: .bottom)
     }
 
     var bottomDrawer: some View {
@@ -83,8 +92,7 @@ struct CallingView: View {
             }
             BottomDrawer(isPresented: viewModel.audioDeviceListViewModel.isDisplayed,
                          hideDrawer: viewModel.dismissDrawer) {
-                AudioDevicesListView(viewModel: viewModel.audioDeviceListViewModel,
-                avatarManager: avatarManager)
+                AudioDevicesListView(viewModel: viewModel.audioDeviceListViewModel)
             }
             BottomDrawer(isPresented: viewModel.participantActionViewModel.isDisplayed,
                          hideDrawer: viewModel.dismissDrawer) {
@@ -117,13 +125,42 @@ struct CallingView: View {
                     viewModel: viewModel.leaveCallConfirmationViewModel,
                     avatarManager: avatarManager)
             }
+            
+            BottomDrawer(isPresented: viewModel.participantOptionsViewModel.isDisplayed,
+                         hideDrawer: viewModel.dismissDrawer) {
+                ParticipantOptionsView(viewModel: viewModel.participantOptionsViewModel,
+                                     avatarManager: avatarManager)
+            }
+            BottomDrawer(isPresented: viewModel.layoutOptionsViewModel.isDisplayed,
+                         hideDrawer: viewModel.dismissDrawer) {
+                LayoutOptionsView(viewModel: viewModel.layoutOptionsViewModel, avatarManager: avatarManager)
+            }
+            
+            MeetingOptionsDrawer(isPresented: viewModel.meetingOptionsViewModel.isDisplayed,
+                         hideDrawer: viewModel.dismissDrawer) {
+                MeetingOptionsView(viewModel: viewModel.meetingOptionsViewModel)
+            }
+        }
+    }
+    
+    var backgroundEffectsView: some View {
+        FullScreenModalView(isPresented: viewModel.effectsPickerViewModel.isDisplayed,
+                            hideModal: viewModel.dismissDrawer) {
+            EffectsPickerView(
+                viewModel: viewModel.effectsPickerViewModel,
+                avatarManager: avatarManager,
+                viewManager: viewManager
+            )
         }
     }
 
     var portraitCallingView: some View {
         VStack(alignment: .center, spacing: 0) {
             containerView
+                .cornerRadius(12)
+                .padding(.all, 4)
             ControlBarView(viewModel: viewModel.controlBarViewModel)
+                       .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: -2)
         }
     }
 
@@ -196,8 +233,12 @@ struct CallingView: View {
                     .accessibilityElement(children: .contain)
                     .accessibilityHidden(!viewModel.onHoldOverlayViewModel.isDisplayed)
             })
+            .modifier(PopupModalView(isPresented: viewModel.isShareMeetingLinkDisplayed) {
+                shareActivityView
+                    .accessibilityElement(children: .contain)
+                    .accessibilityAddTraits(.isModal)
+            })
             .accessibilityElement(children: .contain)
-            .background(Color(StyleProvider.color.drawerColor))
         }
     }
 
@@ -259,6 +300,17 @@ struct CallingView: View {
             .accessibilityElement(children: .contain)
         }
     }
+    
+    var shareActivityView: some View {
+        return Group {
+            SharingActivityView(viewModel: viewModel.shareMeetingLinkViewModel,
+                                applicationActivities: nil,
+                                sourceView: debugInfoSourceView,
+                                isPresented: $viewModel.isShareMeetingLinkDisplayed)
+            .edgesIgnoringSafeArea(.all)
+            .modifier(LockPhoneOrientation())
+        }
+    }
 
     var infoHeaderView: some View {
         InfoHeaderView(viewModel: viewModel.infoHeaderViewModel,
@@ -292,8 +344,7 @@ struct CallingView: View {
                            viewManager: viewManager,
                            viewType: .localVideofull,
                            avatarManager: avatarManager)
-                .background(Color(StyleProvider.color.surface))
-                .edgesIgnoringSafeArea(safeAreaIgnoreArea)
+            .background(Color(UIColor.compositeColor(.lightPurple)))
         }
     }
 

@@ -6,16 +6,21 @@
 import SwiftUI
 
 struct ParticipantGridView: View {
-    let viewModel: ParticipantGridViewModel
+    @ObservedObject var viewModel: ParticipantGridViewModel
     let avatarViewManager: AvatarViewManagerProtocol
     let screenSize: ScreenSizeClassType
     @State var gridsCount: Int = 0
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         return Group {
-            ParticipantGridLayoutView(cellViewModels: viewModel.participantsCellViewModelArr,
+            ParticipantGridLayoutView(viewModel: viewModel,
                                       rendererViewManager: viewModel.rendererViewManager,
                                       avatarViewManager: avatarViewManager,
-                                      screenSize: screenSize)
+                                      screenSize: screenSize,
+                                      previousSpeaker: viewModel.previousSpeaker)
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
             .id(gridsCount)
             .onReceive(viewModel.$gridsCount) {

@@ -14,9 +14,13 @@ enum LocalizationKey: String {
     case headphones = "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.Headphones"
     case bluetooth = "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.Bluetooth"
     case selected = "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.AccessibilityLabel"
+    case muteIncomingAudio = "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.MuteIncomingAudio"
 
     /* SetupView */
     case setupTitle = "AzureCommunicationUICalling.SetupView.Title"
+    case setupSubTitle = "AzureCommunicationUICalling.SetupView.SubTitle"
+    case setupScreenTextfieldPlaceholder = "AzureCommunicationUICalling.SetupView.Placeholder"
+
     case dismissAccessibilityLabel = "AzureCommunicationUICalling.SetupView.Button.Dismiss.AccessibilityLabel"
     case joinCall = "AzureCommunicationUICalling.SetupView.Button.JoinCall"
     case joiningCall = "AzureCommunicationUICalling.SetupView.Button.JoiningCall"
@@ -96,6 +100,8 @@ enum LocalizationKey: String {
     case participantListLobbyAction = "AzureCommunicationUICalling.CallingView.ParticipantDrawer.LobbyAction"
     case participantListWaitingInLobby = "AzureCommunicationUICalling.CallingView.ParticipantDrawer.WaitingInLobby"
     case participantListInTheCall = "AzureCommunicationUICalling.CallingView.ParticipantDrawer.InTheCall"
+    case shareMeetingLinkTitle = "AzureCommunicationUICalling.CallingView.ParticipantDrawer.Share"
+
     case participantListAdmitAll = "AzureCommunicationUICalling.CallingView.ParticipantDrawer.AdmitAll"
     case participantListConfirmTitleAdmitAll =
             "AzureCommunicationUICalling.CallingView.ParticipantDrawer.Confirm.Title.AdmitAll"
@@ -144,6 +150,11 @@ enum LocalizationKey: String {
             "AzureCommunicationUICalling.CallingView.BannerTitle.RecordingStopped"
     case bannerTitleRecordingAndTranscribingStopped =
             "AzureCommunicationUICalling.CallingView.BannerTitle.RecordingAndTranscribingStopped"
+    
+    case participantOptionsPin = "AzureCommunicationUICalling.CallingView.Participants.Options.Pin"
+    case participantOptionsUnpin = "AzureCommunicationUICalling.CallingView.Participants.Options.Unpin"
+    case participantOptionsShowVideo = "AzureCommunicationUICalling.CallingView.Participants.Options.ShowVideo"
+    case participantOptionsHideVideo = "AzureCommunicationUICalling.CallingView.Participants.Options.Don'tShowVideo"
 
     /* ComplianceBanner body */
     case bannerBodyConsent = "AzureCommunicationUICalling.CallingView.BannerBody.Consent"
@@ -186,11 +197,28 @@ enum LocalizationKey: String {
     case callDiagnosticsMicrophoneNotWorking = "AzureCommunicationUICalling.Diagnostics.Text.MicrophoneNotWorking"
     case callDiagnosticsSpeakerNotWorking = "AzureCommunicationUICalling.Diagnostics.Text.SpeakerNotWorking"
     case callDiagnosticsSpeakerMuted = "AzureCommunicationUICalling.Diagnostics.Text.SpeakerMuted"
+    case chooseAudioHeader="AzureCommunicationUICalling.AudioDevice.Drawer.Selected.ChooseAudioHeader"
+    case noiseSuppressionTitle="AzureCommunicationUICalling.AudioDevice.Drawer.Selected.SelectNoiseSuppression"
+    
+    /*Layout options*/
+    case layoutOptionsTitle = "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.Title";
+    case galleryOptionTitle = "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.GridOption";
+    case speakerOptionTitle = "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.SpeakerOption";
 
     case callDiagnosticsDismissAccessibilityLabel =
             "AzureCommunicationUICalling.Diagnostics.Button.Dismiss.AccessibilityLabel"
     case callDiagnosticsDismissAccessibilityHint =
             "AzureCommunicationUICalling.Diagnostics.Button.Dismiss.AccessibilityHint"
+    
+    /*Meeting options*/
+    case chatTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.Chat"
+    case participantsTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.Participants"
+    case effectsTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.Effects"
+    case raiseHandTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.RaiseHand"
+    case lowerHandTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.LowerHand"
+    case changeViewTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.ChangeView"
+    case shareScreenTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.ShareScreen"
+    case stopShareScreenTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.StopShareScreen"
 
     /* Support Form */
     case supportFormReportIssueTitle = "AzureCommunicationUICalling.ReportIssue.Title"

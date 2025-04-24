@@ -14,67 +14,123 @@ struct SetupView: View {
     @Environment(\.verticalSizeClass) var heightSizeClass: UserInterfaceSizeClass?
     @Orientation var orientation: UIDeviceOrientation
     let avatarManager: AvatarViewManagerProtocol
-
+    
+    @StateObject private var keyboard = KeyboardResponder()
+    @State var updatedDisplayName: String = ""
+    
     enum LayoutConstant {
-        static let spacing: CGFloat = 24
-        static let spacingLarge: CGFloat = 40
+        static let spacing: CGFloat = 0
+        static let spacingLarge: CGFloat = 0
         static let startCallButtonHeight: CGFloat = 52
         static let iPadLarge: CGFloat = 469.0
         static let iPadSmall: CGFloat = 375.0
         static let iPadSmallHeightWithMargin: CGFloat = iPadSmall + spacingLarge + startCallButtonHeight
         static let iPadLargeHeightWithMargin: CGFloat = iPadLarge + spacingLarge + startCallButtonHeight
     }
-
+    
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
         ZStack {
-            VStack(spacing: LayoutConstant.spacing) {
+            VStack(spacing: 0) {
                 SetupTitleView(viewModel: viewModel)
                 GeometryReader { geometry in
                     ZStack(alignment: .bottomLeading) {
                         VStack(alignment: .center,
                                spacing: getSizeClass() == .ipadScreenSize ?
                                LayoutConstant.spacingLarge : LayoutConstant.spacing) {
-                            ZStack(alignment: .center) {
-                                PreviewAreaView(viewModel: viewModel.previewAreaViewModel,
-                                                viewManager: viewManager,
-                                                avatarManager: avatarManager)
-                                if viewModel.shouldShowSetupControlBarView() {
-                                    SetupControlBarView(viewModel: viewModel.setupControlBarViewModel)
+                            ZStack(alignment: .bottom) {
+                                PreviewAreaView(
+                                    viewModel: viewModel.previewAreaViewModel,
+                                    viewManager: viewManager,
+                                    avatarManager: avatarManager
+                                )
+                                .background(Color(UIColor.compositeColor(.lightPurple)))
+                                .accessibilityElement(children: .contain)
+                                .padding(.bottom, 120)
+                                .onTapGesture {
+                                    self.endEditing()
                                 }
+                                
+                                Group {
+                                    VStack(alignment: .trailing, spacing: 0) {
+                                        if viewModel.shouldShowSetupControlBarView() {
+                                            SetupControlBarView(viewModel: viewModel.setupControlBarViewModel)
+                                        }
+                                        
+                                        HStack(alignment: .top, spacing: 12) {
+                                            if !viewModel.isJoinRequested {
+                                                TextField(viewModel.textFieldPLaceholder, text: $updatedDisplayName)
+                                                    .padding(.horizontal, 12)
+                                                    .font(AppFont.CircularStd.book.font(size: 16))
+                                                    .frame(height: 44)
+                                                    .background(Color(UIColor.compositeColor(.filledFill)))
+                                                    .cornerRadius(8)
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .stroke(Color(UIColor.compositeColor(.filledBorder)), lineWidth: 1)
+                                                    )
+                                                    .onChange(of: updatedDisplayName) { newValue in
+                                                        viewModel.updatedDisplayName = newValue
+                                                    }
+                                            }
+                                            joinCallView
+                                        }
+                                        .padding(.bottom, 34)
+                                    }
+                                    .frame(height: 130)
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 16)
+                                }
+                                .background(Color.white)
+                                .clipShape(RoundedCorner(radius: 12, corners: [.topLeft, .topRight]))
+                                .shadow(color: .black.opacity(0.05), radius: 1, y: -2)
+                                .offset(y: -keyboard.currentHeight) // 👈 apply here outside the fixed frame
+                                .animation(.easeOut(duration: 0.3), value: keyboard.currentHeight)
                             }
-                            .background(Color(StyleProvider.color.surface))
-                            .cornerRadius(4)
-                            .accessibilityElement(children: .contain)
-                            joinCallView
-                                .padding(.bottom)
+                            
+                            
+                            
+                            
                         }
-                        .padding(.vertical, setupViewVerticalPadding(parentSize: geometry.size))
                         errorInfoView
-                            .padding(.bottom, setupViewVerticalPadding(parentSize: geometry.size))
+                            .padding(.bottom, CGFloat(16))
                     }
-                    .padding(.horizontal, setupViewHorizontalPadding(parentSize: geometry.size))
                 }
             }
             BottomDrawer(isPresented: viewModel.audioDeviceListViewModel.isDisplayed,
-                         hideDrawer: viewModel.dismissAudioDevicesDrawer) {
-                AudioDevicesListView(viewModel: viewModel.audioDeviceListViewModel,
-                avatarManager: avatarManager)
+                         hideDrawer: viewModel.dismissDrawer) {
+                AudioDevicesListView(viewModel: viewModel.audioDeviceListViewModel)
             }
+            backgroundEffectsView
         }
+        .ignoresSafeArea(edges: .bottom)
     }
-
+    
     var joinCallView: some View {
         Group {
             if viewModel.isJoinRequested {
                 JoiningCallActivityView(viewModel: viewModel.joiningCallActivityViewModel)
             } else {
-                PrimaryButton(viewModel: viewModel.joinCallButtonViewModel)
-                    .frame(height: 52)
+                AppPrimaryButton(viewModel: viewModel.joinCallButtonViewModel)
+                    .frame(width: 128, height: 40)
                     .accessibilityIdentifier(AccessibilityIdentifier.joinCallAccessibilityID.rawValue)
             }
         }
     }
-
+    
+    var backgroundEffectsView: some View {
+        FullScreenModalView(isPresented: viewModel.effectsPickerViewModel.isDisplayed,
+                            hideModal: viewModel.dismissDrawer) {
+            EffectsPickerView(
+                viewModel: viewModel.effectsPickerViewModel,
+                avatarManager: avatarManager,
+                viewManager: viewManager
+            )
+        }
+    }
+    
     var errorInfoView: some View {
         VStack {
             Spacer()
@@ -88,52 +144,37 @@ struct SetupView: View {
                 .accessibilityAddTraits(.isModal)
         }
     }
-
-    private func setupViewHorizontalPadding(parentSize: CGSize) -> CGFloat {
-        let isIpad = getSizeClass() == .ipadScreenSize
-        guard isIpad else {
-            return 16
-        }
-        let isLandscape = orientation.isLandscape
-        let screenSize = isLandscape ? LayoutConstant.iPadLarge : LayoutConstant.iPadSmall
-        let horizontalPadding = (parentSize.width - screenSize) / 2.0
-        return horizontalPadding
-    }
-
-    private func setupViewVerticalPadding(parentSize: CGSize) -> CGFloat {
-        let isIpad = getSizeClass() == .ipadScreenSize
-        guard isIpad else {
-            return 16
-        }
-        let isLandscape = orientation.isLandscape
-        let verticalPadding = (parentSize.height - (isLandscape ?
-                                                    LayoutConstant.iPadSmallHeightWithMargin
-                                                    : LayoutConstant.iPadLargeHeightWithMargin)) / 2.0
-        return verticalPadding
-    }
-
+    
     private func getSizeClass() -> ScreenSizeClassType {
         switch (widthSizeClass, heightSizeClass) {
         case (.compact, .regular):
             return .iphonePortraitScreenSize
         case (.compact, .compact),
-             (.regular, .compact):
+            (.regular, .compact):
             return .iphoneLandscapeScreenSize
         default:
             return .ipadScreenSize
         }
     }
+    
+    private func endEditing() {
+        UIApplication.shared.endEditing()
+    }
 }
 
 struct SetupTitleView: View {
-    let viewHeight: CGFloat = 44
+    let viewHeight: CGFloat = 80
     let padding: CGFloat = 34.0
     let verticalSpacing: CGFloat = 0
     var viewModel: SetupViewModel
-
+    
     @Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
-
+    
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         VStack(spacing: verticalSpacing) {
             ZStack(alignment: .leading) {
                 IconButton(viewModel: viewModel.dismissButtonViewModel)
@@ -143,15 +184,16 @@ struct SetupTitleView: View {
                     Spacer()
                     VStack {
                         Text(viewModel.title)
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(Color(UIColor.compositeColor(.headerTitle)))
+                            .font(AppFont.CircularStd.bold.font(size: 24))
+                            .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                             .lineLimit(1)
                             .minimumScaleFactor(sizeCategory.isAccessibilityCategory ? 0.4 : 1)
                             .accessibilityAddTraits(.isHeader)
+                            .padding(.bottom, 4)
                         if let subtitle = viewModel.subTitle, !subtitle.isEmpty {
                             Text(subtitle)
-                                .font(Fonts.caption1.font)
-                                .foregroundColor(Color(StyleProvider.color.onNavigationSecondary))
+                                .font(AppFont.CircularStd.book.font(size: 16))
+                                .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                                 .lineLimit(1)
                                 .minimumScaleFactor(sizeCategory.isAccessibilityCategory ? 0.4 : 1)
                                 .accessibilityAddTraits(.isHeader)
@@ -159,9 +201,22 @@ struct SetupTitleView: View {
                     }
                     Spacer()
                 }.accessibilitySortPriority(1)
-                 .padding(padding)
             }.frame(height: viewHeight)
-            Divider()
         }
+    }
+}
+
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+    
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
     }
 }

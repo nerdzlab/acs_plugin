@@ -107,6 +107,25 @@ protocol CallingMiddlewareHandling {
     func removeParticipant(state: AppState,
                            dispatch: @escaping ActionDispatch,
                            participantId: String) -> Task<Void, Never>
+    
+    @discardableResult
+    func requestLowerHand(
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
+    
+    @discardableResult
+    func requestRaiseHand(
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
+    
+    @discardableResult
+    func requestBackgroundEffect(
+        effect: LocalUserState.BackgroundEffectType,
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
 }
 
 // swiftlint:disable type_body_length
@@ -151,9 +170,12 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
     func startCall(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
+                callingService.updateDisplayName(state.localUserState.updatedDisplayName ?? state.localUserState.initialDisplayName)
                 try await callingService.startCall(
                     isCameraPreferred: state.localUserState.cameraState.operation == .on,
-                    isAudioPreferred: state.localUserState.audioState.operation == .on
+                    isMicrophonePreferred: state.localUserState.audioState.operation == .on,
+                    isNoiseSuppressionPreferred: state.localUserState.noiseSuppressionState.operation == .on,
+                    isMuteIncomingAudio: state.localUserState.incomingAudioState.operation == .muted
                 )
                 subscription(dispatch: dispatch,
                              isSkipRequested: state.callingState.operationStatus == .skipSetupRequested)
@@ -355,6 +377,28 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
                 dispatch(.localUserAction(.cameraSwitchSucceeded(cameraDevice: device)))
             } catch {
                 dispatch(.localUserAction(.cameraSwitchFailed(previousCamera: currentCamera, error: error)))
+            }
+        }
+    }
+    
+    func requestRaiseHand(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            do {
+                try await callingService.raiseHand()
+                dispatch(.localUserAction(.raiseHandSucceeded))
+            } catch {
+                dispatch(.localUserAction(.raiseHandFailed(error: error)))
+            }
+        }
+    }
+
+    func requestLowerHand(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            do {
+                try await callingService.lowerHand()
+                dispatch(.localUserAction(.lowerHandSucceeded))
+            } catch {
+                dispatch(.localUserAction(.lowerHandFailed(error: error)))
             }
         }
     }
@@ -717,6 +761,15 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
+    
+    func requestBackgroundEffect(
+        effect: LocalUserState.BackgroundEffectType,
+        state: AppState, dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never> {
+        return Task {
+            callingService.setBackgroundEffect(effect)
+        }
+    }
 }
 
 extension CallingMiddlewareHandler {
@@ -798,6 +851,12 @@ extension CallingMiddlewareHandler {
             .removeDuplicates()
             .sink { participantCount in
                 dispatch(.remoteParticipantsAction(.setTotalParticipantCount(participantCount: participantCount)))
+            }.store(in: subscription)
+        
+        callingService.videoEffectErrorSubject
+            .removeDuplicates()
+            .sink { error in
+                dispatch(.localUserAction(.backgroundEffectSetFailed(error: error)))
             }.store(in: subscription)
         /* <CALL_START_TIME>
         callingService.callStartTimeSubject

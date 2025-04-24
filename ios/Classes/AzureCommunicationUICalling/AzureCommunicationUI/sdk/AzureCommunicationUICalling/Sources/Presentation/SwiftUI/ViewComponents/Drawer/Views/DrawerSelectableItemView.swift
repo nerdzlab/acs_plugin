@@ -10,19 +10,22 @@ internal struct DrawerSelectableItemView: View {
     let item: DrawerSelectableItemViewModel
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack {
             if let icon = item.icon {
-                Icon(name: icon, size: DrawerListConstants.iconSize)
-                    .foregroundColor(.primary)
+                Icon(name: icon, size: DrawerListConstants.iconSize, renderAsOriginal: true)
             }
             Text(item.title)
-                .foregroundColor(.primary)
+                .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                 .padding(.leading, DrawerListConstants.textPaddingLeading)
-                .font(.body)
+                .font(AppFont.CircularStd.book.font(size: 16))
 
             Spacer()
             if item.isSelected {
-                Icon(name: .checkmark, size: DrawerListConstants.iconSize)
+                Icon(name: .checkmark, size: DrawerListConstants.iconSize, renderAsOriginal: true)
             }
         }
         .padding(.horizontal, DrawerListConstants.optionPaddingHorizontal)

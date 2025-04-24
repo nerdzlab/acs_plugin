@@ -10,9 +10,17 @@ enum CompositeColor: String {
     case hangup = "hangupColor"
     case overlay = "overlayColor"
     case onHoldBackground = "onHoldBackground"
-    case headerTitle = "#393939"
+    case textPrimary = "#393939"
     case purpleBlue = "purpleBlue"
     case lightPurple = "lightPurple"
+    case darkPurple = "darkPurple"
+    case filledFill = "filledFill"
+    case filledBorder = "filledBorder"
+    case errorColor = "errorColor"
+    case textSecondary = "textSecondary"
+    case violet = "violet"
+    case orange = "orange"
+    case blue = "blue"
 }
 
 extension UIColor {
@@ -29,4 +37,6 @@ extension UIColor {
             preconditionFailure("invalid asset color")
         }
     }
+    
+    static let avatarColors: [UIColor] = [compositeColor(.orange), compositeColor(.blue), compositeColor(.violet), compositeColor(.purpleBlue)]
 }

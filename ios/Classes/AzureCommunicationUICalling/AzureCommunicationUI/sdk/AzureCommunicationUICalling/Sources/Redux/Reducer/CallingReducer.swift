@@ -86,10 +86,15 @@ extension Reducer where State == CallingState,
                 .visibilityAction,
                 .showParticipants,
                 .showParticipantActions,
+                .showParticipantOptions,
                 .hideDrawer,
                 .toastNotificationAction,
                 .callScreenInfoHeaderAction,
                 .setTotalParticipantCount,
+                .showShareSheetMeetingLink,
+                .showLayoutOptions,
+                .showMeetingOptions,
+                .showBackgroundEffectsView,
                 .buttonViewDataAction:
             return callingState
         }

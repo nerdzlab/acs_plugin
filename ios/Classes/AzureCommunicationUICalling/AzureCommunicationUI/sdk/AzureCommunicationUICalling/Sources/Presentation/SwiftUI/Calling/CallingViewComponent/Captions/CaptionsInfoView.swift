@@ -13,6 +13,10 @@ struct CaptionsInfoView: View {
     @Environment(\.verticalSizeClass) var verticalSizeClass
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         if viewModel.isLoading {
             loadingView
         } else {

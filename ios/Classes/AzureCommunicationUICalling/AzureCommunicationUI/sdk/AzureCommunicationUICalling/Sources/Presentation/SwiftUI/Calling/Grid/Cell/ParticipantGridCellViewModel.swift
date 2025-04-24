@@ -5,13 +5,14 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 struct ParticipantVideoViewInfoModel {
     let videoStreamType: VideoStreamInfoModel.MediaStreamType?
     let videoStreamId: String?
 }
 
-class ParticipantGridCellViewModel: ObservableObject, Identifiable {
+class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     private let localizationProvider: LocalizationProviderProtocol
     private let accessibilityProvider: AccessibilityProviderProtocol
 
@@ -25,18 +26,26 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
     @Published var isMuted: Bool
     @Published var isHold: Bool
     @Published var participantIdentifier: String
-
+    @Published var isPinned: Bool
+    @Published var isVideoEnableForLocalUser: Bool
+    @Published var isHandRaised: Bool
+    
+    @State var avatarColor: Color
+    
     private var isScreenSharing = false
     private var participantName: String
     private var renderDisplayName: String?
     private var isCameraEnabled: Bool
     private var participantStatus: ParticipantStatus?
     private var callType: CompositeCallType
+    
+    let onUserClicked: () -> Void
 
     init(localizationProvider: LocalizationProviderProtocol,
          accessibilityProvider: AccessibilityProviderProtocol,
          participantModel: ParticipantInfoModel,
          isCameraEnabled: Bool,
+         onUserClicked: @escaping () -> Void,
          callType: CompositeCallType) {
         self.localizationProvider = localizationProvider
         self.accessibilityProvider = accessibilityProvider
@@ -58,6 +67,11 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
         self.participantIdentifier = participantModel.userIdentifier
         self.isMuted = participantModel.isMuted && participantModel.status == .connected
         self.isCameraEnabled = isCameraEnabled
+        self.isVideoEnableForLocalUser = participantModel.isVideoOnForMe
+        self.isPinned = participantModel.isPinned
+        self.onUserClicked = onUserClicked
+        self.avatarColor = participantModel.avatarColor
+        self.isHandRaised = participantModel.isHandRaised
         self.videoViewModel = getDisplayingVideoStreamModel(participantModel)
         self.accessibilityLabel = getAccessibilityLabel(participantModel: participantModel)
     }
@@ -111,6 +125,22 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
         if self.isHold != isOnHold {
             self.isHold = isOnHold
             postParticipantStatusAccessibilityAnnouncements(isHold: self.isHold, participantModel: participantModel)
+        }
+        
+        if self.isVideoEnableForLocalUser != participantModel.isVideoOnForMe {
+            self.isVideoEnableForLocalUser = participantModel.isVideoOnForMe
+        }
+        
+        if self.isPinned != participantModel.isPinned {
+            self.isPinned = participantModel.isPinned
+        }
+        
+        if self.avatarColor != participantModel.avatarColor {
+            self.avatarColor = participantModel.avatarColor
+        }
+        
+        if self.isHandRaised != participantModel.isHandRaised {
+            self.isHandRaised = participantModel.isHandRaised
         }
     }
 
@@ -185,4 +215,8 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable {
             localizationProvider.getLocalizedString(.participantResumeAccessibilityLabel, participantModel.displayName)
         accessibilityProvider.postQueuedAnnouncement(holdResumeAccessibilityAnnouncement)
     }
+    
+    static func ==(lhs: ParticipantGridCellViewModel, rhs: ParticipantGridCellViewModel) -> Bool {
+        return lhs.participantIdentifier == rhs.participantIdentifier // or use participantIdentifier if it's more suitable
+        }
 }

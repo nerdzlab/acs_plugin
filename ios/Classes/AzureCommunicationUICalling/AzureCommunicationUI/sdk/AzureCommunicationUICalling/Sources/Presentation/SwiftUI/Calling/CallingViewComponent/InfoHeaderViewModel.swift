@@ -28,6 +28,7 @@ class InfoHeaderViewModel: ObservableObject {
     private let enableSystemPipWhenMultitasking: Bool
     let enableMultitasking: Bool
     var participantListButtonViewModel: IconButtonViewModel!
+    var chatButtonViewModel: IconButtonViewModel!
     var dismissButtonViewModel: IconButtonViewModel!
     private var cancellables = Set<AnyCancellable>()
     /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
@@ -69,11 +70,21 @@ class InfoHeaderViewModel: ObservableObject {
         self.participantListButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .showParticipant,
             buttonType: .infoButton,
-            isDisabled: false) { [weak self] in
+            isDisabled: false, renderAsOriginal: true) { [weak self] in
                 guard let self = self else {
                     return
                 }
                 self.showParticipantListButtonTapped()
+        }
+        
+        self.chatButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
+            iconName: .chatIcon,
+            buttonType: .infoButton,
+            isDisabled: false, renderAsOriginal: true) { [weak self] in
+                guard let self = self else {
+                    return
+                }
+                self.showChatButtonTapped()
         }
 
         self.participantListButtonViewModel.accessibilityLabel = self.localizationProvider.getLocalizedString(
@@ -82,7 +93,7 @@ class InfoHeaderViewModel: ObservableObject {
         dismissButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .leftArrow,
             buttonType: .infoButton,
-            isDisabled: false) { [weak self] in
+            isDisabled: false, renderAsOriginal: true) { [weak self] in
                 guard let self = self else {
                     return
                 }
@@ -118,6 +129,10 @@ class InfoHeaderViewModel: ObservableObject {
     func showParticipantListButtonTapped() {
         logger.debug("Show participant list button tapped")
         self.displayParticipantsList()
+    }
+    
+    func showChatButtonTapped() {
+        logger.debug("Chat button tapped")
     }
 
     func displayParticipantsList() {

@@ -9,6 +9,10 @@ struct SourceViewSpace: View {
     let sourceView: UIView
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         GeometryReader { geometry -> Color in
             sourceView.translatesAutoresizingMaskIntoConstraints = false
             sourceView.frame = geometry.frame(in: CoordinateSpace.global)

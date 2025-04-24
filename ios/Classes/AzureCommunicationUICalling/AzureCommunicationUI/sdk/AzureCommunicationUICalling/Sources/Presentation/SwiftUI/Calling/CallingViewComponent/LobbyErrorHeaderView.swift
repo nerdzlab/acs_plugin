@@ -32,6 +32,10 @@ struct LobbyErrorHeaderView: View {
     }
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         ZStack {
             if viewModel.isDisplayed {
                 lobbyHeader
@@ -69,7 +73,7 @@ struct LobbyErrorHeaderView: View {
     }
 
     var errorIcon: some View {
-        Icon(name: .lobbyError, size: 24)
+        Icon(name: .lobbyError, size: 24, renderAsOriginal: true)
             .foregroundColor(.white)
             .contentShape(Rectangle())
     }

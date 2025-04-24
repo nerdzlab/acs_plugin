@@ -10,11 +10,15 @@ internal struct DrawerBodyTextView: View {
     let item: BodyTextDrawerListItemViewModel
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack {
             Text(item.title)
-                .foregroundColor(.primary)
+                .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
                 .padding(.leading, DrawerListConstants.textPaddingLeading)
-                .font(.body)
+                .font(AppFont.CircularStd.bold.font(size: 20))
             Spacer()
         }
         .padding(.horizontal, DrawerListConstants.optionPaddingHorizontal)
@@ -32,6 +36,10 @@ internal struct DrawerBodyWithActionTextView: View {
     var isConfirming = false
 
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         HStack {
             Text(item.title)
                 .foregroundColor(.primary)

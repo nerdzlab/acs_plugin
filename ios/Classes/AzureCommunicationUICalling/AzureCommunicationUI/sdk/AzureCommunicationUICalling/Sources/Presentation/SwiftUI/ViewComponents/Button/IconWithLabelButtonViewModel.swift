@@ -5,16 +5,13 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 class IconWithLabelButtonViewModel<T: ButtonState>: ObservableObject {
-    enum ButtonTypeColor {
-        case colorThemedWhite
-        case white
-    }
     @Published var selectedButtonState: T
     @Published var localizationProvider: LocalizationProviderProtocol
     @Published var iconName: CompositeIcon
-    @Published var buttonTypeColor: ButtonTypeColor
+    @Published var buttonColor: Color
     @Published var buttonLabel: String?
     @Published var accessibilityLabel: String?
     @Published var accessibilityValue: String?
@@ -25,14 +22,14 @@ class IconWithLabelButtonViewModel<T: ButtonState>: ObservableObject {
 
     init(selectedButtonState: T,
          localizationProvider: LocalizationProviderProtocol,
-         buttonTypeColor: ButtonTypeColor,
+         buttonColor: Color,
          isDisabled: Bool = false,
          isVisible: Bool = true,
          action: @escaping (() -> Void) = {}) {
         self.selectedButtonState = selectedButtonState
         self.localizationProvider = localizationProvider
         self.iconName = selectedButtonState.iconName
-        self.buttonTypeColor = buttonTypeColor
+        self.buttonColor = buttonColor
         self.buttonLabel = localizationProvider.getLocalizedString(selectedButtonState.localizationKey)
         self.isDisabled = isDisabled
         self.isVisible = isVisible
@@ -71,9 +68,9 @@ class IconWithLabelButtonViewModel<T: ButtonState>: ObservableObject {
         }
     }
 
-    func update(buttonTypeColor: ButtonTypeColor) {
-        if self.buttonTypeColor != buttonTypeColor {
-            self.buttonTypeColor = buttonTypeColor
+    func update(buttonColor: Color) {
+        if self.buttonColor != buttonColor {
+            self.buttonColor = buttonColor
         }
     }
 }

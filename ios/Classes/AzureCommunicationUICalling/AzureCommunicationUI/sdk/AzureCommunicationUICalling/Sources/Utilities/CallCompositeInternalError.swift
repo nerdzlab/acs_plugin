@@ -18,11 +18,14 @@ enum CallCompositeInternalError: Error, Equatable {
     case callJoinFailedByMicPermission
     case cameraSwitchFailed
     case cameraOnFailed
+    case raiseHandFailed
+    case lowerHandFailed
     case networkConnectionNotAvailable
     case micNotAvailable
     case captionsNotActive
     case captionsStartFailedSpokenLanguageNotSupported
     case captionsStartFailedCallNotConnected
+    case setVideoEffectFailed
 
     func toCallCompositeErrorCode() -> String? {
         switch self {
@@ -46,11 +49,16 @@ enum CallCompositeInternalError: Error, Equatable {
             return CallCompositeErrorCode.captionsStartFailedCallNotConnected
         case .captionsStartFailedSpokenLanguageNotSupported:
             return CallCompositeErrorCode.captionsStartFailedSpokenLanguageNotSupported
+        case .raiseHandFailed:
+            return CallCompositeErrorCode.raiseHand
+        case .lowerHandFailed:
+            return CallCompositeErrorCode.lowerHand
         case .callHoldFailed,
                 .callResumeFailed,
                 .callEvicted,
                 .callDenied,
                 .micNotAvailable,
+                .setVideoEffectFailed,
                 .cameraSwitchFailed:
             return nil
         }
@@ -75,6 +83,9 @@ enum CallCompositeInternalError: Error, Equatable {
                 .captionsNotActive,
                 .captionsStartFailedCallNotConnected,
                 .captionsStartFailedSpokenLanguageNotSupported,
+                .raiseHandFailed,
+                .lowerHandFailed,
+                .setVideoEffectFailed,
                 .callJoinConnectionFailed:
             return false
         }
@@ -98,6 +109,9 @@ extension CallCompositeInternalError {
             (.cameraOnFailed, .cameraOnFailed),
             (.micNotAvailable, .micNotAvailable),
             (.captionsNotActive, .captionsNotActive),
+            (.raiseHandFailed, .raiseHandFailed),
+            (.lowerHandFailed, .lowerHandFailed),
+            (.setVideoEffectFailed, .setVideoEffectFailed),
             (.captionsStartFailedSpokenLanguageNotSupported, .captionsStartFailedSpokenLanguageNotSupported),
             (.captionsStartFailedCallNotConnected, .captionsStartFailedCallNotConnected):
             return true

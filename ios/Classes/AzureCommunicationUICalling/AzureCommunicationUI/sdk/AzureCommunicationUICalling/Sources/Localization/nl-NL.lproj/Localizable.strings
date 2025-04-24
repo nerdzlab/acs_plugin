@@ -10,11 +10,31 @@
 "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.iPad"="iPad";
 "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.Headphones"="Hoofdtelefoon";
 "AzureCommunicationUICalling.AudioDevice.DeviceDrawer.Bluetooth"="Bluetooth";
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.MuteIncomingAudio"= "Turn off the audio";
 "AzureCommunicationUICalling.AudioDevice.Drawer.Selected.AccessibilityLabel"= "%@ selected";
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.ChooseAudioHeader"= "Audio settings";
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.SelectNoiseSuppression"= "Noise suppression";
+
+/*Layout options*/
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.Title"= "Meeting view";
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.GridOption"= "Gallery view";
+"AzureCommunicationUICalling.AudioDevice.Drawer.Selected.LayoutOptions.SpeakerOption"= "Speaker view";
+
+/* Meeting options */
+"AzureCommunicationUICalling.CallingView.MeetingOptions.Chat"="Chat";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.Participants"="Participants";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.Effects"="Effects";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.RaiseHand"="Raise hand";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.LowerHand"="Lower hand";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.ChangeView"="Change view";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.ShareScreen"="Share screen";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.StopShareScreen"="Stop sharing";
 
 /* SetupView */
 "AzureCommunicationUICalling.SetupView.Title"="Configuratie";
+"AzureCommunicationUICalling.SetupView.SubTitle"="Check your video and audio.";
 "AzureCommunicationUICalling.SetupView.Button.Dismiss.AccessibilityLabel"="Terug";
+"AzureCommunicationUICalling.SetupView.Placeholder"="Display name";
 "AzureCommunicationUICalling.SetupView.Button.JoinCall"="Deelnemen aan gesprek";
 "AzureCommunicationUICalling.SetupView.Button.StartCall"="Start call";
 "AzureCommunicationUICalling.SetupView.Button.JoiningCall"="Deelnemen aan gesprek…";
@@ -75,7 +95,8 @@
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.LobbyAction"="Tik om toe te geven of af te wijzen";
 
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.WaitingInLobby"="Wachten in lobby (%d)";
-"AzureCommunicationUICalling.CallingView.ParticipantDrawer.InTheCall"="In de oproep (%d)";
+"AzureCommunicationUICalling.CallingView.ParticipantDrawer.InTheCall"="Participants (%d)";
+"AzureCommunicationUICalling.CallingView.ParticipantDrawer.Share"="Share meeting link";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.AdmitAll"="Allen toelaten";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.Confirm.Title.AdmitAll"="Alle deelnemers toelaten?";
 "AzureCommunicationUICalling.CallingView.ParticipantDrawer.Confirm.Title.AdmitParticipant"="%@ toelaten?";
@@ -102,6 +123,11 @@
 "AzureCommunicationUICalling.CallingView.Button.More.AccessibilityLabel" = "Meer";
 "AzureCommunicationUICalling.CallingView.MoreCallOptionsList.ShareDiagnosticsInfo" = "Diagnostische gegevens delen";
 "AzureCommunicationUICalling.CallingView.GridView.Calling"="Calling...";
+
+"AzureCommunicationUICalling.CallingView.Participants.Options.Pin"="Pin for me";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Unpin"="Unpin";
+"AzureCommunicationUICalling.CallingView.Participants.Options.ShowVideo"="Show video";
+"AzureCommunicationUICalling.CallingView.Participants.Options.Don'tShowVideo"="Don't show video";
 
 
 /* ComplianceBanner title */

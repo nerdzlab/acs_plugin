@@ -12,8 +12,13 @@ class ThemeColor: ThemeOptions {
         return .unspecified
     }
     var primaryColor: UIColor {
-        return Colors.Palette.communicationBlue.color
+        return UIColor.compositeColor(.purpleBlue)
     }
+    
+    var primaryShadowColor: UIColor {
+        return UIColor.compositeColor(.darkPurple)
+    }
+    
     var primaryColorTint10: UIColor {
         return Colors.Palette.communicationBlueTint10.color
     }

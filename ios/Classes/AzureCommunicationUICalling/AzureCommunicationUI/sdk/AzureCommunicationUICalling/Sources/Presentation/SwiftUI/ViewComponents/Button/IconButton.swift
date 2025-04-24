@@ -7,101 +7,118 @@ import SwiftUI
 
 struct IconButton: View {
     @ObservedObject var viewModel: IconButtonViewModel
-
+    
     private let buttonDisabledColor = Color(StyleProvider.color.disableColor)
     private var iconImageSize: CGFloat {
         switch viewModel.buttonType {
         case .dismissButton:
             return 16
-        default:
+        case .roundedRectButton:
             return 24
+        case .cameraSwitchButtonPip:
+            return 28
+        case .infoButton:
+            return 26
+        default:
+            return 32
         }
     }
     var width: CGFloat {
         switch viewModel.buttonType {
+        case  .roundedRectButton:
+            return 59
         case .controlButton,
-             .roundedRectButton:
+                .backNavigation:
             return 60
         case .infoButton:
             return iconImageSize
         case .dismissButton:
-            return 16
-        case .cameraSwitchButtonFull,
-             .cameraSwitchButtonPip:
-            return 36
+            return 32
+        case .cameraSwitchButtonFull:
+            return 32
+        case .cameraSwitchButtonPip:
+            return 28
+        default:
+            return 32
         }
     }
     var height: CGFloat {
         switch viewModel.buttonType {
+        case  .roundedRectButton:
+            return 56
         case .controlButton,
-             .roundedRectButton:
+                .backNavigation:
             return 60
         case .infoButton:
             return iconImageSize
         case .dismissButton:
-            return 16
-        case .cameraSwitchButtonFull,
-             .cameraSwitchButtonPip:
-            return 36
+            return 32
+        case .cameraSwitchButtonFull:
+            return 32
+        case .cameraSwitchButtonPip:
+            return 28
+        default:
+            return 32
         }
     }
     var buttonBackgroundColor: Color {
         switch viewModel.buttonType {
         case .roundedRectButton:
-            return Color(StyleProvider.color.hangup)
+            return Color(UIColor.compositeColor(.errorColor))
         case .controlButton,
-             .infoButton,
-             .dismissButton:
+                .infoButton,
+                .backNavigation,
+                .dismissButton:
             return .clear
         case .cameraSwitchButtonFull,
-             .cameraSwitchButtonPip:
-            return Color(StyleProvider.color.surfaceLightColor)
+                .cameraSwitchButtonPip:
+            return .clear
+        default:
+            return .clear
         }
     }
-
+    
     var buttonForegroundColor: Color {
         switch viewModel.buttonType {
         case .controlButton:
-            return Color(StyleProvider.color.onSurfaceColor)
+            return .red
         case .dismissButton:
             return Color(StyleProvider.color.onBackground)
         default:
             return .white
         }
     }
-
+    
     var tappableWidth: CGFloat {
         switch viewModel.buttonType {
-        case .cameraSwitchButtonPip,
-             .cameraSwitchButtonFull,
-             .infoButton:
+        case .cameraSwitchButtonFull:
             return 44
         default:
             return width
         }
     }
-
+    
     var tappableHeight: CGFloat {
         switch viewModel.buttonType {
-        case .cameraSwitchButtonPip,
-             .cameraSwitchButtonFull,
-             .infoButton:
+        case .cameraSwitchButtonFull:
             return 44
         default:
             return height
         }
     }
-
+    
     var shapeCornerRadius: CGFloat {
         switch viewModel.buttonType {
         case .cameraSwitchButtonPip,
-             .cameraSwitchButtonFull:
+                .cameraSwitchButtonFull:
             return 4
+        case .roundedRectButton:
+            return 14
         default:
             return 8
         }
     }
-
+    
     var roundedCorners: UIRectCorner {
         switch viewModel.buttonType {
         case .cameraSwitchButtonPip:
@@ -110,17 +127,20 @@ struct IconButton: View {
             return [.allCorners]
         }
     }
-
+    
     var body: some View {
+#if DEBUG
+        let _ = Self._printChanges()
+#endif
+        
         if viewModel.isVisible {
             Group {
                 Button(action: viewModel.action) {
-                    icon
+                    icon // Unstyled image view
                 }
                 .disabled(viewModel.isDisabled)
-                .foregroundColor(viewModel.isDisabled ? buttonDisabledColor : buttonForegroundColor)
-                .frame(width: width, height: height, alignment: .center)
-                .background(buttonBackgroundColor)
+                .frame(width: width, height: height, alignment: viewModel.buttonType == .backNavigation ? .top : .center)
+                .background(buttonBackgroundColor) // Apply background if needed
                 .clipShape(RoundedCornersShape(radius: shapeCornerRadius, corners: roundedCorners))
                 .accessibilityLabel(Text(viewModel.accessibilityLabel ?? ""))
                 .accessibilityValue(Text(viewModel.accessibilityValue ?? ""))
@@ -131,8 +151,6 @@ struct IconButton: View {
                    alignment: .center)
             .contentShape(Rectangle())
             .onTapGesture {
-                // ignore action in case if button is disabled
-                // .disabled(_) is not used because tap is passed to superview when it shouldn't
                 guard !viewModel.isDisabled else {
                     return
                 }
@@ -140,9 +158,9 @@ struct IconButton: View {
             }
         }
     }
-
+    
     var icon: some View {
-        var icon = Icon(size: iconImageSize)
+        var icon = Icon(size: iconImageSize, renderAsOriginal: viewModel.renderAsOriginal)
         icon.contentShape(Rectangle())
         if let uiImage = viewModel.icon {
             icon.uiImage = uiImage
@@ -150,7 +168,7 @@ struct IconButton: View {
         if let iconName = viewModel.iconName {
             icon.name = iconName
         }
-
+        
         return icon
     }
 }
@@ -158,7 +176,7 @@ struct IconButton: View {
 struct RoundedCornersShape: Shape {
     let radius: CGFloat
     let corners: UIRectCorner
-
+    
     func path(in rect: CGRect) -> Path {
         let path = UIBezierPath(roundedRect: rect,
                                 byRoundingCorners: corners,
