@@ -130,6 +130,7 @@ protocol CallingSDKEventsHandling {
     var activeCaptionLanguageChanged: CurrentValueSubject<String, Never> { get }
     var captionsEnabledChanged: CurrentValueSubject<Bool, Never> { get }
     var captionsTypeChanged: CurrentValueSubject<CallCompositeCaptionsType, Never> { get }
+    var videoEffectError: PassthroughSubject<String, Never> { get }
 
     var capabilitiesChangedSubject: PassthroughSubject<CapabilitiesChangedEvent, Never> { get }
 

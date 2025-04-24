@@ -25,6 +25,7 @@ enum CallCompositeInternalError: Error, Equatable {
     case captionsNotActive
     case captionsStartFailedSpokenLanguageNotSupported
     case captionsStartFailedCallNotConnected
+    case setVideoEffectFailed
 
     func toCallCompositeErrorCode() -> String? {
         switch self {
@@ -57,6 +58,7 @@ enum CallCompositeInternalError: Error, Equatable {
                 .callEvicted,
                 .callDenied,
                 .micNotAvailable,
+                .setVideoEffectFailed,
                 .cameraSwitchFailed:
             return nil
         }
@@ -83,6 +85,7 @@ enum CallCompositeInternalError: Error, Equatable {
                 .captionsStartFailedSpokenLanguageNotSupported,
                 .raiseHandFailed,
                 .lowerHandFailed,
+                .setVideoEffectFailed,
                 .callJoinConnectionFailed:
             return false
         }
@@ -108,6 +111,7 @@ extension CallCompositeInternalError {
             (.captionsNotActive, .captionsNotActive),
             (.raiseHandFailed, .raiseHandFailed),
             (.lowerHandFailed, .lowerHandFailed),
+            (.setVideoEffectFailed, .setVideoEffectFailed),
             (.captionsStartFailedSpokenLanguageNotSupported, .captionsStartFailedSpokenLanguageNotSupported),
             (.captionsStartFailedCallNotConnected, .captionsStartFailedCallNotConnected):
             return true

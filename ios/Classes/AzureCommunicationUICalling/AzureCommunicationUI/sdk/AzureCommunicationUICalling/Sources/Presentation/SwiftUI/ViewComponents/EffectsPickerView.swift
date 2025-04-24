@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct EffectsPickerView: View {
+struct EffectsPickerView: View {    
     @ObservedObject var viewModel: EffectsPickerViewModel
     let topInset = UIApplication.shared.topSafeAreaHeight
     let avatarManager: AvatarViewManagerProtocol

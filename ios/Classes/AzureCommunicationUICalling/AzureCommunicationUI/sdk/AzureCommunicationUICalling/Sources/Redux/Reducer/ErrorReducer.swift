@@ -38,6 +38,11 @@ extension Reducer where State == ErrorState,
             errorType = .lowerHandFailed
             error = nil
             errorCategory = .callState
+        
+        case .localUserAction(.backgroundEffectSetFailed):
+            errorType = .setVideoEffectFailed
+            error = nil
+            errorCategory = .callState
 
             // Exhaustive unimplemented actions
         case .audioSessionAction,

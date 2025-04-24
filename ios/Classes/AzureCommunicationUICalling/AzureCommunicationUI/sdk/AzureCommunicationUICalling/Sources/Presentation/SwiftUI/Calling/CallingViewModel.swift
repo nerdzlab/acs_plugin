@@ -387,12 +387,12 @@ internal class CallingViewModel: ObservableObject {
             isDisplayed: state.navigationState.backgroundEffectsViewVisible
         )
         
-        if state.navigationState.meetignOptionsVisible {
+        if state.navigationState.backgroundEffectsViewVisible {
             videoEffectsPreviewViewModel.update(localUserState: state.localUserState, visibilityState: state.visibilityState)
         }
         
         localVideoViewModel.update(localUserState: state.localUserState,
-                                   visibilityState: state.visibilityState, isPreviewEnabled: !state.navigationState.meetignOptionsVisible)
+                                   visibilityState: state.visibilityState, isPreviewEnabled: !state.navigationState.backgroundEffectsViewVisible)
 
         receiveExtension(state)
     }

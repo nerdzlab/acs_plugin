@@ -32,6 +32,7 @@ protocol CallingServiceProtocol {
     var captionsEnabledChanged: CurrentValueSubject<Bool, Never> { get }
     var captionsTypeSubject: CurrentValueSubject<CallCompositeCaptionsType, Never> { get }
     var capabilitiesChangedSubject: PassthroughSubject<CapabilitiesChangedEvent, Never> {get}
+    var videoEffectErrorSubject: PassthroughSubject<String, Never> { get }
 
     func updateDisplayName(_ displayName: String?)
     func setupCall() async throws
@@ -104,6 +105,8 @@ class CallingService: NSObject, CallingServiceProtocol {
     var activeCaptionLanguageSubject: CurrentValueSubject<String, Never>
     var captionsEnabledChanged: CurrentValueSubject<Bool, Never>
     var captionsTypeSubject: CurrentValueSubject<CallCompositeCaptionsType, Never>
+    var videoEffectErrorSubject: PassthroughSubject<String, Never>
+    
     init(logger: Logger,
          callingSDKWrapper: CallingSDKWrapperProtocol ) {
         self.logger = logger
@@ -132,6 +135,7 @@ class CallingService: NSObject, CallingServiceProtocol {
         /* <CALL_START_TIME>
         callStartTimeSubject = callingSDKWrapper.callingEventsHandler.callStartTimeSubject
         </CALL_START_TIME> */
+        videoEffectErrorSubject = callingSDKWrapper.callingEventsHandler.videoEffectError
     }
 
     func setupCall() async throws {

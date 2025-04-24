@@ -244,15 +244,12 @@ public struct LocalUserState {
     enum BackgroundEffectsOperationalStatus: Equatable {
         case on
         case off
-        case pending
         
         static func == (lhs: LocalUserState.BackgroundEffectsOperationalStatus,
                         rhs: LocalUserState.BackgroundEffectsOperationalStatus) -> Bool {
             switch (lhs, rhs) {
             case (.on, .on),
-                (.off, .off),
-                (.pending, .pending):
-                return true
+                (.off, .off):                return true
             default:
                 return false
             }

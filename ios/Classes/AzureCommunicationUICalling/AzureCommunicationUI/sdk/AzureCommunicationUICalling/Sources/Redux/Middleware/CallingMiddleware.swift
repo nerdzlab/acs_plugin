@@ -133,7 +133,6 @@ private func handleLocalUserAction(_ action: LocalUserAction,
             .raiseHandSucceeded,
             .lowerHandSucceeded,
             .backgroundEffectSetFailed,
-            .backgroundEffectSetSucceeded,
             .participantRoleChanged:
         break
     }

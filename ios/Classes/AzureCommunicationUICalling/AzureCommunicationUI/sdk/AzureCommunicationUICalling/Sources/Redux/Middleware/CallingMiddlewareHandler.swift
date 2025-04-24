@@ -852,6 +852,12 @@ extension CallingMiddlewareHandler {
             .sink { participantCount in
                 dispatch(.remoteParticipantsAction(.setTotalParticipantCount(participantCount: participantCount)))
             }.store(in: subscription)
+        
+        callingService.videoEffectErrorSubject
+            .removeDuplicates()
+            .sink { error in
+                dispatch(.localUserAction(.backgroundEffectSetFailed(error: error)))
+            }.store(in: subscription)
         /* <CALL_START_TIME>
         callingService.callStartTimeSubject
             .removeDuplicates()

@@ -129,13 +129,11 @@ extension Reducer where State == LocalUserState,
             raiseHandStatus = raiseHandStatus
             raiseHandError = error
         case .backgroundEffectRequested(effect: let effect):
-            backgroundEffectsOperationStatus = .pending
-            backgroundEffectsSelectedType = effect
-        case .backgroundEffectSetSucceeded(effect: let effect):
             backgroundEffectsOperationStatus = effect == .none ? .off : .on
             backgroundEffectsSelectedType = effect
         case .backgroundEffectSetFailed(error: let error):
-            backgroundEffectsOperationStatus = backgroundEffectsOperationStatus
+            backgroundEffectsOperationStatus = .off
+            backgroundEffectsSelectedType = .none
             backgroundEffectsError = error
         }
 

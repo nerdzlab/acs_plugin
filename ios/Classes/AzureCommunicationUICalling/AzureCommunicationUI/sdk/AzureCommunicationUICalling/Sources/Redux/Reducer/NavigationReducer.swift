@@ -73,7 +73,7 @@ extension Reducer where State == NavigationState,
                 .captionsAction(.setCaptionLanguageRequested(language: let language)):
             drawerVisibility = .hidden
         case .showBackgroundEffectsView:
-            drawerVisibility = .captionsLangaugeViewVisible
+            drawerVisibility = .backgroundEffectsViewVisible
         case .audioSessionAction,
                 .callingAction(.callIdUpdated),
                 .callingAction(.callStartRequested),
@@ -116,7 +116,7 @@ extension Reducer where State == NavigationState,
                                supportShareSheetVisible: drawerVisibility.isSupportShareSheetVisible,
                                participantsVisible: drawerVisibility.isParticipantsVisible,
                                participantActionsVisible: drawerVisibility.isParticipantActionsVisible,
-                               participantOptionsVisible: drawerVisibility.isParticipantOptionsVisible, shareMeetingLinkVisible: drawerVisibility.isShareSheetMeetingLinkVisible, layoutOptionsVisible: drawerVisibility.isLayoutOptionsVisible, meetignOptionsVisible: drawerVisibility.isMeetingOptionsVisible, selectedParticipant: selectedParticipant
+                               participantOptionsVisible: drawerVisibility.isParticipantOptionsVisible, shareMeetingLinkVisible: drawerVisibility.isShareSheetMeetingLinkVisible, layoutOptionsVisible: drawerVisibility.isLayoutOptionsVisible, meetignOptionsVisible: drawerVisibility.isMeetingOptionsVisible, backgroundEffectsViewVisible: drawerVisibility.isBackgroundEffectsViewVisible, selectedParticipant: selectedParticipant
         )
     }
     enum DrawerVisibility {

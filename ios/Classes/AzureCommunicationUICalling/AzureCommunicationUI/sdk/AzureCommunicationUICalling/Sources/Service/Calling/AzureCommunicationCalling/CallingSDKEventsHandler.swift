@@ -32,6 +32,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
     var activeCaptionLanguageChanged = CurrentValueSubject<String, Never>("")
     var captionsEnabledChanged = CurrentValueSubject<Bool, Never>(false)
     var captionsTypeChanged = CurrentValueSubject<CallCompositeCaptionsType, Never>(.none)
+    var videoEffectError = PassthroughSubject<String, Never>()
 
     // User Facing Diagnostics Subjects
     var networkQualityDiagnosticsSubject = PassthroughSubject<NetworkQualityDiagnosticModel, Never>()
@@ -528,6 +529,8 @@ extension CallingSDKEventsHandler: CallDelegate,
     }
 
     func localVideoEffectsFeature(_ videoEffectsLocalVideoStreamFeature: LocalVideoEffectsFeature, didReceiveVideoEffectError args: VideoEffectErrorEventArgs) {
+        videoEffectError.send("Video Effect Error, VideoEffectName: \(args.videoEffectName), Code: \(args.code), Message: \(args.message)")
+        
         print("Video Effect Error, VideoEffectName: \(args.videoEffectName), Code: \(args.code), Message: \(args.message)")
     }
 }
