@@ -35,7 +35,7 @@ struct IconWithLabelButton<T: ButtonState>: View {
                     } else {
                         Text(buttonLabel)
                             .font(AppFont.CircularStd.book.font(size: 15))
-                            .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
+                            .foregroundColor(viewModel.isDisabled ? buttonDisabledColor : Color(UIColor.compositeColor(.textPrimary)))
                             .lineLimit(1)
                     }
                 }
