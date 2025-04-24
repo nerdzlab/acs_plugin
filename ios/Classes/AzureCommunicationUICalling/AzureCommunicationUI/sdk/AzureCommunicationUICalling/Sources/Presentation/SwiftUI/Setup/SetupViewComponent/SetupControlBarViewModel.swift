@@ -144,8 +144,7 @@ class SetupControlBarViewModel: ObservableObject {
     }
     
     func backgroundEffectButtonTapped() {
-        //MTODO just for test
-        dispatch(.localUserAction(.noiseSuppressionPreviewOn))
+        dispatch(.showBackgroundEffectsView)
     }
     
     func switchCameraButtonTapped() {
