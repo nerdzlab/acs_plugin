@@ -19,6 +19,7 @@ class SetupControlBarViewModel: ObservableObject {
     private let localizationProvider: LocalizationProviderProtocol
     private let audioVideoMode: CallCompositeAudioVideoMode
     private var buttonViewDataState: ButtonViewDataState
+    private var localUserState: LocalUserState?
 
     private var isJoinRequested = false
     private var isDefaultUserStateMapped = false
@@ -47,6 +48,7 @@ class SetupControlBarViewModel: ObservableObject {
         self.localizationProvider = localizationProvider
         self.audioVideoMode = audioVideoMode
         self.buttonViewDataState = buttonViewDataState
+        self.localUserState = localUserState
 
         cameraButtonViewModel = compositeViewModelFactory.makePrimaryIconButtonViewModel(
             selectedButtonState: CameraButtonState.videoOff,
@@ -104,7 +106,7 @@ class SetupControlBarViewModel: ObservableObject {
                 self.endEditing()
                 self.logger.debug("Background effect button tapped")
                 
-                if (localUserState.backgroundEffectsState.operation == .off) {
+                if (self.localUserState?.backgroundEffectsState.operation == .off) {
                     self.dispatch(.localUserAction(.backgroundEffectRequested(effect: LocalUserState.BackgroundEffectType.blur)))
                 } else {
                     self.dispatch(.localUserAction(.backgroundEffectRequested(effect: LocalUserState.BackgroundEffectType.none)))
@@ -198,6 +200,8 @@ class SetupControlBarViewModel: ObservableObject {
                 callingState: CallingState,
                 buttonViewDataState: ButtonViewDataState) {
         self.buttonViewDataState = buttonViewDataState
+        self.localUserState = localUserState
+        
         if cameraPermission != permissionState.cameraPermission {
             cameraPermission = permissionState.cameraPermission
         }
@@ -256,6 +260,7 @@ class SetupControlBarViewModel: ObservableObject {
     }
     
     private func getAudioButtonState(localUserState: LocalUserState) -> AudioButtonState {
+        self.localUserState = localUserState
         
         if localUserState.incomingAudioState.operation == .muted {
             return AudioButtonState.incomingAudioMuted

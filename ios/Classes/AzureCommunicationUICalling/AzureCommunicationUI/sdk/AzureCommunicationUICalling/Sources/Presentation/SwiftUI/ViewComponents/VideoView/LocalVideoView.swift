@@ -105,9 +105,6 @@ struct LocalVideoView: View {
                             VideoRendererView(rendererView: rendererView)
                                 .frame(width: geometry.size.width,
                                        height: geometry.size.height)
-                            if viewType.hasGradient {
-                                GradientView()
-                            }
                             
                             if !viewModel.isInPip || viewType != .effectsPreview {
                                 cameraSwitchButton
