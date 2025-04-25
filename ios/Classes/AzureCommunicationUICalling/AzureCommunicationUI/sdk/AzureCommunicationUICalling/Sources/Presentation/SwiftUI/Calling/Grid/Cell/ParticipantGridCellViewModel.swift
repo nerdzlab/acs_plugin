@@ -41,6 +41,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     private var callType: CompositeCallType
     
     let onUserClicked: () -> Void
+    let onResetReaction: () -> Void
     
     // A single timer for reaction removal
     private var reactionTimer: Timer?
@@ -50,6 +51,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
          participantModel: ParticipantInfoModel,
          isCameraEnabled: Bool,
          onUserClicked: @escaping () -> Void,
+         onResetReaction: @escaping () -> Void,
          callType: CompositeCallType) {
         self.localizationProvider = localizationProvider
         self.accessibilityProvider = accessibilityProvider
@@ -74,15 +76,12 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         self.isVideoEnableForLocalUser = participantModel.isVideoOnForMe
         self.isPinned = participantModel.isPinned
         self.onUserClicked = onUserClicked
+        self.onResetReaction = onResetReaction
         self.avatarColor = participantModel.avatarColor
         self.isHandRaised = participantModel.isHandRaised
         self.videoViewModel = getDisplayingVideoStreamModel(participantModel)
         self.accessibilityLabel = getAccessibilityLabel(participantModel: participantModel)
         self.selectedReaction = participantModel.selectedReaction
-        
-        if self.selectedReaction != nil {
-            updateReactionTimer(reactionPayload: selectedReaction!)
-        }
     }
     
     func update(participantModel: ParticipantInfoModel) {
@@ -159,9 +158,6 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     }
     
     func updateReactionTimer(reactionPayload: ReactionPayload?) {
-        // If a reaction exists, invalidate the previous timer
-        reactionTimer?.invalidate()
-        
         guard let reactionPayload = reactionPayload else {
             return
         }
@@ -177,16 +173,16 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         let timeRemaining = receivedOn.addingTimeInterval(3.0).timeIntervalSince(currentTime)
         
         // If the timeRemaining is positive, start the timer; otherwise, clear the reaction immediately
+        // If a reaction exists, invalidate the previous timer
+        reactionTimer?.invalidate()
+        
         if timeRemaining > 0 {
             // Start a new timer with dynamic duration
-            reactionTimer = Timer.scheduledTimer(withTimeInterval: timeRemaining, repeats: false) { _ in
-                self.selectedReaction = nil // Clear the reaction when the time expires
+            reactionTimer = Timer.scheduledTimer(withTimeInterval: timeRemaining, repeats: false) { [weak self] _ in
+                self?.onResetReaction()
             }
         } else {
-            // If the reaction's end time has already passed, clear it immediately
-            self.selectedReaction = nil
-            
-            ///Need send event to update participant list to set reaction to nill
+            onResetReaction()
         }
     }
     

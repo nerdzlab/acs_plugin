@@ -470,6 +470,9 @@ extension CompositeViewModelFactory {
                                      onUserClicked: { [weak self] in
             self?.store.dispatch(action: Action.showParticipantOptions(participantModel))
         },
+                                     onResetReaction: { [weak self] in
+            self?.store.dispatch(action: .remoteParticipantsAction(.resetParticipantReaction(participantModel.userIdentifier)))
+        },
                                      callType: callType)
     }
     
