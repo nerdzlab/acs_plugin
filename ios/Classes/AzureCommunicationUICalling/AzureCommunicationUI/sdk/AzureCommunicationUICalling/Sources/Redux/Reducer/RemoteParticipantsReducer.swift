@@ -102,6 +102,37 @@ extension Reducer where State == RemoteParticipantsState,
                 pinnedParticipantId: pinnedParticipantId,
                 listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
             )
+        case .remoteParticipantsAction(.resetParticipantReaction(let participantId)):
+            lastUpdateTimeStamp = Date()
+            
+            participantInfoList = updateDerivedParticipantFields(
+                updatedList: participantInfoList.map { participant in
+                    if participant.userIdentifier == participantId {
+                        var updated = participant
+                        updated = ParticipantInfoModel(
+                            displayName: participant.displayName,
+                            isSpeaking: participant.isSpeaking,
+                            isMuted: participant.isMuted,
+                            isHandRaised: participant.isHandRaised,
+                            selectedReaction: nil,
+                            isPinned: participant.isPinned,
+                            isVideoOnForMe: participant.isVideoOnForMe,
+                            avatarColor: participant.avatarColor,
+                            isRemoteUser: participant.isRemoteUser,
+                            userIdentifier: participant.userIdentifier,
+                            status: participant.status,
+                            screenShareVideoStreamModel: participant.screenShareVideoStreamModel,
+                            cameraVideoStreamModel: participant.cameraVideoStreamModel
+                        )
+                        
+                        return updated
+                    }
+                    return participant
+                },
+                currentList: participantInfoList,
+                pinnedParticipantId: pinnedParticipantId,
+                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
+            )
             
         default:
             break
@@ -130,13 +161,27 @@ private func updateDerivedParticipantFields(
 
         // Use existing color or assign new random one
         let avatarColor = existingParticipant?.avatarColor ?? Color(UIColor.avatarColors.randomElement() ?? UIColor.compositeColor(.purpleBlue))
+        
+        let timeRemaining = existingParticipant?.selectedReaction?.receivedOn?.addingTimeInterval(3.0).timeIntervalSince(Date())
+        
+        var selectedReaction: ReactionPayload?
+        
+        if (timeRemaining ?? 0) > 0 {
+            if (participant.selectedReaction != nil && participant.selectedReaction != existingParticipant?.selectedReaction) {
+                selectedReaction = participant.selectedReaction
+            } else {
+                selectedReaction = existingParticipant?.selectedReaction
+            }
+        } else {
+            selectedReaction = participant.selectedReaction
+        }
 
         return ParticipantInfoModel(
             displayName: participant.displayName,
             isSpeaking: participant.isSpeaking,
             isMuted: participant.isMuted,
             isHandRaised: participant.isHandRaised,
-            selectedReaction: participant.selectedReaction,
+            selectedReaction: selectedReaction,
             isPinned: participant.userIdentifier == pinnedParticipantId,
             isVideoOnForMe: !listOfDisabledVideoParticipants.contains(participant.userIdentifier),
             avatarColor: avatarColor,

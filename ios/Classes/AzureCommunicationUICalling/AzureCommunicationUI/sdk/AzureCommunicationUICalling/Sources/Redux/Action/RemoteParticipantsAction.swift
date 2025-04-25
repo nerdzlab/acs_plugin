@@ -15,6 +15,7 @@ enum RemoteParticipantsAction: Equatable {
     case hideParticipantVideo(participantId: String)
     case admitAll
     case declineAll
+    case resetParticipantReaction(String)
     case admit(participantId: String)
     case decline(participantId: String)
     case lobbyError(errorCode: LobbyErrorCode?)
