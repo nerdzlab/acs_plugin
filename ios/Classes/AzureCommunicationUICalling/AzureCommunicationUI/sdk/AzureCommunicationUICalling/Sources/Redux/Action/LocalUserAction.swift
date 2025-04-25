@@ -42,6 +42,7 @@ enum LocalUserAction: Equatable {
     case backgroundEffectSetFailed(error: Error)
     
     case sendReaction(reaction: ReactionType)
+    case resetLocalUserReaction
 
     case microphoneMuteStateUpdated(isMuted: Bool)
 

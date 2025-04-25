@@ -96,6 +96,11 @@ struct LocalVideoView: View {
                        let streamId = localVideoStreamId,
                        let rendererView = viewManager.getLocalVideoRendererView(streamId), viewModel.isPreviewEnable {
                         
+                        avatarView
+                            .frame(width: geometry.size.width,
+                                   height: geometry.size.height)
+                            .accessibilityElement(children: .combine)
+                        
                         ZStack(alignment: viewType.cameraSwitchButtonAlignment) {
                             VideoRendererView(rendererView: rendererView)
                                 .frame(width: geometry.size.width,
@@ -110,21 +115,10 @@ struct LocalVideoView: View {
                         }
                         
                     } else {
-                        VStack(alignment: .center, spacing: 5) {
-                            CompositeAvatar(
-                                displayName: $viewModel.displayName,
-                                avatarImage: Binding.constant(
-                                    avatarManager.localParticipantViewData?.avatarImage
-                                ),
-                                backgroundColor: Color(UIColor.compositeColor(.purpleBlue)),
-                                isSpeaking: false,
-                                avatarSize: viewType.avatarSize,
-                                fontSize: viewType.initialFontSize
-                            )
-                        }
-                        .frame(width: geometry.size.width,
-                               height: geometry.size.height)
-                        .accessibilityElement(children: .combine)
+                        avatarView
+                            .frame(width: geometry.size.width,
+                                   height: geometry.size.height)
+                            .accessibilityElement(children: .combine)
                     }
                     
                     // MARK: - Always show title in bottom leading
@@ -148,6 +142,12 @@ struct LocalVideoView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                         .padding([.leading, .bottom], 8)
                     }
+                    
+                    if let reaction = viewModel.selectedReaction {
+                        ReactionOverlayView(selectedReaction: reaction)
+                            .frame(width: geometry.size.width,
+                                   height: geometry.size.height)
+                    }
                 }
             }
             
@@ -158,6 +158,21 @@ struct LocalVideoView: View {
             }
             
         }.accessibilityIgnoresInvertColors(true)
+    }
+    
+    var avatarView: some View {
+        VStack(alignment: .center, spacing: 5) {
+            CompositeAvatar(
+                displayName: $viewModel.displayName,
+                avatarImage: Binding.constant(
+                    avatarManager.localParticipantViewData?.avatarImage
+                ),
+                backgroundColor: Color(UIColor.compositeColor(.purpleBlue)),
+                isSpeaking: false,
+                avatarSize: viewType.avatarSize,
+                fontSize: viewType.initialFontSize
+            )
+        }
     }
     
     var cameraSwitchButton: some View {

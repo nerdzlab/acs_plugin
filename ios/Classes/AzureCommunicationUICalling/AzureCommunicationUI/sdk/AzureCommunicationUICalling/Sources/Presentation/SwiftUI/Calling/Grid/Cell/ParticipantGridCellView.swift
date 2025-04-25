@@ -22,9 +22,6 @@ struct ParticipantGridCellView: View {
 #if DEBUG
         let _ = Self._printChanges()
 #endif
-        //MTODO
-        //need to add logic to display emoji
-        
         Group {
             GeometryReader { geometry in
                 ZStack {

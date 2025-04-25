@@ -333,6 +333,7 @@ public struct LocalUserState {
     let noiseSuppressionState: NoiseSuppressionState
     let shareScreenState: ShareScreenState
     let raiseHandState: RaiseHandState
+    let selectedReaction: ReactionPayload?
     let meetingLayoutState: MeetingLayoutState
     let initialDisplayName: String?
     let updatedDisplayName: String?
@@ -359,7 +360,8 @@ public struct LocalUserState {
          meetingLayoutState: MeetingLayoutState = MeetingLayoutState(operation: .grid),
          raiseHandState: RaiseHandState = RaiseHandState(operation: .handIsLower),
          shareScreenState: ShareScreenState = ShareScreenState(operation: .screenNotShared),
-         backgroundEffectsState: BackgroundEffectsState = BackgroundEffectsState(operation: .off, effect: .none)
+         backgroundEffectsState: BackgroundEffectsState = BackgroundEffectsState(operation: .off, effect: .none),
+         selectedReaction: ReactionPayload? = nil
     ) {
         self.cameraState = cameraState
         self.noiseSuppressionState = noiseSuppressionState
@@ -376,5 +378,6 @@ public struct LocalUserState {
         self.raiseHandState = raiseHandState
         self.shareScreenState = shareScreenState
         self.backgroundEffectsState = backgroundEffectsState
+        self.selectedReaction = selectedReaction
     }
 }

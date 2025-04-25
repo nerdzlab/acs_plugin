@@ -34,6 +34,8 @@ extension Reducer where State == LocalUserState,
         var incomingAudioStatus = localUserState.incomingAudioState.operation
         var meetingLayoutStatus = localUserState.meetingLayoutState.operation
         
+        var selectedReaction = localUserState.selectedReaction
+        
         var raiseHandStatus = localUserState.raiseHandState.operation
         var raiseHandError = localUserState.raiseHandState.error
         var shareScreenStatus = localUserState.shareScreenState.operation
@@ -136,7 +138,9 @@ extension Reducer where State == LocalUserState,
             backgroundEffectsSelectedType = .none
             backgroundEffectsError = error
         case .sendReaction(let reaction):
-            break
+            selectedReaction = ReactionPayload(reaction: reaction, receivedOn: Date())
+        case .resetLocalUserReaction:
+            selectedReaction = nil
         }
 
         let cameraState = LocalUserState.CameraState(operation: cameraStatus,
@@ -174,7 +178,8 @@ extension Reducer where State == LocalUserState,
                               meetingLayoutState: meetingLayoutState,
                               raiseHandState: raiseHandState,
                               shareScreenState: shareScreenState,
-                              backgroundEffectsState: backgroundEffectsState
+                              backgroundEffectsState: backgroundEffectsState,
+                              selectedReaction: selectedReaction
         )
     }
 }
