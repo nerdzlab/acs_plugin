@@ -12,10 +12,14 @@ class LocalVideoViewModel: ObservableObject {
 
     @Published var isPreviewEnable: Bool
     @Published var localVideoStreamId: String?
+    @Published var selectedReaction: ReactionPayload?
     @Published var displayName: String?
     @Published var isMuted = false
     @Published var cameraOperationalStatus: LocalUserState.CameraOperationalStatus = .off
     @Published var isInPip = false
+    
+    // A single timer for reaction removal
+    private var reactionTimer: Timer?
     
     let localizationProvider: LocalizationProviderProtocol
 
@@ -72,6 +76,12 @@ class LocalVideoViewModel: ObservableObject {
         if cameraOperationalStatus != localUserState.cameraState.operation {
             cameraOperationalStatus = localUserState.cameraState.operation
         }
+        
+        if selectedReaction != localUserState.selectedReaction {
+            selectedReaction = localUserState.selectedReaction
+            
+            updateReactionTimer(reactionPayload: selectedReaction)
+        }
 
         cameraSwitchButtonPipViewModel.update(isDisabled: localUserState.cameraState.device == .switching)
         cameraSwitchButtonPipViewModel.update(accessibilityLabel: localUserState.cameraState.device == .front
@@ -89,5 +99,36 @@ class LocalVideoViewModel: ObservableObject {
         }
 
         isInPip = visibilityState.currentStatus == .pipModeEntered
+    }
+    
+    func updateReactionTimer(reactionPayload: ReactionPayload?) {
+        // If a reaction exists, invalidate the previous timer
+        reactionTimer?.invalidate()
+        
+        guard let reactionPayload = reactionPayload else {
+            return
+        }
+        
+        guard let receivedOn = reactionPayload.receivedOn else {
+            return
+        }
+        
+        // Calculate the remaining time until the reaction should end
+        let currentTime = Date()
+        
+        // Calculate the duration between receivedOn and the current time
+        let timeRemaining = receivedOn.addingTimeInterval(3.0).timeIntervalSince(currentTime)
+        
+        // If the timeRemaining is positive, start the timer; otherwise, clear the reaction immediately
+        if timeRemaining > 0 {
+            // Start a new timer with dynamic duration
+            reactionTimer = Timer.scheduledTimer(withTimeInterval: timeRemaining, repeats: false) { [weak self] _ in
+                self?.dispatch(.localUserAction(.resetLocalUserReaction))
+            }
+        } else {
+            dispatch(.localUserAction(.resetLocalUserReaction))
+            
+            ///Need send event to update participant list to set reaction to nill
+        }
     }
 }

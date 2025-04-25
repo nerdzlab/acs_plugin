@@ -135,6 +135,7 @@ private func handleLocalUserAction(_ action: LocalUserAction,
             .raiseHandSucceeded,
             .lowerHandSucceeded,
             .backgroundEffectSetFailed,
+            .resetLocalUserReaction,
             .participantRoleChanged:
         break
     }

@@ -21,7 +21,7 @@ struct ParticipantGridCellVideoView: View {
     @Binding var isPinned: Bool
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
     @State var show = true
-    
+        
     var body: some View {
 #if DEBUG
         let _ = Self._printChanges()
@@ -53,6 +53,11 @@ struct ParticipantGridCellVideoView: View {
                 .onTapGesture {
                     onUserClicked()
                 }
+            
+            // Reaction overlay
+            if let reaction = selectedReaction {
+                ReactionOverlayView(selectedReaction: reaction)
+            }
 
         }.overlay(
             isHandRaised ? RoundedRectangle(cornerRadius: 12)

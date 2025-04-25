@@ -154,9 +154,8 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         
         if self.selectedReaction != participantModel.selectedReaction {
             self.selectedReaction = participantModel.selectedReaction
+            updateReactionTimer(reactionPayload: selectedReaction)
         }
-        
-        updateReactionTimer(reactionPayload: selectedReaction)
     }
     
     func updateReactionTimer(reactionPayload: ReactionPayload?) {

@@ -22,30 +22,35 @@ struct ParticipantGridCellView: View {
 #if DEBUG
         let _ = Self._printChanges()
 #endif
-        //MTODO
-        //need to add logic to display emoji
-        
         Group {
             GeometryReader { geometry in
-                if let videoStreamId = displayedVideoStreamId,
-                   let rendererViewInfo = getRendererViewInfo(for: videoStreamId), viewModel.isVideoEnableForLocalUser {
-                    let zoomable = viewModel.videoViewModel?.videoStreamType == .screenSharing
-                    ParticipantGridCellVideoView(videoRendererViewInfo: rendererViewInfo,
-                                                 rendererViewManager: rendererViewManager,
-                                                 zoomable: zoomable, onUserClicked: {
-                        viewModel.onUserClicked()
-                    },
-                                                 isSpeaking: $viewModel.isSpeaking,
-                                                 displayName: $viewModel.displayName,
-                                                 isMuted: $viewModel.isMuted,
-                                                 isHandRaised: $viewModel.isHandRaised, selectedReaction: $viewModel.selectedReaction,
-                                                 isPinned: $viewModel.isPinned)
-                    .id(videoStreamId)
-                    
-                } else {
-                    avatarView
-                        .frame(width: geometry.size.width,
-                               height: geometry.size.height)
+                ZStack {
+                    if let videoStreamId = displayedVideoStreamId,
+                       let rendererViewInfo = getRendererViewInfo(for: videoStreamId),
+                       viewModel.isVideoEnableForLocalUser {
+                        let zoomable = viewModel.videoViewModel?.videoStreamType == .screenSharing
+                        ParticipantGridCellVideoView(
+                            videoRendererViewInfo: rendererViewInfo,
+                            rendererViewManager: rendererViewManager,
+                            zoomable: zoomable,
+                            onUserClicked: {
+                                viewModel.onUserClicked()
+                            },
+                            isSpeaking: $viewModel.isSpeaking,
+                            displayName: $viewModel.displayName,
+                            isMuted: $viewModel.isMuted,
+                            isHandRaised: $viewModel.isHandRaised,
+                            selectedReaction: $viewModel.selectedReaction,
+                            isPinned: $viewModel.isPinned
+                        )
+                        .id(videoStreamId)
+                    } else {
+                        avatarView
+                    }
+
+                    if let reaction = viewModel.selectedReaction {
+                        ReactionOverlayView(selectedReaction: reaction)
+                    }
                 }
             }
             .accessibilityElement(children: .combine)
@@ -147,8 +152,6 @@ struct ParticipantGridCellView: View {
             }
         }
     }
-    
-    
 }
 
 struct ParticipantTitleView: View {
