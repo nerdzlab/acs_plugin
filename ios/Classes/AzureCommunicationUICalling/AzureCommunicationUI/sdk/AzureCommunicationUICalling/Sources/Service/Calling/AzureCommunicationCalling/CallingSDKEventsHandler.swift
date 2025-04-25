@@ -271,12 +271,33 @@ extension CallingSDKEventsHandler: CallDelegate,
             let decoder = JSONDecoder()
             let reactionMessage = try decoder.decode(ReactionMessage.self, from: data)
             
-            for (userId, payload) in reactionMessage {
-                print("🎉 Received \(payload.reaction) from \(userId) at \(payload.receivedOn)")
-            }
+            let participantsList = participantsInfoListSubject.value
+            let updatedList = updateParticipantsList(participantsList, withReaction: reactionMessage)
+            
+            participantsInfoListSubject.send(updatedList)
         } catch {
             print("❌ Failed to decode reaction message: \(error)")
         }
+    }
+    
+    private func updateParticipantsList(
+        _ remoteParticipantsInfoList: [ParticipantInfoModel],
+        withReaction reactionMessage: ReactionMessage
+    ) -> [ParticipantInfoModel] {
+        var updatedList = remoteParticipantsInfoList
+        
+        // Iterate through the reaction message and update the participant's reaction
+        for (userId, payload) in reactionMessage {
+            if let index = updatedList.firstIndex(where: { $0.userIdentifier == userId }) {
+                // Update the participant's reaction
+                var updatedPayload = payload
+                updatedPayload.receivedOn = Date()
+                
+                updatedList[index] = updatedList[index].copy(selectedReaction: updatedPayload)
+            }
+        }
+        
+        return updatedList
     }
     
     func dataChannelReceiver(_ dataChannelReceiver: DataChannelReceiver, didClose args: PropertyChangedEventArgs) {

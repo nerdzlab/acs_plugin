@@ -35,7 +35,7 @@ enum ReactionType: String, Codable, CaseIterable {
     }
 }
 
-struct ReactionPayload: Codable {
+struct ReactionPayload: Codable, Equatable, Hashable {
     let reaction: ReactionType
     var receivedOn: Date?
 }
@@ -47,7 +47,7 @@ struct ParticipantInfoModel: Hashable, Equatable {
     let isSpeaking: Bool
     let isMuted: Bool
     let isHandRaised: Bool
-    var selectedReaction: ReactionType?
+    var selectedReaction: ReactionPayload?
     
     let isPinned: Bool
     let isVideoOnForMe: Bool
@@ -75,7 +75,7 @@ extension ParticipantInfoModel {
         status: ParticipantStatus? = nil,
         screenShareVideoStreamModel: VideoStreamInfoModel? = nil,
         cameraVideoStreamModel: VideoStreamInfoModel? = nil,
-        selectedReaction: ReactionType? = nil
+        selectedReaction: ReactionPayload? = nil
     ) -> ParticipantInfoModel {
         return ParticipantInfoModel(
             displayName: displayName ?? self.displayName,
@@ -93,4 +93,20 @@ extension ParticipantInfoModel {
             cameraVideoStreamModel: cameraVideoStreamModel ?? self.cameraVideoStreamModel
         )
     }
+    
+    static func == (lhs: ParticipantInfoModel, rhs: ParticipantInfoModel) -> Bool {
+            return lhs.displayName == rhs.displayName &&
+                lhs.isSpeaking == rhs.isSpeaking &&
+                lhs.isMuted == rhs.isMuted &&
+                lhs.isHandRaised == rhs.isHandRaised &&
+                lhs.selectedReaction == rhs.selectedReaction &&
+                lhs.isPinned == rhs.isPinned &&
+                lhs.isVideoOnForMe == rhs.isVideoOnForMe &&
+                lhs.avatarColor == rhs.avatarColor &&  // Ensure Color is comparable
+                lhs.isRemoteUser == rhs.isRemoteUser &&
+                lhs.userIdentifier == rhs.userIdentifier &&
+                lhs.status == rhs.status &&
+                lhs.screenShareVideoStreamModel == rhs.screenShareVideoStreamModel &&
+                lhs.cameraVideoStreamModel == rhs.cameraVideoStreamModel
+        }
 }
