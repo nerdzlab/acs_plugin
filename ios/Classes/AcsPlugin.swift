@@ -58,8 +58,8 @@ public class AcsPlugin: NSObject, FlutterPlugin {
             requestCameraPermissions(result: result)
             
         case "initializeRoomCall":
-            if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String, let roomId = arguments["roomId"] as? String {
-                initializeRoomCall(token: token, roomId: roomId, result: result)
+            if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String, let roomId = arguments["roomId"] as? String, let userId = arguments["userId"] as? String {
+                initializeRoomCall(token: token, roomId: roomId, userId: userId, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
@@ -77,13 +77,15 @@ public class AcsPlugin: NSObject, FlutterPlugin {
         callService.requestCameraPermissions(result: result)
     }
     
-    private func initializeRoomCall(token: String, roomId: String, result: @escaping FlutterResult) {
+    private func initializeRoomCall(token: String, roomId: String, userId: String, result: @escaping FlutterResult) {
         guard let credential = try? CommunicationTokenCredential(token: token) else { return  }
         
         let callCompositeOptions = CallCompositeOptions(
             enableMultitasking: true,
             enableSystemPictureInPictureWhenMultitasking: true,
-            displayName: "Yra")
+            displayName: "Yra",
+            userId: CommunicationUserIdentifier(userId)
+        )
         
         let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
         

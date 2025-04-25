@@ -17,6 +17,7 @@ struct ParticipantGridCellVideoView: View {
     @Binding var displayName: String?
     @Binding var isMuted: Bool
     @Binding var isHandRaised: Bool
+    @Binding var selectedReaction: ReactionPayload?
     @Binding var isPinned: Bool
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
     @State var show = true

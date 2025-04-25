@@ -22,6 +22,8 @@ struct ParticipantGridCellView: View {
 #if DEBUG
         let _ = Self._printChanges()
 #endif
+        //MTODO
+        //need to add logic to display emoji
         
         Group {
             GeometryReader { geometry in
@@ -36,7 +38,7 @@ struct ParticipantGridCellView: View {
                                                  isSpeaking: $viewModel.isSpeaking,
                                                  displayName: $viewModel.displayName,
                                                  isMuted: $viewModel.isMuted,
-                                                 isHandRaised: $viewModel.isHandRaised,
+                                                 isHandRaised: $viewModel.isHandRaised, selectedReaction: $viewModel.selectedReaction,
                                                  isPinned: $viewModel.isPinned)
                     .id(videoStreamId)
                     

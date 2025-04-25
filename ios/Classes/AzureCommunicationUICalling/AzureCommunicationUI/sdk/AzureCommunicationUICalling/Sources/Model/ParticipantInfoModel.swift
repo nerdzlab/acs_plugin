@@ -17,11 +17,38 @@ enum ParticipantStatus: Int {
     case ringing
 }
 
+enum ReactionType: String, Codable, CaseIterable {
+    case like
+    case heart
+    case laugh
+    case surprised
+    case applause
+    
+    var emoji: String {
+        switch self {
+        case .like: return "👍"
+        case .heart: return "❤️"
+        case .applause: return "👏"
+        case .laugh: return "😆"
+        case .surprised: return "😲"
+        }
+    }
+}
+
+struct ReactionPayload: Codable, Equatable, Hashable {
+    let reaction: ReactionType
+    var receivedOn: Date?
+}
+
+typealias ReactionMessage = [String: ReactionPayload]
+
 struct ParticipantInfoModel: Hashable, Equatable {
     let displayName: String
     let isSpeaking: Bool
     let isMuted: Bool
     let isHandRaised: Bool
+    var selectedReaction: ReactionPayload?
+    
     let isPinned: Bool
     let isVideoOnForMe: Bool
     let avatarColor: Color
@@ -47,13 +74,15 @@ extension ParticipantInfoModel {
         userIdentifier: String? = nil,
         status: ParticipantStatus? = nil,
         screenShareVideoStreamModel: VideoStreamInfoModel? = nil,
-        cameraVideoStreamModel: VideoStreamInfoModel? = nil
+        cameraVideoStreamModel: VideoStreamInfoModel? = nil,
+        selectedReaction: ReactionPayload? = nil
     ) -> ParticipantInfoModel {
         return ParticipantInfoModel(
             displayName: displayName ?? self.displayName,
             isSpeaking: isSpeaking ?? self.isSpeaking,
             isMuted: isMuted ?? self.isMuted,
             isHandRaised: isHandRaised ?? self.isHandRaised,
+            selectedReaction: selectedReaction ?? self.selectedReaction,
             isPinned: isPinned ?? self.isPinned,
             isVideoOnForMe: isVideoOnForMe ?? self.isVideoOnForMe,
             avatarColor: avatarColor ?? self.avatarColor,
@@ -64,4 +93,20 @@ extension ParticipantInfoModel {
             cameraVideoStreamModel: cameraVideoStreamModel ?? self.cameraVideoStreamModel
         )
     }
+    
+    static func == (lhs: ParticipantInfoModel, rhs: ParticipantInfoModel) -> Bool {
+            return lhs.displayName == rhs.displayName &&
+                lhs.isSpeaking == rhs.isSpeaking &&
+                lhs.isMuted == rhs.isMuted &&
+                lhs.isHandRaised == rhs.isHandRaised &&
+                lhs.selectedReaction == rhs.selectedReaction &&
+                lhs.isPinned == rhs.isPinned &&
+                lhs.isVideoOnForMe == rhs.isVideoOnForMe &&
+                lhs.avatarColor == rhs.avatarColor &&  // Ensure Color is comparable
+                lhs.isRemoteUser == rhs.isRemoteUser &&
+                lhs.userIdentifier == rhs.userIdentifier &&
+                lhs.status == rhs.status &&
+                lhs.screenShareVideoStreamModel == rhs.screenShareVideoStreamModel &&
+                lhs.cameraVideoStreamModel == rhs.cameraVideoStreamModel
+        }
 }

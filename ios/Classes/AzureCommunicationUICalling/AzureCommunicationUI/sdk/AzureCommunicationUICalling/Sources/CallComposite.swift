@@ -112,6 +112,10 @@ public class CallComposite {
         let localDebugInfoManager = debugInfoManager ?? createDebugInfoManager()
         return localDebugInfoManager.getDebugInfo()
     }
+    
+    public var localUserId: String? {
+        return userId?.rawId
+    }
 
     /// Get call state for the Call Composite.
     public var callState: CallState {

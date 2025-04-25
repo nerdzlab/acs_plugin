@@ -94,7 +94,7 @@ protocol CallingSDKWrapperProtocol {
     func lowerHand() async throws
     func raiseHand() async throws
     func setBackgroundEffect(_ effect: LocalUserState.BackgroundEffectType)
-
+    func sendReaction(_ reaction: ReactionType) async throws
     var callingEventsHandler: CallingSDKEventsHandling { get }
     func dispose()
 }

@@ -20,10 +20,10 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
     var participantRoleSubject = PassthroughSubject<ParticipantRoleEnum, Never>()
     var totalParticipantCountSubject = PassthroughSubject<Int, Never>()
     /* <CALL_START_TIME>
-    var callStartTimeSubject = PassthroughSubject<Date, Never>()
-    </CALL_START_TIME> */
+     var callStartTimeSubject = PassthroughSubject<Date, Never>()
+     </CALL_START_TIME> */
     var capabilitiesChangedSubject = PassthroughSubject<CapabilitiesChangedEvent, Never>()
-
+    
     var captionsSupportedSpokenLanguages = CurrentValueSubject<[String], Never>([])
     var captionsSupportedCaptionLanguages = CurrentValueSubject<[String], Never>([])
     var isCaptionsTranslationSupported = CurrentValueSubject<Bool, Never>(false)
@@ -33,15 +33,15 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
     var captionsEnabledChanged = CurrentValueSubject<Bool, Never>(false)
     var captionsTypeChanged = CurrentValueSubject<CallCompositeCaptionsType, Never>(.none)
     var videoEffectError = PassthroughSubject<String, Never>()
-
+    
     // User Facing Diagnostics Subjects
     var networkQualityDiagnosticsSubject = PassthroughSubject<NetworkQualityDiagnosticModel, Never>()
     var networkDiagnosticsSubject = PassthroughSubject<NetworkDiagnosticModel, Never>()
     var mediaDiagnosticsSubject = PassthroughSubject<MediaDiagnosticModel, Never>()
-
+    
     private let logger: Logger
     private var remoteParticipantEventAdapter = RemoteParticipantsEventsAdapter()
-
+    
     private var recordingCallFeature: RecordingCallFeature?
     private var transcriptionCallFeature: TranscriptionCallFeature?
     private var dominantSpeakersCallFeature: DominantSpeakersCallFeature?
@@ -51,14 +51,15 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
     private var communicationCaptions: CommunicationCaptions?
     private var capabilitiesCallFeature: CapabilitiesCallFeature?
     private var raiseHandFeature: RaiseHandCallFeature?
+    private var dataChannelCallFeature: DataChannelCallFeature?
     private var backgroundEffectFeature: LocalVideoEffectsFeature?
-
+    
     private var previousCallingStatus: CallingStatus = .none
     private var remoteParticipants = MappedSequence<String, AzureCommunicationCalling.RemoteParticipant>()
-
+    
     private let communicationCaptionsHandler = CommunicationCaptionsHandler()
     private let teamsCaptionsHandler = TeamsCaptionsHandler()
-
+    
     init(logger: Logger) {
         self.logger = logger
         super.init()
@@ -66,33 +67,33 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         communicationCaptionsHandler.parentHandler = self
         teamsCaptionsHandler.parentHandler = self
     }
-
+    
     func assign(_ recordingCallFeature: RecordingCallFeature) {
         self.recordingCallFeature = recordingCallFeature
         recordingCallFeature.delegate = self
     }
-
+    
     func assign(_ transcriptionCallFeature: TranscriptionCallFeature) {
         self.transcriptionCallFeature = transcriptionCallFeature
         transcriptionCallFeature.delegate = self
     }
-
+    
     func assign(_ dominantSpeakersCallFeature: DominantSpeakersCallFeature) {
         self.dominantSpeakersCallFeature = dominantSpeakersCallFeature
         dominantSpeakersCallFeature.delegate = self
     }
-
+    
     func assign(_ localUserDiagnosticsFeature: LocalUserDiagnosticsCallFeature) {
         self.localUserDiagnosticsFeature = localUserDiagnosticsFeature
         localUserDiagnosticsFeature.mediaDiagnostics.delegate = self
         localUserDiagnosticsFeature.networkDiagnostics.delegate = self
     }
-
+    
     func assign(_ captionsFeature: CaptionsCallFeature) {
         self.captionsFeature = captionsFeature
         captionsFeature.delegate = self
     }
-
+    
     func assign(_ capabilitiesCallFeature: CapabilitiesCallFeature) {
         self.capabilitiesCallFeature = capabilitiesCallFeature
         self.capabilitiesCallFeature?.delegate = self
@@ -103,11 +104,16 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         raiseHandFeature.delegate = self
     }
     
+    func assign(_ dataChannelCallFeature: DataChannelCallFeature) {
+        self.dataChannelCallFeature = dataChannelCallFeature
+        dataChannelCallFeature.delegate = self
+    }
+    
     func assign(_ localVideoEffectsFeature: LocalVideoEffectsFeature?) {
         self.backgroundEffectFeature = localVideoEffectsFeature
         self.backgroundEffectFeature?.delegate = self
     }
-
+    
     func setupProperties() {
         participantsInfoListSubject.value.removeAll()
         recordingCallFeature = nil
@@ -121,7 +127,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         raiseHandFeature = nil
         backgroundEffectFeature = nil
     }
-
+    
     private func setupRemoteParticipantEventsAdapter() {
         let participantUpdate: ((AzureCommunicationCalling.RemoteParticipant)
                                 -> Void) = { [weak self] remoteParticipant in
@@ -131,7 +137,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
             let userIdentifier = remoteParticipant.identifier.rawId
             self.updateRemoteParticipant(userIdentifier: userIdentifier)
         }
-
+        
         remoteParticipantEventAdapter.onIsMutedChanged = participantUpdate
         remoteParticipantEventAdapter.onVideoStreamsUpdated = participantUpdate
         remoteParticipantEventAdapter.onStateChanged = participantUpdate
@@ -145,7 +151,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
             self.updateRemoteParticipant(userIdentifier: userIdentifier)
         }
     }
-
+    
     private func removeRemoteParticipants(
         _ remoteParticipants: [AzureCommunicationCalling.RemoteParticipant]
     ) {
@@ -155,26 +161,26 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         }
         removeRemoteParticipantsInfoModel(remoteParticipants)
     }
-
+    
     private func removeRemoteParticipantsInfoModel(
         _ remoteParticipants: [AzureCommunicationCalling.RemoteParticipant]
     ) {
         guard !remoteParticipants.isEmpty
         else { return }
-
+        
         var remoteParticipantsInfoList = participantsInfoListSubject.value
         remoteParticipantsInfoList =
-            remoteParticipantsInfoList.filter { infoModel in
-                !remoteParticipants.contains(where: {
-                    $0.identifier.rawId == infoModel.userIdentifier
-                })
-            }
+        remoteParticipantsInfoList.filter { infoModel in
+            !remoteParticipants.contains(where: {
+                $0.identifier.rawId == infoModel.userIdentifier
+            })
+        }
         
         let updatedList = updateHandRaisedParticipants(remoteParticipantsInfoList)
         
         participantsInfoListSubject.send(updatedList)
     }
-
+    
     private func addRemoteParticipants(
         _ remoteParticipants: [AzureCommunicationCalling.RemoteParticipant]
     ) {
@@ -194,7 +200,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         
         participantsInfoListSubject.send(updatedList)
     }
-
+    
     private func updateRemoteParticipant(userIdentifier: String) {
         var remoteParticipantsInfoList = participantsInfoListSubject.value
         
@@ -206,7 +212,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
             remoteParticipantsInfoList[index] = newInfoModel
             
             let updatedList = updateHandRaisedParticipants(remoteParticipantsInfoList)
-
+            
             participantsInfoListSubject.send(updatedList)
         }
     }
@@ -215,7 +221,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         let raisedHandsIdentifiers = raiseHandFeature?.raisedHands.map { $0.identifier.rawId } ?? []
         
         var updatedList = remoteParticipantsInfoList
-
+        
         for (index, participant) in updatedList.enumerated() {
             let isHandRaised = raisedHandsIdentifiers.contains(participant.userIdentifier)
             
@@ -226,29 +232,82 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         
         return updatedList
     }
-
+    
     private func wasCallConnected() -> Bool {
         return previousCallingStatus == .connected ||
-              previousCallingStatus == .localHold ||
-              previousCallingStatus == .remoteHold
+        previousCallingStatus == .localHold ||
+        previousCallingStatus == .remoteHold
     }
 }
 
 extension CallingSDKEventsHandler: CallDelegate,
-    RecordingCallFeatureDelegate,
-    TranscriptionCallFeatureDelegate,
-    DominantSpeakersCallFeatureDelegate,
-    MediaDiagnosticsDelegate,
-    NetworkDiagnosticsDelegate,
-    CaptionsCallFeatureDelegate,
-    CapabilitiesCallFeatureDelegate,
-    RaiseHandCallFeatureDelegate,
-    LocalVideoEffectsFeatureDelegate
+                                   RecordingCallFeatureDelegate,
+                                   TranscriptionCallFeatureDelegate,
+                                   DominantSpeakersCallFeatureDelegate,
+                                   MediaDiagnosticsDelegate,
+                                   NetworkDiagnosticsDelegate,
+                                   CaptionsCallFeatureDelegate,
+                                   CapabilitiesCallFeatureDelegate,
+                                   RaiseHandCallFeatureDelegate,
+                                   LocalVideoEffectsFeatureDelegate,
+                                   DataChannelCallFeatureDelegate,
+                                   DataChannelReceiverDelegate
 {
+    
+    func dataChannelCallFeature(_ dataChannelCallFeature: DataChannelCallFeature, didCreateReceiver args: DataChannelReceiverCreatedEventArgs) {
+        let receiver = args.receiver
+        receiver.delegate = self
+    }
+    
+    func dataChannelReceiver(_ dataChannelReceiver: DataChannelReceiver, didReceiveMessage args: PropertyChangedEventArgs) {
+        guard let message = dataChannelReceiver.receiveMessage()else {
+                print("No data in message")
+                return
+            }
+        
+        let data = message.data
+                
+        do {
+            let decoder = JSONDecoder()
+            let reactionMessage = try decoder.decode(ReactionMessage.self, from: data)
+            
+            let participantsList = participantsInfoListSubject.value
+            let updatedList = updateParticipantsList(participantsList, withReaction: reactionMessage)
+            
+            participantsInfoListSubject.send(updatedList)
+        } catch {
+            print("❌ Failed to decode reaction message: \(error)")
+        }
+    }
+    
+    private func updateParticipantsList(
+        _ remoteParticipantsInfoList: [ParticipantInfoModel],
+        withReaction reactionMessage: ReactionMessage
+    ) -> [ParticipantInfoModel] {
+        var updatedList = remoteParticipantsInfoList
+        
+        // Iterate through the reaction message and update the participant's reaction
+        for (userId, payload) in reactionMessage {
+            if let index = updatedList.firstIndex(where: { $0.userIdentifier == userId }) {
+                // Update the participant's reaction
+                var updatedPayload = payload
+                updatedPayload.receivedOn = Date()
+                
+                updatedList[index] = updatedList[index].copy(selectedReaction: updatedPayload)
+            }
+        }
+        
+        return updatedList
+    }
+    
+    func dataChannelReceiver(_ dataChannelReceiver: DataChannelReceiver, didClose args: PropertyChangedEventArgs) {
+        print("\(dataChannelReceiver.channelId) closed")
+    }
+    
     func call(_ call: Call, didChangeId args: PropertyChangedEventArgs) {
         callIdSubject.send(call.id)
     }
-
+    
     func call(_ call: Call, didUpdateRemoteParticipant args: ParticipantsUpdatedEventArgs) {
         if !args.removedParticipants.isEmpty {
             removeRemoteParticipants(args.removedParticipants)
@@ -257,17 +316,17 @@ extension CallingSDKEventsHandler: CallDelegate,
             addRemoteParticipants(args.addedParticipants)
         }
     }
-
+    
     /* <CALL_START_TIME>
-    func call(_ call: Call, didUpdateStartTime args: PropertyChangedEventArgs) {
-        callStartTimeSubject.send(call.startTime)
-    }
-    </CALL_START_TIME> */
-
+     func call(_ call: Call, didUpdateStartTime args: PropertyChangedEventArgs) {
+     callStartTimeSubject.send(call.startTime)
+     }
+     </CALL_START_TIME> */
+    
     func call(_ call: Call, didChangeState args: PropertyChangedEventArgs) {
         onStateChanged(call: call)
     }
-
+    
     func onStateChanged(call: Call) {
         callIdSubject.send(call.id)
         let currentStatus = call.state.toCallingStatus()
@@ -291,7 +350,7 @@ extension CallingSDKEventsHandler: CallDelegate,
                             .supportedSpokenLanguages ?? [])
                         self.captionsTypeChanged.send(.communication)
                     }
-
+                    
                     if value?.type == CaptionsType.teamsCaptions {
                         // teams captions
                         self.teamsCaptions = value as? TeamsCaptions
@@ -318,19 +377,19 @@ extension CallingSDKEventsHandler: CallDelegate,
         }
         self.previousCallingStatus = currentStatus
     }
-
+    
     func recordingCallFeature(_ recordingCallFeature: RecordingCallFeature,
                               didChangeRecordingState args: PropertyChangedEventArgs) {
         let newRecordingActive = recordingCallFeature.isRecordingActive
         isRecordingActiveSubject.send(newRecordingActive)
     }
-
+    
     func transcriptionCallFeature(_ transcriptionCallFeature: TranscriptionCallFeature,
                                   didChangeTranscriptionState args: PropertyChangedEventArgs) {
         let newTranscriptionActive = transcriptionCallFeature.isTranscriptionActive
         isTranscriptionActiveSubject.send(newTranscriptionActive)
     }
-
+    
     func dominantSpeakersCallFeature(_ dominantSpeakersCallFeature: DominantSpeakersCallFeature,
                                      didChangeDominantSpeakers args: PropertyChangedEventArgs) {
         let dominantSpeakersInfo = dominantSpeakersCallFeature.dominantSpeakersInfo
@@ -341,28 +400,28 @@ extension CallingSDKEventsHandler: CallDelegate,
         }
         dominantSpeakersSubject.send(speakers)
     }
-
+    
     func call(_ call: Call, didChangeMuteState args: PropertyChangedEventArgs) {
         isLocalUserMutedSubject.send(call.isOutgoingAudioMuted)
     }
-
+    
     func call(_ call: Call, didChangeRole args: PropertyChangedEventArgs) {
         let role = call.callParticipantRole.toParticipantRole()
         participantRoleSubject.send(role)
     }
-
+    
     func call(_ call: Call, didChangeTotalParticipantCount args: PropertyChangedEventArgs) {
         // substract local participant from total participantCount
         totalParticipantCountSubject.send(Int(call.totalParticipantCount) - 1)
     }
-
+    
     // MARK: CapabilitiesDelegate
     func capabilitiesCallFeature(_ capabilitiesCallFeature: CapabilitiesCallFeature,
                                  didChangeCapabilities args: CapabilitiesChangedEventArgs) {
         let capabilitiesChangedEvent = args.toCapabilitiesChangedEvent()
         self.capabilitiesChangedSubject.send(capabilitiesChangedEvent)
     }
-
+    
     // MARK: NetworkDiagnosticsDelegate
     func networkDiagnostics(_ networkDiagnostics: NetworkDiagnostics,
                             didChangeNetworkSendQuality args: DiagnosticQualityChangedEventArgs) {
@@ -372,7 +431,7 @@ extension CallingSDKEventsHandler: CallDelegate,
         )
         self.networkQualityDiagnosticsSubject.send(model)
     }
-
+    
     func networkDiagnostics(_ networkDiagnostics: NetworkDiagnostics,
                             didChangeNetworkReconnectionQuality args: DiagnosticQualityChangedEventArgs) {
         let model = NetworkQualityDiagnosticModel(
@@ -381,7 +440,7 @@ extension CallingSDKEventsHandler: CallDelegate,
         )
         self.networkQualityDiagnosticsSubject.send(model)
     }
-
+    
     func networkDiagnostics(_ networkDiagnostics: NetworkDiagnostics,
                             didChangeNetworkReceiveQuality args: DiagnosticQualityChangedEventArgs) {
         let model = NetworkQualityDiagnosticModel(
@@ -390,98 +449,98 @@ extension CallingSDKEventsHandler: CallDelegate,
         )
         self.networkQualityDiagnosticsSubject.send(model)
     }
-
+    
     func networkDiagnostics(_ networkDiagnostics: NetworkDiagnostics,
                             didChangeIsNetworkUnavailable args: DiagnosticFlagChangedEventArgs) {
         let model = NetworkDiagnosticModel(diagnostic: .networkUnavailable, value: args.value)
         self.networkDiagnosticsSubject.send(model)
     }
-
+    
     func networkDiagnostics(_ networkDiagnostics: NetworkDiagnostics,
                             didChangeIsNetworkRelaysUnreachable args: DiagnosticFlagChangedEventArgs) {
         let model = NetworkDiagnosticModel(diagnostic: .networkRelaysUnreachable, value: args.value)
         self.networkDiagnosticsSubject.send(model)
     }
-
+    
     // MARK: MediaDiagnosticsDelegate
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsSpeakerBusy args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .speakerBusy, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsCameraFrozen args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .cameraFrozen, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsSpeakerMuted args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .speakerMuted, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsMicrophoneBusy args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .microphoneBusy, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsCameraStartFailed args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .cameraStartFailed, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsSpeakerVolumeZero args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .speakerVolumeZero, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsSpeakerNotFunctioning args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .speakerNotFunctioning, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsCameraPermissionDenied args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .cameraPermissionDenied, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsMicrophoneNotFunctioning args: DiagnosticFlagChangedEventArgs) {
         // .microphoneNotFunctioning is unhandled for now because there is a false positive
         // event from SDK that is fixed, but pending release.
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsCameraStartTimedOut args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .cameraStartTimedOut, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsMicrophoneMutedUnexpectedly args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .microphoneMutedUnexpectedly, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsNoSpeakerDevicesAvailable args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .noSpeakerDevicesAvailable, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsNoMicrophoneDevicesAvailable args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .noMicrophoneDevicesAvailable, value: args.value)
         self.mediaDiagnosticsSubject.send(model)
     }
-
+    
     func mediaDiagnostics(_ mediaDiagnostics: MediaDiagnostics,
                           didChangeIsSpeakingWhileMicrophoneIsMuted args: DiagnosticFlagChangedEventArgs) {
         let model = MediaDiagnosticModel(diagnostic: .speakingWhileMicrophoneIsMuted, value: args.value)
@@ -492,12 +551,12 @@ extension CallingSDKEventsHandler: CallDelegate,
         print("Participant \(args.identifier) raised their hand.")
         
         let identifier = args.identifier.rawId
-            let currentList = participantsInfoListSubject.value
-
-            if let participant = currentList.first(where: { $0.userIdentifier == identifier }),
-               participant.isRemoteUser == true {
-                AudioPlayerManager.shared.playRaiseHandSound()
-            }
+        let currentList = participantsInfoListSubject.value
+        
+        if let participant = currentList.first(where: { $0.userIdentifier == identifier }),
+           participant.isRemoteUser == true {
+            AudioPlayerManager.shared.playRaiseHandSound()
+        }
         
         updateHandRaisedStatus(for: args.identifier.rawId, isRaised: true)
     }
@@ -509,7 +568,7 @@ extension CallingSDKEventsHandler: CallDelegate,
     }
     
     private func updateHandRaisedStatus(for identifier: String, isRaised: Bool) {
-        var currentList = participantsInfoListSubject.value 
+        var currentList = participantsInfoListSubject.value
         
         if let index = currentList.firstIndex(where: { $0.userIdentifier == identifier }) {
             let participant = currentList[index]
@@ -523,11 +582,11 @@ extension CallingSDKEventsHandler: CallDelegate,
     func localVideoEffectsFeature(_ videoEffectsLocalVideoStreamFeature: LocalVideoEffectsFeature, didEnableVideoEffect args: VideoEffectEnabledEventArgs) {
         print("Video Effect Enabled, VideoEffectName: \(args.videoEffectName)")
     }
-
+    
     func localVideoEffectsFeature(_ videoEffectsLocalVideoStreamFeature: LocalVideoEffectsFeature, didDisableVideoEffect args: VideoEffectDisabledEventArgs) {
         print("Video Effect Disabled, VideoEffectName: \(args.videoEffectName)")
     }
-
+    
     func localVideoEffectsFeature(_ videoEffectsLocalVideoStreamFeature: LocalVideoEffectsFeature, didReceiveVideoEffectError args: VideoEffectErrorEventArgs) {
         videoEffectError.send("Video Effect Error, VideoEffectName: \(args.videoEffectName), Code: \(args.code), Message: \(args.message)")
         
@@ -537,44 +596,44 @@ extension CallingSDKEventsHandler: CallDelegate,
 
 private class CommunicationCaptionsHandler: NSObject, CommunicationCaptionsDelegate {
     weak var parentHandler: CallingSDKEventsHandler?
-
+    
     func communicationCaptions(_ communicationCaptions: CommunicationCaptions,
                                didReceiveCaptions: CommunicationCaptionsReceivedEventArgs) {
         parentHandler?.captionsReceived.send(didReceiveCaptions.toCallCompositeCaptionsData())
     }
-
+    
     func communicationCaptions(_ communicationCaptions: CommunicationCaptions,
                                didChangeActiveSpokenLanguageState args: PropertyChangedEventArgs) {
         let spokenLanguage = communicationCaptions.activeSpokenLanguage
         parentHandler?.activeSpokenLanguageChanged.send(spokenLanguage)
     }
-
-   func communicationCaptions(_ communicationCaptions: CommunicationCaptions,
-                              didChangeCaptionsEnabledState args: PropertyChangedEventArgs) {
+    
+    func communicationCaptions(_ communicationCaptions: CommunicationCaptions,
+                               didChangeCaptionsEnabledState args: PropertyChangedEventArgs) {
         let isCaptionsEnabled = communicationCaptions.isEnabled
-       parentHandler?.captionsEnabledChanged.send(isCaptionsEnabled)
+        parentHandler?.captionsEnabledChanged.send(isCaptionsEnabled)
     }
 }
 
 private class TeamsCaptionsHandler: NSObject, TeamsCaptionsDelegate {
     weak var parentHandler: CallingSDKEventsHandler?
-
+    
     func teamsCaptions(_ teamsCaptions: TeamsCaptions,
                        didChangeCaptionsEnabledState args: PropertyChangedEventArgs) {
         parentHandler?.captionsEnabledChanged.send(teamsCaptions.isEnabled)
     }
-
+    
     func teamsCaptions(_ teamsCaptions: TeamsCaptions,
                        didChangeActiveSpokenLanguageState args: PropertyChangedEventArgs) {
         let spokenLanguage = teamsCaptions.activeSpokenLanguage
         parentHandler?.activeSpokenLanguageChanged.send(spokenLanguage)
     }
-
+    
     func teamsCaptions(_ teamsCaptions: TeamsCaptions,
                        didReceiveCaptions args: TeamsCaptionsReceivedEventArgs) {
         parentHandler?.captionsReceived.send(args.toCallCompositeCaptionsData())
     }
-
+    
     func teamsCaptions(_ teamsCaptions: TeamsCaptions,
                        didChangeActiveCaptionLanguageState args: PropertyChangedEventArgs) {
         let captionsLanguage = teamsCaptions.activeCaptionLanguage

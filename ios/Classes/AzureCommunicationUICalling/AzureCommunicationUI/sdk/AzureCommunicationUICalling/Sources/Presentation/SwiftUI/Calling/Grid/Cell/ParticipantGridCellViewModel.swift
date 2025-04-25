@@ -15,9 +15,9 @@ struct ParticipantVideoViewInfoModel {
 class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     private let localizationProvider: LocalizationProviderProtocol
     private let accessibilityProvider: AccessibilityProviderProtocol
-
+    
     let id = UUID()
-
+    
     @Published var videoViewModel: ParticipantVideoViewInfoModel?
     @Published var accessibilityLabel: String = ""
     @Published var displayName: String?
@@ -29,6 +29,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     @Published var isPinned: Bool
     @Published var isVideoEnableForLocalUser: Bool
     @Published var isHandRaised: Bool
+    @Published var selectedReaction: ReactionPayload?
     
     @State var avatarColor: Color
     
@@ -40,7 +41,10 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     private var callType: CompositeCallType
     
     let onUserClicked: () -> Void
-
+    
+    // A single timer for reaction removal
+    private var reactionTimer: Timer?
+    
     init(localizationProvider: LocalizationProviderProtocol,
          accessibilityProvider: AccessibilityProviderProtocol,
          participantModel: ParticipantInfoModel,
@@ -74,8 +78,13 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         self.isHandRaised = participantModel.isHandRaised
         self.videoViewModel = getDisplayingVideoStreamModel(participantModel)
         self.accessibilityLabel = getAccessibilityLabel(participantModel: participantModel)
+        self.selectedReaction = participantModel.selectedReaction
+        
+        if self.selectedReaction != nil {
+            updateReactionTimer(reactionPayload: selectedReaction!)
+        }
     }
-
+    
     func update(participantModel: ParticipantInfoModel) {
         self.participantIdentifier = participantModel.userIdentifier
         let videoViewModel = getDisplayingVideoStreamModel(participantModel)
@@ -91,9 +100,9 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
             }
             self.isScreenSharing = newIsScreenSharing
             self.videoViewModel = ParticipantVideoViewInfoModel(videoStreamType: videoViewModel.videoStreamType,
-                                                 videoStreamId: videoViewModel.videoStreamId)
+                                                                videoStreamId: videoViewModel.videoStreamId)
         }
-
+        
         if self.participantName != participantModel.displayName ||
             self.isMuted != participantModel.isMuted ||
             self.isSpeaking != participantModel.isSpeaking ||
@@ -101,7 +110,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
             self.isHold != (participantModel.status == .hold) {
             self.accessibilityLabel = getAccessibilityLabel(participantModel: participantModel)
         }
-
+        
         if self.participantStatus != participantModel.status {
             self.participantStatus = participantModel.status
             updateParticipantNameIfNeeded(with: renderDisplayName)
@@ -111,17 +120,17 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
             self.participantName = participantModel.displayName
             updateParticipantNameIfNeeded(with: renderDisplayName)
         }
-
+        
         if self.isSpeaking != participantModel.isSpeaking {
             self.isSpeaking = participantModel.isSpeaking
         }
-
+        
         if self.isMuted != participantModel.isMuted {
             self.isMuted = participantModel.isMuted && participantModel.status == .connected
         }
-
+        
         let isOnHold = participantModel.status == .hold
-
+        
         if self.isHold != isOnHold {
             self.isHold = isOnHold
             postParticipantStatusAccessibilityAnnouncements(isHold: self.isHold, participantModel: participantModel)
@@ -142,8 +151,46 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         if self.isHandRaised != participantModel.isHandRaised {
             self.isHandRaised = participantModel.isHandRaised
         }
+        
+        if self.selectedReaction != participantModel.selectedReaction {
+            self.selectedReaction = participantModel.selectedReaction
+        }
+        
+        updateReactionTimer(reactionPayload: selectedReaction)
     }
-
+    
+    func updateReactionTimer(reactionPayload: ReactionPayload?) {
+        // If a reaction exists, invalidate the previous timer
+        reactionTimer?.invalidate()
+        
+        guard let reactionPayload = reactionPayload else {
+            return
+        }
+        
+        guard let receivedOn = reactionPayload.receivedOn else {
+            return
+        }
+        
+        // Calculate the remaining time until the reaction should end
+        let currentTime = Date()
+        
+        // Calculate the duration between receivedOn and the current time
+        let timeRemaining = receivedOn.addingTimeInterval(3.0).timeIntervalSince(currentTime)
+        
+        // If the timeRemaining is positive, start the timer; otherwise, clear the reaction immediately
+        if timeRemaining > 0 {
+            // Start a new timer with dynamic duration
+            reactionTimer = Timer.scheduledTimer(withTimeInterval: timeRemaining, repeats: false) { _ in
+                self.selectedReaction = nil // Clear the reaction when the time expires
+            }
+        } else {
+            // If the reaction's end time has already passed, clear it immediately
+            self.selectedReaction = nil
+            
+            ///Need send event to update participant list to set reaction to nill
+        }
+    }
+    
     func updateParticipantNameIfNeeded(with renderDisplayName: String?) {
         let isDisplayConnecting = ParticipantGridCellViewModel.isOutgoingCallDialingInProgress(
             callType: callType,
@@ -159,7 +206,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         guard renderDisplayName != displayName else {
             return
         }
-
+        
         let name: String
         if let renderDisplayName = renderDisplayName {
             let isRendererNameEmpty = renderDisplayName.trimmingCharacters(in: .whitespaces).isEmpty
@@ -170,30 +217,30 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         self.displayName = name
         self.avatarDisplayName = displayName
     }
-
+    
     func getOnHoldString() -> String {
         localizationProvider.getLocalizedString(.onHold)
     }
-
+    
     private func getAccessibilityLabel(participantModel: ParticipantInfoModel) -> String {
         let status = participantModel.status == .hold ? getOnHoldString() :
         localizationProvider.getLocalizedString(participantModel.isSpeaking ? .speaking :
                                                     participantModel.isMuted ? .muted : .unmuted)
-
+        
         let videoStatus = (videoViewModel?.videoStreamId?.isEmpty ?? true) ?
         localizationProvider.getLocalizedString(.videoOff) :
         localizationProvider.getLocalizedString(.videoOn)
         return localizationProvider.getLocalizedString(.participantInformationAccessibilityLable,
                                                        participantModel.displayName, status, videoStatus)
     }
-
+    
     private func getDisplayingVideoStreamModel(_ participantModel: ParticipantInfoModel)
     -> ParticipantVideoViewInfoModel {
         let screenShareVideoStreamIdentifier = participantModel.screenShareVideoStreamModel?.videoStreamIdentifier
         let cameraVideoStreamIdentifier = isCameraEnabled ?
         participantModel.cameraVideoStreamModel?.videoStreamIdentifier :
         nil
-
+        
         let screenShareVideoStreamType = participantModel.screenShareVideoStreamModel?.mediaStreamType
         let cameraVideoStreamType = participantModel.cameraVideoStreamModel?.mediaStreamType
         return screenShareVideoStreamIdentifier != nil ?
@@ -202,21 +249,21 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
         ParticipantVideoViewInfoModel(videoStreamType: cameraVideoStreamType,
                                       videoStreamId: cameraVideoStreamIdentifier)
     }
-
+    
     private static func isOutgoingCallDialingInProgress(callType: CompositeCallType,
                                                         participantStatus: ParticipantStatus?) -> Bool {
         return callType == .oneToNOutgoing &&
-               (participantStatus == nil || participantStatus == .connecting || participantStatus == .ringing)
+        (participantStatus == nil || participantStatus == .connecting || participantStatus == .ringing)
     }
-
+    
     private func postParticipantStatusAccessibilityAnnouncements(isHold: Bool, participantModel: ParticipantInfoModel) {
         let holdResumeAccessibilityAnnouncement = isHold ?
-            localizationProvider.getLocalizedString(.onHoldAccessibilityLabel, participantModel.displayName) :
-            localizationProvider.getLocalizedString(.participantResumeAccessibilityLabel, participantModel.displayName)
+        localizationProvider.getLocalizedString(.onHoldAccessibilityLabel, participantModel.displayName) :
+        localizationProvider.getLocalizedString(.participantResumeAccessibilityLabel, participantModel.displayName)
         accessibilityProvider.postQueuedAnnouncement(holdResumeAccessibilityAnnouncement)
     }
     
     static func ==(lhs: ParticipantGridCellViewModel, rhs: ParticipantGridCellViewModel) -> Bool {
         return lhs.participantIdentifier == rhs.participantIdentifier // or use participantIdentifier if it's more suitable
-        }
+    }
 }

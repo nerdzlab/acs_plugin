@@ -17,6 +17,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
     private let onLowerHand: () -> Void
     private let onEffects: () -> Void
     private let onLayoutOptions: () -> Void
+    private let onReaction: (ReactionType) -> Void
     
     private(set) var chatButtonViewModel: IconWithLabelButtonViewModel<ChatButtonState>!
     private(set) var participantsButtonViewModel: IconWithLabelButtonViewModel<ParticipantsButtonState>!
@@ -39,6 +40,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
         onLowerHand: @escaping () -> Void,
         onEffects: @escaping () -> Void,
         onLayoutOptions: @escaping () -> Void,
+        onReaction: @escaping (ReactionType) -> Void,
         isDisplayed: Bool
     ) {
         self.localizationProvider = localizationProvider
@@ -51,6 +53,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
         self.onLowerHand = onLowerHand
         self.onEffects = onEffects
         self.onLayoutOptions = onLayoutOptions
+        self.onReaction = onReaction
         
         raiseHandButtonViewModel = IconWithLabelButtonViewModel(
             selectedButtonState: localUserState.raiseHandState.operation == .handIsLower ? RaiseHandButtonState.raiseHand : RaiseHandButtonState.lowerHand,
@@ -200,5 +203,9 @@ internal class MeetingOptionsViewModel: ObservableObject {
             action: { [weak self] in
                 self?.onEffects()
             })
+    }
+    
+    func sendReaction(_ reaction: ReactionType) {
+        onReaction(reaction)
     }
 }

@@ -40,6 +40,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   Future<void> initializeRoomCall({
     required String token,
     required String roomId,
+    required String userId,
   }) {
     throw UnimplementedError('initializeRoomCall() has not been implemented.');
   }

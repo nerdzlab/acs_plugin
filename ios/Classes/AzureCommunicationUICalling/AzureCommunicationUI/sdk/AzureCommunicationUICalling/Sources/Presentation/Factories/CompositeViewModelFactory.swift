@@ -216,6 +216,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                      onLowerHand: @escaping () -> Void,
                                      onEffects: @escaping () -> Void,
                                      onLayoutOptions: @escaping () -> Void,
+                                     onReaction: @escaping (ReactionType) -> Void,
                                      isDisplayed: Bool) -> MeetingOptionsViewModel {
         MeetingOptionsViewModel(
             localUserState: localUserState,
@@ -228,6 +229,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
             onLowerHand: onLowerHand,
             onEffects: onEffects,
             onLayoutOptions: onLayoutOptions,
+            onReaction: onReaction,
             isDisplayed: isDisplayed
         )
     }

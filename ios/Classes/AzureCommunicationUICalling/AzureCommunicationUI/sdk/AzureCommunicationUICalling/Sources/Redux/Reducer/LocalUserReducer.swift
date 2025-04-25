@@ -135,6 +135,8 @@ extension Reducer where State == LocalUserState,
             backgroundEffectsOperationStatus = .off
             backgroundEffectsSelectedType = .none
             backgroundEffectsError = error
+        case .sendReaction(let reaction):
+            break
         }
 
         let cameraState = LocalUserState.CameraState(operation: cameraStatus,

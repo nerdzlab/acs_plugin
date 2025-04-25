@@ -55,12 +55,14 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   Future<void> initializeRoomCall({
     required String token,
     required String roomId,
+    required String userId,
   }) async {
     await methodChannel.invokeMethod(
       'initializeRoomCall',
       {
         'token': token,
         'roomId': roomId,
+        'userId': userId,
       },
     );
   }

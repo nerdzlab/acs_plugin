@@ -107,6 +107,7 @@ protocol CompositeViewModelFactoryProtocol {
                                      onLowerHand: @escaping () -> Void,
                                      onEffects: @escaping () -> Void,
                                      onLayoutOptions: @escaping () -> Void,
+                                     onReaction: @escaping (ReactionType) -> Void,
                                      isDisplayed: Bool) -> MeetingOptionsViewModel
     
     func makeEffectsPickerViewModel(localUserState: LocalUserState,

@@ -126,6 +126,13 @@ protocol CallingMiddlewareHandling {
         state: AppState,
         dispatch: @escaping ActionDispatch
     ) -> Task<Void, Never>
+    
+    @discardableResult
+    func sendReaction(
+        _ reaction: ReactionType,
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
 }
 
 // swiftlint:disable type_body_length
@@ -399,6 +406,16 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
                 dispatch(.localUserAction(.lowerHandSucceeded))
             } catch {
                 dispatch(.localUserAction(.lowerHandFailed(error: error)))
+            }
+        }
+    }
+    
+    func sendReaction(_ reaction: ReactionType, state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            do {
+                try await callingService.sendReaction(reaction)
+            } catch {
+                dispatch(.localUserAction(.raiseHandFailed(error: error)))
             }
         }
     }

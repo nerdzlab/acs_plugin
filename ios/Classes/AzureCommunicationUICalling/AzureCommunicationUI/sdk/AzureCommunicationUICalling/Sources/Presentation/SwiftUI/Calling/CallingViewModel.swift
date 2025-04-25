@@ -205,6 +205,9 @@ internal class CallingViewModel: ObservableObject {
             onLayoutOptions: {
                 store.dispatch(action: .showLayoutOptions)
             },
+            onReaction: { reaction in
+                store.dispatch(action: .localUserAction(.sendReaction(reaction: reaction)))
+            },
             isDisplayed: store.state.navigationState.meetignOptionsVisible
         )
         
