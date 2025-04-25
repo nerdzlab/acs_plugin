@@ -94,7 +94,7 @@ class SetupControlBarViewModel: ObservableObject {
             .deviceAccesibiiltyLabel)
         
         backgroundEffectButtonViewModel = compositeViewModelFactory.makePrimaryIconButtonViewModel(
-            selectedButtonState: BackgroundEffectButtonState.off,
+            selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? BackgroundEffectButtonState.off : BackgroundEffectButtonState.on,
             localizationProvider: self.localizationProvider,
             isDisabled: cameraStatus == LocalUserState.CameraOperationalStatus.off) { [weak self] in
                 guard let self = self else {
@@ -103,7 +103,12 @@ class SetupControlBarViewModel: ObservableObject {
         
                 self.endEditing()
                 self.logger.debug("Background effect button tapped")
-                self.backgroundEffectButtonTapped()
+                
+                if (localUserState.backgroundEffectsState.operation == .off) {
+                    self.dispatch(.localUserAction(.backgroundEffectRequested(effect: LocalUserState.BackgroundEffectType.blur)))
+                } else {
+                    self.dispatch(.localUserAction(.backgroundEffectRequested(effect: LocalUserState.BackgroundEffectType.none)))
+                }
         }
         
         switchCameraButtonViewModel = compositeViewModelFactory.makePrimaryIconButtonViewModel(
@@ -141,10 +146,6 @@ class SetupControlBarViewModel: ObservableObject {
         case (true, _):
             dispatch(.localUserAction(.cameraOffTriggered))
         }
-    }
-    
-    func backgroundEffectButtonTapped() {
-        dispatch(.showBackgroundEffectsView)
     }
     
     func switchCameraButtonTapped() {
@@ -228,6 +229,9 @@ class SetupControlBarViewModel: ObservableObject {
         
         backgroundEffectButtonViewModel.update(
             isDisabled: cameraStatus == .off)
+        
+        backgroundEffectButtonViewModel.update(selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? BackgroundEffectButtonState.off : BackgroundEffectButtonState.on)
+        
         
         switchCameraButtonViewModel.update(isDisabled: cameraStatus == .off)
         

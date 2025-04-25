@@ -16,8 +16,6 @@ class SetupViewModel: ObservableObject {
     
     let isRightToLeft: Bool
     let previewAreaViewModel: PreviewAreaViewModel
-    let videoEffectsPreviewViewModel: VideoEffectsPreviewViewModel
-    let effectsPickerViewModel: EffectsPickerViewModel
     var title: String
     var subTitle: String?
     var textFieldPLaceholder: String
@@ -52,20 +50,6 @@ class SetupViewModel: ObservableObject {
         self.isRightToLeft = localizationProvider.isRightToLeft
         self.logger = logger
         self.callType = callType
-        self.videoEffectsPreviewViewModel = VideoEffectsPreviewViewModel()
-        
-        effectsPickerViewModel = compositeViewModelFactory.makeEffectsPickerViewModel(
-            localUserState: store.state.localUserState,
-            localizationProvider: localizationProvider,
-            videoEffectsPreviewViewModel: videoEffectsPreviewViewModel,
-            onDismiss: {
-                store.dispatch(action: .hideDrawer)
-            },
-            onEffects: { effect in
-                store.dispatch(action: .localUserAction(.backgroundEffectRequested(effect: effect)))
-            },
-            isDisplayed: store.state.navigationState.backgroundEffectsViewVisible
-        )
         
         if let title = setupScreenViewData?.title, !title.isEmpty {
             // if title is not nil/empty, use given title and optional subtitle
@@ -196,18 +180,9 @@ class SetupViewModel: ObservableObject {
         let permissionState = state.permissionState
         let callingState = state.callingState
         
-        effectsPickerViewModel.update(
-            localUserState: state.localUserState,
-            isDisplayed: state.navigationState.backgroundEffectsViewVisible
-        )
-        
-        if state.navigationState.backgroundEffectsViewVisible {
-            videoEffectsPreviewViewModel.update(localUserState: state.localUserState, visibilityState: state.visibilityState)
-        }
-        
         previewAreaViewModel.update(localUserState: localUserState,
                                     permissionState: permissionState,
-                                    visibilityState: state.visibilityState, isPreviewEnabled: !state.navigationState.backgroundEffectsViewVisible)
+                                    visibilityState: state.visibilityState)
         
         setupControlBarViewModel.update(localUserState: localUserState,
                                         permissionState: permissionState,

@@ -94,7 +94,7 @@ struct LocalVideoView: View {
                     // MARK: - Main content depending on camera status
                     if viewModel.cameraOperationalStatus == .on,
                        let streamId = localVideoStreamId,
-                       let rendererView = viewManager.getLocalVideoRendererView(streamId), viewModel.isPreviewEnable {
+                       let rendererView = viewManager.getLocalVideoRendererView(streamId) {
                         
                         avatarView
                             .frame(width: geometry.size.width,

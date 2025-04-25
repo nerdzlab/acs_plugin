@@ -28,7 +28,6 @@ internal class CallingViewModel: ObservableObject {
     private var callClientRequested = false
 
     let localVideoViewModel: LocalVideoViewModel
-    let videoEffectsPreviewViewModel: VideoEffectsPreviewViewModel
     let participantGridsViewModel: ParticipantGridViewModel
     let bannerViewModel: BannerViewModel
     let lobbyOverlayViewModel: LobbyOverlayViewModel
@@ -39,7 +38,6 @@ internal class CallingViewModel: ObservableObject {
     let participantOptionsViewModel: ParticipantOptionsViewModel
     let layoutOptionsViewModel: LayoutOptionsViewModel
     let meetingOptionsViewModel: MeetingOptionsViewModel
-    let effectsPickerViewModel: EffectsPickerViewModel
     var onHoldOverlayViewModel: OnHoldOverlayViewModel!
     var shareMeetingLinkViewModel: ShareMeetingInfoActivityViewModel!
     let isRightToLeft: Bool
@@ -102,9 +100,7 @@ internal class CallingViewModel: ObservableObject {
         supportFormViewModel = compositeViewModelFactory.makeSupportFormViewModel()
 
         localVideoViewModel = compositeViewModelFactory.makeLocalVideoViewModel(dispatchAction: actionDispatch, isPreviewEnable: true)
-        
-        videoEffectsPreviewViewModel = VideoEffectsPreviewViewModel()
-        
+                
         participantGridsViewModel = compositeViewModelFactory.makeParticipantGridsViewModel(
             isIpadInterface: isIpadInterface,
             rendererViewManager: rendererViewManager
@@ -199,8 +195,8 @@ internal class CallingViewModel: ObservableObject {
             onLowerHand: {
                 store.dispatch(action: .localUserAction(.lowerHandRequested))
             },
-            onEffects: {
-                store.dispatch(action: .showBackgroundEffectsView)
+            onEffects: { effect in
+                store.dispatch(action: .localUserAction(.backgroundEffectRequested(effect: effect)))
             },
             onLayoutOptions: {
                 store.dispatch(action: .showLayoutOptions)
@@ -209,19 +205,6 @@ internal class CallingViewModel: ObservableObject {
                 store.dispatch(action: .localUserAction(.sendReaction(reaction: reaction)))
             },
             isDisplayed: store.state.navigationState.meetignOptionsVisible
-        )
-        
-        effectsPickerViewModel = compositeViewModelFactory.makeEffectsPickerViewModel(
-            localUserState: store.state.localUserState,
-            localizationProvider: localizationProvider,
-            videoEffectsPreviewViewModel: videoEffectsPreviewViewModel,
-            onDismiss: {
-                store.dispatch(action: .hideDrawer)
-            },
-            onEffects: { effect in
-                store.dispatch(action: .localUserAction(.backgroundEffectRequested(effect: effect)))
-            },
-            isDisplayed: store.state.navigationState.backgroundEffectsViewVisible
         )
 
         controlBarViewModel = compositeViewModelFactory
@@ -385,17 +368,8 @@ internal class CallingViewModel: ObservableObject {
                                             visibilityState: state.visibilityState,
                                             buttonViewDataState: state.buttonViewDataState)
         
-        effectsPickerViewModel.update(
-            localUserState: state.localUserState,
-            isDisplayed: state.navigationState.backgroundEffectsViewVisible
-        )
-        
-        if state.navigationState.backgroundEffectsViewVisible {
-            videoEffectsPreviewViewModel.update(localUserState: state.localUserState, visibilityState: state.visibilityState)
-        }
-        
         localVideoViewModel.update(localUserState: state.localUserState,
-                                   visibilityState: state.visibilityState, isPreviewEnabled: !state.navigationState.backgroundEffectsViewVisible)
+                                   visibilityState: state.visibilityState)
 
         receiveExtension(state)
     }

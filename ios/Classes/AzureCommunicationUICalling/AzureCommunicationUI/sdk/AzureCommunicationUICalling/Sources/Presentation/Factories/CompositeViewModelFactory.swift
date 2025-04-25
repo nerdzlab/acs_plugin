@@ -214,7 +214,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                      onParticipants: @escaping () -> Void,
                                      onRaiseHand: @escaping () -> Void,
                                      onLowerHand: @escaping () -> Void,
-                                     onEffects: @escaping () -> Void,
+                                     onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
                                      onLayoutOptions: @escaping () -> Void,
                                      onReaction: @escaping (ReactionType) -> Void,
                                      isDisplayed: Bool) -> MeetingOptionsViewModel {

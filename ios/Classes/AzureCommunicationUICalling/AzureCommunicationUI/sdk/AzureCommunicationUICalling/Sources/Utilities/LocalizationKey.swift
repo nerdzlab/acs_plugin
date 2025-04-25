@@ -213,7 +213,8 @@ enum LocalizationKey: String {
     /*Meeting options*/
     case chatTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.Chat"
     case participantsTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.Participants"
-    case effectsTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.Effects"
+    case turnEffectsOn = "AzureCommunicationUICalling.CallingView.MeetingOptions.EffectsOn"
+    case turnEffectsOff = "AzureCommunicationUICalling.CallingView.MeetingOptions.EffectsOff"
     case raiseHandTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.RaiseHand"
     case lowerHandTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.LowerHand"
     case changeViewTitle = "AzureCommunicationUICalling.CallingView.MeetingOptions.ChangeView"

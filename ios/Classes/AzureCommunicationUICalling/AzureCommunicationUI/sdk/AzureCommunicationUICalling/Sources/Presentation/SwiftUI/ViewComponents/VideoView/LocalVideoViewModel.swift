@@ -10,7 +10,6 @@ class LocalVideoViewModel: ObservableObject {
     private let logger: Logger
     private let dispatch: ActionDispatch
 
-    @Published var isPreviewEnable: Bool
     @Published var localVideoStreamId: String?
     @Published var selectedReaction: ReactionPayload?
     @Published var displayName: String?
@@ -34,7 +33,6 @@ class LocalVideoViewModel: ObservableObject {
         self.logger = logger
         self.localizationProvider = localizationProvider
         self.dispatch = dispatchAction
-        self.isPreviewEnable = isPreviewEnable
 
         cameraSwitchButtonPipViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .switchCameraFilled,
@@ -60,13 +58,9 @@ class LocalVideoViewModel: ObservableObject {
         dispatch(.localUserAction(.cameraSwitchTriggered))
     }
 
-    func update(localUserState: LocalUserState, visibilityState: VisibilityState, isPreviewEnabled: Bool) {
+    func update(localUserState: LocalUserState, visibilityState: VisibilityState) {
         if localVideoStreamId != localUserState.localVideoStreamIdentifier {
             localVideoStreamId = localUserState.localVideoStreamIdentifier
-        }
-        
-        if self.isPreviewEnable != isPreviewEnabled {
-            self.isPreviewEnable = isPreviewEnabled
         }
 
         if displayName != localUserState.initialDisplayName {

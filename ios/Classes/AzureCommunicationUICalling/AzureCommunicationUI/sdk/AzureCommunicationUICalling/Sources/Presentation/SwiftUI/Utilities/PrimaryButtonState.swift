@@ -130,14 +130,25 @@ enum ParticipantsButtonState: ButtonState {
 }
 
 enum EffectsButtonState: ButtonState {
-    case `default`
+    case on
+    case off
     
     var iconName: CompositeIcon {
-        return .backgroundEffectOn
+        switch self {
+        case .on:
+            return .backgroundEffectOff
+        case .off:
+            return .backgroundEffectOn
+        }
     }
     
     var localizationKey: LocalizationKey {
-        return .effectsTitle
+        switch self {
+        case .on:
+            return .turnEffectsOff
+        case .off:
+            return .turnEffectsOn
+        }
     }
 }
 
@@ -147,7 +158,12 @@ enum BackgroundEffectButtonState: PrimaryButtonState {
     case off
     
     var iconName: CompositeIcon {
-        return .backgroundEffectOn
+        switch self {
+        case .on:
+            return .backgroundEffectOff
+        case .off:
+            return .backgroundEffectOn
+        }
     }
 }
 
