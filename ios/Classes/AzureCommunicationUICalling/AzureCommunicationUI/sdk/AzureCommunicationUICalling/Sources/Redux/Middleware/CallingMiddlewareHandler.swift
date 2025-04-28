@@ -133,6 +133,30 @@ protocol CallingMiddlewareHandling {
         state: AppState,
         dispatch: @escaping ActionDispatch
     ) -> Task<Void, Never>
+    
+    @discardableResult
+    func unMuteCall(
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
+    
+    @discardableResult
+    func muteCall(
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
+    
+    @discardableResult
+    func noiseSuppressionCallOn(
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
+    
+    @discardableResult
+    func noiseSuppressionCallOff(
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
 }
 
 // swiftlint:disable type_body_length
@@ -785,6 +809,38 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
     ) -> Task<Void, Never> {
         return Task {
             callingService.setBackgroundEffect(effect)
+        }
+    }
+    
+    func unMuteCall(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            do {
+                try await callingService.unMuteCall()
+            } catch {
+                handle(error: error, errorType: .unMuteFailed, dispatch: dispatch)
+            }
+        }
+    }
+    
+    func muteCall(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            do {
+                try await callingService.muteCall()
+            } catch {
+                handle(error: error, errorType: .muteFailed, dispatch: dispatch)
+            }
+        }
+    }
+    
+    func noiseSuppressionCallOn(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            callingService.noiseSuppressionCallOn()
+        }
+    }
+    
+    func noiseSuppressionCallOff(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            callingService.noiseSuppressionCallOff()
         }
     }
 }

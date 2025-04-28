@@ -50,7 +50,8 @@ protocol CompositeViewModelFactoryProtocol {
                                     paddings: CompositeButton.Paddings?,
                                     action: @escaping (() -> Void)) -> PrimaryButtonViewModel
     func makeAudioDevicesListViewModel(dispatchAction: @escaping ActionDispatch,
-                                       localUserState: LocalUserState) -> AudioDevicesListViewModel
+                                       localUserState: LocalUserState,
+                                       isPreviewSettings: Bool) -> AudioDevicesListViewModel
     func makeCaptionsLanguageListViewModel (dispatchAction: @escaping ActionDispatch,
                                             state: AppState) -> CaptionsLanguageListViewModel
     func makeCaptionsInfoViewModel (state: AppState) -> CaptionsInfoViewModel

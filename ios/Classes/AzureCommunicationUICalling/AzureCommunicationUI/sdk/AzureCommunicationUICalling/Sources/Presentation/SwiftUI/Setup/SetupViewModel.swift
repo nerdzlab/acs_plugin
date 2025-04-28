@@ -75,7 +75,9 @@ class SetupViewModel: ObservableObject {
         
         audioDeviceListViewModel = compositeViewModelFactory.makeAudioDevicesListViewModel(
             dispatchAction: actionDispatch,
-            localUserState: store.state.localUserState)
+            localUserState: store.state.localUserState,
+            isPreviewSettings: true
+        )
         
         let callButtonLocalization = LocalizationKey.startCall
         

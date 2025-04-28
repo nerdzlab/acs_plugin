@@ -52,7 +52,10 @@ enum LocalUserAction: Equatable {
     case noiseSuppressionPreviewOn
     case noiseSuppressionPreviewOff
     
-    case muteIncomingAudioOnPreviewRequested
+    case noiseSuppressionCallOn
+    case noiseSuppressionCallOff
+    
+    case muteIncomingAudioRequested
     
     case gridLayoutSelected
     case speakerLayoutSelected
@@ -92,7 +95,7 @@ enum LocalUserAction: Equatable {
             (.noiseSuppressionPreviewOff, .noiseSuppressionPreviewOff),
             (.gridLayoutSelected, .gridLayoutSelected),
             (.speakerLayoutSelected, .speakerLayoutSelected),
-            (.muteIncomingAudioOnPreviewRequested, .muteIncomingAudioOnPreviewRequested),
+            (.muteIncomingAudioRequested, .muteIncomingAudioRequested),
             (.microphonePreviewOff, .microphonePreviewOff):
             return true
 

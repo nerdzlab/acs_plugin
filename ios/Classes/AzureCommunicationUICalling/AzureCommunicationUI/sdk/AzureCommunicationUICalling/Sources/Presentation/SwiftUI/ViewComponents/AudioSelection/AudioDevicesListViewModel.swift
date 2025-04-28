@@ -16,6 +16,7 @@ internal class AudioDevicesListViewModel: ObservableObject {
     private let localizationProvider: LocalizationProviderProtocol
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
     private var localUserState: LocalUserState
+    private let isPreviewSettings: Bool
     
     private(set) var noiseSuppressionViewModel: NoiseSuppressionItemViewModel?
     
@@ -26,12 +27,15 @@ internal class AudioDevicesListViewModel: ObservableObject {
     init(compositeViewModelFactory: CompositeViewModelFactoryProtocol,
          dispatchAction: @escaping ActionDispatch,
          localUserState: LocalUserState,
-         localizationProvider: LocalizationProviderProtocol) {
+         localizationProvider: LocalizationProviderProtocol,
+         isPreviewSettings: Bool
+    ) {
         self.localUserState = localUserState
         self.dispatch = dispatchAction
         self.audioDeviceStatus = localUserState.audioState.device
         self.localizationProvider = localizationProvider
         self.compositeViewModelFactory = compositeViewModelFactory
+        self.isPreviewSettings = isPreviewSettings
         self.noiseSuppressionViewModel = getNoiseSuppressionViewModel()
     }
 
@@ -39,13 +43,16 @@ internal class AudioDevicesListViewModel: ObservableObject {
                 navigationState: NavigationState,
                 localUserState: LocalUserState,
                 visibilityState: VisibilityState) {
-        self.localUserState = localUserState
         
-        if audioDeviceStatus != self.audioDeviceStatus || audioDevicesList.isEmpty || localUserState.incomingAudioState.operation == .muted,
+        if audioDeviceStatus != self.audioDeviceStatus || audioDevicesList.isEmpty || localUserState.incomingAudioState.operation != self.localUserState.incomingAudioState.operation,
            LocalUserState.AudioDeviceSelectionStatus.isSelected(for: audioDeviceStatus) {
+            self.localUserState = localUserState
+            
             self.audioDeviceStatus = audioDeviceStatus
             self.audioDevicesList = getAvailableAudioDevices(audioDeviceStatus: audioDeviceStatus)
         }
+        
+        self.localUserState = localUserState
         
         self.noiseSuppressionViewModel = getNoiseSuppressionViewModel()
         
@@ -55,9 +62,9 @@ internal class AudioDevicesListViewModel: ObservableObject {
     private func getNoiseSuppressionViewModel() -> NoiseSuppressionItemViewModel {
         return NoiseSuppressionItemViewModel(title: localizationProvider.getLocalizedString(.noiseSuppressionTitle), icon: CompositeIcon.noiseSuppresion, isOn: localUserState.noiseSuppressionState.operation == .on) { [weak self] isOn in
             if isOn {
-                self?.dispatch(.localUserAction(.noiseSuppressionPreviewOn))
+                (self?.isPreviewSettings == true) ? self?.dispatch(.localUserAction(.noiseSuppressionPreviewOn)) : self?.dispatch(.localUserAction(.noiseSuppressionCallOn))
             } else {
-                self?.dispatch(.localUserAction(.noiseSuppressionPreviewOff))
+                (self?.isPreviewSettings == true) ? self?.dispatch(.localUserAction(.noiseSuppressionPreviewOff)) : self?.dispatch(.localUserAction(.noiseSuppressionCallOff))
             }
         }
     }
@@ -120,7 +127,7 @@ internal class AudioDevicesListViewModel: ObservableObject {
     private func getMuteAudioOption() -> DrawerSelectableItemViewModel {
         let isSelected = localUserState.incomingAudioState.operation == .muted
         
-        let action = LocalUserAction.muteIncomingAudioOnPreviewRequested
+        let action = LocalUserAction.muteIncomingAudioRequested
         
         let audioDeviceOption = DrawerSelectableItemViewModel(
             icon: CompositeIcon.volumeOff,

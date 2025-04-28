@@ -287,11 +287,14 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
     }
     
     func makeAudioDevicesListViewModel(dispatchAction: @escaping ActionDispatch,
-                                       localUserState: LocalUserState) -> AudioDevicesListViewModel {
+                                       localUserState: LocalUserState,
+                                       isPreviewSettings: Bool) -> AudioDevicesListViewModel {
         AudioDevicesListViewModel(compositeViewModelFactory: self,
                                   dispatchAction: dispatchAction,
                                   localUserState: localUserState,
-                                  localizationProvider: localizationProvider)
+                                  localizationProvider: localizationProvider,
+                                  isPreviewSettings: isPreviewSettings
+        )
     }
     
     func makeLayoutOptionsViewModel(

@@ -75,6 +75,12 @@ protocol CallingServiceProtocol {
     /* <CALL_START_TIME>
     func callStartTime() -> Date?
     </CALL_START_TIME> */
+    
+    func muteCall() async throws
+    func unMuteCall() async throws
+    
+    func noiseSuppressionCallOn()
+    func noiseSuppressionCallOff()
 }
 
 class CallingService: NSObject, CallingServiceProtocol {
@@ -253,5 +259,21 @@ class CallingService: NSObject, CallingServiceProtocol {
     
     func sendReaction(_ reaction: ReactionType) async throws {
         try await callingSDKWrapper.sendReaction(reaction)
+    }
+    
+    func unMuteCall() async throws {
+        try await callingSDKWrapper.unMuteCall()
+    }
+    
+    func muteCall() async throws {
+        try await callingSDKWrapper.muteCall()
+    }
+    
+    func noiseSuppressionCallOn() {
+        callingSDKWrapper.enableNoiseSuppression()
+    }
+    
+    func noiseSuppressionCallOff() {
+        callingSDKWrapper.disableNoiseSuppression()
     }
 }

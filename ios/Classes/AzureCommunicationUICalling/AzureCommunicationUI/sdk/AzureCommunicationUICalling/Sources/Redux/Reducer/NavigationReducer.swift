@@ -59,7 +59,7 @@ extension Reducer where State == NavigationState,
             drawerVisibility = .captionsLangaugeViewVisible
         case .localUserAction(.audioDeviceChangeRequested):
             drawerVisibility = .hidden
-        case .localUserAction(.muteIncomingAudioOnPreviewRequested):
+        case .localUserAction(.muteIncomingAudioRequested):
             drawerVisibility = .hidden
         case .localUserAction(.gridLayoutSelected):
             drawerVisibility = .hidden

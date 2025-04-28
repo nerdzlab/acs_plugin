@@ -87,7 +87,9 @@ internal class CallingViewModel: ObservableObject {
 
         audioDeviceListViewModel = compositeViewModelFactory.makeAudioDevicesListViewModel(
                 dispatchAction: actionDispatch,
-                localUserState: store.state.localUserState)
+                localUserState: store.state.localUserState,
+                isPreviewSettings: false
+        )
 
         captionsLanguageListViewModel = compositeViewModelFactory.makeCaptionsLanguageListViewModel(
             dispatchAction: actionDispatch,
