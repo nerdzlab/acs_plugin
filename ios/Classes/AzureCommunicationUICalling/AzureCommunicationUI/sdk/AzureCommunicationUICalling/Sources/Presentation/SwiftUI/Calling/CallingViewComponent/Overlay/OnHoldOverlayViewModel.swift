@@ -24,7 +24,7 @@ class OnHoldOverlayViewModel: OverlayViewModelProtocol, ObservableObject {
 
     var errorInfoViewModel: ErrorInfoViewModel?
 
-    @Published var actionButtonViewModel: PrimaryButtonViewModel?
+    @Published var actionButtonViewModel: AppPrimaryButtonViewModel?
 
     @Published var isDisplayed = false
 
@@ -43,10 +43,10 @@ class OnHoldOverlayViewModel: OverlayViewModelProtocol, ObservableObject {
         self.errorInfoViewModel = compositeViewModelFactory.makeErrorInfoViewModel(title: errorInfoTitle,
                                                                             subtitle: errorInfoSubtitle)
         self.resumeAction = resumeAction
-        self.actionButtonViewModel = compositeViewModelFactory.makePrimaryButtonViewModel(
+        
+        self.actionButtonViewModel = compositeViewModelFactory.makeAppPrimaryButtonViewModel(
             buttonStyle: .primaryFilled,
-            buttonLabel: localizationProvider.getLocalizedString(.resume),
-            iconName: nil,
+            buttonLabel: localizationProvider.getLocalizedString(.resume).uppercased(),
             isDisabled: false) { [weak self] in
                 guard let self = self else {
                     return
@@ -57,7 +57,8 @@ class OnHoldOverlayViewModel: OverlayViewModelProtocol, ObservableObject {
                 } else {
                     self.errorInfoViewModel?.show()
                 }
-        }
+            }
+        
         self.actionButtonViewModel?
             .update(accessibilityLabel: self.localizationProvider.getLocalizedString(.resumeAccessibilityLabel))
     }
