@@ -21,6 +21,7 @@ public struct UserData {
 }
 
 public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
+    
     private var callService: CallService {
         return CallService.getOrCreateInstance()
     }
@@ -263,6 +264,56 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     //
     //        return configError
     //    }
+    
+    public func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+        if type == .voIP {
+            self.voipToken = pushCredentials.token
+            let tokenString = pushCredentials.token.map { String(format: "%02x", $0) }.joined()
+            print("Received VoIP token: \(tokenString)")
+        }
+    }
+    
+    public func pushRegistry(_ registry: PKPushRegistry,
+                             didReceiveIncomingPushWith payload: PKPushPayload,
+                             for type: PKPushType,
+                             completion: @escaping () -> Void) {
+        print("pushRegistry payload: \(payload.dictionaryPayload)")
+        //        os_log("pushRegistry payload: \(payload.dictionaryPayload)")
+        //        if isAppInForeground() {
+        //            os_log("calling demo app: app is in foreground")
+        //            if let entryViewController = findEntryViewController() {
+        //                os_log("calling demo app: onPushNotificationReceived")
+        //                entryViewController.onPushNotificationReceived(dictionaryPayload: payload.dictionaryPayload)
+        //            }
+        //        } else {
+        //            os_log("calling demo app: app is not in foreground")
+        //            let pushInfo = PushNotification(data: payload.dictionaryPayload)
+        //            let providerConfig = CXProviderConfiguration()
+        //            providerConfig.supportsVideo = true
+        //            providerConfig.maximumCallGroups = 1
+        //            providerConfig.maximumCallsPerCallGroup = 1
+        //            providerConfig.includesCallsInRecents = true
+        //            providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
+        //            let callKitOptions = CallKitOptions(providerConfig: providerConfig,
+        //                                                isCallHoldSupported: true,
+        //                                                provideRemoteInfo: incomingCallRemoteInfo,
+        //                                                configureAudioSession: configureAudioSession)
+        //            CallComposite.reportIncomingCall(pushNotification: pushInfo,
+        //                                             callKitOptions: callKitOptions) { result in
+        //                if case .success = result {
+        //                    DispatchQueue.global().async {
+        //                        if let entryViewController = self.findEntryViewController() {
+        //                            os_log("calling demo app: onPushNotificationReceivedBackgroundMode")
+        //                            entryViewController.onPushNotificationReceivedBackgroundMode(
+        //                                dictionaryPayload: payload.dictionaryPayload)
+        //                        }
+        //                    }
+        //                } else {
+        //                    os_log("calling demo app: failed on reportIncomingCall")
+        //                }
+        //            }
+        //        }
+    }
 }
 
 extension AcsPlugin: FlutterStreamHandler {
