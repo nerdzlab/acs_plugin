@@ -66,4 +66,36 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       },
     );
   }
+
+  @override
+  Future<void> startOneOnOneCall({
+    required String token,
+    required String participantId,
+    required String userId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'startOneOnOneCall',
+      {
+        'token': token,
+        'participantId': participantId,
+        'userId': userId,
+      },
+    );
+  }
+
+  @override
+  Future<void> setUserData({
+    required String token,
+    required String name,
+    required String userId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'setUserData',
+      {
+        'token': token,
+        'name': name,
+        'userId': userId,
+      },
+    );
+  }
 }

@@ -26,6 +26,32 @@ class AcsPlugin {
     );
   }
 
+  // Start one on one call
+  Future<void> startOneOnOneCall({
+    required String token,
+    required String participantId,
+    required String userId,
+  }) async {
+    await AcsPluginPlatform.instance.startOneOnOneCall(
+      token: token,
+      participantId: participantId,
+      userId: userId,
+    );
+  }
+
+  // Set user data
+  Future<void> setUserData({
+    required String token,
+    required String name,
+    required String userId,
+  }) async {
+    await AcsPluginPlatform.instance.setUserData(
+      token: token,
+      name: name,
+      userId: userId,
+    );
+  }
+
 // Stream to listen for events
   Stream<Map<String, dynamic>> get eventStream {
     return AcsPluginPlatform.instance.eventStream;
