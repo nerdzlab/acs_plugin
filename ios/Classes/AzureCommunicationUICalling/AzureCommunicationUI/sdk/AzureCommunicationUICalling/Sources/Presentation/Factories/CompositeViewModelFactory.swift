@@ -234,21 +234,6 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
         )
     }
     
-    func makeEffectsPickerViewModel(localUserState: LocalUserState,
-                                    localizationProvider: LocalizationProviderProtocol,
-                                    videoEffectsPreviewViewModel: VideoEffectsPreviewViewModel,
-                                    onDismiss: @escaping () -> Void,
-                                    onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
-                                    isDisplayed: Bool) -> EffectsPickerViewModel {
-        EffectsPickerViewModel(localUserState: localUserState,
-                               localizationProvider: localizationProvider,
-                               videoEffectsPreviewViewModel: videoEffectsPreviewViewModel,
-                               onDismiss: onDismiss,
-                               onEffects: onEffects,
-                               isDisplayed: isDisplayed
-        )
-    }
-    
     func makeLocalVideoViewModel(dispatchAction: @escaping ActionDispatch, isPreviewEnable: Bool) -> LocalVideoViewModel {
         LocalVideoViewModel(compositeViewModelFactory: self,
                             logger: logger, isPreviewEnable: isPreviewEnable,
