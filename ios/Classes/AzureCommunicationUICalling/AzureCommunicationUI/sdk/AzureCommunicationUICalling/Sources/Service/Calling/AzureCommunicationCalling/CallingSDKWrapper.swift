@@ -232,12 +232,14 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
                 options.outgoingAudioOptions = OutgoingAudioOptions()
                 options.outgoingAudioOptions?.muted = !isMicrophonePreferred
                 options.incomingVideoOptions = incomingVideoOptions
+                
                 if let remoteInfo = callKitRemoteInfo {
                     let callKitRemoteInfo = AzureCommunicationCalling.CallKitRemoteInfo()
                     callKitRemoteInfo.displayName = remoteInfo.displayName
                     callKitRemoteInfo.handle = remoteInfo.handle
                     options.callKitRemoteInfo = callKitRemoteInfo
                 }
+                
                 if let incomngCall = callingSDKInitializer.getIncomingCall() {
                     do {
                         call = try await incomngCall.accept(options: options)
