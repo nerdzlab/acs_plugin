@@ -28,7 +28,6 @@ struct NavigationState: Equatable {
     let shareMeetingLinkVisible: Bool
     let layoutOptionsVisible: Bool
     let meetignOptionsVisible: Bool
-    let backgroundEffectsViewVisible: Bool
     
     // When showing Participant Menu, this provides
     // context on who we are shoing it for
@@ -48,7 +47,6 @@ struct NavigationState: Equatable {
          shareMeetingLinkVisible: Bool = false,
          layoutOptionsVisible: Bool = false,
          meetignOptionsVisible: Bool = false,
-         backgroundEffectsViewVisible: Bool = false,
          selectedParticipant: ParticipantInfoModel? = nil
     ) {
         self.status = status
@@ -67,7 +65,6 @@ struct NavigationState: Equatable {
         self.layoutOptionsVisible = layoutOptionsVisible
         self.meetignOptionsVisible = meetignOptionsVisible
         self.shareMeetingLinkVisible = shareMeetingLinkVisible
-        self.backgroundEffectsViewVisible = backgroundEffectsViewVisible
     }
     
     static func == (lhs: NavigationState, rhs: NavigationState) -> Bool {
@@ -86,7 +83,6 @@ struct NavigationState: Equatable {
         && lhs.participantOptionsVisible == rhs.participantOptionsVisible
         && lhs.layoutOptionsVisible == rhs.layoutOptionsVisible
         && lhs.meetignOptionsVisible == rhs.meetignOptionsVisible
-        && lhs.backgroundEffectsViewVisible == rhs.backgroundEffectsViewVisible
         && lhs.shareMeetingLinkVisible == rhs.shareMeetingLinkVisible
     }
 }

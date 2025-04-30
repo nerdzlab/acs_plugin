@@ -121,7 +121,8 @@
 /*Meeting options*/
 "AzureCommunicationUICalling.CallingView.MeetingOptions.Chat"="Chat";
 "AzureCommunicationUICalling.CallingView.MeetingOptions.Participants"="Participants";
-"AzureCommunicationUICalling.CallingView.MeetingOptions.Effects"="Effects";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.EffectsOn"="Turn blur on";
+"AzureCommunicationUICalling.CallingView.MeetingOptions.EffectsOff"="Turn blur off";
 "AzureCommunicationUICalling.CallingView.MeetingOptions.RaiseHand"="Raise hand";
 "AzureCommunicationUICalling.CallingView.MeetingOptions.LowerHand"="Lower hand";
 "AzureCommunicationUICalling.CallingView.MeetingOptions.ChangeView"="Change view";

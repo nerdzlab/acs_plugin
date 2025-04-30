@@ -103,7 +103,6 @@ struct SetupView: View {
                          hideDrawer: viewModel.dismissDrawer) {
                 AudioDevicesListView(viewModel: viewModel.audioDeviceListViewModel)
             }
-            backgroundEffectsView
         }
         .ignoresSafeArea(edges: .bottom)
     }
@@ -117,17 +116,6 @@ struct SetupView: View {
                     .frame(width: 128, height: 40)
                     .accessibilityIdentifier(AccessibilityIdentifier.joinCallAccessibilityID.rawValue)
             }
-        }
-    }
-    
-    var backgroundEffectsView: some View {
-        FullScreenModalView(isPresented: viewModel.effectsPickerViewModel.isDisplayed,
-                            hideModal: viewModel.dismissDrawer) {
-            EffectsPickerView(
-                viewModel: viewModel.effectsPickerViewModel,
-                avatarManager: avatarManager,
-                viewManager: viewManager
-            )
         }
     }
     

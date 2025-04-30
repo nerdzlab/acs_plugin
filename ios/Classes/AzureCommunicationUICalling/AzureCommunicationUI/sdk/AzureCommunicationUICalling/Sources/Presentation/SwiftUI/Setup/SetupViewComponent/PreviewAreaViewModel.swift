@@ -12,7 +12,6 @@ class PreviewAreaViewModel: ObservableObject {
     private var audioPermission: AppPermission.Status = .unknown
 
     @Published var isPermissionsDenied = false
-    @Published var isPreviewEnable = true
 
     var goToSettingsButtonViewModel: PrimaryButtonViewModel!
     let localVideoViewModel: LocalVideoViewModel!
@@ -63,13 +62,12 @@ class PreviewAreaViewModel: ObservableObject {
         return displayText
     }
 
-    func update(localUserState: LocalUserState, permissionState: PermissionState, visibilityState: VisibilityState, isPreviewEnabled: Bool) {
+    func update(localUserState: LocalUserState, permissionState: PermissionState, visibilityState: VisibilityState) {
         self.cameraPermission = permissionState.cameraPermission
         self.audioPermission = permissionState.audioPermission
-        self.isPreviewEnable = isPreviewEnabled
         
         updatePermissionsState()
-        localVideoViewModel.update(localUserState: localUserState, visibilityState: visibilityState, isPreviewEnabled: isPreviewEnable)
+        localVideoViewModel.update(localUserState: localUserState, visibilityState: visibilityState)
     }
 
     private func updatePermissionsState() {

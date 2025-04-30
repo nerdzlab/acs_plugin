@@ -50,7 +50,8 @@ protocol CompositeViewModelFactoryProtocol {
                                     paddings: CompositeButton.Paddings?,
                                     action: @escaping (() -> Void)) -> PrimaryButtonViewModel
     func makeAudioDevicesListViewModel(dispatchAction: @escaping ActionDispatch,
-                                       localUserState: LocalUserState) -> AudioDevicesListViewModel
+                                       localUserState: LocalUserState,
+                                       isPreviewSettings: Bool) -> AudioDevicesListViewModel
     func makeCaptionsLanguageListViewModel (dispatchAction: @escaping ActionDispatch,
                                             state: AppState) -> CaptionsLanguageListViewModel
     func makeCaptionsInfoViewModel (state: AppState) -> CaptionsInfoViewModel
@@ -105,7 +106,7 @@ protocol CompositeViewModelFactoryProtocol {
                                      onParticipants: @escaping () -> Void,
                                      onRaiseHand: @escaping () -> Void,
                                      onLowerHand: @escaping () -> Void,
-                                     onEffects: @escaping () -> Void,
+                                     onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
                                      onLayoutOptions: @escaping () -> Void,
                                      onReaction: @escaping (ReactionType) -> Void,
                                      isDisplayed: Bool) -> MeetingOptionsViewModel

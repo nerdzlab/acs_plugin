@@ -19,6 +19,7 @@ class SetupControlBarViewModel: ObservableObject {
     private let localizationProvider: LocalizationProviderProtocol
     private let audioVideoMode: CallCompositeAudioVideoMode
     private var buttonViewDataState: ButtonViewDataState
+    private var localUserState: LocalUserState?
 
     private var isJoinRequested = false
     private var isDefaultUserStateMapped = false
@@ -47,6 +48,7 @@ class SetupControlBarViewModel: ObservableObject {
         self.localizationProvider = localizationProvider
         self.audioVideoMode = audioVideoMode
         self.buttonViewDataState = buttonViewDataState
+        self.localUserState = localUserState
 
         cameraButtonViewModel = compositeViewModelFactory.makePrimaryIconButtonViewModel(
             selectedButtonState: CameraButtonState.videoOff,
@@ -94,7 +96,7 @@ class SetupControlBarViewModel: ObservableObject {
             .deviceAccesibiiltyLabel)
         
         backgroundEffectButtonViewModel = compositeViewModelFactory.makePrimaryIconButtonViewModel(
-            selectedButtonState: BackgroundEffectButtonState.off,
+            selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? BackgroundEffectButtonState.off : BackgroundEffectButtonState.on,
             localizationProvider: self.localizationProvider,
             isDisabled: cameraStatus == LocalUserState.CameraOperationalStatus.off) { [weak self] in
                 guard let self = self else {
@@ -103,7 +105,12 @@ class SetupControlBarViewModel: ObservableObject {
         
                 self.endEditing()
                 self.logger.debug("Background effect button tapped")
-                self.backgroundEffectButtonTapped()
+                
+                if (self.localUserState?.backgroundEffectsState.operation == .off) {
+                    self.dispatch(.localUserAction(.backgroundEffectRequested(effect: LocalUserState.BackgroundEffectType.blur)))
+                } else {
+                    self.dispatch(.localUserAction(.backgroundEffectRequested(effect: LocalUserState.BackgroundEffectType.none)))
+                }
         }
         
         switchCameraButtonViewModel = compositeViewModelFactory.makePrimaryIconButtonViewModel(
@@ -141,10 +148,6 @@ class SetupControlBarViewModel: ObservableObject {
         case (true, _):
             dispatch(.localUserAction(.cameraOffTriggered))
         }
-    }
-    
-    func backgroundEffectButtonTapped() {
-        dispatch(.showBackgroundEffectsView)
     }
     
     func switchCameraButtonTapped() {
@@ -197,6 +200,8 @@ class SetupControlBarViewModel: ObservableObject {
                 callingState: CallingState,
                 buttonViewDataState: ButtonViewDataState) {
         self.buttonViewDataState = buttonViewDataState
+        self.localUserState = localUserState
+        
         if cameraPermission != permissionState.cameraPermission {
             cameraPermission = permissionState.cameraPermission
         }
@@ -229,6 +234,9 @@ class SetupControlBarViewModel: ObservableObject {
         backgroundEffectButtonViewModel.update(
             isDisabled: cameraStatus == .off)
         
+        backgroundEffectButtonViewModel.update(selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? BackgroundEffectButtonState.off : BackgroundEffectButtonState.on)
+        
+        
         switchCameraButtonViewModel.update(isDisabled: cameraStatus == .off)
         
         cameraButtonViewModel.update(accessibilityLabel: cameraStatus == .on
@@ -252,6 +260,7 @@ class SetupControlBarViewModel: ObservableObject {
     }
     
     private func getAudioButtonState(localUserState: LocalUserState) -> AudioButtonState {
+        self.localUserState = localUserState
         
         if localUserState.incomingAudioState.operation == .muted {
             return AudioButtonState.incomingAudioMuted

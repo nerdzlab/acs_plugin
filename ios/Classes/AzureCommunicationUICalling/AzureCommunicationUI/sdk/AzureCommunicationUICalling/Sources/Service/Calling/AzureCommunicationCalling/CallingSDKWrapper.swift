@@ -111,6 +111,11 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             joinCallOptions.outgoingAudioOptions?.filters = filters
         }
         
+        if isMuteIncomingAudio {
+            joinCallOptions.incomingAudioOptions = IncomingAudioOptions()
+            joinCallOptions.incomingAudioOptions?.muted = isMuteIncomingAudio
+        }
+        
         joinCallOptions.outgoingAudioOptions?.muted = !isMicrophonePreferred
         joinCallOptions.incomingVideoOptions = incomingVideoOptions
         if let remoteInfo = callKitRemoteInfo {
@@ -141,10 +146,6 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         
         do {
             let callAgent = try await callingSDKInitializer.setupCallAgent()
-            
-            if isMuteIncomingAudio {
-                joinCallOptions.incomingAudioOptions?.muted = isMuteIncomingAudio
-            }
             
             //MTODO: Displayname
             //            callAgent.
@@ -704,6 +705,52 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             print("❌ Failed to encode reaction: \(error)")
             throw error
         }
+    }
+    
+    func muteCall() async throws {
+        guard let call = call else {
+            return
+        }
+        
+        do {
+            try await call.muteIncomingAudio()
+        } catch {
+            print("❌ Failed to mute call")
+            throw error
+        }
+    }
+    
+    func unMuteCall() async throws {
+        guard let call = call else {
+            return
+        }
+        
+        do {
+            try await call.unmuteIncomingAudio()
+        } catch {
+            print("❌ Failed to unMute call")
+            throw error
+        }
+    }
+    
+    func enableNoiseSuppression() {
+        guard let call = call else {
+            return
+        }
+        
+        call.liveOutgoingAudioFilters.musicModeEnabled = true
+        call.liveOutgoingAudioFilters.acousticEchoCancellationEnabled = true
+        call.liveOutgoingAudioFilters.noiseSuppressionMode = .high
+    }
+    
+    func disableNoiseSuppression() {
+        guard let call = call else {
+            return
+        }
+        
+        call.liveOutgoingAudioFilters.musicModeEnabled = false
+        call.liveOutgoingAudioFilters.acousticEchoCancellationEnabled = false
+        call.liveOutgoingAudioFilters.noiseSuppressionMode = .off
     }
 }
 

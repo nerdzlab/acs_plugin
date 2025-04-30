@@ -107,6 +107,16 @@ private func handleLocalUserAction(_ action: LocalUserAction,
         actionHandler.requestLowerHand(state: getState(), dispatch: dispatch)
     case .backgroundEffectRequested(let effect):
         actionHandler.requestBackgroundEffect(effect: effect, state: getState(), dispatch: dispatch)
+    case .audioDeviceChangeSucceeded:
+        if (getState().localUserState.incomingAudioState.operation == .muted) {
+            actionHandler.unMuteCall(state: getState(), dispatch: dispatch)
+        }
+    case .muteIncomingAudioRequested:
+        actionHandler.muteCall(state: getState(), dispatch: dispatch)
+    case .noiseSuppressionCallOn:
+        actionHandler.noiseSuppressionCallOn(state: getState(), dispatch: dispatch)
+    case .noiseSuppressionCallOff:
+        actionHandler.noiseSuppressionCallOff(state: getState(), dispatch: dispatch)
         
     case .cameraOnSucceeded,
             .cameraOnFailed,
@@ -123,9 +133,7 @@ private func handleLocalUserAction(_ action: LocalUserAction,
             .microphonePreviewOff,
             .noiseSuppressionPreviewOn,
             .noiseSuppressionPreviewOff,
-            .muteIncomingAudioOnPreviewRequested,
             .audioDeviceChangeRequested,
-            .audioDeviceChangeSucceeded,
             .audioDeviceChangeFailed,
             .changeDisplayNameRequested,
             .gridLayoutSelected,

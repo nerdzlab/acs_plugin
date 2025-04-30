@@ -10,7 +10,7 @@ protocol OverlayViewModelProtocol {
     var title: String { get }
     var subtitle: String? { get }
     var background: UIColor { get }
-    var actionButtonViewModel: PrimaryButtonViewModel? { get }
+    var actionButtonViewModel: AppPrimaryButtonViewModel? { get }
     var errorInfoViewModel: ErrorInfoViewModel? { get }
     var isDisplayed: Bool { get }
 }
@@ -18,6 +18,6 @@ protocol OverlayViewModelProtocol {
 extension OverlayViewModelProtocol {
     var subtitle: String? { return nil }
     var background: UIColor { return StyleProvider.color.overlay }
-    var actionButtonViewModel: PrimaryButtonViewModel? { return nil }
+    var actionButtonViewModel: AppPrimaryButtonViewModel? { return nil }
     var errorInfoViewModel: ErrorInfoViewModel? { return nil }
 }

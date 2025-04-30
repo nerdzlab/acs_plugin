@@ -36,7 +36,7 @@ public class EffectsPickerViewModel: ObservableObject {
         self.onDismiss = onDismiss
         self.isDisplayed = false
         self.onEffects = onEffects
-        self.title = localizationProvider.getLocalizedString(.effectsTitle)
+        self.title = localizationProvider.getLocalizedString(.onHold)
         self.selectedEffect = localUserState.backgroundEffectsState.effect
         self.videoEffectsPreviewViewModel = videoEffectsPreviewViewModel
         

@@ -100,11 +100,15 @@ extension Reducer where State == LocalUserState,
             currentCapabilitiesAreDefault = false
         case .onCapabilitiesChanged(event: let event):
             break
+        case .noiseSuppressionCallOn:
+            noiseSuppressionStatus = .on
+        case .noiseSuppressionCallOff:
+            noiseSuppressionStatus = .off
         case .noiseSuppressionPreviewOn:
             noiseSuppressionStatus = .on
         case .noiseSuppressionPreviewOff:
             noiseSuppressionStatus = .off
-        case .muteIncomingAudioOnPreviewRequested:
+        case .muteIncomingAudioRequested:
             incomingAudioStatus = .muted
         case .changeDisplayNameRequested(displayName: let name):
             updatedDisplayName = name

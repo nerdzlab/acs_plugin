@@ -19,6 +19,8 @@ enum CallCompositeInternalError: Error, Equatable {
     case cameraSwitchFailed
     case cameraOnFailed
     case raiseHandFailed
+    case unMuteFailed
+    case muteFailed
     case lowerHandFailed
     case networkConnectionNotAvailable
     case micNotAvailable
@@ -59,6 +61,8 @@ enum CallCompositeInternalError: Error, Equatable {
                 .callDenied,
                 .micNotAvailable,
                 .setVideoEffectFailed,
+                .muteFailed,
+                .unMuteFailed,
                 .cameraSwitchFailed:
             return nil
         }
@@ -86,6 +90,8 @@ enum CallCompositeInternalError: Error, Equatable {
                 .raiseHandFailed,
                 .lowerHandFailed,
                 .setVideoEffectFailed,
+                .unMuteFailed,
+                .muteFailed,
                 .callJoinConnectionFailed:
             return false
         }

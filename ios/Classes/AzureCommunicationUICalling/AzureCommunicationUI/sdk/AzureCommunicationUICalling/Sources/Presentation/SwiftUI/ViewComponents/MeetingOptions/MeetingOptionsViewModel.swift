@@ -15,7 +15,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
     private let onParticipants: () -> Void
     private let onRaiseHand: () -> Void
     private let onLowerHand: () -> Void
-    private let onEffects: () -> Void
+    private let onEffects: (LocalUserState.BackgroundEffectType) -> Void
     private let onLayoutOptions: () -> Void
     private let onReaction: (ReactionType) -> Void
     
@@ -38,7 +38,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
         onParticipants: @escaping () -> Void,
         onRaiseHand: @escaping () -> Void,
         onLowerHand: @escaping () -> Void,
-        onEffects: @escaping () -> Void,
+        onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
         onLayoutOptions: @escaping () -> Void,
         onReaction: @escaping (ReactionType) -> Void,
         isDisplayed: Bool
@@ -113,13 +113,17 @@ internal class MeetingOptionsViewModel: ObservableObject {
             })
         
         effectsButtonViewModel = IconWithLabelButtonViewModel(
-            selectedButtonState: EffectsButtonState.default,
+            selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? EffectsButtonState.off : EffectsButtonState.on,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
             isDisabled: localUserState.cameraState.operation == .off,
             isVisible: true,
             action: { [weak self] in
-                self?.onEffects()
+                if (localUserState.backgroundEffectsState.operation == .off) {
+                    self?.onEffects(LocalUserState.BackgroundEffectType.blur)
+                } else {
+                    self?.onEffects(LocalUserState.BackgroundEffectType.none)
+                }
             })
     }
     
@@ -195,13 +199,17 @@ internal class MeetingOptionsViewModel: ObservableObject {
             })
         
         effectsButtonViewModel = IconWithLabelButtonViewModel(
-            selectedButtonState: EffectsButtonState.default,
+            selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? EffectsButtonState.off : EffectsButtonState.on,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
             isDisabled: localUserState.cameraState.operation == .off,
             isVisible: true,
             action: { [weak self] in
-                self?.onEffects()
+                if (localUserState.backgroundEffectsState.operation == .off) {
+                    self?.onEffects(LocalUserState.BackgroundEffectType.blur)
+                } else {
+                    self?.onEffects(LocalUserState.BackgroundEffectType.none)
+                }
             })
     }
     

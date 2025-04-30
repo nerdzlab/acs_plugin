@@ -59,7 +59,7 @@ extension Reducer where State == NavigationState,
             drawerVisibility = .captionsLangaugeViewVisible
         case .localUserAction(.audioDeviceChangeRequested):
             drawerVisibility = .hidden
-        case .localUserAction(.muteIncomingAudioOnPreviewRequested):
+        case .localUserAction(.muteIncomingAudioRequested):
             drawerVisibility = .hidden
         case .localUserAction(.gridLayoutSelected):
             drawerVisibility = .hidden
@@ -116,7 +116,7 @@ extension Reducer where State == NavigationState,
                                supportShareSheetVisible: drawerVisibility.isSupportShareSheetVisible,
                                participantsVisible: drawerVisibility.isParticipantsVisible,
                                participantActionsVisible: drawerVisibility.isParticipantActionsVisible,
-                               participantOptionsVisible: drawerVisibility.isParticipantOptionsVisible, shareMeetingLinkVisible: drawerVisibility.isShareSheetMeetingLinkVisible, layoutOptionsVisible: drawerVisibility.isLayoutOptionsVisible, meetignOptionsVisible: drawerVisibility.isMeetingOptionsVisible, backgroundEffectsViewVisible: drawerVisibility.isBackgroundEffectsViewVisible, selectedParticipant: selectedParticipant
+                               participantOptionsVisible: drawerVisibility.isParticipantOptionsVisible, shareMeetingLinkVisible: drawerVisibility.isShareSheetMeetingLinkVisible, layoutOptionsVisible: drawerVisibility.isLayoutOptionsVisible, meetignOptionsVisible: drawerVisibility.isMeetingOptionsVisible,  selectedParticipant: selectedParticipant
         )
     }
     enum DrawerVisibility {
@@ -168,7 +168,6 @@ extension Reducer where State == NavigationState,
         state.shareMeetingLinkVisible ? .shareMeetingLinkVisible :
         state.layoutOptionsVisible ? .layoutOptionsVisible :
         state.meetignOptionsVisible ? .meetingOptionsVisible :
-        state.backgroundEffectsViewVisible ? .backgroundEffectsViewVisible :
         state.moreOptionsVisible ? .moreOptionsVisible : .hidden
     }
 

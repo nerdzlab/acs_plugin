@@ -97,6 +97,10 @@ protocol CallingSDKWrapperProtocol {
     func sendReaction(_ reaction: ReactionType) async throws
     var callingEventsHandler: CallingSDKEventsHandling { get }
     func dispose()
+    func muteCall() async throws
+    func unMuteCall() async throws
+    func enableNoiseSuppression()
+    func disableNoiseSuppression()
 }
 
 protocol CallingSDKEventsHandling {

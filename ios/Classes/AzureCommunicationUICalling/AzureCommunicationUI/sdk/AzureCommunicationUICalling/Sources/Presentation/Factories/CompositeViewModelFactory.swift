@@ -214,7 +214,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                      onParticipants: @escaping () -> Void,
                                      onRaiseHand: @escaping () -> Void,
                                      onLowerHand: @escaping () -> Void,
-                                     onEffects: @escaping () -> Void,
+                                     onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
                                      onLayoutOptions: @escaping () -> Void,
                                      onReaction: @escaping (ReactionType) -> Void,
                                      isDisplayed: Bool) -> MeetingOptionsViewModel {
@@ -287,11 +287,14 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
     }
     
     func makeAudioDevicesListViewModel(dispatchAction: @escaping ActionDispatch,
-                                       localUserState: LocalUserState) -> AudioDevicesListViewModel {
+                                       localUserState: LocalUserState,
+                                       isPreviewSettings: Bool) -> AudioDevicesListViewModel {
         AudioDevicesListViewModel(compositeViewModelFactory: self,
                                   dispatchAction: dispatchAction,
                                   localUserState: localUserState,
-                                  localizationProvider: localizationProvider)
+                                  localizationProvider: localizationProvider,
+                                  isPreviewSettings: isPreviewSettings
+        )
     }
     
     func makeLayoutOptionsViewModel(
