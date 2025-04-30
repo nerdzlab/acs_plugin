@@ -4,7 +4,7 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 class ParticipantsListCellViewModel: BaseDrawerItemViewModel {
     let participantId: String?

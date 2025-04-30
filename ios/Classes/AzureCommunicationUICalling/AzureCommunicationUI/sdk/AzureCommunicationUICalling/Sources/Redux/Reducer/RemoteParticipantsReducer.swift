@@ -4,7 +4,7 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 extension Reducer where State == RemoteParticipantsState,
                         Actions == Action {

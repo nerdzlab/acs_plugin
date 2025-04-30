@@ -5,7 +5,7 @@
 
 import Foundation
 import Combine
-import SwiftUICore
+import SwiftUI
 
 class ParticipantGridViewModel: ObservableObject {
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol

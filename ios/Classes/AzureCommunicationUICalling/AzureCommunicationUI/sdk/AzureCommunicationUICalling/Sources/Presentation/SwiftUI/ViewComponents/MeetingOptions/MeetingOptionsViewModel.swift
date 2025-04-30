@@ -5,7 +5,7 @@
 //  Created by Yriy Malyts on 16.04.2025.
 //
 import SwiftUI
-import SwiftUICore
+import SwiftUI
 
 internal class MeetingOptionsViewModel: ObservableObject {
     private let localizationProvider: LocalizationProviderProtocol
