@@ -39,6 +39,36 @@ android {
     }
 }
 
+dependencies {
+    implementation "androidx.core:core-ktx:$androidx_core_ktx_version"
+    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
+    implementation "androidx.fragment:fragment-ktx:$androidx_fragment_ktx_version"
+    implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_layout_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$androidx_navigation_fragment_ktx_version"
+    api ("com.azure.android:azure-communication-calling:$azure_calling_sdk_version")
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_lifecycle_viewmodel_ktx_version"
+    implementation "com.microsoft.fluentui:fluentui_others:$microsoft_fluent_ui_version"
+    implementation "com.microsoft.fluentui:fluentui_drawer:$microsoft_fluent_ui_version"
+    implementation "com.microsoft.fluentui:fluentui_persona:$microsoft_fluent_ui_version"
+    implementation "com.microsoft.fluentui:fluentui_transients:$microsoft_fluent_ui_version"
+
+    api 'com.jakewharton.threetenabp:threetenabp:1.4.4'
+
+    testImplementation "androidx.arch.core:core-testing:$androidx_core_testing_version"
+    testImplementation "junit:junit:$junit_version"
+    testImplementation "org.mockito:mockito-inline:$mockito_inline_version"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$jetbrains_kotlinx_coroutines_test_version"
+    testImplementation('org.threeten:threetenbp:1.6.5') {
+        exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
+    }
+    androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidx_espresso_core_version"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$androidx_espresso_contrib_version"
+    androidTestImplementation "androidx.test:rules:$androidx_test_rules_version"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$jetbrains_kotlinx_coroutines_test_version"
+}
+
 flutter {
     source = "../.."
 }

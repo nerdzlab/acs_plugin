@@ -1,8 +1,51 @@
-group = "com.acs_plugin"
-version = "1.0-SNAPSHOT"
-
 buildscript {
-    ext.kotlin_version = "1.8.10"
+    def getVersionCode = { ->
+        return project.hasProperty('versionCode') ? versionCode.toInteger() : 1
+    }
+
+    ext {
+        kotlin_version = '1.8.10'
+
+        call_library_version_name = '1.14.0'
+
+        ui_library_version_code = getVersionCode()
+
+        junit_version = '4.13.2'
+
+        androidx_activity_ktx_version = '1.4.0'
+        androidx_appcompat_version = '1.4.1'
+        androidx_constraint_layout_version = '2.1.4'
+        androidx_core_ktx_version = '1.7.0'
+        androidx_core_testing_version = '2.1.0'
+        androidx_espresso_contrib_version = '3.4.0'
+        androidx_espresso_core_version = '3.4.0'
+        androidx_fragment_ktx_version = '1.4.1'
+        androidx_junit_version = '1.1.3'
+        androidx_lifecycle_viewmodel_ktx_version = '2.4.1'
+        androidx_navigation_fragment_ktx_version = '2.4.2'
+        androidx_test_rules_version = '1.4.1-alpha07'
+        androidx_activity_compose_version = "1.5.1"
+        androidx_navigation_compose = "2.5.2"
+
+        azure_calling_sdk_version = '2.13.1'
+
+        azure_common_sdk_version = '1.0.2'
+
+        jetbrains_kotlinx_coroutines_test_version = '1.6.0-native-mt'
+
+        microsoft_dualscreen_layout_version = '1.0.0-alpha01'
+        microsoft_fluent_ui_version = '0.0.21'
+        microsoft_fluent_ui_version_v2 = '0.1.2'
+        microsoft_fluent_ui_drawer_version_v2 = '0.1.3'
+
+        mockito_inline_version = '4.3.1'
+        mockito_kotlin_version = '4.0.0'
+
+        androidx_activity_compose_version = '1.5.1'
+        compose_version = '1.2.1'
+        kotlin_compiler_extension_version = '1.3.2'
+    }
+
     repositories {
         google()
         mavenCentral()
@@ -11,13 +54,21 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:7.4.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+        classpath 'com.google.gms:google-services:4.3.14'
     }
+}
+
+plugins {
+    id 'org.jetbrains.kotlin.android' version '1.8.10' apply false
 }
 
 allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url "https://pkgs.dev.azure.com/MicrosoftDeviceSDK/DuoSDK-Public/_packaging/Duo-SDK-Feed/maven/v1"
+        }
     }
 }
 
@@ -63,4 +114,34 @@ android {
             }
         }
     }
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:$androidx_core_ktx_version"
+    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
+    implementation "androidx.fragment:fragment-ktx:$androidx_fragment_ktx_version"
+    implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_layout_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$androidx_navigation_fragment_ktx_version"
+    api ("com.azure.android:azure-communication-calling:$azure_calling_sdk_version")
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_lifecycle_viewmodel_ktx_version"
+    implementation "com.microsoft.fluentui:fluentui_others:$microsoft_fluent_ui_version"
+    implementation "com.microsoft.fluentui:fluentui_drawer:$microsoft_fluent_ui_version"
+    implementation "com.microsoft.fluentui:fluentui_persona:$microsoft_fluent_ui_version"
+    implementation "com.microsoft.fluentui:fluentui_transients:$microsoft_fluent_ui_version"
+
+    api 'com.jakewharton.threetenabp:threetenabp:1.4.4'
+
+    testImplementation "androidx.arch.core:core-testing:$androidx_core_testing_version"
+    testImplementation "junit:junit:$junit_version"
+    testImplementation "org.mockito:mockito-inline:$mockito_inline_version"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$jetbrains_kotlinx_coroutines_test_version"
+    testImplementation('org.threeten:threetenbp:1.6.5') {
+        exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
+    }
+    androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidx_espresso_core_version"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$androidx_espresso_contrib_version"
+    androidTestImplementation "androidx.test:rules:$androidx_test_rules_version"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$jetbrains_kotlinx_coroutines_test_version"
 }

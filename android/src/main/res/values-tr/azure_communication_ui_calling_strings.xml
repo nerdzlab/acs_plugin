@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+   Copyright (c) Microsoft Corporation. All rights reserved.
+   Licensed under the MIT License.
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--    Device-->
+    <string name="azure_communication_ui_calling_audio_device_drawer_android">Android</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_speaker">Hoparlör</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_bluetooth">Bluetooth</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_headphone">Mikrofonlu kulaklık</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_accessibility_label">Cihaz seçenekleri. Kapat düğmesi.</string>
+    <string name="azure_communication_ui_calling_switch_camera_button_front">Ön kamera açık, arka kameraya geç</string>
+    <string name="azure_communication_ui_calling_switch_camera_button_back">Arka kamera açık, ön kameraya geç</string>
+    <string name="azure_communication_ui_calling_setup_audio_device_select_content_description">%1$s Ses Cihazını Seç</string>
+    <string name="azure_communication_ui_calling_selected_audio_device_announcement">%1$s ses cihazı, seçildi</string>
+    <!--    Setup View-->
+    <string name="azure_communication_ui_calling_setup_view_button_connecting_call">Aramaya katılıyorsunuz…</string>
+    <string name="azure_communication_ui_calling_setup_view_button_video_off">Görüntü kapalı</string>
+    <string name="azure_communication_ui_calling_setup_view_button_video_on">Görüntü açık</string>
+    <string name="azure_communication_ui_calling_setup_view_button_mic_off">Mikrofon kapalı</string>
+    <string name="azure_communication_ui_calling_setup_view_button_mic_on">Mikrofon açık</string>
+    <string name="azure_communication_ui_calling_setup_view_button_join_call">Aramaya katıl</string>
+    <string name="azure_communication_ui_calling_setup_view_preview_area_audio_disabled">Sesiniz devre dışı. Etkinleştirmek için Ayarlar seçeneğine giderek erişime izin verin.
+    Bu aramayı başlatmak için sesi etkinleştirmeniz gerekiyor.</string>
+    <string name="azure_communication_ui_calling_setup_view_preview_area_camera_disabled">Kameranız devre dışı. Etkinleştirmek için Ayarlar seçeneğine giderek
+      erişime izin verin.</string>
+    <string name="azure_communication_ui_calling_setup_view_warning_missing_text">İzinler gerekli</string>
+    <string name="azure_communication_ui_calling_setup_view_go_to_settings">Ayarlara Git</string>
+    <string name="azure_communication_ui_calling_setup_view_audio_device_selected_accessibility_label">Seçili</string>
+    <string name="azure_communication_ui_calling_setup_view_background_gradient_accessibility_label">Gradyan Kur</string>
+    <string name="azure_communication_ui_calling_button_switch_camera_accessibility_label">Kamerayı Değiştir</string>
+    <string name="azure_communication_ui_calling_call_setup_action_bar_title">Kurulum</string>
+    <string name="azure_communication_ui_calling_call_setup_toolbar_title_announcement">Başlık</string>
+    <string name="azure_communication_ui_calling_call_setup_toolbar_subtitle_announcement">Alt Yazı</string>
+    <string name="azure_communication_ui_calling_call_setup_toolbar_navigation_button_announcement">Geri gezinti</string>
+
+    <!--    Lobby View-->
+    <string name="azure_communication_ui_calling_lobby_view_text_waiting_for_host">Oturum sahibi bekleniyor</string>
+    <string name="azure_communication_ui_calling_lobby_view_text_waiting_details">Katılımcılardan biri sizi kısa süre sonra toplantıya alacak</string>
+
+    <!-- Hold Overlay -->
+    <string name="azure_communication_ui_calling_hold_view_text">Beklemeye alındınız</string>
+    <string name="azure_communication_ui_calling_resume">Devam et</string>
+    <string name="azure_communication_ui_calling_remote_participant_on_hold">Beklemede</string>
+    <string name="azure_communication_ui_calling_mic_used">Çağrıya devam edilemiyor\nMikrofonunuz başka bir uygulama tarafından kullanılıyor.</string>
+
+    <!--    Calling View-->
+    <string name="azure_communication_ui_calling_view_info_header_waiting_for_others_to_join">Diğerlerinin katılması bekleniyor</string>
+    <string name="azure_communication_ui_calling_view_info_header_call_with_1_person">1 kişi ile arama</string>
+    <string name="azure_communication_ui_calling_view_info_header_call_with_n_people">%1$d kişi ile arama</string>
+    <string name="azure_communication_ui_calling_view_go_back">Geri</string>
+    <string name="azure_communication_ui_calling_view_participant_drawer_local_participant_format">%1$s (ben)</string>
+    <string name="azure_communication_ui_calling_view_participant_drawer_unnamed">Adsız katılımcı</string>
+    <string name="azure_communication_ui_calling_view_leave_call">Aramadan ayrıl?</string>
+    <string name="azure_communication_ui_calling_view_leave_call_button_text">Ayrıl</string>
+    <string name="azure_communication_ui_calling_view_leave_call_cancel">İptal</string>
+    <string name="azure_communication_ui_calling_view_leave_confirm_menu">Onayla menüsünden ayrıl</string>
+    <string name="azure_communication_ui_calling_view_participant_list_open_accessibility_label">Katılımcı Listesini Aç</string>
+    <string name="azure_communication_ui_calling_view_participant_list_dismiss_list">Katılımcı listesini kapatmak için iki kez dokunun</string>
+    <string name="azure_communication_ui_calling_view_participant_list_muted_accessibility_label">Sessize alınmış</string>
+    <string name="azure_communication_ui_calling_view_participant_list_unmuted_accessibility_label">Sesi açıldı</string>
+    <string name="azure_communication_ui_calling_view_button_hang_up_accessibility_label">Kapat</string>
+    <string name="azure_communication_ui_calling_view_button_close_button_accessibility_label">Kapat</string>
+    <string name="azure_communication_ui_calling_view_button_close_button_full_accessibility_label">Kapatma Düğmesi</string>
+    <string name="azure_communication_ui_calling_view_button_toggle_video_accessibility_label">Görüntüyü Aç/Kapat</string>
+    <string name="azure_communication_ui_calling_view_button_toggle_audio_accessibility_label">Sesi Aç/Kapat</string>
+    <string name="azure_communication_ui_calling_view_button_device_options_accessibility_label">Cihaz Seçenekleri</string>
+    <string name="azure_communication_ui_calling_view_more_menu_accessibility_label">Diğer</string>
+    <string name="azure_communication_ui_calling_view_share_diagnostics">Tanılama bilgilerini paylaş</string>
+    <string name="azure_communication_ui_calling_view_share_diagnostics_title">Tanılama bilgileri</string>
+    <string name="azure_communication_ui_calling_view_share_diagnostics_description">Tanılama bilgilerini paylaş Düğmesi</string>
+    <string name="azure_communication_ui_calling_view_call_with_accessibility_label">Şununla ara: %1$s</string>
+    <string name="azure_communication_ui_calling_view_participant_list">Katılımcı listesi</string>
+    <string name="azure_communication_ui_calling_view_more_menu_list_accessibility_label">Diğer seçenekler. Kapat düğmesi.</string>
+    <string name="azure_communication_ui_calling_view_participant_list_accessibility_label">Katılımcı listesi. Kapat düğmesi.</string>
+    <string name="azure_communication_ui_calling_view_captions_menu_list_accessibility_label">Alt Yazı &amp; RTT menüsü. Kapat düğmesi.</string>
+    <string name="azure_communication_ui_calling_view_captions_language_menu_list_accessibility_label">Konuşma dili menüsü. Kapat düğmesi.</string>
+
+    <!--    Compliance Banner-->
+    <string name="azure_communication_ui_calling_view_banner_recording_started"><b>Kayıt başlatıldı.</b> Katılarak,
+    bu toplantının dökümünün alınmasına izin veriyorsunuz.
+       <u>Gizlilik ilkesi</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_stopped"><b>Kayıt kaydediliyor.</b> Kayıt durduruldu.
+         <u>Daha fazla bilgi edinin</u></string>
+    <string name="azure_communication_ui_calling_view_banner_transcription_started"><b>Döküm başlatıldı.</b> Katılarak,
+    bu toplantının dökümünün alınmasına izin veriyorsunuz. <u>Gizlilik ilkesi</u></string>
+    <string name="azure_communication_ui_calling_view_banner_transcription_stopped"><b>Döküm kaydediliyor.</b> Döküm
+        durduruldu. <u>Daha fazla bilgi edinin</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_and_transcribing_started"><b>Kayıt ve döküm başlatıldı.</b> Katılarak,
+    bu toplantının dökümünün alınmasına izin veriyorsunuz
+      . <u>Gizlilik ilkesi</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_and_transcribing_stopped"><b>Kayıt ve döküm
+        kaydediliyor.</b> Kayıt ve döküm durduruldu. <u>Daha fazla bilgi edinin</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_stopped_still_transcribing"><b>Kayıt durduruldu.</b>
+    Şu anda yalnızca bu toplantının dökümünü alıyorsunuz. <u>Gizlilik ilkesi</u></string>
+    <string name="azure_communication_ui_calling_view_banner_transcription_stopped_still_recording"><b>Döküm durduruldu.</b>
+    Şu anda yalnızca bu toplantıyı kaydediyorsunuz. <u>Gizlilik ilkesi</u></string>
+    <string name="azure_communication_ui_calling_view_link">Bağlantı</string>
+
+    <!--    PopUp warning-->
+    <string name="azure_communication_ui_calling_snack_bar_button_dismiss">Kapat</string>
+    <string name="azure_communication_ui_calling_alert_title">Uyarı</string>
+    <string name="azure_communication_ui_calling_call_end_with_error">Bir hata veya bağlantı kesildi nedeniyle aramadan çıkarıldınız. Lütfen çağrıya yeniden katılmayı deneyin.</string>
+    <string name="azure_communication_ui_calling_snack_bar_text_error_call_join">Bir hata nedeniyle aramaya katılınamıyor.</string>
+    <string name="azure_communication_ui_calling_call_state_evicted">Aramadan çıkarıldınız.</string>
+    <string name="azure_communication_ui_calling_no_connection_available">Aramaya katılınamıyor. Ağ bağlantınızı kontrol edin.</string>
+    <string name="azure_communication_ui_calling_call_video_fails_error">Kameralar değiştirilemiyor.</string>
+
+    <!--    Notification-->
+    <string name="azure_communication_ui_calling_service_notification_title">Devam eden çağrı</string>
+    <string name="azure_communication_ui_calling_service_notification_message">Aramaya dönmek için dokunun</string>
+
+    <!--    Accessibility Hooks -->
+    <string name="azure_communication_ui_calling_accessibility_user_added">%1$s toplantıya katıldı</string>
+    <string name="azure_communication_ui_calling_accessibility_user_left">%1$s toplantıdan ayrıldı</string>
+    <string name="azure_communication_ui_calling_accessibility_meeting_connected">Aramaya katıldınız</string>
+
+    <!--    Participant list-->
+    <string name="azure_communication_ui_calling_participant_list_in_call_n_people">Aramada (%1$d)</string>
+    <string name="azure_communication_ui_calling_participant_list_in_call_plus_more_people">+ %1$d diğer</string>
+    <string name="azure_communication_ui_calling_participant_list_in_lobby_n_people">Lobide (%1$d)</string>
+    <string name="azure_communication_ui_calling_view_participant_list_dismiss_lobby_list">Katılımcıyı kabul etmek/reddetmek için iki kez dokunun</string>
+
+    <!--    Admit participant dialog-->
+    <string name="azure_communication_ui_calling_admit_name">%1$s kabul edilsin mi?</string>
+    <string name="azure_communication_ui_calling_admit">Kabul et</string>
+    <string name="azure_communication_ui_calling_decline">Reddet</string>
+    <string name="azure_communication_ui_calling_admit_all">Tümünü kabul et</string>
+
+    <!--    Lobby header-->
+    <string name="azure_communication_ui_calling_lobby_header_text">Kişiler katılmayı bekliyor</string>
+    <string name="azure_communication_ui_calling_lobby_header_icon_content_description">Lobi</string>
+    <string name="azure_communication_ui_calling_lobby_header_view_participant_button">Lobiyi görüntüle</string>
+    <string name="azure_communication_ui_calling_lobby_header_accessibility_label">Lobiyi görüntüleyin</string>
+    <string name="azure_communication_ui_calling_lobby_header_close_description">Lobiyi kapat</string>
+
+    <!--    Lobby error header-->
+    <string name="azure_communication_ui_calling_lobby_header_error_close_description">Lobiyi kapatma hatası</string>
+    <string name="azure_communication_ui_calling_lobby_error_content_description">Lobi hatası</string>
+    <string name="azure_communication_ui_calling_error_lobby_disabled_by_configuration">Lobi devre dışı bırakıldı</string>
+    <string name="azure_communication_ui_calling_error_lobby_conversation_type_not_supported">Lobi desteklenmiyor</string>
+    <string name="azure_communication_ui_calling_error_lobby_meeting_role_not_allowded">Rolünüz lobide etkili olamaz</string>
+    <string name="azure_communication_ui_calling_error_lobby_failed_to_remove_participant">Reddedilemedi</string>
+    <string name="azure_communication_ui_calling_error_lobby_unknown">Lobi eylemi hatası</string>
+
+    <!-- Call Diagnostics -->
+    <string name="azure_communication_ui_calling_diagnostics_network_was_lost">Ağ bağlantısı kesildi</string>
+    <string name="azure_communication_ui_calling_diagnostics_network_reconnecting">Yeniden bağlanıyor...</string>
+    <string name="azure_communication_ui_calling_diagnostics_network_quality_low">Ağ kalitesi düşük</string>
+    <string name="azure_communication_ui_calling_diagnostics_you_are_muted">Sesiniz kapatıldı</string>
+    <string name="azure_communication_ui_calling_diagnostics_microphone_not_working_as_expected">Mikrofon beklendiği gibi çalışmıyor</string>
+    <string name="azure_communication_ui_calling_diagnostics_unable_to_start_camera">Kamera başlatılamıyor</string>
+    <string name="azure_communication_ui_calling_diagnostics_camera_stoppped_working">Kamera çalışmayı durdurdu</string>
+    <string name="azure_communication_ui_calling_diagnostics_speaker_not_working_as_expected">Hoparlör beklendiği gibi çalışmıyor</string>
+    <string name="azure_communication_ui_calling_diagnostics_unable_to_locate_speaker">Hoparlör bulunamıyor</string>
+    <string name="azure_communication_ui_calling_diagnostics_unable_to_locate_microphone">Mikrofon bulunamıyor</string>
+    <string name="azure_communication_ui_calling_diagnostics_speaker_muted">Hoparlörün sesi kapatıldı</string>
+
+    <!--    Upper Message Bar Notification -->
+    <string name="azure_communication_ui_calling_notification_dismiss_accessibility_label">Kapat</string>
+
+    <!--     Support Form -->
+    <string name="azure_communication_ui_calling_report_issue">Sorun Bildir</string>
+    <string name="azure_communication_ui_calling_report_issue_title">Sorun Bildir</string>
+    <string name="azure_communication_ui_calling_logs_attach_notice">Günlükler otomatik olarak eklenir.</string>
+    <string name="azure_communication_ui_calling_privacy_policy_label">Gizlilik İlkesi</string>
+    <string name="azure_communication_ui_calling_privacy_policy_label_accessibility">Gizlilik İlkesi. Bağlantı.</string>
+    <string name="azure_communication_ui_calling_describe_your_issue_hint_text">Lütfen sorununuzu açıklayın...</string>
+    <string name="azure_communication_ui_calling_cancel_button_label">İptal</string>
+    <string name="azure_communication_ui_calling_attach_screenshot">Ekran görüntüsü ekle</string>
+    <string name="azure_communication_ui_calling_report_a_problem_label">Sorun bildirin</string>
+    <string name="azure_communication_ui_calling_send_feedback_label">Gönder</string>
+
+    <!--    Outgoing Call-->
+    <string name="azure_communication_ui_calling_setup_view_start_call">Aramayı başlat</string>
+    <string name="azure_communication_ui_calling_setup_view_button_starting_call">Arama başlatılıyor…</string>
+    <string name="azure_communication_ui_calling_call_view_calling">Aranıyor...</string>
+
+    <!-- Participant menu actions -->
+    <string name="azure_communication_ui_calling_view_participant_menu_mute">Mute</string>
+    <string name="azure_communication_ui_calling_view_participant_menu_mute_accessibility_label">Katılımcı menüsünü sessize al</string>
+    <string name="azure_communication_ui_calling_view_participant_menu_remove">Remove from call</string>
+    <string name="azure_communication_ui_calling_view_participant_menu_remove_accessibility_label">Katılımcıyı arama menüsünden kaldır</string>
+    <string name="azure_communication_ui_calling_view_capabilities_changed_toast_features_lost">Arama ayarları güncelleştirildi. Bazı özellikler kullanılamıyor olabilir.</string>
+    <string name="azure_communication_ui_calling_view_capabilities_changed_toast_features_gained">Arama ayarları güncelleştirildi. Bazı ek eylemleri artık siz de kullanılabileceksiniz.</string>
+
+    <!-- Participant menu view -->
+    <string name="azure_communication_ui_calling_view_participant_menu_item_disabled">devre dışı bırakılmış öğe.</string>
+
+    <!--    Drawer-->
+    <string name="azure_communication_ui_calling_drawer_next_content_description">Sonraki</string>
+    <string name="azure_communication_ui_calling_leave_confirm_drawer_leave_button">Ayrıl, Düğme</string>
+    <string name="azure_communication_ui_calling_leave_confirm_drawer_cancel_button">İptal, Düğme</string>
+
+    <!--    Captions-->
+    <string name="azure_communication_ui_calling_live_captions_title">Canlı alt yazılar</string>
+    <string name="azure_communication_ui_calling_captions_spoken_language_title">Konuşma dili</string>
+    <string name="azure_communication_ui_calling_list_item">%1$s. %2$d/%3$d</string>
+    <string name="azure_communication_ui_calling_captions_caption_language_title">Alt yazı dili</string>
+    <string name="azure_communication_ui_calling_starting_captions">Alt yazılar başlatılıyor...</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_start">Alt yazılar başlatılamadı</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_stop">Alt yazılar durdurulamadı</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_set_spoken_language">Konuşma dili değiştirilemedi</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_set_caption_language">Açıklamalı alt yazı dili değiştirilemedi</string>
+    <string name="azure_communication_ui_calling_captions_rtt_menu">Alt yazılar &amp; RTT</string>
+    <string name="azure_communication_ui_calling_rtt_info">Gerçek zamanlı metin (RTT) bu toplantı süresi boyunca etkindir ve tüm katılımcılar tarafından görülebilir. <a href="https://learn.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/real-time-text">Daha fazla bilgi</a></string>
+    <string name="azure_communication_ui_calling_rtt_info_accessibility">Gerçek zamanlı metin (RTT) bu toplantı süresi boyunca etkindir ve tüm katılımcılar tarafından görülebilir. Daha fazla bilgi edinin. Bağlantı</string>
+    <string name="azure_communication_ui_calling_rtt">RTT</string>
+    <string name="azure_communication_ui_calling_rtt_message_sent">İleti gönderildi</string>
+    <string name="azure_communication_ui_calling_rtt_typing">RTT yazma</string>
+    <string name="azure_communication_ui_calling_captions_turn_on_rtt">Bu arama için RTT\'yi aç</string>
+    <string name="azure_communication_ui_calling_captions_turn_on">Alt yazıları aç</string>
+    <string name="azure_communication_ui_calling_captions_turn_off">Alt yazıları kapat</string>
+    <string name="azure_communication_ui_calling_captions_is_on">Alt yazı açık</string>
+    <string name="azure_communication_ui_calling_captions_is_off">Alt yazı kapalı</string>
+    <string name="azure_communication_ui_calling_view_rtt_confirmation_title">RTT açılsın mı?</string>
+    <string name="azure_communication_ui_calling_view_rtt_confirmation_message">Aramadaki herkes için gerçek zamanlı metin (RTT) açılacak.</string>
+    <string name="azure_communication_ui_calling_view_rtt_confirmation_confirm">Aç</string>
+    <string name="azure_communication_ui_calling_rtt_header">Gerçek zamanlı metin</string>
+    <string name="azure_communication_ui_calling_captions_header">Alt yazılar</string>
+    <string name="azure_communication_ui_calling_maximize_captions_and_rtt">Alt yazılar ve RTT ile ekranı kapla</string>
+    <string name="azure_communication_ui_calling_minimize_captions_and_rtt">Alt yazıları ve RTT’yi küçült</string>
+    <string name="azure_communication_ui_calling_rtt_edit_text_hint">Gerçek zamanlı bir ileti yazın</string>
+</resources>
