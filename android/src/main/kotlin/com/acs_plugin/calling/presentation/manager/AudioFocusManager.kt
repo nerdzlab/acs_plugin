@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.manager
+package com.acs_plugin.calling.presentation.manager
 
 import android.content.Context
 import android.media.AudioAttributes
@@ -10,12 +10,12 @@ import android.media.AudioManager
 import android.media.AudioManager.MODE_NORMAL
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.azure.android.communication.ui.calling.models.CallCompositeTelecomManagerOptions
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.action.AudioSessionAction
-import com.azure.android.communication.ui.calling.redux.state.AudioFocusStatus
-import com.azure.android.communication.ui.calling.redux.state.CallingStatus
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.calling.models.CallCompositeTelecomManagerOptions
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.action.AudioSessionAction
+import com.acs_plugin.calling.redux.state.AudioFocusStatus
+import com.acs_plugin.calling.redux.state.CallingStatus
+import com.acs_plugin.calling.redux.state.ReduxState
 import kotlinx.coroutines.flow.collect
 
 internal abstract class AudioFocusHandler : AudioManager.OnAudioFocusChangeListener {

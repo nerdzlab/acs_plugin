@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.hangup
+package com.acs_plugin.calling.presentation.fragment.calling.hangup
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -13,10 +13,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.utilities.BottomCellAdapter
-import com.azure.android.communication.ui.calling.utilities.BottomCellItem
-import com.azure.android.communication.ui.calling.utilities.BottomCellItemType
+import com.acs_plugin.R
+import com.acs_plugin.calling.utilities.BottomCellAdapter
+import com.acs_plugin.calling.utilities.BottomCellItem
+import com.acs_plugin.calling.utilities.BottomCellItemType
 import com.microsoft.fluentui.drawer.DrawerDialog
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

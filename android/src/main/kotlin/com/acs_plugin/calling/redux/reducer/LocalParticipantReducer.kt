@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.redux.reducer
+package com.acs_plugin.calling.redux.reducer
 
-import com.azure.android.communication.ui.calling.redux.action.Action
-import com.azure.android.communication.ui.calling.redux.action.LocalParticipantAction
-import com.azure.android.communication.ui.calling.redux.action.NavigationAction
-import com.azure.android.communication.ui.calling.redux.state.AudioOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraDeviceSelectionStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraTransmissionStatus
-import com.azure.android.communication.ui.calling.redux.state.LocalUserState
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.action.LocalParticipantAction
+import com.acs_plugin.calling.redux.action.NavigationAction
+import com.acs_plugin.calling.redux.state.AudioOperationalStatus
+import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
+import com.acs_plugin.calling.redux.state.CameraOperationalStatus
+import com.acs_plugin.calling.redux.state.CameraTransmissionStatus
+import com.acs_plugin.calling.redux.state.LocalUserState
 
 internal interface LocalParticipantStateReducer : Reducer<LocalUserState>
 

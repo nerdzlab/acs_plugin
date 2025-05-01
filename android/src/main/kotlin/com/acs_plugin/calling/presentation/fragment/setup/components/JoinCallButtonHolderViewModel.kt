@@ -1,21 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.setup.components
+package com.acs_plugin.calling.presentation.fragment.setup.components
 
 import android.media.AudioManager
-import com.azure.android.communication.ui.calling.configuration.CallType
-import com.azure.android.communication.ui.calling.error.CallStateError
-import com.azure.android.communication.ui.calling.error.ErrorCode
-import com.azure.android.communication.ui.calling.presentation.manager.NetworkManager
-import com.azure.android.communication.ui.calling.redux.action.Action
-import com.azure.android.communication.ui.calling.redux.action.CallingAction
-import com.azure.android.communication.ui.calling.redux.action.ErrorAction
-import com.azure.android.communication.ui.calling.redux.state.CallingState
-import com.azure.android.communication.ui.calling.redux.state.CallingStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.PermissionStatus
-import com.azure.android.communication.ui.calling.redux.state.isDisconnected
+import com.acs_plugin.calling.configuration.CallType
+import com.acs_plugin.calling.error.CallStateError
+import com.acs_plugin.calling.error.ErrorCode
+import com.acs_plugin.calling.presentation.manager.NetworkManager
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.action.CallingAction
+import com.acs_plugin.calling.redux.action.ErrorAction
+import com.acs_plugin.calling.redux.state.CallingState
+import com.acs_plugin.calling.redux.state.CallingStatus
+import com.acs_plugin.calling.redux.state.CameraOperationalStatus
+import com.acs_plugin.calling.redux.state.PermissionStatus
+import com.acs_plugin.calling.redux.state.isDisconnected
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

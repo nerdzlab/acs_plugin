@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.utilities
+package com.acs_plugin.calling.utilities
 
 import android.graphics.drawable.Drawable
 import android.view.View
-import com.azure.android.communication.ui.calling.models.CallCompositeParticipantViewData
+import com.acs_plugin.calling.models.CallCompositeParticipantViewData
 
 internal enum class BottomCellItemType {
     BottomMenuAction,

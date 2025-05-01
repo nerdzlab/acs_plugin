@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service.sdk
+package com.acs_plugin.calling.service.sdk
 
 import com.azure.android.communication.calling.CallState
-import com.azure.android.communication.ui.calling.error.CallStateError
-import com.azure.android.communication.ui.calling.error.ErrorCode
-import com.azure.android.communication.ui.calling.models.CallCompositeEventCode
-import com.azure.android.communication.ui.calling.redux.state.CallingStatus
+import com.acs_plugin.calling.error.CallStateError
+import com.acs_plugin.calling.error.ErrorCode
+import com.acs_plugin.calling.models.CallCompositeEventCode
+import com.acs_plugin.calling.redux.state.CallingStatus
 
 internal data class CallingStateWrapper(
     val callState: CallState,

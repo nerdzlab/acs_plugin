@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.captions
+package com.acs_plugin.calling.presentation.fragment.calling.captions
 
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.azure.android.communication.ui.calling.implementation.R
+import com.acs_plugin.R
 import com.microsoft.fluentui.persona.AvatarView
 
 internal class CaptionsRecyclerViewAdapter(

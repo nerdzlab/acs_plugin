@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.manager
+package com.acs_plugin.calling.presentation.manager
 
-import com.azure.android.communication.ui.calling.models.CallCompositeLocalOptions
-import com.azure.android.communication.ui.calling.configuration.RemoteParticipantViewData
-import com.azure.android.communication.ui.calling.configuration.RemoteParticipantsConfiguration
-import com.azure.android.communication.ui.calling.configuration.RemoteParticipantsConfigurationHandler
-import com.azure.android.communication.ui.calling.models.CallCompositeParticipantViewData
-import com.azure.android.communication.ui.calling.models.CallCompositeSetParticipantViewDataResult
-import com.azure.android.communication.ui.calling.redux.AppStore
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
-import com.azure.android.communication.ui.calling.utilities.CoroutineContextProvider
+import com.acs_plugin.calling.models.CallCompositeLocalOptions
+import com.acs_plugin.calling.configuration.RemoteParticipantViewData
+import com.acs_plugin.calling.configuration.RemoteParticipantsConfiguration
+import com.acs_plugin.calling.configuration.RemoteParticipantsConfigurationHandler
+import com.acs_plugin.calling.models.CallCompositeParticipantViewData
+import com.acs_plugin.calling.models.CallCompositeSetParticipantViewDataResult
+import com.acs_plugin.calling.redux.AppStore
+import com.acs_plugin.calling.redux.state.ReduxState
+import com.acs_plugin.calling.utilities.CoroutineContextProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

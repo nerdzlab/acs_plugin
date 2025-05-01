@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar
+package com.acs_plugin.calling.presentation.fragment.calling.controlbar
 
 import android.content.Context
 import android.util.AttributeSet
@@ -15,12 +15,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.redux.state.AudioDeviceSelectionStatus
-import com.azure.android.communication.ui.calling.redux.state.AudioOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraOperationalStatus
-import com.azure.android.communication.ui.calling.utilities.isTablet
-import com.azure.android.communication.ui.calling.utilities.launchAll
+import com.acs_plugin.R
+import com.acs_plugin.calling.redux.state.AudioDeviceSelectionStatus
+import com.acs_plugin.calling.redux.state.AudioOperationalStatus
+import com.acs_plugin.calling.redux.state.CameraOperationalStatus
+import com.acs_plugin.calling.utilities.isTablet
+import com.acs_plugin.calling.utilities.launchAll
 import kotlinx.coroutines.flow.collect
 
 internal class ControlBarView : ConstraintLayout {

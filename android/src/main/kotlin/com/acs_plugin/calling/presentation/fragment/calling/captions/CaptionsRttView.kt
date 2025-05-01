@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.captions
+package com.acs_plugin.calling.presentation.fragment.calling.captions
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -25,9 +25,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.utilities.isTablet
-import com.azure.android.communication.ui.calling.utilities.launchAll
+import com.acs_plugin.R
+import com.acs_plugin.calling.utilities.isTablet
+import com.acs_plugin.calling.utilities.launchAll
 import kotlinx.coroutines.flow.collect
 import kotlin.math.abs
 import kotlin.math.max

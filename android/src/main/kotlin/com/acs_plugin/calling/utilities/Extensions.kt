@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.utilities
+package com.acs_plugin.calling.utilities
 
 import androidx.lifecycle.LifecycleCoroutineScope
-import com.azure.android.communication.ui.calling.redux.Store
+import com.acs_plugin.calling.redux.Store
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

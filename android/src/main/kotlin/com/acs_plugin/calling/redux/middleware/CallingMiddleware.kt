@@ -1,26 +1,26 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.redux.middleware
+package com.acs_plugin.calling.redux.middleware
 
-import com.azure.android.communication.ui.calling.logger.Logger
-import com.azure.android.communication.ui.calling.redux.Dispatch
-import com.azure.android.communication.ui.calling.redux.Middleware
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.action.Action
-import com.azure.android.communication.ui.calling.redux.action.AudioSessionAction
-import com.azure.android.communication.ui.calling.redux.action.CallDiagnosticsAction
-import com.azure.android.communication.ui.calling.redux.action.CallingAction
-import com.azure.android.communication.ui.calling.redux.action.CaptionsAction
-import com.azure.android.communication.ui.calling.redux.action.ErrorAction
-import com.azure.android.communication.ui.calling.redux.action.LifecycleAction
-import com.azure.android.communication.ui.calling.redux.action.LocalParticipantAction
-import com.azure.android.communication.ui.calling.redux.action.ParticipantAction
-import com.azure.android.communication.ui.calling.redux.action.PermissionAction
-import com.azure.android.communication.ui.calling.redux.action.RttAction
-import com.azure.android.communication.ui.calling.redux.action.ToastNotificationAction
-import com.azure.android.communication.ui.calling.redux.middleware.handler.CallingMiddlewareActionHandler
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.calling.logger.Logger
+import com.acs_plugin.calling.redux.Dispatch
+import com.acs_plugin.calling.redux.Middleware
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.action.AudioSessionAction
+import com.acs_plugin.calling.redux.action.CallDiagnosticsAction
+import com.acs_plugin.calling.redux.action.CallingAction
+import com.acs_plugin.calling.redux.action.CaptionsAction
+import com.acs_plugin.calling.redux.action.ErrorAction
+import com.acs_plugin.calling.redux.action.LifecycleAction
+import com.acs_plugin.calling.redux.action.LocalParticipantAction
+import com.acs_plugin.calling.redux.action.ParticipantAction
+import com.acs_plugin.calling.redux.action.PermissionAction
+import com.acs_plugin.calling.redux.action.RttAction
+import com.acs_plugin.calling.redux.action.ToastNotificationAction
+import com.acs_plugin.calling.redux.middleware.handler.CallingMiddlewareActionHandler
+import com.acs_plugin.calling.redux.state.ReduxState
 
 internal interface CallingMiddleware
 

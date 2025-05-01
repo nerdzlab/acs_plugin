@@ -1,38 +1,38 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.di
+package com.acs_plugin.calling.di
 
-import com.azure.android.communication.ui.calling.CallComposite
-import com.azure.android.communication.ui.calling.configuration.CallCompositeConfiguration
-import com.azure.android.communication.ui.calling.data.CallHistoryRepository
-import com.azure.android.communication.ui.calling.error.ErrorHandler
-import com.azure.android.communication.ui.calling.handlers.CallStateHandler
-import com.azure.android.communication.ui.calling.handlers.RemoteParticipantHandler
-import com.azure.android.communication.ui.calling.logger.Logger
-import com.azure.android.communication.ui.calling.presentation.CallCompositeActivity
-import com.azure.android.communication.ui.calling.presentation.VideoViewManager
-import com.azure.android.communication.ui.calling.presentation.manager.AccessibilityAnnouncementManager
-import com.azure.android.communication.ui.calling.presentation.manager.AudioFocusManager
-import com.azure.android.communication.ui.calling.presentation.manager.AudioModeManager
-import com.azure.android.communication.ui.calling.presentation.manager.AudioSessionManager
-import com.azure.android.communication.ui.calling.presentation.manager.AvatarViewManager
-import com.azure.android.communication.ui.calling.presentation.manager.CapabilitiesManager
-import com.azure.android.communication.ui.calling.presentation.manager.CaptionsRttDataManager
-import com.azure.android.communication.ui.calling.presentation.manager.CompositeExitManager
-import com.azure.android.communication.ui.calling.presentation.manager.DebugInfoManager
-import com.azure.android.communication.ui.calling.presentation.manager.LifecycleManager
-import com.azure.android.communication.ui.calling.presentation.manager.MultitaskingManager
-import com.azure.android.communication.ui.calling.presentation.manager.NetworkManager
-import com.azure.android.communication.ui.calling.presentation.manager.PermissionManager
-import com.azure.android.communication.ui.calling.presentation.manager.UpdatableOptionsManager
-import com.azure.android.communication.ui.calling.presentation.navigation.NavigationRouter
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.middleware.handler.CallingMiddlewareActionHandler
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
-import com.azure.android.communication.ui.calling.service.CallHistoryService
-import com.azure.android.communication.ui.calling.service.CallingService
-import com.azure.android.communication.ui.calling.service.NotificationService
+import com.acs_plugin.calling.CallComposite
+import com.acs_plugin.calling.configuration.CallCompositeConfiguration
+import com.acs_plugin.calling.data.CallHistoryRepository
+import com.acs_plugin.calling.error.ErrorHandler
+import com.acs_plugin.calling.handlers.CallStateHandler
+import com.acs_plugin.calling.handlers.RemoteParticipantHandler
+import com.acs_plugin.calling.logger.Logger
+import com.acs_plugin.calling.presentation.CallCompositeActivity
+import com.acs_plugin.calling.presentation.VideoViewManager
+import com.acs_plugin.calling.presentation.manager.AccessibilityAnnouncementManager
+import com.acs_plugin.calling.presentation.manager.AudioFocusManager
+import com.acs_plugin.calling.presentation.manager.AudioModeManager
+import com.acs_plugin.calling.presentation.manager.AudioSessionManager
+import com.acs_plugin.calling.presentation.manager.AvatarViewManager
+import com.acs_plugin.calling.presentation.manager.CapabilitiesManager
+import com.acs_plugin.calling.presentation.manager.CaptionsRttDataManager
+import com.acs_plugin.calling.presentation.manager.CompositeExitManager
+import com.acs_plugin.calling.presentation.manager.DebugInfoManager
+import com.acs_plugin.calling.presentation.manager.LifecycleManager
+import com.acs_plugin.calling.presentation.manager.MultitaskingManager
+import com.acs_plugin.calling.presentation.manager.NetworkManager
+import com.acs_plugin.calling.presentation.manager.PermissionManager
+import com.acs_plugin.calling.presentation.manager.UpdatableOptionsManager
+import com.acs_plugin.calling.presentation.navigation.NavigationRouter
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.middleware.handler.CallingMiddlewareActionHandler
+import com.acs_plugin.calling.redux.state.ReduxState
+import com.acs_plugin.calling.service.CallHistoryService
+import com.acs_plugin.calling.service.CallingService
+import com.acs_plugin.calling.service.NotificationService
 import java.lang.ref.WeakReference
 
 // Dependency Container for the Call Composite Activity

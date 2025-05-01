@@ -4,4 +4,4 @@
 /**
  * Package containing the classes for call-composite. Azure android communication calling composite.
  */
-package android.src.main.kotlin.com.acs_plugin.calling;
+package com.acs_plugin.calling;

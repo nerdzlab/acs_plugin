@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.redux.reducer
+package com.acs_plugin.calling.redux.reducer
 
-import com.azure.android.communication.ui.calling.redux.action.Action
-import com.azure.android.communication.ui.calling.redux.action.LifecycleAction
-import com.azure.android.communication.ui.calling.redux.state.LifecycleState
-import com.azure.android.communication.ui.calling.redux.state.LifecycleStatus
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.action.LifecycleAction
+import com.acs_plugin.calling.redux.state.LifecycleState
+import com.acs_plugin.calling.redux.state.LifecycleStatus
 
 internal interface LifecycleReducer : Reducer<LifecycleState>
 

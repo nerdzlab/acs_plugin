@@ -1,9 +1,9 @@
-package com.azure.android.communication.ui.calling.presentation.fragment.factories
+package com.acs_plugin.calling.presentation.fragment.factories
 
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.ErrorInfoViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.PermissionWarningViewModel
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.calling.presentation.fragment.setup.components.ErrorInfoViewModel
+import com.acs_plugin.calling.presentation.fragment.setup.components.PermissionWarningViewModel
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.state.ReduxState
 
 internal open class BaseViewModelFactory constructor(
     private val store: Store<ReduxState>,

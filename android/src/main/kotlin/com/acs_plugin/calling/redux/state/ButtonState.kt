@@ -1,4 +1,4 @@
-package com.azure.android.communication.ui.calling.redux.state
+package com.acs_plugin.calling.redux.state
 
 internal data class DefaultButtonState(
     val isEnabled: Boolean? = null,

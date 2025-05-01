@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package android.src.main.kotlin.com.acs_plugin.calling;
+package com.acs_plugin.calling;
 
-import static com.azure.android.communication.ui.calling.CallCompositeExtentionsKt.createDebugInfoManager;
-import static com.azure.android.communication.ui.calling.service.sdk.TypeConversionsKt.into;
+import static com.acs_plugin.calling.CallCompositeExtentionsKt.createDebugInfoManager;
+import static com.acs_plugin.calling.service.sdk.TypeConversionsKt.into;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,44 +12,44 @@ import android.util.Log;
 
 import com.azure.android.communication.common.CommunicationIdentifier;
 import com.azure.android.communication.common.CommunicationTokenCredential;
-import com.azure.android.communication.ui.calling.configuration.CallCompositeConfiguration;
-import com.azure.android.communication.ui.calling.configuration.CallConfiguration;
-import com.azure.android.communication.ui.calling.configuration.CallType;
-import com.azure.android.communication.ui.calling.di.DependencyInjectionContainer;
-import com.azure.android.communication.ui.calling.di.DependencyInjectionContainerImpl;
-import com.azure.android.communication.ui.calling.logger.DefaultLogger;
-import com.azure.android.communication.ui.calling.logger.Logger;
-import com.azure.android.communication.ui.calling.models.CallCompositeAudioSelectionChangedEvent;
-import com.azure.android.communication.ui.calling.models.CallCompositeCallStateCode;
-import com.azure.android.communication.ui.calling.models.CallCompositeCallStateChangedEvent;
-import com.azure.android.communication.ui.calling.models.CallCompositeDebugInfo;
-import com.azure.android.communication.ui.calling.models.CallCompositeDismissedEvent;
-import com.azure.android.communication.ui.calling.models.CallCompositeErrorEvent;
-import com.azure.android.communication.ui.calling.models.CallCompositeGroupCallLocator;
-import com.azure.android.communication.ui.calling.models.CallCompositeIncomingCallCancelledEvent;
-import com.azure.android.communication.ui.calling.models.CallCompositeIncomingCallEvent;
-import com.azure.android.communication.ui.calling.models.CallCompositeJoinLocator;
-import com.azure.android.communication.ui.calling.models.CallCompositeLocalOptions;
-import com.azure.android.communication.ui.calling.models.CallCompositeMultitaskingOptions;
-import com.azure.android.communication.ui.calling.models.CallCompositePictureInPictureChangedEvent;
-import com.azure.android.communication.ui.calling.models.CallCompositePushNotification;
-import com.azure.android.communication.ui.calling.models.CallCompositeRemoteOptions;
-import com.azure.android.communication.ui.calling.models.CallCompositeRemoteParticipantJoinedEvent;
-import com.azure.android.communication.ui.calling.models.CallCompositeRemoteParticipantLeftEvent;
-import com.azure.android.communication.ui.calling.models.CallCompositeRoomLocator;
-import com.azure.android.communication.ui.calling.models.CallCompositeParticipantViewData;
-import com.azure.android.communication.ui.calling.models.CallCompositeSetParticipantViewDataResult;
-import com.azure.android.communication.ui.calling.models.CallCompositeTeamsMeetingIdLocator;
-import com.azure.android.communication.ui.calling.models.CallCompositeTeamsMeetingLinkLocator;
-import com.azure.android.communication.ui.calling.models.CallCompositeUserReportedIssueEvent;
-import com.azure.android.communication.ui.calling.presentation.CallCompositeActivity;
-import com.azure.android.communication.ui.calling.presentation.MultitaskingCallCompositeActivity;
-import com.azure.android.communication.ui.calling.presentation.PiPCallCompositeActivity;
-import com.azure.android.communication.ui.calling.presentation.manager.DebugInfoManager;
-import com.azure.android.communication.ui.calling.redux.action.PipAction;
-import com.azure.android.communication.ui.calling.redux.state.CallingStatus;
-import com.azure.android.communication.ui.calling.service.sdk.CallingSDKInitializer;
-import com.azure.android.communication.ui.calling.utilities.TestHelper;
+import com.acs_plugin.calling.configuration.CallCompositeConfiguration;
+import com.acs_plugin.calling.configuration.CallConfiguration;
+import com.acs_plugin.calling.configuration.CallType;
+import com.acs_plugin.calling.di.DependencyInjectionContainer;
+import com.acs_plugin.calling.di.DependencyInjectionContainerImpl;
+import com.acs_plugin.calling.logger.DefaultLogger;
+import com.acs_plugin.calling.logger.Logger;
+import com.acs_plugin.calling.models.CallCompositeAudioSelectionChangedEvent;
+import com.acs_plugin.calling.models.CallCompositeCallStateCode;
+import com.acs_plugin.calling.models.CallCompositeCallStateChangedEvent;
+import com.acs_plugin.calling.models.CallCompositeDebugInfo;
+import com.acs_plugin.calling.models.CallCompositeDismissedEvent;
+import com.acs_plugin.calling.models.CallCompositeErrorEvent;
+import com.acs_plugin.calling.models.CallCompositeGroupCallLocator;
+import com.acs_plugin.calling.models.CallCompositeIncomingCallCancelledEvent;
+import com.acs_plugin.calling.models.CallCompositeIncomingCallEvent;
+import com.acs_plugin.calling.models.CallCompositeJoinLocator;
+import com.acs_plugin.calling.models.CallCompositeLocalOptions;
+import com.acs_plugin.calling.models.CallCompositeMultitaskingOptions;
+import com.acs_plugin.calling.models.CallCompositePictureInPictureChangedEvent;
+import com.acs_plugin.calling.models.CallCompositePushNotification;
+import com.acs_plugin.calling.models.CallCompositeRemoteOptions;
+import com.acs_plugin.calling.models.CallCompositeRemoteParticipantJoinedEvent;
+import com.acs_plugin.calling.models.CallCompositeRemoteParticipantLeftEvent;
+import com.acs_plugin.calling.models.CallCompositeRoomLocator;
+import com.acs_plugin.calling.models.CallCompositeParticipantViewData;
+import com.acs_plugin.calling.models.CallCompositeSetParticipantViewDataResult;
+import com.acs_plugin.calling.models.CallCompositeTeamsMeetingIdLocator;
+import com.acs_plugin.calling.models.CallCompositeTeamsMeetingLinkLocator;
+import com.acs_plugin.calling.models.CallCompositeUserReportedIssueEvent;
+import com.acs_plugin.calling.presentation.CallCompositeActivity;
+import com.acs_plugin.calling.presentation.MultitaskingCallCompositeActivity;
+import com.acs_plugin.calling.presentation.PiPCallCompositeActivity;
+import com.acs_plugin.calling.presentation.manager.DebugInfoManager;
+import com.acs_plugin.calling.redux.action.PipAction;
+import com.acs_plugin.calling.redux.state.CallingStatus;
+import com.acs_plugin.calling.service.sdk.CallingSDKInitializer;
+import com.acs_plugin.calling.utilities.TestHelper;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Collection;
@@ -357,7 +357,7 @@ public final class CallComposite {
      * Add {@link CallCompositeEventHandler}.
      *
      * <p> Add a callback for Call Composite dismissed Event.
-     * See {@link com.azure.android.communication.ui.calling.models.CallCompositeErrorCode} for values.</p>
+     * See {@link com.acs_plugin.calling.models.CallCompositeErrorCode} for values.</p>
      * <pre>
      *
      * &#47;&#47; add on dismissed event handler.
@@ -438,7 +438,7 @@ public final class CallComposite {
      * Add {@link CallCompositeEventHandler}.
      *
      * <p> Add a callback for Call Composite Error Events.
-     * See {@link com.azure.android.communication.ui.calling.models.CallCompositeErrorCode} for values.</p>
+     * See {@link com.acs_plugin.calling.models.CallCompositeErrorCode} for values.</p>
      * <pre>
      *
      * &#47;&#47; add error handler
@@ -460,7 +460,7 @@ public final class CallComposite {
      * Remove {@link CallCompositeEventHandler}.
      *
      * <p> Remove a callback for Call Composite Error Events.
-     * See {@link com.azure.android.communication.ui.calling.models.CallCompositeErrorEvent} for values.</p>
+     * See {@link com.acs_plugin.calling.models.CallCompositeErrorEvent} for values.</p>
      *
      * @param errorHandler The {@link CallCompositeEventHandler}.
      */
@@ -515,7 +515,7 @@ public final class CallComposite {
      * Add {@link CallCompositeEventHandler}.
      *
      * <p> Add a callback for Call Composite Audio Selection Changed Event.
-     * See {@link com.azure.android.communication.ui.calling.models.CallCompositeAudioSelectionChangedEvent}
+     * See {@link com.acs_plugin.calling.models.CallCompositeAudioSelectionChangedEvent}
      * for values.</p>
      * <pre>
      *
@@ -538,7 +538,7 @@ public final class CallComposite {
      * Remove {@link CallCompositeEventHandler}.
      *
      * <p> Remove a callback for Call Composite Audio Selection Changed Event.
-     * See {@link com.azure.android.communication.ui.calling.models.CallCompositeAudioSelectionChangedEvent}
+     * See {@link com.acs_plugin.calling.models.CallCompositeAudioSelectionChangedEvent}
      * for values.</p>
      *
      * @param eventHandler The {@link CallCompositeEventHandler}.

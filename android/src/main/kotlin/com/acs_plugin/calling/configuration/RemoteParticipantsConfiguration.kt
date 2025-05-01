@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.configuration
+package com.acs_plugin.calling.configuration
 
-import com.azure.android.communication.ui.calling.models.CallCompositeParticipantViewData
-import com.azure.android.communication.ui.calling.models.CallCompositeSetParticipantViewDataResult
-import com.azure.android.communication.ui.calling.service.sdk.CommunicationIdentifier
+import com.acs_plugin.calling.models.CallCompositeParticipantViewData
+import com.acs_plugin.calling.models.CallCompositeSetParticipantViewDataResult
+import com.acs_plugin.calling.service.sdk.CommunicationIdentifier
 import java.lang.ref.WeakReference
 
 internal data class RemoteParticipantViewData(

@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package android.src.main.kotlin.com.acs_plugin.calling.models;
+package com.acs_plugin.calling.models;
 
 import android.content.Context;
 
 import com.azure.android.communication.common.CommunicationTokenCredential;
-import com.azure.android.communication.ui.calling.CallComposite;
-import com.azure.android.communication.ui.calling.CallCompositeBuilder;
+import com.acs_plugin.calling.CallComposite;
+import com.acs_plugin.calling.CallCompositeBuilder;
 
 /**
  * CallCompositeRemoteOptions for CallComposite.launch.

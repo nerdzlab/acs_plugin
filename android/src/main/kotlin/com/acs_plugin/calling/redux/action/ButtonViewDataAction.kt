@@ -1,4 +1,4 @@
-package com.azure.android.communication.ui.calling.redux.action
+package com.acs_plugin.calling.redux.action
 
 internal sealed class ButtonViewDataAction : Action {
     class CallScreenCameraButtonIsEnabledUpdated(val isEnabled: Boolean?) : ButtonViewDataAction()

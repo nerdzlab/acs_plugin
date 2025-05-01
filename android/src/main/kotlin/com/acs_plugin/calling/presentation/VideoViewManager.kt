@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation
+package com.acs_plugin.calling.presentation
 
 import android.content.Context
 import android.view.View
@@ -9,14 +9,14 @@ import android.view.ViewGroup
 import com.azure.android.communication.calling.MediaStreamType
 import com.azure.android.communication.calling.ScalingMode
 import com.azure.android.communication.calling.CreateViewOptions
-import com.azure.android.communication.ui.calling.service.sdk.CallingSDK
-import com.azure.android.communication.ui.calling.service.sdk.LocalVideoStream
-import com.azure.android.communication.ui.calling.service.sdk.RemoteVideoStream
-import com.azure.android.communication.ui.calling.service.sdk.VideoStreamRenderer
-import com.azure.android.communication.ui.calling.service.sdk.VideoStreamRendererLocalWrapper
-import com.azure.android.communication.ui.calling.service.sdk.VideoStreamRendererView
-import com.azure.android.communication.ui.calling.service.sdk.VideoStreamRendererRemoteWrapper
-import com.azure.android.communication.ui.calling.utilities.isAndroidTV
+import com.acs_plugin.calling.service.sdk.CallingSDK
+import com.acs_plugin.calling.service.sdk.LocalVideoStream
+import com.acs_plugin.calling.service.sdk.RemoteVideoStream
+import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
+import com.acs_plugin.calling.service.sdk.VideoStreamRendererLocalWrapper
+import com.acs_plugin.calling.service.sdk.VideoStreamRendererView
+import com.acs_plugin.calling.service.sdk.VideoStreamRendererRemoteWrapper
+import com.acs_plugin.calling.utilities.isAndroidTV
 
 internal class VideoViewManager(
     private val callingSDKWrapper: CallingSDK,

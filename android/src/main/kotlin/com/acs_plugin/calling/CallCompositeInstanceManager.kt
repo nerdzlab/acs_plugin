@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling
+package com.acs_plugin.calling
 
-import com.azure.android.communication.ui.calling.configuration.CallCompositeConfiguration
-import com.azure.android.communication.ui.calling.service.sdk.CallingSDKInitializer
+import com.acs_plugin.calling.configuration.CallCompositeConfiguration
+import com.acs_plugin.calling.service.sdk.CallingSDKInitializer
 import java.lang.IllegalStateException
 
 internal class CallCompositeInstanceManager {

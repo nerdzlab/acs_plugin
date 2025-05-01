@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.models
+package com.acs_plugin.calling.models
 
 import org.threeten.bp.OffsetDateTime
 import java.io.File

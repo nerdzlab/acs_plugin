@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling
+package com.acs_plugin.calling.presentation.fragment.calling
 
 import android.content.Context
 import android.content.res.Configuration
@@ -24,35 +24,35 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.azure.android.communication.ui.calling.CallCompositeInstanceManager
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.presentation.CallCompositeActivityViewModel
-import com.azure.android.communication.ui.calling.presentation.MultitaskingCallCompositeActivity
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.banner.BannerView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.captions.CaptionsRttView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.connecting.overlay.ConnectingOverlayView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar.ControlBarView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar.captions.CaptionsLanguageSelectionListView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar.captions.CaptionsListView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar.more.MoreCallOptionsListView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.hangup.LeaveConfirmView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.header.InfoHeaderView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.hold.OnHoldOverlayView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.lobby.LobbyErrorHeaderView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.lobby.LobbyHeaderView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.lobby.WaitingLobbyOverlayView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.localuser.LocalParticipantView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.notification.ToastNotificationView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.notification.UpperMessageBarNotificationLayoutView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.participant.grid.ParticipantGridView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.participant.menu.ParticipantMenuView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.participantlist.ParticipantListView
-import com.azure.android.communication.ui.calling.presentation.fragment.common.audiodevicelist.AudioDeviceListView
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.ErrorInfoView
-import com.azure.android.communication.ui.calling.utilities.convertDpToPx
-import com.azure.android.communication.ui.calling.utilities.hideKeyboard
-import com.azure.android.communication.ui.calling.utilities.isKeyboardOpen
-import com.azure.android.communication.ui.calling.utilities.isTablet
+import com.acs_plugin.calling.CallCompositeInstanceManager
+import com.acs_plugin.R
+import com.acs_plugin.calling.presentation.CallCompositeActivityViewModel
+import com.acs_plugin.calling.presentation.MultitaskingCallCompositeActivity
+import com.acs_plugin.calling.presentation.fragment.calling.banner.BannerView
+import com.acs_plugin.calling.presentation.fragment.calling.captions.CaptionsRttView
+import com.acs_plugin.calling.presentation.fragment.calling.connecting.overlay.ConnectingOverlayView
+import com.acs_plugin.calling.presentation.fragment.calling.controlbar.ControlBarView
+import com.acs_plugin.calling.presentation.fragment.calling.controlbar.captions.CaptionsLanguageSelectionListView
+import com.acs_plugin.calling.presentation.fragment.calling.controlbar.captions.CaptionsListView
+import com.acs_plugin.calling.presentation.fragment.calling.controlbar.more.MoreCallOptionsListView
+import com.acs_plugin.calling.presentation.fragment.calling.hangup.LeaveConfirmView
+import com.acs_plugin.calling.presentation.fragment.calling.header.InfoHeaderView
+import com.acs_plugin.calling.presentation.fragment.calling.hold.OnHoldOverlayView
+import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyErrorHeaderView
+import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyHeaderView
+import com.acs_plugin.calling.presentation.fragment.calling.lobby.WaitingLobbyOverlayView
+import com.acs_plugin.calling.presentation.fragment.calling.localuser.LocalParticipantView
+import com.acs_plugin.calling.presentation.fragment.calling.notification.ToastNotificationView
+import com.acs_plugin.calling.presentation.fragment.calling.notification.UpperMessageBarNotificationLayoutView
+import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridView
+import com.acs_plugin.calling.presentation.fragment.calling.participant.menu.ParticipantMenuView
+import com.acs_plugin.calling.presentation.fragment.calling.participantlist.ParticipantListView
+import com.acs_plugin.calling.presentation.fragment.common.audiodevicelist.AudioDeviceListView
+import com.acs_plugin.calling.presentation.fragment.setup.components.ErrorInfoView
+import com.acs_plugin.calling.utilities.convertDpToPx
+import com.acs_plugin.calling.utilities.hideKeyboard
+import com.acs_plugin.calling.utilities.isKeyboardOpen
+import com.acs_plugin.calling.utilities.isTablet
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 

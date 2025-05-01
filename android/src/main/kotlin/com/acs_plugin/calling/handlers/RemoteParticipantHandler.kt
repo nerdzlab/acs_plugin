@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.handlers
+package com.acs_plugin.calling.handlers
 
-import com.azure.android.communication.ui.calling.configuration.CallCompositeConfiguration
-import com.azure.android.communication.ui.calling.models.CallCompositeRemoteParticipantJoinedEvent
-import com.azure.android.communication.ui.calling.models.buildCallCompositeRemoteParticipantLeftEvent
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
-import com.azure.android.communication.ui.calling.redux.state.RemoteParticipantsState
-import com.azure.android.communication.ui.calling.service.sdk.CallingSDK
-import com.azure.android.communication.ui.calling.service.sdk.into
+import com.acs_plugin.calling.configuration.CallCompositeConfiguration
+import com.acs_plugin.calling.models.CallCompositeRemoteParticipantJoinedEvent
+import com.acs_plugin.calling.models.buildCallCompositeRemoteParticipantLeftEvent
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.state.ReduxState
+import com.acs_plugin.calling.redux.state.RemoteParticipantsState
+import com.acs_plugin.calling.service.sdk.CallingSDK
+import com.acs_plugin.calling.service.sdk.into
 import kotlinx.coroutines.flow.collect
 
 internal class RemoteParticipantHandler(

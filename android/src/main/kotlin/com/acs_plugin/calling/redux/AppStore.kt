@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.redux
+package com.acs_plugin.calling.redux
 
 import android.os.Handler
 import android.os.Looper
-import com.azure.android.communication.ui.calling.CallCompositeException
-import com.azure.android.communication.ui.calling.redux.action.Action
-import com.azure.android.communication.ui.calling.redux.reducer.Reducer
+import com.acs_plugin.calling.CallCompositeException
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.reducer.Reducer
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel

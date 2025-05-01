@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.participant.grid
+package com.acs_plugin.calling.presentation.fragment.calling.participant.grid
 
 import android.content.Context
 import android.graphics.Rect
@@ -15,11 +15,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.models.CallCompositeParticipantViewData
-import com.azure.android.communication.ui.calling.presentation.VideoViewManager
-import com.azure.android.communication.ui.calling.presentation.manager.AvatarViewManager
-import com.azure.android.communication.ui.calling.service.sdk.VideoStreamRenderer
+import com.acs_plugin.R
+import com.acs_plugin.calling.models.CallCompositeParticipantViewData
+import com.acs_plugin.calling.presentation.VideoViewManager
+import com.acs_plugin.calling.presentation.manager.AvatarViewManager
+import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation
+package com.acs_plugin.calling.presentation
 
 import android.annotation.SuppressLint
 import android.app.PictureInPictureParams
@@ -24,31 +24,30 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
-import com.azure.android.communication.ui.calling.CallCompositeException
-import com.azure.android.communication.ui.calling.CallCompositeInstanceManager
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.models.CallCompositeSupportedLocale
-import com.azure.android.communication.ui.calling.models.CallCompositeSupportedScreenOrientation
-import com.azure.android.communication.ui.calling.models.CallCompositeUserReportedIssueEvent
-import com.azure.android.communication.ui.calling.onExit
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.CallingFragment
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.support.SupportView
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.support.SupportViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.SetupFragment
-import com.azure.android.communication.ui.calling.redux.action.CallingAction
-import com.azure.android.communication.ui.calling.redux.action.DeviceConfigurationAction
-import com.azure.android.communication.ui.calling.redux.action.NavigationAction
-import com.azure.android.communication.ui.calling.redux.action.PipAction
-import com.azure.android.communication.ui.calling.redux.state.NavigationStatus
-import com.azure.android.communication.ui.calling.redux.state.VisibilityStatus
-import com.azure.android.communication.ui.calling.utilities.collect
-import com.azure.android.communication.ui.calling.utilities.isAndroidTV
-import com.azure.android.communication.ui.calling.utilities.isKeyboardOpen
-import com.azure.android.communication.ui.calling.utilities.isTablet
-import com.azure.android.communication.ui.calling.utilities.launchAll
+import com.acs_plugin.calling.CallCompositeException
+import com.acs_plugin.calling.CallCompositeInstanceManager
+import com.acs_plugin.R
+import com.acs_plugin.calling.models.CallCompositeSupportedLocale
+import com.acs_plugin.calling.models.CallCompositeSupportedScreenOrientation
+import com.acs_plugin.calling.models.CallCompositeUserReportedIssueEvent
+import com.acs_plugin.calling.onExit
+import com.acs_plugin.calling.presentation.fragment.calling.CallingFragment
+import com.acs_plugin.calling.presentation.fragment.calling.support.SupportView
+import com.acs_plugin.calling.presentation.fragment.calling.support.SupportViewModel
+import com.acs_plugin.calling.presentation.fragment.setup.SetupFragment
+import com.acs_plugin.calling.redux.action.CallingAction
+import com.acs_plugin.calling.redux.action.DeviceConfigurationAction
+import com.acs_plugin.calling.redux.action.NavigationAction
+import com.acs_plugin.calling.redux.action.PipAction
+import com.acs_plugin.calling.redux.state.NavigationStatus
+import com.acs_plugin.calling.redux.state.VisibilityStatus
+import com.acs_plugin.calling.utilities.collect
+import com.acs_plugin.calling.utilities.isAndroidTV
+import com.acs_plugin.calling.utilities.isKeyboardOpen
+import com.acs_plugin.calling.utilities.isTablet
+import com.acs_plugin.calling.utilities.launchAll
 import com.microsoft.fluentui.util.activity
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.Locale

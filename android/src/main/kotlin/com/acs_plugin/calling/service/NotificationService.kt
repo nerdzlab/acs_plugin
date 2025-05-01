@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service
+package com.acs_plugin.calling.service
 
 import android.content.ComponentName
 import android.content.Context
@@ -9,11 +9,11 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.lifecycle.LifecycleCoroutineScope
-import com.azure.android.communication.ui.calling.configuration.CallCompositeConfiguration
-import com.azure.android.communication.ui.calling.presentation.CallCompositeActivity
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.state.CallingStatus
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.calling.configuration.CallCompositeConfiguration
+import com.acs_plugin.calling.presentation.CallCompositeActivity
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.state.CallingStatus
+import com.acs_plugin.calling.redux.state.ReduxState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

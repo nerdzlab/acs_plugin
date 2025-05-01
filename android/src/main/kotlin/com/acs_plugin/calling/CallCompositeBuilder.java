@@ -1,24 +1,24 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package android.src.main.kotlin.com.acs_plugin.calling;
+package com.acs_plugin.calling;
 
 import com.azure.android.communication.common.CommunicationIdentifier;
-import com.azure.android.communication.ui.calling.models.CallCompositeCapabilitiesChangedNotificationMode;
-import com.azure.android.communication.ui.calling.models.CallCompositeLocalOptions;
+import com.acs_plugin.calling.models.CallCompositeCapabilitiesChangedNotificationMode;
+import com.acs_plugin.calling.models.CallCompositeLocalOptions;
 import android.content.Context;
 import com.azure.android.communication.common.CommunicationTokenCredential;
 /*  <DEFAULT_AUDIO_MODE:0>
-import com.azure.android.communication.ui.calling.models.CallCompositeAudioSelectionMode;
+import com.acs_plugin.calling.models.CallCompositeAudioSelectionMode;
 </DEFAULT_AUDIO_MODE:0> */
-import com.azure.android.communication.ui.calling.models.CallCompositeCallScreenOptions;
-import com.azure.android.communication.ui.calling.models.CallCompositeLocalizationOptions;
-import com.azure.android.communication.ui.calling.configuration.CallCompositeConfiguration;
-import com.azure.android.communication.ui.calling.models.CallCompositeMultitaskingOptions;
-import com.azure.android.communication.ui.calling.models.CallCompositeParticipantViewData;
-import com.azure.android.communication.ui.calling.models.CallCompositeSetupScreenOptions;
-import com.azure.android.communication.ui.calling.models.CallCompositeSupportedScreenOrientation;
-import com.azure.android.communication.ui.calling.models.CallCompositeTelecomManagerOptions;
+import com.acs_plugin.calling.models.CallCompositeCallScreenOptions;
+import com.acs_plugin.calling.models.CallCompositeLocalizationOptions;
+import com.acs_plugin.calling.configuration.CallCompositeConfiguration;
+import com.acs_plugin.calling.models.CallCompositeMultitaskingOptions;
+import com.acs_plugin.calling.models.CallCompositeParticipantViewData;
+import com.acs_plugin.calling.models.CallCompositeSetupScreenOptions;
+import com.acs_plugin.calling.models.CallCompositeSupportedScreenOrientation;
+import com.acs_plugin.calling.models.CallCompositeTelecomManagerOptions;
 
 /**
  * Builder for creating {@link CallComposite}.

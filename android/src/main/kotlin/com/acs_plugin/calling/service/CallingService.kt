@@ -1,27 +1,27 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service
+package com.acs_plugin.calling.service
 
-import com.azure.android.communication.ui.calling.logger.Logger
-import com.azure.android.communication.ui.calling.models.CallCompositeCaptionsData
-import com.azure.android.communication.ui.calling.models.CallCompositeCaptionsType
-import com.azure.android.communication.ui.calling.models.CallCompositeLobbyErrorCode
-import com.azure.android.communication.ui.calling.models.CallInfoModel
-import com.azure.android.communication.ui.calling.models.CapabilitiesChangedEvent
-import com.azure.android.communication.ui.calling.models.MediaCallDiagnosticModel
-import com.azure.android.communication.ui.calling.models.NetworkCallDiagnosticModel
-import com.azure.android.communication.ui.calling.models.NetworkQualityCallDiagnosticModel
-import com.azure.android.communication.ui.calling.models.ParticipantCapabilityType
-import com.azure.android.communication.ui.calling.models.ParticipantInfoModel
-import com.azure.android.communication.ui.calling.models.ParticipantRole
-import com.azure.android.communication.ui.calling.models.RttMessage
-import com.azure.android.communication.ui.calling.redux.state.AudioState
-import com.azure.android.communication.ui.calling.redux.state.CallingStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraDeviceSelectionStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraState
-import com.azure.android.communication.ui.calling.service.sdk.CallingSDK
-import com.azure.android.communication.ui.calling.utilities.CoroutineContextProvider
+import com.acs_plugin.calling.logger.Logger
+import com.acs_plugin.calling.models.CallCompositeCaptionsData
+import com.acs_plugin.calling.models.CallCompositeCaptionsType
+import com.acs_plugin.calling.models.CallCompositeLobbyErrorCode
+import com.acs_plugin.calling.models.CallInfoModel
+import com.acs_plugin.calling.models.CapabilitiesChangedEvent
+import com.acs_plugin.calling.models.MediaCallDiagnosticModel
+import com.acs_plugin.calling.models.NetworkCallDiagnosticModel
+import com.acs_plugin.calling.models.NetworkQualityCallDiagnosticModel
+import com.acs_plugin.calling.models.ParticipantCapabilityType
+import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.models.ParticipantRole
+import com.acs_plugin.calling.models.RttMessage
+import com.acs_plugin.calling.redux.state.AudioState
+import com.acs_plugin.calling.redux.state.CallingStatus
+import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
+import com.acs_plugin.calling.redux.state.CameraState
+import com.acs_plugin.calling.service.sdk.CallingSDK
+import com.acs_plugin.calling.utilities.CoroutineContextProvider
 import java.util.concurrent.CompletableFuture
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel

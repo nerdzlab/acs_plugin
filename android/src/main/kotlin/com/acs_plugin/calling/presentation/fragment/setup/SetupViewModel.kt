@@ -1,18 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.setup
+package com.acs_plugin.calling.presentation.fragment.setup
 
-import com.azure.android.communication.ui.calling.models.CallCompositeSetupScreenOptions
-import com.azure.android.communication.ui.calling.presentation.fragment.BaseViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.factories.SetupViewModelFactory
-import com.azure.android.communication.ui.calling.presentation.manager.NetworkManager
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.action.CallingAction
-import com.azure.android.communication.ui.calling.redux.action.LocalParticipantAction
-import com.azure.android.communication.ui.calling.redux.action.NavigationAction
-import com.azure.android.communication.ui.calling.redux.state.AudioFocusStatus
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.calling.models.CallCompositeSetupScreenOptions
+import com.acs_plugin.calling.presentation.fragment.BaseViewModel
+import com.acs_plugin.calling.presentation.fragment.factories.SetupViewModelFactory
+import com.acs_plugin.calling.presentation.manager.NetworkManager
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.action.CallingAction
+import com.acs_plugin.calling.redux.action.LocalParticipantAction
+import com.acs_plugin.calling.redux.action.NavigationAction
+import com.acs_plugin.calling.redux.state.AudioFocusStatus
+import com.acs_plugin.calling.redux.state.ReduxState
 import kotlinx.coroutines.CoroutineScope
 
 internal class SetupViewModel(

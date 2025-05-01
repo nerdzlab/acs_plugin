@@ -1,6 +1,6 @@
-package com.azure.android.communication.ui.calling.error
+package com.acs_plugin.calling.error
 
-import com.azure.android.communication.ui.calling.models.CallCompositeEventCode
+import com.acs_plugin.calling.models.CallCompositeEventCode
 
 internal class CallStateError(
     val errorCode: ErrorCode,

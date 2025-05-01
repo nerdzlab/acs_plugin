@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service.sdk
+package com.acs_plugin.calling.service.sdk
 
 import com.azure.android.communication.calling.CallAgent
 import com.azure.android.communication.calling.CallAgentOptions
@@ -12,15 +12,15 @@ import com.azure.android.communication.calling.IncomingCallListener
 import com.azure.android.communication.calling.PropertyChangedListener
 import com.azure.android.communication.calling.PushNotificationInfo
 import com.azure.android.communication.calling.TelecomManagerOptions
-import com.azure.android.communication.ui.calling.CallCompositeException
-import com.azure.android.communication.ui.calling.DiagnosticConfig
-import com.azure.android.communication.ui.calling.configuration.CallCompositeConfiguration
-import com.azure.android.communication.ui.calling.logger.Logger
-import com.azure.android.communication.ui.calling.models.CallCompositePushNotification
-import com.azure.android.communication.ui.calling.models.CallCompositeTelecomManagerIntegrationMode
-import com.azure.android.communication.ui.calling.models.buildCallCompositeIncomingCallCancelledEvent
-import com.azure.android.communication.ui.calling.models.buildCallCompositeIncomingCallEvent
-import com.azure.android.communication.ui.calling.service.sdk.ext.setTags
+import com.acs_plugin.calling.CallCompositeException
+import com.acs_plugin.calling.DiagnosticConfig
+import com.acs_plugin.calling.configuration.CallCompositeConfiguration
+import com.acs_plugin.calling.logger.Logger
+import com.acs_plugin.calling.models.CallCompositePushNotification
+import com.acs_plugin.calling.models.CallCompositeTelecomManagerIntegrationMode
+import com.acs_plugin.calling.models.buildCallCompositeIncomingCallCancelledEvent
+import com.acs_plugin.calling.models.buildCallCompositeIncomingCallEvent
+import com.acs_plugin.calling.service.sdk.ext.setTags
 import java.util.concurrent.CompletableFuture
 
 internal class CallingSDKInitializer(

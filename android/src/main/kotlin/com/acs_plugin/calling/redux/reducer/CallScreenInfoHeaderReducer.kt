@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-package com.azure.android.communication.ui.calling.redux.reducer
+package com.acs_plugin.calling.redux.reducer
 
-import com.azure.android.communication.ui.calling.redux.action.Action
-import com.azure.android.communication.ui.calling.redux.action.CallScreenInfoHeaderAction
-import com.azure.android.communication.ui.calling.redux.state.CallScreenInfoHeaderState
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.action.CallScreenInfoHeaderAction
+import com.acs_plugin.calling.redux.state.CallScreenInfoHeaderState
 
 internal interface CallScreenInformationHeaderReducer : Reducer<CallScreenInfoHeaderState>
 

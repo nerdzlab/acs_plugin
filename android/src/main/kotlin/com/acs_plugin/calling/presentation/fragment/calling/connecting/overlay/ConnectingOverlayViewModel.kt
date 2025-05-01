@@ -1,24 +1,24 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.connecting.overlay
+package com.acs_plugin.calling.presentation.fragment.calling.connecting.overlay
 
-import com.azure.android.communication.ui.calling.configuration.CallType
-import com.azure.android.communication.ui.calling.error.ErrorCode
-import com.azure.android.communication.ui.calling.error.FatalError
-import com.azure.android.communication.ui.calling.presentation.manager.NetworkManager
-import com.azure.android.communication.ui.calling.redux.action.ErrorAction
-import com.azure.android.communication.ui.calling.redux.action.Action
-import com.azure.android.communication.ui.calling.redux.action.PermissionAction
-import com.azure.android.communication.ui.calling.redux.state.AudioOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.AudioState
-import com.azure.android.communication.ui.calling.redux.state.CallingState
-import com.azure.android.communication.ui.calling.redux.state.CallingStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraState
-import com.azure.android.communication.ui.calling.redux.state.InitialCallJoinState
-import com.azure.android.communication.ui.calling.redux.state.PermissionState
-import com.azure.android.communication.ui.calling.redux.state.PermissionStatus
+import com.acs_plugin.calling.configuration.CallType
+import com.acs_plugin.calling.error.ErrorCode
+import com.acs_plugin.calling.error.FatalError
+import com.acs_plugin.calling.presentation.manager.NetworkManager
+import com.acs_plugin.calling.redux.action.ErrorAction
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.action.PermissionAction
+import com.acs_plugin.calling.redux.state.AudioOperationalStatus
+import com.acs_plugin.calling.redux.state.AudioState
+import com.acs_plugin.calling.redux.state.CallingState
+import com.acs_plugin.calling.redux.state.CallingStatus
+import com.acs_plugin.calling.redux.state.CameraOperationalStatus
+import com.acs_plugin.calling.redux.state.CameraState
+import com.acs_plugin.calling.redux.state.InitialCallJoinState
+import com.acs_plugin.calling.redux.state.PermissionState
+import com.acs_plugin.calling.redux.state.PermissionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.captions
+package com.acs_plugin.calling.presentation.fragment.calling.captions
 
 import android.graphics.Bitmap
 import java.util.Date

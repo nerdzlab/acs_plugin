@@ -1,33 +1,33 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar
+package com.acs_plugin.calling.presentation.fragment.calling.controlbar
 
 import android.content.Context
-import com.azure.android.communication.ui.calling.logger.Logger
-import com.azure.android.communication.ui.calling.models.CallCompositeAudioVideoMode
-import com.azure.android.communication.ui.calling.models.CallCompositeButtonViewData
-import com.azure.android.communication.ui.calling.models.CallCompositeCallScreenControlBarOptions
-import com.azure.android.communication.ui.calling.models.ParticipantCapabilityType
-import com.azure.android.communication.ui.calling.models.createButtonClickEvent
-import com.azure.android.communication.ui.calling.presentation.manager.CapabilitiesManager
-import com.azure.android.communication.ui.calling.redux.action.Action
-import com.azure.android.communication.ui.calling.redux.action.LocalParticipantAction
-import com.azure.android.communication.ui.calling.redux.action.NavigationAction
-import com.azure.android.communication.ui.calling.redux.state.AudioDeviceSelectionStatus
-import com.azure.android.communication.ui.calling.redux.state.AudioOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.AudioState
-import com.azure.android.communication.ui.calling.redux.state.ButtonState
-import com.azure.android.communication.ui.calling.redux.state.CallingState
-import com.azure.android.communication.ui.calling.redux.state.CallingStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraState
-import com.azure.android.communication.ui.calling.redux.state.DefaultButtonState
-import com.azure.android.communication.ui.calling.redux.state.DeviceConfigurationState
-import com.azure.android.communication.ui.calling.redux.state.PermissionState
-import com.azure.android.communication.ui.calling.redux.state.PermissionStatus
-import com.azure.android.communication.ui.calling.redux.state.VisibilityState
-import com.azure.android.communication.ui.calling.redux.state.VisibilityStatus
+import com.acs_plugin.calling.logger.Logger
+import com.acs_plugin.calling.models.CallCompositeAudioVideoMode
+import com.acs_plugin.calling.models.CallCompositeButtonViewData
+import com.acs_plugin.calling.models.CallCompositeCallScreenControlBarOptions
+import com.acs_plugin.calling.models.ParticipantCapabilityType
+import com.acs_plugin.calling.models.createButtonClickEvent
+import com.acs_plugin.calling.presentation.manager.CapabilitiesManager
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.action.LocalParticipantAction
+import com.acs_plugin.calling.redux.action.NavigationAction
+import com.acs_plugin.calling.redux.state.AudioDeviceSelectionStatus
+import com.acs_plugin.calling.redux.state.AudioOperationalStatus
+import com.acs_plugin.calling.redux.state.AudioState
+import com.acs_plugin.calling.redux.state.ButtonState
+import com.acs_plugin.calling.redux.state.CallingState
+import com.acs_plugin.calling.redux.state.CallingStatus
+import com.acs_plugin.calling.redux.state.CameraOperationalStatus
+import com.acs_plugin.calling.redux.state.CameraState
+import com.acs_plugin.calling.redux.state.DefaultButtonState
+import com.acs_plugin.calling.redux.state.DeviceConfigurationState
+import com.acs_plugin.calling.redux.state.PermissionState
+import com.acs_plugin.calling.redux.state.PermissionStatus
+import com.acs_plugin.calling.redux.state.VisibilityState
+import com.acs_plugin.calling.redux.state.VisibilityStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

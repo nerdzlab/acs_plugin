@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.participant.grid
+package com.acs_plugin.calling.presentation.fragment.calling.participant.grid
 
-import com.azure.android.communication.ui.calling.models.ParticipantInfoModel
-import com.azure.android.communication.ui.calling.presentation.fragment.factories.ParticipantGridCellViewModelFactory
-import com.azure.android.communication.ui.calling.redux.state.CaptionsState
-import com.azure.android.communication.ui.calling.redux.state.CaptionsStatus
-import com.azure.android.communication.ui.calling.redux.state.DeviceConfigurationState
-import com.azure.android.communication.ui.calling.redux.state.RttState
-import com.azure.android.communication.ui.calling.redux.state.VisibilityStatus
-import com.azure.android.communication.ui.calling.utilities.EventFlow
-import com.azure.android.communication.ui.calling.utilities.MutableEventFlow
+import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.presentation.fragment.factories.ParticipantGridCellViewModelFactory
+import com.acs_plugin.calling.redux.state.CaptionsState
+import com.acs_plugin.calling.redux.state.CaptionsStatus
+import com.acs_plugin.calling.redux.state.DeviceConfigurationState
+import com.acs_plugin.calling.redux.state.RttState
+import com.acs_plugin.calling.redux.state.VisibilityStatus
+import com.acs_plugin.calling.utilities.EventFlow
+import com.acs_plugin.calling.utilities.MutableEventFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.lang.Integer.min

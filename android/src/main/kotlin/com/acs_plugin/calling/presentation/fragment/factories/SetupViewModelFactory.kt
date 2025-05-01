@@ -1,20 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.factories
+package com.acs_plugin.calling.presentation.fragment.factories
 
 import android.content.Context
 import android.media.AudioManager
-import com.azure.android.communication.ui.calling.configuration.CallType
-import com.azure.android.communication.ui.calling.logger.Logger
-import com.azure.android.communication.ui.calling.presentation.fragment.common.audiodevicelist.AudioDeviceListViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.JoinCallButtonHolderViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.PreviewAreaViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupControlBarViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupGradientViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupParticipantAvatarViewModel
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.calling.configuration.CallType
+import com.acs_plugin.calling.logger.Logger
+import com.acs_plugin.calling.presentation.fragment.common.audiodevicelist.AudioDeviceListViewModel
+import com.acs_plugin.calling.presentation.fragment.setup.components.JoinCallButtonHolderViewModel
+import com.acs_plugin.calling.presentation.fragment.setup.components.PreviewAreaViewModel
+import com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarViewModel
+import com.acs_plugin.calling.presentation.fragment.setup.components.SetupGradientViewModel
+import com.acs_plugin.calling.presentation.fragment.setup.components.SetupParticipantAvatarViewModel
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.state.ReduxState
 
 internal class SetupViewModelFactory(
     private val store: Store<ReduxState>,

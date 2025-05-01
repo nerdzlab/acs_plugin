@@ -1,21 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation
+package com.acs_plugin.calling.presentation
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.azure.android.communication.ui.calling.CallCompositeException
-import com.azure.android.communication.ui.calling.CallCompositeInstanceManager
-import com.azure.android.communication.ui.calling.di.DependencyInjectionContainer
-import com.azure.android.communication.ui.calling.getDiContainer
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.models.CallCompositeAudioVideoMode
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.CallingViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.factories.CallingViewModelFactory
-import com.azure.android.communication.ui.calling.presentation.fragment.factories.ParticipantGridCellViewModelFactory
-import com.azure.android.communication.ui.calling.presentation.fragment.factories.SetupViewModelFactory
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.SetupViewModel
+import com.acs_plugin.calling.CallCompositeException
+import com.acs_plugin.calling.CallCompositeInstanceManager
+import com.acs_plugin.calling.di.DependencyInjectionContainer
+import com.acs_plugin.calling.getDiContainer
+import com.acs_plugin.R
+import com.acs_plugin.calling.models.CallCompositeAudioVideoMode
+import com.acs_plugin.calling.presentation.fragment.calling.CallingViewModel
+import com.acs_plugin.calling.presentation.fragment.factories.CallingViewModelFactory
+import com.acs_plugin.calling.presentation.fragment.factories.ParticipantGridCellViewModelFactory
+import com.acs_plugin.calling.presentation.fragment.factories.SetupViewModelFactory
+import com.acs_plugin.calling.presentation.fragment.setup.SetupViewModel
 
 /**
  * ViewModel for the CallCompositeActivity

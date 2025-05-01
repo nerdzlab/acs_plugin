@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.utilities
+package com.acs_plugin.calling.utilities
 
-import com.azure.android.communication.ui.calling.presentation.VideoStreamRendererFactory
-import com.azure.android.communication.ui.calling.service.sdk.CallingSDK
+import com.acs_plugin.calling.presentation.VideoStreamRendererFactory
+import com.acs_plugin.calling.service.sdk.CallingSDK
 
 /**
  * This singleton provides a shared global state that our in-process tests (i.e. instrumented on-device unit tests)

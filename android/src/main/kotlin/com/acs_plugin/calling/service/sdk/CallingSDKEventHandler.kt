@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service.sdk
+package com.acs_plugin.calling.service.sdk
 
 import com.azure.android.communication.calling.Call
 import com.azure.android.communication.calling.CallCaptions
@@ -30,23 +30,23 @@ import com.azure.android.communication.calling.RemoteVideoStreamsUpdatedListener
 import com.azure.android.communication.calling.TeamsCaptions
 import com.azure.android.communication.calling.TeamsCaptionsListener
 import com.azure.android.communication.calling.TranscriptionCallFeature
-import com.azure.android.communication.ui.calling.configuration.CallType
-import com.azure.android.communication.ui.calling.models.CallCompositeAudioVideoMode
-import com.azure.android.communication.ui.calling.models.CallCompositeCaptionsData
-import com.azure.android.communication.ui.calling.models.CallCompositeCaptionsType
-import com.azure.android.communication.ui.calling.models.CallDiagnosticModel
-import com.azure.android.communication.ui.calling.models.CallDiagnosticQuality
-import com.azure.android.communication.ui.calling.models.CapabilitiesChangedEvent
-import com.azure.android.communication.ui.calling.models.MediaCallDiagnostic
-import com.azure.android.communication.ui.calling.models.MediaCallDiagnosticModel
-import com.azure.android.communication.ui.calling.models.NetworkCallDiagnostic
-import com.azure.android.communication.ui.calling.models.NetworkCallDiagnosticModel
-import com.azure.android.communication.ui.calling.models.NetworkQualityCallDiagnosticModel
-import com.azure.android.communication.ui.calling.models.ParticipantInfoModel
-import com.azure.android.communication.ui.calling.models.ParticipantRole
-import com.azure.android.communication.ui.calling.models.RttMessage
-import com.azure.android.communication.ui.calling.models.into
-import com.azure.android.communication.ui.calling.utilities.CoroutineContextProvider
+import com.acs_plugin.calling.configuration.CallType
+import com.acs_plugin.calling.models.CallCompositeAudioVideoMode
+import com.acs_plugin.calling.models.CallCompositeCaptionsData
+import com.acs_plugin.calling.models.CallCompositeCaptionsType
+import com.acs_plugin.calling.models.CallDiagnosticModel
+import com.acs_plugin.calling.models.CallDiagnosticQuality
+import com.acs_plugin.calling.models.CapabilitiesChangedEvent
+import com.acs_plugin.calling.models.MediaCallDiagnostic
+import com.acs_plugin.calling.models.MediaCallDiagnosticModel
+import com.acs_plugin.calling.models.NetworkCallDiagnostic
+import com.acs_plugin.calling.models.NetworkCallDiagnosticModel
+import com.acs_plugin.calling.models.NetworkQualityCallDiagnosticModel
+import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.models.ParticipantRole
+import com.acs_plugin.calling.models.RttMessage
+import com.acs_plugin.calling.models.into
+import com.acs_plugin.calling.utilities.CoroutineContextProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.cancel

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service.sdk
+package com.acs_plugin.calling.service.sdk
 
 import android.content.Context
 import com.azure.android.communication.calling.CreateViewOptions

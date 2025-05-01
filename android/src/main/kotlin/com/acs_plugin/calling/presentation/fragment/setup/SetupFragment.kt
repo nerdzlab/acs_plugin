@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.setup
+package com.acs_plugin.calling.presentation.fragment.setup
 
 import android.os.Build
 import android.os.Bundle
@@ -11,17 +11,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.presentation.CallCompositeActivityViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.common.audiodevicelist.AudioDeviceListView
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.ErrorInfoView
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.JoinCallButtonHolderView
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.PermissionWarningView
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.PreviewAreaView
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupControlBarView
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupGradientView
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupParticipantAvatarView
-import com.azure.android.communication.ui.calling.presentation.fragment.setup.components.ToolbarView
+import com.acs_plugin.R
+import com.acs_plugin.calling.presentation.CallCompositeActivityViewModel
+import com.acs_plugin.calling.presentation.fragment.common.audiodevicelist.AudioDeviceListView
+import com.acs_plugin.calling.presentation.fragment.setup.components.ErrorInfoView
+import com.acs_plugin.calling.presentation.fragment.setup.components.JoinCallButtonHolderView
+import com.acs_plugin.calling.presentation.fragment.setup.components.PermissionWarningView
+import com.acs_plugin.calling.presentation.fragment.setup.components.PreviewAreaView
+import com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarView
+import com.acs_plugin.calling.presentation.fragment.setup.components.SetupGradientView
+import com.acs_plugin.calling.presentation.fragment.setup.components.SetupParticipantAvatarView
+import com.acs_plugin.calling.presentation.fragment.setup.components.ToolbarView
 
 internal class SetupFragment :
     Fragment(R.layout.azure_communication_ui_calling_fragment_setup) {

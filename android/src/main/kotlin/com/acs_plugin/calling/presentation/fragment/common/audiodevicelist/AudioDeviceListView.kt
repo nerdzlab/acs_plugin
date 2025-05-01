@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.common.audiodevicelist
+package com.acs_plugin.calling.presentation.fragment.common.audiodevicelist
 
 import android.content.Context
 import android.widget.RelativeLayout
@@ -10,14 +10,15 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.redux.state.AudioDeviceSelectionStatus
-import com.azure.android.communication.ui.calling.redux.state.AudioState
-import com.azure.android.communication.ui.calling.utilities.BottomCellAdapter
-import com.azure.android.communication.ui.calling.utilities.BottomCellItem
-import com.azure.android.communication.ui.calling.utilities.implementation.CompositeDrawerDialog
-import com.azure.android.communication.ui.calling.utilities.isAndroidTV
+import com.acs_plugin.R
+import com.acs_plugin.calling.redux.state.AudioDeviceSelectionStatus
+import com.acs_plugin.calling.redux.state.AudioState
+import com.acs_plugin.calling.utilities.BottomCellAdapter
+import com.acs_plugin.calling.utilities.BottomCellItem
+import com.acs_plugin.calling.utilities.implementation.CompositeDrawerDialog
+import com.acs_plugin.calling.utilities.isAndroidTV
 import com.microsoft.fluentui.drawer.DrawerDialog
+import com.microsoft.fluentui.R as fluentUiR
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -110,7 +111,7 @@ internal class AudioDeviceListView(
                         },
                         accessoryImage = ContextCompat.getDrawable(
                             context,
-                            R.drawable.ms_ic_checkmark_24_filled
+                            fluentUiR.drawable.ms_ic_checkmark_24_filled
                         ),
                         accessoryImageDescription = context.getString(R.string.azure_communication_ui_calling_setup_view_audio_device_selected_accessibility_label),
                         isChecked = initialDevice == AudioDeviceSelectionStatus.RECEIVER_SELECTED,
@@ -132,7 +133,7 @@ internal class AudioDeviceListView(
                     title = context.getString(R.string.azure_communication_ui_calling_audio_device_drawer_speaker),
                     accessoryImage = ContextCompat.getDrawable(
                         context,
-                        R.drawable.ms_ic_checkmark_24_filled
+                        fluentUiR.drawable.ms_ic_checkmark_24_filled
                     ),
                     accessoryImageDescription = context.getString(R.string.azure_communication_ui_calling_setup_view_audio_device_selected_accessibility_label),
                     isChecked = initialDevice == AudioDeviceSelectionStatus.SPEAKER_SELECTED,
@@ -156,7 +157,7 @@ internal class AudioDeviceListView(
                         title = viewModel.audioStateFlow.value.bluetoothState.deviceName,
                         accessoryImage = ContextCompat.getDrawable(
                             context,
-                            R.drawable.ms_ic_checkmark_24_filled
+                            fluentUiR.drawable.ms_ic_checkmark_24_filled
                         ),
                         accessoryImageDescription = context.getString(R.string.azure_communication_ui_calling_setup_view_audio_device_selected_accessibility_label),
                         isChecked = initialDevice == AudioDeviceSelectionStatus.BLUETOOTH_SCO_SELECTED,

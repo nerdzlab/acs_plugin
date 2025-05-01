@@ -1,22 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.configuration
+package com.acs_plugin.calling.configuration
 
 import android.content.Context
 import com.azure.android.communication.common.CommunicationIdentifier
 import com.azure.android.communication.common.CommunicationTokenCredential
-import com.azure.android.communication.ui.calling.configuration.events.CallCompositeEventsHandler
-import com.azure.android.communication.ui.calling.models.CallCompositeCapabilitiesChangedNotificationMode
+import com.acs_plugin.calling.configuration.events.CallCompositeEventsHandler
+import com.acs_plugin.calling.models.CallCompositeCapabilitiesChangedNotificationMode
 /*  <DEFAULT_AUDIO_MODE:0>
-import com.azure.android.communication.ui.calling.models.CallCompositeAudioSelectionMode
+import com.acs_plugin.calling.models.CallCompositeAudioSelectionMode
 </DEFAULT_AUDIO_MODE:0> */
-import com.azure.android.communication.ui.calling.models.CallCompositeCallScreenOptions
-import com.azure.android.communication.ui.calling.models.CallCompositeLocalOptions
-import com.azure.android.communication.ui.calling.models.CallCompositeLocalizationOptions
-import com.azure.android.communication.ui.calling.models.CallCompositeSetupScreenOptions
-import com.azure.android.communication.ui.calling.models.CallCompositeSupportedScreenOrientation
-import com.azure.android.communication.ui.calling.models.CallCompositeTelecomManagerOptions
+import com.acs_plugin.calling.models.CallCompositeCallScreenOptions
+import com.acs_plugin.calling.models.CallCompositeLocalOptions
+import com.acs_plugin.calling.models.CallCompositeLocalizationOptions
+import com.acs_plugin.calling.models.CallCompositeSetupScreenOptions
+import com.acs_plugin.calling.models.CallCompositeSupportedScreenOrientation
+import com.acs_plugin.calling.models.CallCompositeTelecomManagerOptions
 
 internal class CallCompositeConfiguration {
     /*  <DEFAULT_AUDIO_MODE:0>

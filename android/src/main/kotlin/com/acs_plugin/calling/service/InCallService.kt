@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service
+package com.acs_plugin.calling.service
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -13,10 +13,10 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.presentation.CallCompositeActivity
-import com.azure.android.communication.ui.calling.presentation.MultitaskingCallCompositeActivity
-import com.azure.android.communication.ui.calling.presentation.PiPCallCompositeActivity
+import com.acs_plugin.R
+import com.acs_plugin.calling.presentation.CallCompositeActivity
+import com.acs_plugin.calling.presentation.MultitaskingCallCompositeActivity
+import com.acs_plugin.calling.presentation.PiPCallCompositeActivity
 import java.lang.ref.WeakReference
 
 internal class InCallService : Service() {

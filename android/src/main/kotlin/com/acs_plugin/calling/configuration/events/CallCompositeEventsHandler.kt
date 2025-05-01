@@ -1,19 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.configuration.events
+package com.acs_plugin.calling.configuration.events
 
-import com.azure.android.communication.ui.calling.CallCompositeEventHandler
-import com.azure.android.communication.ui.calling.models.CallCompositeCallStateChangedEvent
-import com.azure.android.communication.ui.calling.models.CallCompositeErrorEvent
-import com.azure.android.communication.ui.calling.models.CallCompositePictureInPictureChangedEvent
-import com.azure.android.communication.ui.calling.models.CallCompositeDismissedEvent
-import com.azure.android.communication.ui.calling.models.CallCompositeRemoteParticipantJoinedEvent
-import com.azure.android.communication.ui.calling.models.CallCompositeUserReportedIssueEvent
-import com.azure.android.communication.ui.calling.models.CallCompositeAudioSelectionChangedEvent
-import com.azure.android.communication.ui.calling.models.CallCompositeIncomingCallCancelledEvent
-import com.azure.android.communication.ui.calling.models.CallCompositeIncomingCallEvent
-import com.azure.android.communication.ui.calling.models.CallCompositeRemoteParticipantLeftEvent
+import com.acs_plugin.calling.CallCompositeEventHandler
+import com.acs_plugin.calling.models.CallCompositeCallStateChangedEvent
+import com.acs_plugin.calling.models.CallCompositeErrorEvent
+import com.acs_plugin.calling.models.CallCompositePictureInPictureChangedEvent
+import com.acs_plugin.calling.models.CallCompositeDismissedEvent
+import com.acs_plugin.calling.models.CallCompositeRemoteParticipantJoinedEvent
+import com.acs_plugin.calling.models.CallCompositeUserReportedIssueEvent
+import com.acs_plugin.calling.models.CallCompositeAudioSelectionChangedEvent
+import com.acs_plugin.calling.models.CallCompositeIncomingCallCancelledEvent
+import com.acs_plugin.calling.models.CallCompositeIncomingCallEvent
+import com.acs_plugin.calling.models.CallCompositeRemoteParticipantLeftEvent
 /*  <CALL_START_TIME>
 import java.util.Date
 </CALL_START_TIME> */

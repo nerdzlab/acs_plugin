@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.factories
+package com.acs_plugin.calling.presentation.fragment.factories
 
-import com.azure.android.communication.ui.calling.models.ParticipantInfoModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.participant.grid.ParticipantGridCellViewModel
+import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridCellViewModel
 
 internal class ParticipantGridCellViewModelFactory {
     fun ParticipantGridCellViewModel(

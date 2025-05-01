@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.redux.reducer
+package com.acs_plugin.calling.redux.reducer
 
-import com.azure.android.communication.ui.calling.redux.action.Action
-import com.azure.android.communication.ui.calling.redux.action.PipAction
-import com.azure.android.communication.ui.calling.redux.state.VisibilityState
-import com.azure.android.communication.ui.calling.redux.state.VisibilityStatus
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.action.PipAction
+import com.acs_plugin.calling.redux.state.VisibilityState
+import com.acs_plugin.calling.redux.state.VisibilityStatus
 
 // TODO: VisibilityReducer
 internal interface PipReducer : Reducer<VisibilityState>

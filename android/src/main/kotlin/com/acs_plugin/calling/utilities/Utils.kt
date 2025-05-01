@@ -1,4 +1,4 @@
-package com.azure.android.communication.ui.calling.utilities
+package com.acs_plugin.calling.utilities
 
 import android.app.Activity
 import android.content.Context

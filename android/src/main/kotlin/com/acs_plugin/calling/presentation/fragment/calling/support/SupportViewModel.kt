@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.support
+package com.acs_plugin.calling.presentation.fragment.calling.support
 
-import com.azure.android.communication.ui.calling.redux.Dispatch
-import com.azure.android.communication.ui.calling.redux.action.NavigationAction
-import com.azure.android.communication.ui.calling.redux.state.NavigationState
+import com.acs_plugin.calling.redux.Dispatch
+import com.acs_plugin.calling.redux.action.NavigationAction
+import com.acs_plugin.calling.redux.state.NavigationState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

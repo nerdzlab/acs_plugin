@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.configuration
+package com.acs_plugin.calling.configuration
 
 import com.azure.android.communication.common.CommunicationIdentifier
-import com.azure.android.communication.ui.calling.DiagnosticConfig
+import com.acs_plugin.calling.DiagnosticConfig
 import java.util.UUID
 
 internal enum class CallType {

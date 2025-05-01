@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service.sdk
+package com.acs_plugin.calling.service.sdk
 
 internal class DominantSpeakersInfoWrapper(
     private val dominantSpeakersInfo: com.azure.android.communication.calling.DominantSpeakersInfo

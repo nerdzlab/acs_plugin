@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.error
+package com.acs_plugin.calling.error
 
-import com.azure.android.communication.ui.calling.configuration.CallCompositeConfiguration
-import com.azure.android.communication.ui.calling.error.ErrorCode.Companion.TOKEN_EXPIRED
-import com.azure.android.communication.ui.calling.models.CallCompositeErrorEvent
-import com.azure.android.communication.ui.calling.models.CallCompositeEventCode
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.action.ErrorAction
-import com.azure.android.communication.ui.calling.redux.state.ErrorState
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.calling.configuration.CallCompositeConfiguration
+import com.acs_plugin.calling.error.ErrorCode.Companion.TOKEN_EXPIRED
+import com.acs_plugin.calling.models.CallCompositeErrorEvent
+import com.acs_plugin.calling.models.CallCompositeEventCode
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.action.ErrorAction
+import com.acs_plugin.calling.redux.state.ErrorState
+import com.acs_plugin.calling.redux.state.ReduxState
 import kotlinx.coroutines.flow.collect
 
 internal class ErrorHandler(

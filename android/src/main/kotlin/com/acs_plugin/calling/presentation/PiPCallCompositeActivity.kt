@@ -1,4 +1,4 @@
-package com.azure.android.communication.ui.calling.presentation
+package com.acs_plugin.calling.presentation
 
 import android.os.Bundle
 

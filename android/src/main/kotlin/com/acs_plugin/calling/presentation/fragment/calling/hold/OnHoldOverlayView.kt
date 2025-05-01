@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.hold
+package com.acs_plugin.calling.presentation.fragment.calling.hold
 
 import android.content.Context
 import android.content.res.Configuration
@@ -22,10 +22,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.utilities.isAndroidTV
+import com.acs_plugin.R
+import com.acs_plugin.calling.utilities.isAndroidTV
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.microsoft.fluentui.snackbar.Snackbar
+import com.microsoft.fluentui.R as fluentUiR
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -144,14 +145,14 @@ internal class OnHoldOverlayView : LinearLayout {
                 ),
                 PorterDuff.Mode.SRC_IN
             )
-            snackBarTextView = view.findViewById(R.id.snackbar_text)
+            snackBarTextView = view.findViewById(fluentUiR.id.snackbar_text)
             snackBarTextView.setTextColor(
                 ContextCompat.getColor(
                     rootView.context,
                     R.color.azure_communication_ui_calling_color_snack_bar_text_color
                 )
             )
-            view.findViewById<AppCompatButton>(R.id.snackbar_action).apply {
+            view.findViewById<AppCompatButton>(fluentUiR.id.snackbar_action).apply {
                 setTextColor(
                     ContextCompat.getColor(
                         rootView.context,

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.manager
+package com.acs_plugin.calling.presentation.manager
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -13,11 +13,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.action.LocalParticipantAction
-import com.azure.android.communication.ui.calling.redux.state.AudioDeviceSelectionStatus
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.R
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.action.LocalParticipantAction
+import com.acs_plugin.calling.redux.state.AudioDeviceSelectionStatus
+import com.acs_plugin.calling.redux.state.ReduxState
 import kotlinx.coroutines.flow.collect
 import android.media.AudioDeviceInfo
 import android.os.Build
@@ -26,13 +26,13 @@ import androidx.annotation.RequiresApi
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.coroutineScope
-import com.azure.android.communication.ui.calling.CallCompositeException
+import com.acs_plugin.calling.CallCompositeException
 /*  <DEFAULT_AUDIO_MODE:0>
-import com.azure.android.communication.ui.calling.models.CallCompositeAudioSelectionMode
+import com.acs_plugin.calling.models.CallCompositeAudioSelectionMode
 </DEFAULT_AUDIO_MODE:0> */
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
-import com.azure.android.communication.ui.calling.redux.state.PermissionStatus
+import com.acs_plugin.calling.redux.state.PermissionStatus
 
 internal class AudioSessionManager(
     private val store: Store<ReduxState>,

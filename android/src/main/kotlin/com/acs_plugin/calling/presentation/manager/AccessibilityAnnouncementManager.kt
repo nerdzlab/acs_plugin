@@ -1,22 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.manager
+package com.acs_plugin.calling.presentation.manager
 
 import android.app.Activity
 import android.content.Context
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.models.ParticipantInfoModel
-import com.azure.android.communication.ui.calling.models.ParticipantStatus
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.state.CallingStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraDeviceSelectionStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.CaptionsStatus
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
-import com.azure.android.communication.ui.calling.redux.state.ToastNotificationKind
+import com.acs_plugin.R
+import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.models.ParticipantStatus
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.state.CallingStatus
+import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
+import com.acs_plugin.calling.redux.state.CameraOperationalStatus
+import com.acs_plugin.calling.redux.state.CaptionsStatus
+import com.acs_plugin.calling.redux.state.ReduxState
+import com.acs_plugin.calling.redux.state.ToastNotificationKind
 import kotlinx.coroutines.flow.collect
 
 // Manager to hook into accessibility and provide announcements

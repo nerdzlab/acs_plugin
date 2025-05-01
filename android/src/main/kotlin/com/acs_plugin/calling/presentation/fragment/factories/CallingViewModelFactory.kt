@@ -1,37 +1,37 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.factories
+package com.acs_plugin.calling.presentation.fragment.factories
 
-import com.azure.android.communication.ui.calling.configuration.CallType
-import com.azure.android.communication.ui.calling.logger.Logger
-import com.azure.android.communication.ui.calling.models.CallCompositeCallScreenControlBarOptions
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.banner.BannerViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.captions.CaptionsViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.connecting.overlay.ConnectingOverlayViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar.ControlBarViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar.captions.CaptionsLanguageSelectionListViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar.captions.CaptionsListViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar.more.MoreCallOptionsListViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.hangup.LeaveConfirmViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.header.InfoHeaderViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.hold.OnHoldOverlayViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.lobby.LobbyErrorHeaderViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.lobby.LobbyHeaderViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.lobby.WaitingLobbyOverlayViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.localuser.LocalParticipantViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.notification.ToastNotificationViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.notification.UpperMessageBarNotificationLayoutViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.participant.grid.ParticipantGridViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.participant.menu.ParticipantMenuViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.participantlist.ParticipantListViewModel
-import com.azure.android.communication.ui.calling.presentation.fragment.common.audiodevicelist.AudioDeviceListViewModel
-import com.azure.android.communication.ui.calling.presentation.manager.CapabilitiesManager
-import com.azure.android.communication.ui.calling.presentation.manager.CaptionsRttDataManager
-import com.azure.android.communication.ui.calling.presentation.manager.DebugInfoManager
-import com.azure.android.communication.ui.calling.presentation.manager.UpdatableOptionsManager
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.calling.configuration.CallType
+import com.acs_plugin.calling.logger.Logger
+import com.acs_plugin.calling.models.CallCompositeCallScreenControlBarOptions
+import com.acs_plugin.calling.presentation.fragment.calling.banner.BannerViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.captions.CaptionsViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.connecting.overlay.ConnectingOverlayViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.controlbar.ControlBarViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.controlbar.captions.CaptionsLanguageSelectionListViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.controlbar.captions.CaptionsListViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.controlbar.more.MoreCallOptionsListViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.hangup.LeaveConfirmViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.header.InfoHeaderViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.hold.OnHoldOverlayViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyErrorHeaderViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyHeaderViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.lobby.WaitingLobbyOverlayViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.localuser.LocalParticipantViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.notification.ToastNotificationViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.notification.UpperMessageBarNotificationLayoutViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.participant.menu.ParticipantMenuViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.participantlist.ParticipantListViewModel
+import com.acs_plugin.calling.presentation.fragment.common.audiodevicelist.AudioDeviceListViewModel
+import com.acs_plugin.calling.presentation.manager.CapabilitiesManager
+import com.acs_plugin.calling.presentation.manager.CaptionsRttDataManager
+import com.acs_plugin.calling.presentation.manager.DebugInfoManager
+import com.acs_plugin.calling.presentation.manager.UpdatableOptionsManager
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.state.ReduxState
 
 internal class CallingViewModelFactory(
     private val store: Store<ReduxState>,

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service.sdk
+package com.acs_plugin.calling.service.sdk
 
 import com.azure.android.communication.calling.CallingCommunicationErrors as SdkCallingCommunicationErrors
 import com.azure.android.communication.calling.CallingCommunicationException as SdkCallingCommunicationException
@@ -14,14 +14,14 @@ import com.azure.android.communication.common.CommunicationUserIdentifier
 import com.azure.android.communication.common.MicrosoftTeamsUserIdentifier
 import com.azure.android.communication.common.PhoneNumberIdentifier
 import com.azure.android.communication.common.UnknownIdentifier
-import com.azure.android.communication.ui.calling.models.CallCompositeLobbyErrorCode
-import com.azure.android.communication.ui.calling.models.CapabilitiesChangedEvent
-import com.azure.android.communication.ui.calling.models.CapabilitiesChangedReason
-import com.azure.android.communication.ui.calling.models.CapabilityResolutionReason
-import com.azure.android.communication.ui.calling.models.ParticipantCapability
-import com.azure.android.communication.ui.calling.models.ParticipantCapabilityType
-import com.azure.android.communication.ui.calling.models.ParticipantRole
-import com.azure.android.communication.ui.calling.models.ParticipantStatus
+import com.acs_plugin.calling.models.CallCompositeLobbyErrorCode
+import com.acs_plugin.calling.models.CapabilitiesChangedEvent
+import com.acs_plugin.calling.models.CapabilitiesChangedReason
+import com.acs_plugin.calling.models.CapabilityResolutionReason
+import com.acs_plugin.calling.models.ParticipantCapability
+import com.acs_plugin.calling.models.ParticipantCapabilityType
+import com.acs_plugin.calling.models.ParticipantRole
+import com.acs_plugin.calling.models.ParticipantStatus
 import com.azure.android.communication.calling.ParticipantCapabilityType as SdkParticipantCapabilityType
 
 internal fun com.azure.android.communication.calling.RemoteParticipant.into(): RemoteParticipant {

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.setup.components
+package com.acs_plugin.calling.presentation.fragment.setup.components
 
 import android.content.Context
 import android.content.Intent
@@ -16,8 +16,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.redux.state.PermissionStatus
+import com.acs_plugin.R
+import com.acs_plugin.calling.redux.state.PermissionStatus
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 

@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 @file:OptIn(InternalCoroutinesApi::class)
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.support
+package com.acs_plugin.calling.presentation.fragment.calling.support
 
 import android.content.Context
 import android.content.Intent
@@ -15,8 +15,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.utilities.implementation.CompositeDrawerDialog
+import com.acs_plugin.R
+import com.acs_plugin.calling.utilities.implementation.CompositeDrawerDialog
 import com.microsoft.fluentui.drawer.DrawerDialog
 import com.microsoft.fluentui.widget.Button
 import kotlinx.coroutines.InternalCoroutinesApi

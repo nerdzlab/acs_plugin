@@ -1,23 +1,23 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.manager
+package com.acs_plugin.calling.presentation.manager
 
 import android.graphics.Bitmap
 import com.azure.android.communication.common.CommunicationIdentifier
-import com.azure.android.communication.ui.calling.models.CallCompositeCaptionsData
-import com.azure.android.communication.ui.calling.models.CaptionsResultType
-import com.azure.android.communication.ui.calling.models.RttMessage
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.CallingFragment
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.captions.CaptionsRttRecord
-import com.azure.android.communication.ui.calling.presentation.fragment.calling.captions.CaptionsRttType
-import com.azure.android.communication.ui.calling.redux.AppStore
-import com.azure.android.communication.ui.calling.redux.state.CaptionsStatus
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
-import com.azure.android.communication.ui.calling.service.CallingService
-import com.azure.android.communication.ui.calling.utilities.EventFlow
-import com.azure.android.communication.ui.calling.utilities.MutableEventFlow
-import com.azure.android.communication.ui.calling.utilities.launchAll
+import com.acs_plugin.calling.models.CallCompositeCaptionsData
+import com.acs_plugin.calling.models.CaptionsResultType
+import com.acs_plugin.calling.models.RttMessage
+import com.acs_plugin.calling.presentation.fragment.calling.CallingFragment
+import com.acs_plugin.calling.presentation.fragment.calling.captions.CaptionsRttRecord
+import com.acs_plugin.calling.presentation.fragment.calling.captions.CaptionsRttType
+import com.acs_plugin.calling.redux.AppStore
+import com.acs_plugin.calling.redux.state.CaptionsStatus
+import com.acs_plugin.calling.redux.state.ReduxState
+import com.acs_plugin.calling.service.CallingService
+import com.acs_plugin.calling.utilities.EventFlow
+import com.acs_plugin.calling.utilities.MutableEventFlow
+import com.acs_plugin.calling.utilities.launchAll
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow

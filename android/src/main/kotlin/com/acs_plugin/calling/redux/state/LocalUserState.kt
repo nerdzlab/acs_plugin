@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.redux.state
+package com.acs_plugin.calling.redux.state
 
-import com.azure.android.communication.ui.calling.error.CallCompositeError
-import com.azure.android.communication.ui.calling.models.CallCompositeAudioVideoMode
-import com.azure.android.communication.ui.calling.models.ParticipantCapabilityType
-import com.azure.android.communication.ui.calling.models.ParticipantRole
+import com.acs_plugin.calling.error.CallCompositeError
+import com.acs_plugin.calling.models.CallCompositeAudioVideoMode
+import com.acs_plugin.calling.models.ParticipantCapabilityType
+import com.acs_plugin.calling.models.ParticipantRole
 
 internal enum class CameraOperationalStatus {
     PENDING,

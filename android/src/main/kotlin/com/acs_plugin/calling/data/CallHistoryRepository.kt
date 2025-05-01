@@ -1,13 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.data
+package com.acs_plugin.calling.data
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.azure.android.communication.ui.calling.data.model.CallHistoryRecordData
-import com.azure.android.communication.ui.calling.logger.Logger
+import com.acs_plugin.calling.data.CallHistoryContract
+import com.acs_plugin.calling.data.DbHelper
+import com.acs_plugin.calling.data.model.CallHistoryRecordData
+import com.acs_plugin.calling.logger.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Instant

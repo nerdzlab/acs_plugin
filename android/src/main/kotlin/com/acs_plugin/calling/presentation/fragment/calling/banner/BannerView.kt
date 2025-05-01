@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.banner
+package com.acs_plugin.calling.presentation.fragment.calling.banner
 
 import android.content.Context
 import android.content.Intent
@@ -15,7 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.azure.android.communication.ui.calling.implementation.R
+import com.acs_plugin.R
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 

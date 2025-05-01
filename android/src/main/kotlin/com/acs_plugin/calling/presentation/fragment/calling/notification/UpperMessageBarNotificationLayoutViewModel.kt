@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.notification
+package com.acs_plugin.calling.presentation.fragment.calling.notification
 
-import com.azure.android.communication.ui.calling.implementation.R
-import com.azure.android.communication.ui.calling.models.MediaCallDiagnostic
-import com.azure.android.communication.ui.calling.models.UpperMessageBarNotificationModel
-import com.azure.android.communication.ui.calling.redux.action.Action
-import com.azure.android.communication.ui.calling.redux.state.CallDiagnosticsState
+import com.acs_plugin.R
+import com.acs_plugin.calling.models.MediaCallDiagnostic
+import com.acs_plugin.calling.models.UpperMessageBarNotificationModel
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.state.CallDiagnosticsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

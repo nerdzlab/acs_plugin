@@ -1,19 +1,19 @@
-package com.azure.android.communication.ui.calling.presentation.manager
+package com.acs_plugin.calling.presentation.manager
 
-import com.azure.android.communication.ui.calling.configuration.CallCompositeConfiguration
-import com.azure.android.communication.ui.calling.models.CallCompositeCustomButtonViewData
-import com.azure.android.communication.ui.calling.models.setDrawableIdChangedEventHandler
-import com.azure.android.communication.ui.calling.models.setEnabledChangedEventHandler
+import com.acs_plugin.calling.configuration.CallCompositeConfiguration
+import com.acs_plugin.calling.models.CallCompositeCustomButtonViewData
+import com.acs_plugin.calling.models.setDrawableIdChangedEventHandler
+import com.acs_plugin.calling.models.setEnabledChangedEventHandler
 /* <CALL_START_TIME>
-import com.azure.android.communication.ui.calling.models.setShowCallDurationChangedEventHandler
+import com.acs_plugin.calling.models.setShowCallDurationChangedEventHandler
 </CALL_START_TIME> */
-import com.azure.android.communication.ui.calling.models.setSubtitleChangedEventHandler
-import com.azure.android.communication.ui.calling.models.setTitleChangedEventHandler
-import com.azure.android.communication.ui.calling.models.setVisibleChangedEventHandler
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.action.ButtonViewDataAction
-import com.azure.android.communication.ui.calling.redux.action.CallScreenInfoHeaderAction
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.calling.models.setSubtitleChangedEventHandler
+import com.acs_plugin.calling.models.setTitleChangedEventHandler
+import com.acs_plugin.calling.models.setVisibleChangedEventHandler
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.action.ButtonViewDataAction
+import com.acs_plugin.calling.redux.action.CallScreenInfoHeaderAction
+import com.acs_plugin.calling.redux.state.ReduxState
 
 internal class UpdatableOptionsManager(
     private val configuration: CallCompositeConfiguration,

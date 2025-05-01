@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service.sdk.ext
+package com.acs_plugin.calling.service.sdk.ext
 
 import com.azure.android.communication.calling.CallClientOptions
 import com.azure.android.communication.calling.CallDiagnosticsOptions
-import com.azure.android.communication.ui.calling.logger.Logger
+import com.acs_plugin.calling.logger.Logger
 
 internal fun CallClientOptions.getOrCreateDiagnostics(): CallDiagnosticsOptions {
     if (this.diagnostics == null) {

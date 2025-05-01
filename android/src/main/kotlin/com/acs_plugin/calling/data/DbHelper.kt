@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.data
+package com.acs_plugin.calling.data
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -23,7 +23,7 @@ internal class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_N
     companion object {
         // If you change the database schema, you must increment the database version.
         const val DATABASE_VERSION = 1
-        const val DATABASE_NAME = "com.azure.android.communication.ui.calling.CallHistoryReader.db"
+        const val DATABASE_NAME = "com.acs_plugin.calling.CallHistoryReader.db"
     }
 }
 

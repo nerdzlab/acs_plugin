@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.participant.grid
+package com.acs_plugin.calling.presentation.fragment.calling.participant.grid
 
-import com.azure.android.communication.ui.calling.models.ParticipantInfoModel
-import com.azure.android.communication.ui.calling.models.ParticipantStatus
-import com.azure.android.communication.ui.calling.models.VideoStreamModel
+import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.models.ParticipantStatus
+import com.acs_plugin.calling.models.VideoStreamModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

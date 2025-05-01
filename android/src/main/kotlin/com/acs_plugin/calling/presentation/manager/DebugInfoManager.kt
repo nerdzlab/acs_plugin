@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.manager
+package com.acs_plugin.calling.presentation.manager
 
-import com.azure.android.communication.ui.calling.data.CallHistoryRepository
-import com.azure.android.communication.ui.calling.models.CallCompositeCallHistoryRecord
-import com.azure.android.communication.ui.calling.models.CallCompositeDebugInfo
-import com.azure.android.communication.ui.calling.models.buildCallCompositeDebugInfo
-import com.azure.android.communication.ui.calling.models.buildCallHistoryRecord
+import com.acs_plugin.calling.data.CallHistoryRepository
+import com.acs_plugin.calling.models.CallCompositeCallHistoryRecord
+import com.acs_plugin.calling.models.CallCompositeDebugInfo
+import com.acs_plugin.calling.models.buildCallCompositeDebugInfo
+import com.acs_plugin.calling.models.buildCallHistoryRecord
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext

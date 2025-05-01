@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.presentation.fragment.calling.participant.grid.screenshare
+package com.acs_plugin.calling.presentation.fragment.calling.participant.grid.screenshare
 
 import android.content.Context
 import android.content.res.Configuration
@@ -11,7 +11,7 @@ import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.azure.android.communication.ui.calling.service.sdk.VideoStreamRenderer
+import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
 
 internal class ScreenShareViewManager(
     private val context: Context,

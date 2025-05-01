@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service.sdk
+package com.acs_plugin.calling.service.sdk
 
 import android.content.Context
 import com.azure.android.communication.calling.AcceptCallOptions
@@ -26,21 +26,21 @@ import com.azure.android.communication.calling.TeamsCaptions
 import com.azure.android.communication.calling.TeamsMeetingIdLocator
 import com.azure.android.communication.calling.TeamsMeetingLinkLocator
 import com.azure.android.communication.calling.VideoDevicesUpdatedListener
-import com.azure.android.communication.ui.calling.CallCompositeException
-import com.azure.android.communication.ui.calling.configuration.CallConfiguration
-import com.azure.android.communication.ui.calling.configuration.CallType
-import com.azure.android.communication.ui.calling.logger.Logger
-import com.azure.android.communication.ui.calling.models.CallCompositeCaptionsOptions
-import com.azure.android.communication.ui.calling.models.CallCompositeLobbyErrorCode
-import com.azure.android.communication.ui.calling.models.ParticipantCapabilityType
-import com.azure.android.communication.ui.calling.models.ParticipantInfoModel
-import com.azure.android.communication.ui.calling.redux.state.AudioOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.AudioState
-import com.azure.android.communication.ui.calling.redux.state.CameraDeviceSelectionStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraOperationalStatus
-import com.azure.android.communication.ui.calling.redux.state.CameraState
-import com.azure.android.communication.ui.calling.utilities.isAndroidTV
-import com.azure.android.communication.ui.calling.utilities.toJavaUtil
+import com.acs_plugin.calling.CallCompositeException
+import com.acs_plugin.calling.configuration.CallConfiguration
+import com.acs_plugin.calling.configuration.CallType
+import com.acs_plugin.calling.logger.Logger
+import com.acs_plugin.calling.models.CallCompositeCaptionsOptions
+import com.acs_plugin.calling.models.CallCompositeLobbyErrorCode
+import com.acs_plugin.calling.models.ParticipantCapabilityType
+import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.redux.state.AudioOperationalStatus
+import com.acs_plugin.calling.redux.state.AudioState
+import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
+import com.acs_plugin.calling.redux.state.CameraOperationalStatus
+import com.acs_plugin.calling.redux.state.CameraState
+import com.acs_plugin.calling.utilities.isAndroidTV
+import com.acs_plugin.calling.utilities.toJavaUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 /*  <CALL_START_TIME>

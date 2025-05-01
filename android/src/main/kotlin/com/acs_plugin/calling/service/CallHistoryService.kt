@@ -1,14 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package com.azure.android.communication.ui.calling.service
+package com.acs_plugin.calling.service
 
-import com.azure.android.communication.ui.calling.data.CallHistoryRepository
-import com.azure.android.communication.ui.calling.redux.Store
-import com.azure.android.communication.ui.calling.redux.state.ReduxState
+import com.acs_plugin.calling.data.CallHistoryRepository
+import com.acs_plugin.calling.redux.Store
+import com.acs_plugin.calling.redux.state.ReduxState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal interface CallHistoryService {
