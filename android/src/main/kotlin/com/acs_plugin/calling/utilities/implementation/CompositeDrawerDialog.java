@@ -9,7 +9,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.acs_plugin.R;
+import com.microsoft.fluentui.drawer.R;
 import com.microsoft.fluentui.drawer.DrawerDialog;
 
 public class CompositeDrawerDialog extends DrawerDialog {
