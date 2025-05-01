@@ -1,4 +1,4 @@
-package com.example.acs_plugin
+package com.acs_plugin
 
 import androidx.annotation.NonNull
 
