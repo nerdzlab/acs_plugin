@@ -279,7 +279,7 @@ internal open class CallCompositeActivity : AppCompatActivity() {
 
     override fun onPictureInPictureModeChanged(
         isInPictureInPictureMode: Boolean,
-        newConfig: Configuration?
+        newConfig: Configuration
     ) {
         store.dispatch(if (isInPictureInPictureMode) PipAction.PipModeEntered() else PipAction.ShowNormalEntered())
     }

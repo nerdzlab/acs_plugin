@@ -65,7 +65,7 @@
             android:exported="false"
             />
         <service
-            android:name="com.acs_plugin.calling.TelecomConnectionService"
+            android:name="com.azure.android.communication.calling.TelecomConnectionService"
             android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
             android:exported="true">
             <intent-filter>

@@ -5,8 +5,6 @@ package com.acs_plugin.calling.models;
 
 import androidx.annotation.NonNull;
 
-import com.acs_plugin.calling.implementation.BuildConfig;
-
 /**
  * This class provides a snapshot of version information for critical calling dependencies within the application.
  * It encapsulates the versions of both the Azure Calling UI SDK and the underlying Azure Calling SDK.
@@ -20,7 +18,7 @@ public class CallCompositeVersions {
      * @return A {@link String} representing the version of the Azure Calling UI SDK.
      */
     public String getAzureCallingUILibrary() {
-        return BuildConfig.UI_SDK_VERSION;
+        return "1.14.0";
     }
 
     /**
@@ -30,7 +28,7 @@ public class CallCompositeVersions {
      * @return A {@link String} representing the version of the Azure Calling SDK.
      */
     public String getAzureCallingLibrary() {
-        return BuildConfig.CALL_SDK_VERSION;
+        return "2.13.1";
     }
 
     /**
