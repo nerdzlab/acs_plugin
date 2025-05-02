@@ -57,6 +57,10 @@ enum CallCompositeInternalError: Error, Equatable {
             return CallCompositeErrorCode.raiseHand
         case .lowerHandFailed:
             return CallCompositeErrorCode.lowerHand
+        case .stopScreenSharingFailed:
+            return CallCompositeErrorCode.stopScreenShareFailure
+        case .startScreenSharingFailed:
+            return CallCompositeErrorCode.startScreenShareFailure
         case .callHoldFailed,
                 .callResumeFailed,
                 .callEvicted,
@@ -65,8 +69,6 @@ enum CallCompositeInternalError: Error, Equatable {
                 .setVideoEffectFailed,
                 .muteFailed,
                 .unMuteFailed,
-                .stopScreenSharingFailed,
-                .startScreenSharingFailed,
                 .cameraSwitchFailed:
             return nil
         }

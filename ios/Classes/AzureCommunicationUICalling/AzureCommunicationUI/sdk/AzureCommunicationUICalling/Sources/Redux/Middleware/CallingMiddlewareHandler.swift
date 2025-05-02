@@ -861,8 +861,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             do {
                 try await callingService.startScreenSharing()
             } catch {
-                //MTODO need specify error, as mutefailed not correct one
-                handle(error: error, errorType: .muteFailed, dispatch: dispatch)
+                dispatch(.localUserAction(.screenShareOnTriggeredFailed(error: error)))
             }
         }
     }
@@ -872,8 +871,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             do {
                 try await callingService.stopScreenSharing()
             } catch {
-                //MTODO need specify error, as mutefailed not correct one
-                handle(error: error, errorType: .muteFailed, dispatch: dispatch)
+                dispatch(.localUserAction(.screenShareOffTriggeredFailed(error: error)))
             }
         }
     }

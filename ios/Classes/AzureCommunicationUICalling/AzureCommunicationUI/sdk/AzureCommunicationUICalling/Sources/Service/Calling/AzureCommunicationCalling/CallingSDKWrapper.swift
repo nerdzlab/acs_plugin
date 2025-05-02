@@ -26,6 +26,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
     private var callKitRemoteInfo: CallKitRemoteInfo?
     private var callingSDKInitializer: CallingSDKInitializer
     private var replacementEffect: BackgroundReplacementEffect
+    private var screenRecorder: RPScreenRecorder = RPScreenRecorder.shared()
     
     init(logger: Logger,
          callingEventsHandler: CallingSDKEventsHandling,
@@ -345,8 +346,6 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         try await startCallScreenShareStream(stream)
     }
     
-    var screenRecorder: RPScreenRecorder = RPScreenRecorder.shared()
-    
     private func startCallScreenShareStream(
         _ videoStream: AzureCommunicationCalling.ScreenShareOutgoingVideoStream
     ) async throws {
@@ -364,21 +363,10 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
                 try await call.startVideo(stream: videoStream)
             }
             
-//            startCapture()
-//            
-//            try await call.startVideo(stream: videoStream)
             logger.debug("Screen share video started successfully")
         } catch {
             logger.error( "Screen share video failed to start. \(error)")
             throw error
-        }
-    }
-    
-    private func startCapture() {
-        screenRecorder = RPScreenRecorder.shared()
-        
-        if screenRecorder.isAvailable {
-            screenRecorder.startCapture(handler: captureOutput)
         }
     }
     
@@ -416,14 +404,15 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         localScreenShareOutgoingVideoStream?.state == .started
         
         if canSendRawVideoFrames {
-            localScreenShareOutgoingVideoStream?.send(frame: rawVideoFrameBuffer) { error in
-                print("error \(error)")
+            localScreenShareOutgoingVideoStream?.send(frame: rawVideoFrameBuffer) { [weak self] error in
+                if (error != nil) {
+                    Task {
+                        try? await self?.stopScreenSharingStream()
+                    }
+                    
+                    self?.logger.debug("Share screen error \(error!)")
+                }
             }
-            
-//            if (delegate != nil)
-//            {
-//                delegate!(rawVideoFrameBuffer)
-//            }
         }
     }
     
@@ -435,6 +424,10 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         }
         do {
             try await call.stopVideo(stream: videoStream)
+            self.localScreenShareOutgoingVideoStream?.delegate = nil
+            self.localScreenShareOutgoingVideoStream = nil
+            screenRecorder.stopCapture()
+            
             logger.debug("Share screen video stopped successfully")
         } catch {
             logger.error( "Share screen video failed to stop. \(error)")
@@ -942,6 +935,70 @@ extension CallingSDKWrapper {
         }
         return "builtinCameraVideoStream"
     }
+    
+    private func getValidLocalVideoStream() async -> AzureCommunicationCalling.LocalVideoStream {
+        if let existingVideoStream = localVideoStream {
+            return existingVideoStream
+        }
+        
+        let videoDevice = await getVideoDeviceInfo(.front)
+        let videoStream = AzureCommunicationCalling.LocalVideoStream(camera: videoDevice)
+        localVideoStream = videoStream
+        return videoStream
+    }
+    
+    private func getValidScreenShareStream() -> AzureCommunicationCalling.ScreenShareOutgoingVideoStream {
+        if let existingScreenShareStream = localScreenShareOutgoingVideoStream {
+            return existingScreenShareStream
+        }
+        
+        let videoStream =  ScreenShareOutgoingVideoStream(
+            videoStreamOptions: createRawOutgoingVideoStreamOptions())
+        localScreenShareOutgoingVideoStream = videoStream
+        localScreenShareOutgoingVideoStream?.delegate = self
+        return videoStream
+    }
+    
+    private func createRawOutgoingVideoStreamOptions() -> RawOutgoingVideoStreamOptions {
+        let format = createVideoStreamFormat()
+        
+        let options = RawOutgoingVideoStreamOptions()
+        options.formats = [format]
+        
+        return options
+    }
+    
+    private func createVideoStreamFormat() -> VideoStreamFormat {
+        let format = VideoStreamFormat()
+        format.pixelFormat = VideoStreamPixelFormat.nv12
+        format.framesPerSecond = 30.0
+        
+        let maxWidth: Double = 1920.0
+        let maxHeight: Double = 1080.0
+        
+        let screenSize = UIScreen.main.bounds
+        var w = screenSize.width
+        var h = screenSize.height
+        
+        if h > maxHeight {
+            let percentage = abs((maxHeight / h) - 1);
+            w = ceil((w * percentage));
+            h = maxHeight;
+        }
+        
+        if w > maxWidth {
+            let percentage = abs((maxWidth / w) - 1);
+            h = ceil((h * percentage));
+            w = maxWidth;
+        }
+        
+        format.width = Int32(w)
+        format.height = Int32(h)
+        format.stride1 = Int32(w)
+        format.stride2 = Int32(w)
+        
+        return format
+    }
 }
 // swiftlint:enable type_body_length
 
@@ -968,67 +1025,36 @@ extension CallingSDKWrapper: DeviceManagerDelegate {
             }
         })
     }
-    
-    private func getValidLocalVideoStream() async -> AzureCommunicationCalling.LocalVideoStream {
-        if let existingVideoStream = localVideoStream {
-            return existingVideoStream
+}
+
+extension CallingSDKWrapper: ScreenShareOutgoingVideoStreamDelegate {
+    func screenShareOutgoingVideoStream(_ screenShareOutgoingVideoStream: ScreenShareOutgoingVideoStream,
+                                        didChangeState args: VideoStreamStateChangedEventArgs) {
+        let stream = args.stream
+        switch (stream.direction) {
+        case .outgoing:
+            outgoingVideoStreamStateChanged(stream: stream as! OutgoingVideoStream)
+            
+        default:
+            break
         }
-        
-        let videoDevice = await getVideoDeviceInfo(.front)
-        let videoStream = AzureCommunicationCalling.LocalVideoStream(camera: videoDevice)
-        localVideoStream = videoStream
-        return videoStream
     }
     
-    private func getValidScreenShareStream() -> AzureCommunicationCalling.ScreenShareOutgoingVideoStream {
-        if let existingScreenShareStream = localScreenShareOutgoingVideoStream {
-            return existingScreenShareStream
+    private func outgoingVideoStreamStateChanged(stream: OutgoingVideoStream) {
+        switch stream.state {
+        case .stopped:
+            switch stream.type {
+            case .screenShareOutgoing:
+                Task {
+                    try? await stopScreenSharingStream()
+                }
+                
+            default:
+                break
+            }
+            
+        default:
+            break
         }
-        
-        let videoStream =  ScreenShareOutgoingVideoStream(
-            videoStreamOptions: createRawOutgoingVideoStreamOptions())
-        localScreenShareOutgoingVideoStream = videoStream
-        return videoStream
-    }
-    
-    private func createRawOutgoingVideoStreamOptions() -> RawOutgoingVideoStreamOptions {
-        let format = createVideoStreamFormat()
-
-        let options = RawOutgoingVideoStreamOptions()
-        options.formats = [format]
-
-        return options
-    }
-
-    private func createVideoStreamFormat() -> VideoStreamFormat {
-        let format = VideoStreamFormat()
-        format.pixelFormat = VideoStreamPixelFormat.nv12
-        format.framesPerSecond = 30.0
-        
-         let maxWidth: Double = 1920.0
-         let maxHeight: Double = 1080.0
-        
-        let screenSize = UIScreen.main.bounds
-        var w = screenSize.width
-        var h = screenSize.height
-        
-        if h > maxHeight {
-            let percentage = abs((maxHeight / h) - 1);
-            w = ceil((w * percentage));
-            h = maxHeight;
-        }
-
-        if w > maxWidth {
-            let percentage = abs((maxWidth / w) - 1);
-            h = ceil((h * percentage));
-            w = maxWidth;
-        }
-        
-        format.width = Int32(w)
-        format.height = Int32(h)
-        format.stride1 = Int32(w)
-        format.stride2 = Int32(w)
-        
-        return format
     }
 }
