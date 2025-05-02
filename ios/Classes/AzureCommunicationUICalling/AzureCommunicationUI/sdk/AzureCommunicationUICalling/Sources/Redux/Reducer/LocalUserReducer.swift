@@ -145,6 +145,16 @@ extension Reducer where State == LocalUserState,
             selectedReaction = ReactionPayload(reaction: reaction, receivedOn: Date())
         case .resetLocalUserReaction:
             selectedReaction = nil
+        case .screenShareOnTriggered:
+            shareScreenStatus = .screenIsSharing
+        case .screenShareOffTriggered:
+            shareScreenStatus = .screenNotShared
+        case .screenShareOnTriggeredFailed(error: let error):
+            shareScreenStatus = .screenNotShared
+            //MTODO need to handle error state
+        case .screenShareOffTriggeredFailed(error: let error):
+            //MTODO need to handle error state
+            shareScreenStatus = .screenIsSharing
         }
 
         let cameraState = LocalUserState.CameraState(operation: cameraStatus,

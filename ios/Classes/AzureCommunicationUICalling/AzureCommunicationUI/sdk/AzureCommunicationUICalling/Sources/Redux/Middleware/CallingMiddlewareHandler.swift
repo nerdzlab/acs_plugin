@@ -157,6 +157,18 @@ protocol CallingMiddlewareHandling {
         state: AppState,
         dispatch: @escaping ActionDispatch
     ) -> Task<Void, Never>
+    
+    @discardableResult
+    func startScreenSharing(
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
+    
+    @discardableResult
+    func stopScreenSharing(
+        state: AppState,
+        dispatch: @escaping ActionDispatch
+    ) -> Task<Void, Never>
 }
 
 // swiftlint:disable type_body_length
@@ -841,6 +853,28 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
     func noiseSuppressionCallOff(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             callingService.noiseSuppressionCallOff()
+        }
+    }
+    
+    func startScreenSharing(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            do {
+                try await callingService.startScreenSharing()
+            } catch {
+                //MTODO need specify error, as mutefailed not correct one
+                handle(error: error, errorType: .muteFailed, dispatch: dispatch)
+            }
+        }
+    }
+    
+    func stopScreenSharing(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+        Task {
+            do {
+                try await callingService.stopScreenSharing()
+            } catch {
+                //MTODO need specify error, as mutefailed not correct one
+                handle(error: error, errorType: .muteFailed, dispatch: dispatch)
+            }
         }
     }
 }
