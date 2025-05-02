@@ -10,16 +10,19 @@ class ShareMeetingInfoActivityViewModel: InfoSharingAccessible {
     let accessibilityProvider: AccessibilityProviderProtocol
     let debugInfoManager: DebugInfoManagerProtocol
     let dismissDrawer: () -> Void
+    let shareLink: String
 
     init(accessibilityProvider: AccessibilityProviderProtocol,
          debugInfoManager: DebugInfoManagerProtocol,
+         shareLink: String,
          dismissDrawer: @escaping () -> Void) {
         self.accessibilityProvider = accessibilityProvider
         self.debugInfoManager = debugInfoManager
+        self.shareLink = shareLink
         self.dismissDrawer = dismissDrawer
     }
 
     func getShareInfo() -> String {
-        return "www.google.com"
+        return shareLink
     }
 }

@@ -643,6 +643,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
                 avatarManager: avatarViewManager,
                 themeOptions: themeOptions ?? ThemeColor(),
                 updatableOptionsManager: updatableOptionsManager,
+                callConfiguration: callConfiguration,
                 retrieveLogFiles: callingSdkWrapper.getLogFiles
             )
         )
