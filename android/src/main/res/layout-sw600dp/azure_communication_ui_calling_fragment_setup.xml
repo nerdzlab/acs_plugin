@@ -12,7 +12,7 @@
     android:gravity="center_horizontal"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    tools:context="com.azure.android.communication.ui.calling.presentation.fragment.setup.SetupFragment"
+    tools:context="com.acs_plugin.calling.presentation.fragment.setup.SetupFragment"
     >
 
     <androidx.constraintlayout.widget.Guideline
@@ -76,7 +76,7 @@
             app:layout_constraintStart_toStartOf="parent"
             >
 
-            <com.azure.android.communication.ui.calling.presentation.fragment.setup.components.PreviewAreaView
+            <com.acs_plugin.calling.presentation.fragment.setup.components.PreviewAreaView
                 android:id="@+id/azure_communication_ui_setup_local_video_holder"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -87,7 +87,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupParticipantAvatarView
+            <com.acs_plugin.calling.presentation.fragment.setup.components.SetupParticipantAvatarView
                 android:id="@+id/azure_communication_ui_setup_default_avatar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupGradientView
+            <com.acs_plugin.calling.presentation.fragment.setup.components.SetupGradientView
                 android:id="@+id/azure_communication_ui_setup_gradient"
                 android:layout_width="0dp"
                 android:layout_height="140dp"
@@ -113,7 +113,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 />
 
-            <com.azure.android.communication.ui.calling.presentation.fragment.setup.components.PermissionWarningView
+            <com.acs_plugin.calling.presentation.fragment.setup.components.PermissionWarningView
                 android:id="@+id/azure_communication_ui_setup_permission_info"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -157,9 +157,9 @@
                     android:background="@drawable/azure_communication_ui_calling_button_outline"
                     android:text="@string/azure_communication_ui_calling_setup_view_go_to_settings" />
 
-            </com.azure.android.communication.ui.calling.presentation.fragment.setup.components.PermissionWarningView>
+            </com.acs_plugin.calling.presentation.fragment.setup.components.PermissionWarningView>
 
-            <com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupControlBarView
+            <com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarView
                 android:id="@+id/azure_communication_ui_setup_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -170,7 +170,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 >
 
-                <com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupButton
+                <com.acs_plugin.calling.presentation.fragment.setup.components.SetupButton
                     android:id="@+id/azure_communication_ui_setup_camera_button"
                     style="@style/Widget.FluentUI.Button.Borderless"
                     android:layout_width="wrap_content"
@@ -189,7 +189,7 @@
                     android:textSize="13sp"
                     />
 
-                <com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupButton
+                <com.acs_plugin.calling.presentation.fragment.setup.components.SetupButton
                     android:id="@+id/azure_communication_ui_setup_audio_button"
                     style="@style/Widget.FluentUI.Button.Borderless"
                     android:layout_width="wrap_content"
@@ -208,7 +208,7 @@
                     android:textSize="13sp"
                     />
 
-                <com.azure.android.communication.ui.calling.presentation.fragment.setup.components.AudioDeviceSetupButton
+                <com.acs_plugin.calling.presentation.fragment.setup.components.AudioDeviceSetupButton
                     android:id="@+id/azure_communication_ui_setup_audio_device_button"
                     style="@style/Widget.FluentUI.Button.Borderless"
                     android:layout_width="wrap_content"
@@ -226,11 +226,11 @@
                     android:textColor="@color/azure_communication_ui_calling_toggle_selector"
                     android:textSize="13sp"
                     />
-            </com.azure.android.communication.ui.calling.presentation.fragment.setup.components.SetupControlBarView>
+            </com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.azure.android.communication.ui.calling.presentation.fragment.setup.components.JoinCallButtonHolderView
+        <com.acs_plugin.calling.presentation.fragment.setup.components.JoinCallButtonHolderView
             android:id="@+id/azure_communication_ui_setup_join_call_holder"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -312,6 +312,6 @@
                 tools:visibility="visible"
                 />
 
-        </com.azure.android.communication.ui.calling.presentation.fragment.setup.components.JoinCallButtonHolderView>
+        </com.acs_plugin.calling.presentation.fragment.setup.components.JoinCallButtonHolderView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,7 +2,7 @@
    Copyright (c) Microsoft Corporation. All rights reserved.
    Licensed under the MIT License.
   -->
-<com.azure.android.communication.ui.calling.presentation.fragment.calling.banner.BannerView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.acs_plugin.calling.presentation.fragment.calling.banner.BannerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/azure_communication_ui_call_banner"
     android:layout_width="match_parent"
@@ -42,4 +42,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
-</com.azure.android.communication.ui.calling.presentation.fragment.calling.banner.BannerView>
+</com.acs_plugin.calling.presentation.fragment.calling.banner.BannerView>

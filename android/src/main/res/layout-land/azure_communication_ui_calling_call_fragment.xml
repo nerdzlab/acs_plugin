@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:alpha="1"
-    tools:context="com.azure.android.communication.ui.calling.presentation.fragment.calling.CallingFragment"
+    tools:context="com.acs_plugin.calling.presentation.fragment.calling.CallingFragment"
     android:clipChildren="false"
     >
 
@@ -25,7 +25,7 @@
         app:layout_constraintTop_toTopOf="parent"
         >
 
-        <com.azure.android.communication.ui.calling.presentation.fragment.calling.participant.grid.ParticipantGridView
+        <com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridView
             android:id="@+id/azure_communication_ui_call_participant_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

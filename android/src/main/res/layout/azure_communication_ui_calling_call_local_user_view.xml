@@ -2,7 +2,7 @@
    Copyright (c) Microsoft Corporation. All rights reserved.
    Licensed under the MIT License.
   -->
-<com.azure.android.communication.ui.calling.presentation.fragment.calling.localuser.LocalParticipantView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.acs_plugin.calling.presentation.fragment.calling.localuser.LocalParticipantView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/azure_communication_ui_call_local_user_view"
     android:layout_width="match_parent"
@@ -109,4 +109,4 @@
             </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</com.azure.android.communication.ui.calling.presentation.fragment.calling.localuser.LocalParticipantView>
+</com.acs_plugin.calling.presentation.fragment.calling.localuser.LocalParticipantView>

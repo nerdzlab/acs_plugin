@@ -2,7 +2,7 @@
    Copyright (c) Microsoft Corporation. All rights reserved.
    Licensed under the MIT License.
   -->
-<com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar.ControlBarView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.acs_plugin.calling.presentation.fragment.calling.controlbar.ControlBarView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/azure_communication_ui_call_call_buttons"
@@ -107,4 +107,4 @@
             app:layout_constraintBottom_toBottomOf="parent"
             />
 
-</com.azure.android.communication.ui.calling.presentation.fragment.calling.controlbar.ControlBarView>
+</com.acs_plugin.calling.presentation.fragment.calling.controlbar.ControlBarView>
