@@ -29,6 +29,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
     private let setupScreenOptions: SetupScreenOptions?
     private let callScreenOptions: CallScreenOptions?
     private let callType: CompositeCallType
+    private let callConfiguration: CallConfiguration
     /* <CUSTOM_COLOR_FEATURE> */
     private let themeOptions: ThemeOptions
     /* </CUSTOM_COLOR_FEATURE> */
@@ -56,6 +57,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
          themeOptions: ThemeOptions,
          /* </CUSTOM_COLOR_FEATURE> */
          updatableOptionsManager: UpdatableOptionsManagerProtocol,
+         callConfiguration: CallConfiguration,
          retrieveLogFiles: @escaping () -> [URL]
     ) {
         self.logger = logger
@@ -79,6 +81,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
         self.themeOptions = themeOptions
         /* </CUSTOM_COLOR_FEATURE> */
         self.avatarManager = avatarManager
+        self.callConfiguration = callConfiguration
         self.updatableOptionsManager = updatableOptionsManager
     }
     
@@ -610,9 +613,10 @@ extension CompositeViewModelFactory {
         }
     }
     
+    //MTDOD need proper way to construct link
     func makeShareMeetingInfoActivityViewModel() -> ShareMeetingInfoActivityViewModel {
         ShareMeetingInfoActivityViewModel(accessibilityProvider: accessibilityProvider,
-                                          debugInfoManager: debugInfoManager) {
+                                          debugInfoManager: debugInfoManager, shareLink: "https://msteam.desktop.superbrains.nl/meeting?roomId=\(callConfiguration.roomId ?? "")") {
             self.store.dispatch(action: .hideDrawer)
         }
     }

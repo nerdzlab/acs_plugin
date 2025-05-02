@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+   Copyright (c) Microsoft Corporation. All rights reserved.
+   Licensed under the MIT License.
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--    Device-->
+    <string name="azure_communication_ui_calling_audio_device_drawer_android">Android</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_speaker">Alto-falante</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_bluetooth">Bluetooth</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_headphone">Headset</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_accessibility_label">Opções do dispositivo. Botão Fechar.</string>
+    <string name="azure_communication_ui_calling_switch_camera_button_front">Câmera frontal ligada, alterne para a câmera traseira</string>
+    <string name="azure_communication_ui_calling_switch_camera_button_back">Câmera traseira ligada, alterne para a câmera frontal</string>
+    <string name="azure_communication_ui_calling_setup_audio_device_select_content_description">Selecionar o Dispositivo de Áudio %1$s</string>
+    <string name="azure_communication_ui_calling_selected_audio_device_announcement">%1$s dispositivo de áudio, selecionado</string>
+    <!--    Setup View-->
+    <string name="azure_communication_ui_calling_setup_view_button_connecting_call">Ingressando na chamada…</string>
+    <string name="azure_communication_ui_calling_setup_view_button_video_off">Vídeo desativado</string>
+    <string name="azure_communication_ui_calling_setup_view_button_video_on">Vídeo ligado</string>
+    <string name="azure_communication_ui_calling_setup_view_button_mic_off">Microfone desligado</string>
+    <string name="azure_communication_ui_calling_setup_view_button_mic_on">Microfone ligado</string>
+    <string name="azure_communication_ui_calling_setup_view_button_join_call">Ingressar na chamada</string>
+    <string name="azure_communication_ui_calling_setup_view_preview_area_audio_disabled">Seu áudio está desabilitado. Para habilitar, vá para Configurações para permitir o acesso. Você deve
+ habilitar o áudio para iniciar essa chamada.</string>
+    <string name="azure_communication_ui_calling_setup_view_preview_area_camera_disabled">Sua câmera está desabilitada. Para habilitar, vá para Configurações
+ para permitir o acesso.</string>
+    <string name="azure_communication_ui_calling_setup_view_warning_missing_text">Permissões necessárias</string>
+    <string name="azure_communication_ui_calling_setup_view_go_to_settings">Vá para Configurações</string>
+    <string name="azure_communication_ui_calling_setup_view_audio_device_selected_accessibility_label">Selecionado</string>
+    <string name="azure_communication_ui_calling_setup_view_background_gradient_accessibility_label">Configurar Gradiente</string>
+    <string name="azure_communication_ui_calling_button_switch_camera_accessibility_label">Alternar Câmera</string>
+    <string name="azure_communication_ui_calling_call_setup_action_bar_title">Configurar</string>
+    <string name="azure_communication_ui_calling_call_setup_toolbar_title_announcement">Título</string>
+    <string name="azure_communication_ui_calling_call_setup_toolbar_subtitle_announcement">Legenda</string>
+    <string name="azure_communication_ui_calling_call_setup_toolbar_navigation_button_announcement">Navegação posterior</string>
+
+    <!--    Lobby View-->
+    <string name="azure_communication_ui_calling_lobby_view_text_waiting_for_host">Esperando pelo anfitrião</string>
+    <string name="azure_communication_ui_calling_lobby_view_text_waiting_details">Alguém na reunião permitirá que você entre em breve</string>
+
+    <!-- Hold Overlay -->
+    <string name="azure_communication_ui_calling_hold_view_text">Você está em espera</string>
+    <string name="azure_communication_ui_calling_resume">Retomar</string>
+    <string name="azure_communication_ui_calling_remote_participant_on_hold">Em espera</string>
+    <string name="azure_communication_ui_calling_mic_used">Não é possível retomar a chamada\nseu microfone está sendo usado por outro aplicativo.</string>
+
+    <!--    Calling View-->
+    <string name="azure_communication_ui_calling_view_info_header_waiting_for_others_to_join">Aguardando o ingresso de outros participantes</string>
+    <string name="azure_communication_ui_calling_view_info_header_call_with_1_person">Chamada com 1 pessoa</string>
+    <string name="azure_communication_ui_calling_view_info_header_call_with_n_people">Ligar com %1$d pessoas</string>
+    <string name="azure_communication_ui_calling_view_go_back">Voltar</string>
+    <string name="azure_communication_ui_calling_view_participant_drawer_local_participant_format">%1$s (eu)</string>
+    <string name="azure_communication_ui_calling_view_participant_drawer_unnamed">Participante Sem Nome</string>
+    <string name="azure_communication_ui_calling_view_leave_call">Sair da chamada?</string>
+    <string name="azure_communication_ui_calling_view_leave_call_button_text">Sair</string>
+    <string name="azure_communication_ui_calling_view_leave_call_cancel">Cancelar</string>
+    <string name="azure_communication_ui_calling_view_leave_confirm_menu">Sair do menu confirmar</string>
+    <string name="azure_communication_ui_calling_view_participant_list_open_accessibility_label">Abrir Lista de Participantes</string>
+    <string name="azure_communication_ui_calling_view_participant_list_dismiss_list">Toque duplo para ignorar a lista de Participantes</string>
+    <string name="azure_communication_ui_calling_view_participant_list_muted_accessibility_label">Mudo Ativado</string>
+    <string name="azure_communication_ui_calling_view_participant_list_unmuted_accessibility_label">Mudo Desativado</string>
+    <string name="azure_communication_ui_calling_view_button_hang_up_accessibility_label">Desligar</string>
+    <string name="azure_communication_ui_calling_view_button_close_button_accessibility_label">Fechar</string>
+    <string name="azure_communication_ui_calling_view_button_close_button_full_accessibility_label">Botão Fechar</string>
+    <string name="azure_communication_ui_calling_view_button_toggle_video_accessibility_label">Ativar/Desativar Vídeo</string>
+    <string name="azure_communication_ui_calling_view_button_toggle_audio_accessibility_label">Ativar/Desativar Áudio</string>
+    <string name="azure_communication_ui_calling_view_button_device_options_accessibility_label">Opções do Dispositivo</string>
+    <string name="azure_communication_ui_calling_view_more_menu_accessibility_label">Mais</string>
+    <string name="azure_communication_ui_calling_view_share_diagnostics">Compartilhar informações de diagnóstico</string>
+    <string name="azure_communication_ui_calling_view_share_diagnostics_title">Informações de diagnóstico</string>
+    <string name="azure_communication_ui_calling_view_share_diagnostics_description">Botão Compartilhar informações de diagnóstico</string>
+    <string name="azure_communication_ui_calling_view_call_with_accessibility_label">Chamada com: %1$s</string>
+    <string name="azure_communication_ui_calling_view_participant_list">Lista de participantes</string>
+    <string name="azure_communication_ui_calling_view_more_menu_list_accessibility_label">Mais opções. Botão Fechar.</string>
+    <string name="azure_communication_ui_calling_view_participant_list_accessibility_label">Lista de participantes. Botão Fechar.</string>
+    <string name="azure_communication_ui_calling_view_captions_menu_list_accessibility_label">Menu de Legendas e RTT. Botão Fechar.</string>
+    <string name="azure_communication_ui_calling_view_captions_language_menu_list_accessibility_label">Menu de idioma falado. Botão Fechar.</string>
+
+    <!--    Compliance Banner-->
+    <string name="azure_communication_ui_calling_view_banner_recording_started"><b>A transcrição foi iniciada.</b> Ingressando, você está
+dando consentimento para que esta reunião seja transcrita.
+ <u>Política de privacidade</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_stopped"><b>A gravação está sendo salva.</b> A gravação foi interrompida.
+         <u>Saiba mais</u></string>
+    <string name="azure_communication_ui_calling_view_banner_transcription_started"><b>A transcrição foi iniciada.</b> Ingressando, você
+        está dando consentimento para que esta reunião seja transcrita. <u>Política de privacidade</u></string>
+    <string name="azure_communication_ui_calling_view_banner_transcription_stopped"><b>A transcrição está sendo salva.</b> A transcrição
+        foi interrompida. <u>Saiba mais</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_and_transcribing_started"><b>A gravação e a transcrição foram
+ iniciadas.</b> Ingressando, você está dando consentimento para que esta reunião seja transcrita
+    . <u>Política de privacidade</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_and_transcribing_stopped"><b>A gravação e a transcrição estão
+        sendo salvas.</b> A gravação e a transcrição foram interrompidas. <u>Saiba mais</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_stopped_still_transcribing"><b>A gravação foi interrompida.</b> Você
+        agora só está transcrevendo esta reunião. <u>Política de privacidade</u></string>
+    <string name="azure_communication_ui_calling_view_banner_transcription_stopped_still_recording"><b>A transcrição foi interrompida.
+    </b> Você agora só está gravando esta reunião. <u>Política de privacidade</u></string>
+    <string name="azure_communication_ui_calling_view_link">Link</string>
+
+    <!--    PopUp warning-->
+    <string name="azure_communication_ui_calling_snack_bar_button_dismiss">Ignorar</string>
+    <string name="azure_communication_ui_calling_alert_title">Alerta</string>
+    <string name="azure_communication_ui_calling_call_end_with_error">Você foi removido da chamada devido a um erro ou à perda de conexão. Tente reingressar na chamada.</string>
+    <string name="azure_communication_ui_calling_snack_bar_text_error_call_join">Não é possível ingressar na chamada devido a um erro.</string>
+    <string name="azure_communication_ui_calling_call_state_evicted">Você foi removido da chamada.</string>
+    <string name="azure_communication_ui_calling_no_connection_available">Não é possível ingressar na chamada. Verifique sua conexão de rede.</string>
+    <string name="azure_communication_ui_calling_call_video_fails_error">Não é possível alternar câmeras.</string>
+
+    <!--    Notification-->
+    <string name="azure_communication_ui_calling_service_notification_title">Chamada em andamento</string>
+    <string name="azure_communication_ui_calling_service_notification_message">Toque para retornar à chamada</string>
+
+    <!--    Accessibility Hooks -->
+    <string name="azure_communication_ui_calling_accessibility_user_added">%1$s ingressou na reunião</string>
+    <string name="azure_communication_ui_calling_accessibility_user_left">%1$s saiu da reunião</string>
+    <string name="azure_communication_ui_calling_accessibility_meeting_connected">Você ingressou na chamada</string>
+
+    <!--    Participant list-->
+    <string name="azure_communication_ui_calling_participant_list_in_call_n_people">Na chamada (%1$d)</string>
+    <string name="azure_communication_ui_calling_participant_list_in_call_plus_more_people">mais %1$d</string>
+    <string name="azure_communication_ui_calling_participant_list_in_lobby_n_people">No lobby (%1$d)</string>
+    <string name="azure_communication_ui_calling_view_participant_list_dismiss_lobby_list">Clique duas vezes para admitir ou recusar um participante</string>
+
+    <!--    Admit participant dialog-->
+    <string name="azure_communication_ui_calling_admit_name">Admitir %1$s?</string>
+    <string name="azure_communication_ui_calling_admit">Admitir</string>
+    <string name="azure_communication_ui_calling_decline">Recusar</string>
+    <string name="azure_communication_ui_calling_admit_all">Permitir todos</string>
+
+    <!--    Lobby header-->
+    <string name="azure_communication_ui_calling_lobby_header_text">As pessoas estão esperando para ingressar</string>
+    <string name="azure_communication_ui_calling_lobby_header_icon_content_description">Lobby</string>
+    <string name="azure_communication_ui_calling_lobby_header_view_participant_button">Exibir o lobby</string>
+    <string name="azure_communication_ui_calling_lobby_header_accessibility_label">Exibir o lobby</string>
+    <string name="azure_communication_ui_calling_lobby_header_close_description">Fechar o lobby</string>
+
+    <!--    Lobby error header-->
+    <string name="azure_communication_ui_calling_lobby_header_error_close_description">Ocorreu um erro ao fechar o lobby</string>
+    <string name="azure_communication_ui_calling_lobby_error_content_description">Ocorreu um erro de lobby</string>
+    <string name="azure_communication_ui_calling_error_lobby_disabled_by_configuration">O lobby foi desabilitado</string>
+    <string name="azure_communication_ui_calling_error_lobby_conversation_type_not_supported">Lobby sem suporte</string>
+    <string name="azure_communication_ui_calling_error_lobby_meeting_role_not_allowded">Sua função não pode agir no lobby</string>
+    <string name="azure_communication_ui_calling_error_lobby_failed_to_remove_participant">Ocorreu um erro ao recusar</string>
+    <string name="azure_communication_ui_calling_error_lobby_unknown">Ocorreu um erro de ação do lobby</string>
+
+    <!-- Call Diagnostics -->
+    <string name="azure_communication_ui_calling_diagnostics_network_was_lost">A rede foi perdida</string>
+    <string name="azure_communication_ui_calling_diagnostics_network_reconnecting">Reconectando...</string>
+    <string name="azure_communication_ui_calling_diagnostics_network_quality_low">A qualidade da rede é baixa</string>
+    <string name="azure_communication_ui_calling_diagnostics_you_are_muted">Você está com mudo ativado</string>
+    <string name="azure_communication_ui_calling_diagnostics_microphone_not_working_as_expected">O microfone não está funcionando conforme o esperado</string>
+    <string name="azure_communication_ui_calling_diagnostics_unable_to_start_camera">Não foi possível iniciar a câmera</string>
+    <string name="azure_communication_ui_calling_diagnostics_camera_stoppped_working">A câmera parou de funcionar</string>
+    <string name="azure_communication_ui_calling_diagnostics_speaker_not_working_as_expected">O alto-falante não está funcionando conforme o esperado</string>
+    <string name="azure_communication_ui_calling_diagnostics_unable_to_locate_speaker">Não foi possível localizar o alto-falante</string>
+    <string name="azure_communication_ui_calling_diagnostics_unable_to_locate_microphone">Não foi possível localizar o microfone</string>
+    <string name="azure_communication_ui_calling_diagnostics_speaker_muted">O alto-falante está silenciado</string>
+
+    <!--    Upper Message Bar Notification -->
+    <string name="azure_communication_ui_calling_notification_dismiss_accessibility_label">Ignorar</string>
+
+    <!--     Support Form -->
+    <string name="azure_communication_ui_calling_report_issue">Relatar Problema</string>
+    <string name="azure_communication_ui_calling_report_issue_title">Relatar Problema</string>
+    <string name="azure_communication_ui_calling_logs_attach_notice">Nós anexaremos automaticamente os registros.</string>
+    <string name="azure_communication_ui_calling_privacy_policy_label">Política de Privacidade</string>
+    <string name="azure_communication_ui_calling_privacy_policy_label_accessibility">Política de Privacidade. Link.</string>
+    <string name="azure_communication_ui_calling_describe_your_issue_hint_text">Descreva seu problema...</string>
+    <string name="azure_communication_ui_calling_cancel_button_label">Cancelar</string>
+    <string name="azure_communication_ui_calling_attach_screenshot">Anexar captura de tela</string>
+    <string name="azure_communication_ui_calling_report_a_problem_label">Informar um problema</string>
+    <string name="azure_communication_ui_calling_send_feedback_label">Enviar</string>
+
+    <!--    Outgoing Call-->
+    <string name="azure_communication_ui_calling_setup_view_start_call">Iniciar chamada</string>
+    <string name="azure_communication_ui_calling_setup_view_button_starting_call">Iniciando chamada…</string>
+    <string name="azure_communication_ui_calling_call_view_calling">Chamando...</string>
+
+    <!-- Participant menu actions -->
+    <string name="azure_communication_ui_calling_view_participant_menu_mute">Mute</string>
+    <string name="azure_communication_ui_calling_view_participant_menu_mute_accessibility_label">Ative o mudo do menu do participante</string>
+    <string name="azure_communication_ui_calling_view_participant_menu_remove">Remove from call</string>
+    <string name="azure_communication_ui_calling_view_participant_menu_remove_accessibility_label">Remova o participante do menu de chamada</string>
+    <string name="azure_communication_ui_calling_view_capabilities_changed_toast_features_lost">Configurações de chamada atualizadas. Alguns recursos podem não estar disponíveis para você.</string>
+    <string name="azure_communication_ui_calling_view_capabilities_changed_toast_features_gained">Configurações de chamada atualizadas. Algumas ações adicionais agora podem estar disponíveis para você.</string>
+
+    <!-- Participant menu view -->
+    <string name="azure_communication_ui_calling_view_participant_menu_item_disabled">item desabilitado.</string>
+
+    <!--    Drawer-->
+    <string name="azure_communication_ui_calling_drawer_next_content_description">Avançar</string>
+    <string name="azure_communication_ui_calling_leave_confirm_drawer_leave_button">Sair, Botão</string>
+    <string name="azure_communication_ui_calling_leave_confirm_drawer_cancel_button">Cancelar, Botão</string>
+
+    <!--    Captions-->
+    <string name="azure_communication_ui_calling_live_captions_title">Legendas ao vivo</string>
+    <string name="azure_communication_ui_calling_captions_spoken_language_title">Idioma falado</string>
+    <string name="azure_communication_ui_calling_list_item">%1$s. %2$d de %3$d</string>
+    <string name="azure_communication_ui_calling_captions_caption_language_title">Idioma da legenda</string>
+    <string name="azure_communication_ui_calling_starting_captions">Iniciando legendas...</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_start">Não é possível iniciar as legendas</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_stop">Não é possível parar as legendas</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_set_spoken_language">Não é possível alterar o idioma falado</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_set_caption_language">Não é possível alterar o idioma da legenda</string>
+    <string name="azure_communication_ui_calling_captions_rtt_menu">Legendas e RTT</string>
+    <string name="azure_communication_ui_calling_rtt_info">O texto em tempo real (RTT) está habilitado durante toda a reunião e é visto por todos os participantes. <a href="https://learn.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/real-time-text">Saiba mais</a></string>
+    <string name="azure_communication_ui_calling_rtt_info_accessibility">O texto em tempo real (RTT) está habilitado durante toda a reunião e é visto por todos os participantes. Saiba Mais. Link</string>
+    <string name="azure_communication_ui_calling_rtt">RTT</string>
+    <string name="azure_communication_ui_calling_rtt_message_sent">Mensagem enviada</string>
+    <string name="azure_communication_ui_calling_rtt_typing">Digitação RTT</string>
+    <string name="azure_communication_ui_calling_captions_turn_on_rtt">Habilitar a RTT para esta chamada</string>
+    <string name="azure_communication_ui_calling_captions_turn_on">Ativar legendas</string>
+    <string name="azure_communication_ui_calling_captions_turn_off">Desativar legendas</string>
+    <string name="azure_communication_ui_calling_captions_is_on">Legendas ativadas</string>
+    <string name="azure_communication_ui_calling_captions_is_off">Legendas desativadas</string>
+    <string name="azure_communication_ui_calling_view_rtt_confirmation_title">Ativar o RTT?</string>
+    <string name="azure_communication_ui_calling_view_rtt_confirmation_message">A digitação em tempo real (RTT) será ativada para todos na chamada.</string>
+    <string name="azure_communication_ui_calling_view_rtt_confirmation_confirm">Habilitar</string>
+    <string name="azure_communication_ui_calling_rtt_header">Texto em Tempo real</string>
+    <string name="azure_communication_ui_calling_captions_header">Legendas</string>
+    <string name="azure_communication_ui_calling_maximize_captions_and_rtt">Maximizar legendas e RTT</string>
+    <string name="azure_communication_ui_calling_minimize_captions_and_rtt">Minimizar legendas e RTT</string>
+    <string name="azure_communication_ui_calling_rtt_edit_text_hint">Digitar mensagem em tempo real</string>
+</resources>

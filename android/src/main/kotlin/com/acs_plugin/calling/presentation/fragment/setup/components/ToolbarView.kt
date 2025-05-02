@@ -1,0 +1,76 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+package com.acs_plugin.calling.presentation.fragment.setup.components
+
+import android.content.Context
+import android.text.TextUtils
+import android.util.AttributeSet
+import android.view.View
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.TextView
+import com.acs_plugin.R
+import com.acs_plugin.calling.logger.Logger
+import com.acs_plugin.calling.models.CallCompositeLocalOptions
+
+internal class ToolbarView : LinearLayout {
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+    private lateinit var navigationButton: ImageButton
+    private lateinit var toolbarTitle: TextView
+    private lateinit var toolbarSubtitle: TextView
+    private lateinit var logger: Logger
+    private var callCompositeLocalOptions: CallCompositeLocalOptions? = null
+
+    override fun onFinishInflate() {
+        super.onFinishInflate()
+        navigationButton = findViewById(R.id.azure_communication_ui_navigation_button)
+        toolbarTitle = findViewById(R.id.azure_communication_ui_toolbar_title)
+        toolbarSubtitle = findViewById(R.id.azure_communication_ui_toolbar_subtitle)
+    }
+
+    fun start(
+        callCompositeLocalOptions: CallCompositeLocalOptions?,
+        logger: Logger,
+        exitComposite: () -> Unit
+    ) {
+        this.callCompositeLocalOptions = callCompositeLocalOptions
+        this.logger = logger
+        setActionBarTitleSubtitle()
+        navigationButton.setOnClickListener {
+            exitComposite()
+        }
+    }
+
+    fun stop() {
+        // to fix memory leak
+        rootView.invalidate()
+    }
+
+    private fun setActionBarTitleSubtitle() {
+        val localOptions = callCompositeLocalOptions
+        val titleText = if (!TextUtils.isEmpty(localOptions?.setupScreenViewData?.title)) {
+            localOptions?.setupScreenViewData?.title
+        } else {
+            context.getString(R.string.azure_communication_ui_calling_call_setup_action_bar_title)
+        }
+
+        toolbarTitle.text = titleText
+
+        // Only set the subtitle if the title has also been set
+        if (!TextUtils.isEmpty(localOptions?.setupScreenViewData?.subtitle)) {
+            if (!TextUtils.isEmpty(localOptions?.setupScreenViewData?.title)) {
+                val subtitleText = localOptions?.setupScreenViewData?.subtitle
+                toolbarSubtitle.visibility = View.VISIBLE
+                toolbarSubtitle.text = subtitleText
+                toolbarSubtitle.contentDescription = subtitleText + " " + context.getString(R.string.azure_communication_ui_calling_call_setup_toolbar_subtitle_announcement)
+            } else {
+                logger.error(
+                    "Provided setupScreenViewData has subtitle, but no title provided. In this case subtitle is not displayed."
+                )
+            }
+        }
+    }
+}

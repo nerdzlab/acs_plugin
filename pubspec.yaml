@@ -34,7 +34,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.acs_plugin
+        package: com.acs_plugin
         pluginClass: AcsPlugin
       ios:
         pluginClass: AcsPlugin

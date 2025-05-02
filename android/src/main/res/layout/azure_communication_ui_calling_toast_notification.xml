@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+   Copyright (c) Microsoft Corporation. All rights reserved.
+   Licensed under the MIT License.
+  -->
+<com.acs_plugin.calling.presentation.fragment.calling.notification.ToastNotificationView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/azure_communication_ui_calling_toast_notification"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="8dp"
+    android:paddingHorizontal="8dp"
+    >
+    <LinearLayout
+        android:id="@+id/azure_communication_ui_calling_toast_notification_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
+    </LinearLayout>
+
+</com.acs_plugin.calling.presentation.fragment.calling.notification.ToastNotificationView>
+

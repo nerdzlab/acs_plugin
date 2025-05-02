@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+   Copyright (c) Microsoft Corporation. All rights reserved.
+   Licensed under the MIT License.
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--    Device-->
+    <string name="azure_communication_ui_calling_audio_device_drawer_android">Android</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_speaker">Kaiutin</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_bluetooth">Bluetooth</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_headphone">Kuulokemikrofoni</string>
+    <string name="azure_communication_ui_calling_audio_device_drawer_accessibility_label">Laiteasetukset. Sulkemispainike.</string>
+    <string name="azure_communication_ui_calling_switch_camera_button_front">Etukamera käytössä, vaihda takakameraan</string>
+    <string name="azure_communication_ui_calling_switch_camera_button_back">Takakamera käytössä, vaihda etukameraan</string>
+    <string name="azure_communication_ui_calling_setup_audio_device_select_content_description">Valitse äänilaite %1$s</string>
+    <string name="azure_communication_ui_calling_selected_audio_device_announcement">%1$s äänilaite, valittu</string>
+    <!--    Setup View-->
+    <string name="azure_communication_ui_calling_setup_view_button_connecting_call">Liitytään puheluun…</string>
+    <string name="azure_communication_ui_calling_setup_view_button_video_off">Videokuva ei käytössä</string>
+    <string name="azure_communication_ui_calling_setup_view_button_video_on">Videokuva käytössä</string>
+    <string name="azure_communication_ui_calling_setup_view_button_mic_off">Mikrofoni ei käytössä</string>
+    <string name="azure_communication_ui_calling_setup_view_button_mic_on">Mikrofoni käytössä</string>
+    <string name="azure_communication_ui_calling_setup_view_button_join_call">Liity puheluun</string>
+    <string name="azure_communication_ui_calling_setup_view_preview_area_audio_disabled">Ääni on poistettu käytöstä. Ota käyttöön siirtymällä Asetuksiin ja sallimalla käyttö. Sinun on
+        otettava ääni käyttöön aloittaaksesi tämän puhelun.</string>
+    <string name="azure_communication_ui_calling_setup_view_preview_area_camera_disabled">Kamerasi on poistettu käytöstä. Ota käyttöön siirtymällä Asetuksiin
+        ja sallimalla käyttö.</string>
+    <string name="azure_communication_ui_calling_setup_view_warning_missing_text">Vaaditut käyttöoikeudet</string>
+    <string name="azure_communication_ui_calling_setup_view_go_to_settings">Siirry asetuksiin</string>
+    <string name="azure_communication_ui_calling_setup_view_audio_device_selected_accessibility_label">Valittu</string>
+    <string name="azure_communication_ui_calling_setup_view_background_gradient_accessibility_label">Määritä liukuvärjäys</string>
+    <string name="azure_communication_ui_calling_button_switch_camera_accessibility_label">Vaihda kameraa</string>
+    <string name="azure_communication_ui_calling_call_setup_action_bar_title">Määritä</string>
+    <string name="azure_communication_ui_calling_call_setup_toolbar_title_announcement">Otsikko</string>
+    <string name="azure_communication_ui_calling_call_setup_toolbar_subtitle_announcement">Alaotsikko</string>
+    <string name="azure_communication_ui_calling_call_setup_toolbar_navigation_button_announcement">Takaisin siirtyminen</string>
+
+    <!--    Lobby View-->
+    <string name="azure_communication_ui_calling_lobby_view_text_waiting_for_host">Odotetaan isäntää</string>
+    <string name="azure_communication_ui_calling_lobby_view_text_waiting_details">Joku kokouksen osallistuja päästää sinut pian sisään</string>
+
+    <!-- Hold Overlay -->
+    <string name="azure_communication_ui_calling_hold_view_text">Olet pidossa</string>
+    <string name="azure_communication_ui_calling_resume">Jatka</string>
+    <string name="azure_communication_ui_calling_remote_participant_on_hold">Pidossa</string>
+    <string name="azure_communication_ui_calling_mic_used">Puhelua ei voi jatkaa,\ntoinen sovellus käyttää mikrofoniasi.</string>
+
+    <!--    Calling View-->
+    <string name="azure_communication_ui_calling_view_info_header_waiting_for_others_to_join">Odotetaan että muut liittyvät</string>
+    <string name="azure_communication_ui_calling_view_info_header_call_with_1_person">Puhelu yhden henkilön kanssa</string>
+    <string name="azure_communication_ui_calling_view_info_header_call_with_n_people">Soita %1$d henkilölle</string>
+    <string name="azure_communication_ui_calling_view_go_back">Edellinen</string>
+    <string name="azure_communication_ui_calling_view_participant_drawer_local_participant_format">%1$s (minä)</string>
+    <string name="azure_communication_ui_calling_view_participant_drawer_unnamed">Nimetön osallistuja</string>
+    <string name="azure_communication_ui_calling_view_leave_call">Poistutaanko puhelusta?</string>
+    <string name="azure_communication_ui_calling_view_leave_call_button_text">Poistu</string>
+    <string name="azure_communication_ui_calling_view_leave_call_cancel">Peruuta</string>
+    <string name="azure_communication_ui_calling_view_leave_confirm_menu">Poistu vahvistusvalikosta</string>
+    <string name="azure_communication_ui_calling_view_participant_list_open_accessibility_label">Avaa osallistujaluettelo</string>
+    <string name="azure_communication_ui_calling_view_participant_list_dismiss_list">Hylkää osallistujaluettelo kaksoisnapauttamalla</string>
+    <string name="azure_communication_ui_calling_view_participant_list_muted_accessibility_label">Mykistetty</string>
+    <string name="azure_communication_ui_calling_view_participant_list_unmuted_accessibility_label">Ei mykistetty</string>
+    <string name="azure_communication_ui_calling_view_button_hang_up_accessibility_label">Katkaise</string>
+    <string name="azure_communication_ui_calling_view_button_close_button_accessibility_label">Sulje</string>
+    <string name="azure_communication_ui_calling_view_button_close_button_full_accessibility_label">Sulje-painike</string>
+    <string name="azure_communication_ui_calling_view_button_toggle_video_accessibility_label">Ota video käyttöön</string>
+    <string name="azure_communication_ui_calling_view_button_toggle_audio_accessibility_label">Ota ääni käyttöön tai poista se käytöstä</string>
+    <string name="azure_communication_ui_calling_view_button_device_options_accessibility_label">Laitevaihtoehdot</string>
+    <string name="azure_communication_ui_calling_view_more_menu_accessibility_label">Lisää</string>
+    <string name="azure_communication_ui_calling_view_share_diagnostics">Jaa diagnostiikkatiedot</string>
+    <string name="azure_communication_ui_calling_view_share_diagnostics_title">Diagnostiikkatiedot</string>
+    <string name="azure_communication_ui_calling_view_share_diagnostics_description">Jaa diagnostiikkatiedot -painike</string>
+    <string name="azure_communication_ui_calling_view_call_with_accessibility_label">Puhelu: %1$s</string>
+    <string name="azure_communication_ui_calling_view_participant_list">Osallistujaluettelo</string>
+    <string name="azure_communication_ui_calling_view_more_menu_list_accessibility_label">Lisää asetuksia. Sulkemispainike.</string>
+    <string name="azure_communication_ui_calling_view_participant_list_accessibility_label">Osallistujaluettelo. Sulkemispainike.</string>
+    <string name="azure_communication_ui_calling_view_captions_menu_list_accessibility_label">Tekstitykset ja RTT-valikko. Sulkemispainike.</string>
+    <string name="azure_communication_ui_calling_view_captions_language_menu_list_accessibility_label">Puhuttu kieli -valikko. Sulkemispainike.</string>
+
+    <!--    Compliance Banner-->
+    <string name="azure_communication_ui_calling_view_banner_recording_started"><b>Tallennus on aloitettu.</b> Liittymällä annat
+        suostumuksen sille, että tämä kokous litteroidaan.
+        <u>Tietosuojakäytäntö</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_stopped"><b>Tallennetta tallennetaan.</b> Tallennus on pysäytetty.
+         <u>Lisätietoja</u></string>
+    <string name="azure_communication_ui_calling_view_banner_transcription_started"><b>Litterointi on alkanut.</b> Liittymällä
+        annat suostumuksesi tämän kokouksen litteroimiseen. <u>Tietosuojakäytäntö</u></string>
+    <string name="azure_communication_ui_calling_view_banner_transcription_stopped"><b>Litterointia tallennetaan.</b> Litterointi
+        on pysäytetty. <u> Lisätietoja</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_and_transcribing_started"><b>Tallennus ja litterointi on aloitettu.
+        </b> Liittymällä annat suostumuksesi kokouksen litteroimiseen
+        .<u>Tietosuojakäytäntö</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_and_transcribing_stopped"><b>Tallennus ja litterointi tallennetaan
+        </b> Tallennus ja litterointi on pysäytetty. <u>Lisätietoja</u></string>
+    <string name="azure_communication_ui_calling_view_banner_recording_stopped_still_transcribing"><b>Tallennus on pysäytetty.</b> Sinä
+        litteroit nyt vain tämän kokouksen. <u>Tietosuojakäytäntö</u></string>
+    <string name="azure_communication_ui_calling_view_banner_transcription_stopped_still_recording"><b>Litterointi on pysäytetty.
+        </b> Olet nyt tallentamassa vain tätä kokousta.<u>Tietosuojakäytäntö</u></string>
+    <string name="azure_communication_ui_calling_view_link">Linkki</string>
+
+    <!--    PopUp warning-->
+    <string name="azure_communication_ui_calling_snack_bar_button_dismiss">Hylkää</string>
+    <string name="azure_communication_ui_calling_alert_title">Ilmoitus</string>
+    <string name="azure_communication_ui_calling_call_end_with_error">Sinut poistettiin puhelusta virheen tai katkennut yhteyden vuoksi. Yritä liittyä puheluun uudelleen.</string>
+    <string name="azure_communication_ui_calling_snack_bar_text_error_call_join">Puheluun liittyminen ei onnistu virheen vuoksi.</string>
+    <string name="azure_communication_ui_calling_call_state_evicted">Sinut poistettiin puhelusta.</string>
+    <string name="azure_communication_ui_calling_no_connection_available">Puheluun liittyminen ei onnistu. Tarkista verkkoyhteys.</string>
+    <string name="azure_communication_ui_calling_call_video_fails_error">Kameroita ei voi vaihtaa.</string>
+
+    <!--    Notification-->
+    <string name="azure_communication_ui_calling_service_notification_title">Puhelu käynnissä</string>
+    <string name="azure_communication_ui_calling_service_notification_message">Soita takaisin napauttamalla</string>
+
+    <!--    Accessibility Hooks -->
+    <string name="azure_communication_ui_calling_accessibility_user_added">%1$s on liittynyt kokoukseen</string>
+    <string name="azure_communication_ui_calling_accessibility_user_left">%1$s poistui kokouksesta</string>
+    <string name="azure_communication_ui_calling_accessibility_meeting_connected">Olet liittynyt puheluun</string>
+
+    <!--    Participant list-->
+    <string name="azure_communication_ui_calling_participant_list_in_call_n_people">Puhelussa (%1$d)</string>
+    <string name="azure_communication_ui_calling_participant_list_in_call_plus_more_people">+ %1$d muuta</string>
+    <string name="azure_communication_ui_calling_participant_list_in_lobby_n_people">Odotustilassa (%1$d)</string>
+    <string name="azure_communication_ui_calling_view_participant_list_dismiss_lobby_list">Hyväksy tai hylkää osallistuja kaksoisnapauttamalla</string>
+
+    <!--    Admit participant dialog-->
+    <string name="azure_communication_ui_calling_admit_name">Hyväksy %1$s?</string>
+    <string name="azure_communication_ui_calling_admit">Hyväksy</string>
+    <string name="azure_communication_ui_calling_decline">Hylkää</string>
+    <string name="azure_communication_ui_calling_admit_all">Hyväksy kaikki</string>
+
+    <!--    Lobby header-->
+    <string name="azure_communication_ui_calling_lobby_header_text">Ihmiset odottavat liittymistä</string>
+    <string name="azure_communication_ui_calling_lobby_header_icon_content_description">Odotustila</string>
+    <string name="azure_communication_ui_calling_lobby_header_view_participant_button">Näytä odotustila</string>
+    <string name="azure_communication_ui_calling_lobby_header_accessibility_label">Näytä odotustila</string>
+    <string name="azure_communication_ui_calling_lobby_header_close_description">Sulje odotustila</string>
+
+    <!--    Lobby error header-->
+    <string name="azure_communication_ui_calling_lobby_header_error_close_description">Sulje odotustilan virhe</string>
+    <string name="azure_communication_ui_calling_lobby_error_content_description">Odotustilan virhe</string>
+    <string name="azure_communication_ui_calling_error_lobby_disabled_by_configuration">Odotustila on poistettu käytöstä</string>
+    <string name="azure_communication_ui_calling_error_lobby_conversation_type_not_supported">Odotustila ei ole tuettu</string>
+    <string name="azure_communication_ui_calling_error_lobby_meeting_role_not_allowded">Roolisi ei voi toimia odotustilassa</string>
+    <string name="azure_communication_ui_calling_error_lobby_failed_to_remove_participant">Hylkääminen epäonnistui</string>
+    <string name="azure_communication_ui_calling_error_lobby_unknown">Odotustilan toimintovirhe</string>
+
+    <!-- Call Diagnostics -->
+    <string name="azure_communication_ui_calling_diagnostics_network_was_lost">Verkkoyhteys katkesi</string>
+    <string name="azure_communication_ui_calling_diagnostics_network_reconnecting">Yhdistetään uudelleen...</string>
+    <string name="azure_communication_ui_calling_diagnostics_network_quality_low">Verkkoyhteyden laatu on huono</string>
+    <string name="azure_communication_ui_calling_diagnostics_you_are_muted">Sinut on mykistetty</string>
+    <string name="azure_communication_ui_calling_diagnostics_microphone_not_working_as_expected">Mikrofoni ei toimi odotetulla tavalla</string>
+    <string name="azure_communication_ui_calling_diagnostics_unable_to_start_camera">Kameraa ei voi käynnistää</string>
+    <string name="azure_communication_ui_calling_diagnostics_camera_stoppped_working">Kamera lakkasi toimimasta</string>
+    <string name="azure_communication_ui_calling_diagnostics_speaker_not_working_as_expected">Kaiutin ei toimi odotetulla tavalla</string>
+    <string name="azure_communication_ui_calling_diagnostics_unable_to_locate_speaker">Kaiutinta ei löydy</string>
+    <string name="azure_communication_ui_calling_diagnostics_unable_to_locate_microphone">Mikrofonia ei löydy</string>
+    <string name="azure_communication_ui_calling_diagnostics_speaker_muted">Kaiuttimesi on vaimennettu</string>
+
+    <!--    Upper Message Bar Notification -->
+    <string name="azure_communication_ui_calling_notification_dismiss_accessibility_label">Hylkää</string>
+
+    <!--     Support Form -->
+    <string name="azure_communication_ui_calling_report_issue">Ilmoita ongelmasta</string>
+    <string name="azure_communication_ui_calling_report_issue_title">Ilmoita ongelmasta</string>
+    <string name="azure_communication_ui_calling_logs_attach_notice">Lokit liitetään automaattisesti.</string>
+    <string name="azure_communication_ui_calling_privacy_policy_label">Tietosuojakäytäntö</string>
+    <string name="azure_communication_ui_calling_privacy_policy_label_accessibility">Tietosuojakäytäntö. Linkki.</string>
+    <string name="azure_communication_ui_calling_describe_your_issue_hint_text">Kuvaile ongelmaa...</string>
+    <string name="azure_communication_ui_calling_cancel_button_label">Peruuta</string>
+    <string name="azure_communication_ui_calling_attach_screenshot">Liitä näyttökuva</string>
+    <string name="azure_communication_ui_calling_report_a_problem_label">Ilmoita ongelmasta</string>
+    <string name="azure_communication_ui_calling_send_feedback_label">Lähetä</string>
+
+    <!--    Outgoing Call-->
+    <string name="azure_communication_ui_calling_setup_view_start_call">Aloita puhelu</string>
+    <string name="azure_communication_ui_calling_setup_view_button_starting_call">Aloitetaan puhelua…</string>
+    <string name="azure_communication_ui_calling_call_view_calling">Soitetaan...</string>
+
+    <!-- Participant menu actions -->
+    <string name="azure_communication_ui_calling_view_participant_menu_mute">Mykistä</string>
+    <string name="azure_communication_ui_calling_view_participant_menu_mute_accessibility_label">Mykistä osallistuja -valikko.</string>
+    <string name="azure_communication_ui_calling_view_participant_menu_remove">Poista puhelusta</string>
+    <string name="azure_communication_ui_calling_view_participant_menu_remove_accessibility_label">Poista osallistuja puheluvalikosta.</string>
+    <string name="azure_communication_ui_calling_view_capabilities_changed_toast_features_lost">Puheluasetukset päivitettiin. Jotkin ominaisuudet eivät ehkä ole käytettävissäsi.</string>
+    <string name="azure_communication_ui_calling_view_capabilities_changed_toast_features_gained">Puheluasetukset päivitettiin. Jotkin lisätoiminnot saattavat olla nyt käytettävissäsi.</string>
+
+    <!-- Participant menu view -->
+    <string name="azure_communication_ui_calling_view_participant_menu_item_disabled">käytöstä poistettu kohde.</string>
+
+    <!--    Drawer-->
+    <string name="azure_communication_ui_calling_drawer_next_content_description">Seuraava</string>
+    <string name="azure_communication_ui_calling_leave_confirm_drawer_leave_button">Poistu, painike</string>
+    <string name="azure_communication_ui_calling_leave_confirm_drawer_cancel_button">Peruuta, painike</string>
+
+    <!--    Captions-->
+    <string name="azure_communication_ui_calling_live_captions_title">Live-tekstitys</string>
+    <string name="azure_communication_ui_calling_captions_spoken_language_title">Puhuttu kieli</string>
+    <string name="azure_communication_ui_calling_list_item">%1$s. %2$d/%3$d</string>
+    <string name="azure_communication_ui_calling_captions_caption_language_title">Tekstityksen kieli</string>
+    <string name="azure_communication_ui_calling_starting_captions">Aloitetaan tekstitystä...</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_start">Tekstitystä ei voi käynnistää</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_stop">Tekstitystä ei voi pysäyttää</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_set_spoken_language">Puhuttua kieltä ei voi vaihtaa</string>
+    <string name="azure_communication_ui_calling_error_captions_failed_to_set_caption_language">Kuvatekstin kieltä ei voi vaihtaa</string>
+    <string name="azure_communication_ui_calling_captions_rtt_menu">Tekstitykset &amp; RTT</string>
+    <string name="azure_communication_ui_calling_rtt_info">Reaaliaikainen teksti (RTT) on käytössä koko kokouksen keston ajan, ja kaikki osallistujat voivat nähdä sen. <a href="https://learn.microsoft.com/en-us/azure/communication-services/concepts/voice-video-calling/real-time-text">Lisätietoja</a></string>
+    <string name="azure_communication_ui_calling_rtt_info_accessibility">Reaaliaikainen teksti (RTT) on käytössä koko kokouksen keston ajan, ja kaikki osallistujat voivat nähdä sen. Opi lisää. Linkki</string>
+    <string name="azure_communication_ui_calling_rtt">Reaaliaikainen kirjoitus</string>
+    <string name="azure_communication_ui_calling_rtt_message_sent">Viesti lähetetty</string>
+    <string name="azure_communication_ui_calling_rtt_typing">Reaaliaikainen kirjoitus</string>
+    <string name="azure_communication_ui_calling_captions_turn_on_rtt">Ota reaaliaikainen kirjoitus käyttöön tässä puhelussa</string>
+    <string name="azure_communication_ui_calling_captions_turn_on">Ota tekstitykset käyttöön</string>
+    <string name="azure_communication_ui_calling_captions_turn_off">Poista tekstitykset käytöstä</string>
+    <string name="azure_communication_ui_calling_captions_is_on">Tekstitykset ovat käytössä</string>
+    <string name="azure_communication_ui_calling_captions_is_off">Tekstitykset eivät ole käytössä</string>
+    <string name="azure_communication_ui_calling_view_rtt_confirmation_title">Otetaanko RTT käyttöön?</string>
+    <string name="azure_communication_ui_calling_view_rtt_confirmation_message">Reaaliaikainen kirjoitus (RTT) otetaan käyttöön kaikille puhelun osallistujille.</string>
+    <string name="azure_communication_ui_calling_view_rtt_confirmation_confirm">Ota käyttöön</string>
+    <string name="azure_communication_ui_calling_rtt_header">Reaaliaikainen teksti</string>
+    <string name="azure_communication_ui_calling_captions_header">Tekstitykset</string>
+    <string name="azure_communication_ui_calling_maximize_captions_and_rtt">Suurenna tekstitykset ja RTT</string>
+    <string name="azure_communication_ui_calling_minimize_captions_and_rtt">Pienennä tekstitykset ja RTT</string>
+    <string name="azure_communication_ui_calling_rtt_edit_text_hint">Kirjoita viesti reaaliaikaisesti</string>
+</resources>
