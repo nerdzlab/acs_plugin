@@ -220,6 +220,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                      onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
                                      onLayoutOptions: @escaping () -> Void,
                                      onReaction: @escaping (ReactionType) -> Void,
+                                     isRemoteParticipantsPresent: Bool,
                                      isDisplayed: Bool) -> MeetingOptionsViewModel {
         MeetingOptionsViewModel(
             localUserState: localUserState,
@@ -233,7 +234,8 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
             onEffects: onEffects,
             onLayoutOptions: onLayoutOptions,
             onReaction: onReaction,
-            isDisplayed: isDisplayed
+            isDisplayed: isDisplayed,
+            isRemoteParticipantsPresent: isRemoteParticipantsPresent
         )
     }
     

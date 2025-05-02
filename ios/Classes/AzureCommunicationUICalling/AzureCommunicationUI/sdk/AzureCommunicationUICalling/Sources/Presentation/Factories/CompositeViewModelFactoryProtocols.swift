@@ -109,8 +109,8 @@ protocol CompositeViewModelFactoryProtocol {
                                      onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
                                      onLayoutOptions: @escaping () -> Void,
                                      onReaction: @escaping (ReactionType) -> Void,
+                                     isRemoteParticipantsPresent: Bool,
                                      isDisplayed: Bool) -> MeetingOptionsViewModel
-    
     
     func makeLayoutOptionsViewModel(
         localUserState: LocalUserState,

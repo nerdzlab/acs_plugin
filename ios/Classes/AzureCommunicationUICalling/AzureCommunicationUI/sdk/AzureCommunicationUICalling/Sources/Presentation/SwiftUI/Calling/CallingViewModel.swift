@@ -206,6 +206,8 @@ internal class CallingViewModel: ObservableObject {
             onReaction: { reaction in
                 store.dispatch(action: .localUserAction(.sendReaction(reaction: reaction)))
             },
+            isRemoteParticipantsPresent: (isCallConnected || isOutgoingCall || isRemoteHold) &&
+            CallingViewModel.hasRemoteParticipants(store.state.remoteParticipantsState.participantInfoList),
             isDisplayed: store.state.navigationState.meetignOptionsVisible
         )
 
