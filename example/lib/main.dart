@@ -94,6 +94,9 @@ class _CallScreenState extends State<CallScreen> {
     switch (eventName) {
       case 'onShowChat':
         _shwoSnacBar("Show chat");
+
+      case 'onCallUIClosed':
+        _shwoSnacBar("Call ui closed");
       default:
         log('Unhandled event type: $eventName');
         break;

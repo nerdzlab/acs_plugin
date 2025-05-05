@@ -234,6 +234,14 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         }
         
         callComposite.events.onShowUserChat = showChatEvent
+        
+        let callCompositDismissed: ((CallCompositeDismissed) -> Void)? = { [weak self] _ in
+            self?.callUIClosed()
+        }
+        
+        callComposite.events.onDismissed = callCompositDismissed
+        
+        
     }
     
     //    private func getCallKitOptions() -> CallKitOptions {
@@ -359,6 +367,15 @@ extension AcsPlugin: FlutterStreamHandler {
         
         let eventData: [String: Any?] = [
             "event": "onShowChat",
+        ]
+        eventSink(eventData)
+    }
+    
+    public func callUIClosed() {
+        guard let eventSink = eventSink else { return }
+        
+        let eventData: [String: Any?] = [
+            "event": "onCallUIClosed",
         ]
         eventSink(eventData)
     }
