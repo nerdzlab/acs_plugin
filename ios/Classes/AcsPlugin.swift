@@ -92,8 +92,13 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             requestCameraPermissions(result: result)
             
         case "initializeRoomCall":
-            if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String, let roomId = arguments["roomId"] as? String, let userId = arguments["userId"] as? String {
-                initializeRoomCall(token: token, roomId: roomId, userId: userId, result: result)
+            if let arguments = call.arguments as? [String: Any],
+                let token = arguments["token"] as? String,
+                let roomId = arguments["roomId"] as? String,
+                let userId = arguments["userId"] as? String,
+                let isChatEnable = arguments["isChatEnable"] as? Bool
+            {
+                initializeRoomCall(token: token, roomId: roomId, userId: userId, isChatEnable: isChatEnable, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
@@ -126,7 +131,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         callService.requestCameraPermissions(result: result)
     }
     
-    private func initializeRoomCall(token: String, roomId: String, userId: String, result: @escaping FlutterResult) {
+    private func initializeRoomCall(token: String, roomId: String, userId: String, isChatEnable: Bool, result: @escaping FlutterResult) {
         let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
         
         createCallComposite(token: token, userId: userId)?.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)

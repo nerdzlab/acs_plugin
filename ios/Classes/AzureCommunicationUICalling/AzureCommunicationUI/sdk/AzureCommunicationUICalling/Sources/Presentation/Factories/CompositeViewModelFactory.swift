@@ -233,7 +233,8 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
             onEffects: onEffects,
             onLayoutOptions: onLayoutOptions,
             onReaction: onReaction,
-            isDisplayed: isDisplayed
+            isDisplayed: isDisplayed,
+            isRemoteParticipantsPresent: false
         )
     }
     

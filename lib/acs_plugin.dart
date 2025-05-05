@@ -18,11 +18,13 @@ class AcsPlugin {
     required String token,
     required String roomId,
     required String userId,
+    required bool isChatEnable,
   }) async {
     await AcsPluginPlatform.instance.initializeRoomCall(
       token: token,
       roomId: roomId,
       userId: userId,
+      isChatEnable: isChatEnable,
     );
   }
 
