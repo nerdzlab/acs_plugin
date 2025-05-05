@@ -678,6 +678,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
 
     private func disposeSDKWrappers() {
         self.callingSDKEventsHandler = nil
+        self.callingSDKWrapper?.dispose()
         self.callingSDKWrapper = nil
     }
 

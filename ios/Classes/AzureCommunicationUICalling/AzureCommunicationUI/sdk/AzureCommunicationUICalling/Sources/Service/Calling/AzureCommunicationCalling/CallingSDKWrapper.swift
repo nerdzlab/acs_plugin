@@ -44,6 +44,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
     
     func dispose() {
         call = nil
+        resetVideoEffects()
     }
     
     func setupCall() async throws {
@@ -649,7 +650,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         guard let videoEffectsFeature = localVideoStream?.feature(Features.localVideoEffects) else {
             return
         }
-        
+                
         switch effect {
         case .none:
             // Disable both known effect types just to be sure
@@ -833,6 +834,10 @@ extension CallingSDKWrapper {
             return nil
         }
         return "builtinCameraVideoStream"
+    }
+    
+    private func resetVideoEffects() {
+        localVideoStream?.feature(Features.localVideoEffects).disable(effect: BackgroundBlurEffect())
     }
 }
 // swiftlint:enable type_body_length
