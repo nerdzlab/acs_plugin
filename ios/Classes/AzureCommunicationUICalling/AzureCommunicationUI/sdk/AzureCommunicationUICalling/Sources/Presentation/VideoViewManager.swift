@@ -26,8 +26,8 @@ protocol RendererViewManager: AnyObject {
     func updateDisplayedRemoteVideoStream(_ videoViewIdArray: [RemoteParticipantVideoViewId])
 }
 
-class VideoViewManager: NSObject, RendererDelegate, RendererViewManager {
-
+class VideoViewManager: NSObject, RendererDelegate, RendererViewManager  {
+    
     struct VideoStreamCache {
         var renderer: VideoStreamRenderer
         var rendererView: RendererView
@@ -92,7 +92,6 @@ class VideoViewManager: NSObject, RendererDelegate, RendererViewManager {
             logger.error("Failed to render remote video, reason:\(error.localizedDescription)")
             return nil
         }
-
     }
 
     // MARK: ParticipantRendererViewManager

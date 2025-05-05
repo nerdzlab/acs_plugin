@@ -180,10 +180,10 @@ internal class CallingViewModel: ObservableObject {
             localUserState: store.state.localUserState,
             localizationProvider: localizationProvider,
             onShareScreen: {
-                print("On share screen")
+                store.dispatch(action: .localUserAction(.screenShareOnTriggered))
             },
             onStopShareScreen: {
-                print("On stop share screen")
+                store.dispatch(action: .localUserAction(.screenShareOffTriggered))
             },
             onChat: {
                 print("On chat screen")
@@ -308,7 +308,8 @@ internal class CallingViewModel: ObservableObject {
         
         meetingOptionsViewModel.update(
             localUserState: state.localUserState,
-            isDisplayed: state.navigationState.meetignOptionsVisible
+            isDisplayed: state.navigationState.meetignOptionsVisible,
+            isRemoteParticipantsPresent: isParticipantGridDisplayed
         )
         
         layoutOptionsViewModel.update(

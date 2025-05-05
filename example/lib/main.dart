@@ -64,7 +64,6 @@ class _CallScreenState extends State<CallScreen> {
   initState() {
     super.initState();
     _getPlatformVersion();
-
     _setDeviceType();
 
     // Subscribe to event stream
@@ -77,6 +76,7 @@ class _CallScreenState extends State<CallScreen> {
 
   _setDeviceType() async {
     isRealDevice = await SafeDevice.isRealDevice;
+    _setUserData();
   }
 
 // Handle incoming events
@@ -183,6 +183,38 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  // One on one call methods
+  Future<void> _startOneOnOneCall() async {
+    try {
+      await _acsPlugin.startOneOnOneCall(
+        token: _acsToken,
+        participantId: _otherUserId,
+        userId: _userId,
+      );
+      log('One on one call initialized successfully');
+      _shwoSnacBar('One on one call initialized successfully');
+    } on PlatformException catch (error) {
+      log('Failed to initialize one on one call: ${error.message}');
+      _shwoSnacBar('Failed to initialize one on one call: ${error.message}');
+    }
+  }
+
+  // Set user data
+  Future<void> _setUserData() async {
+    try {
+      await _acsPlugin.setUserData(
+        token: _acsToken,
+        name: "Yra",
+        userId: _userId,
+      );
+      log('Set user data successfully');
+      _shwoSnacBar('Set user data successfully');
+    } on PlatformException catch (error) {
+      log('Failed to set user data: ${error.message}');
+      _shwoSnacBar('Failed to set user data: ${error.message}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,6 +249,13 @@ class _CallScreenState extends State<CallScreen> {
                   label: 'Init room call',
                   onTap: initializeRoomCall,
                   icon: Icons.cloud,
+                ),
+              ]),
+              _buildButtonGrid([
+                ButtonConfig(
+                  label: 'One on One call',
+                  onTap: _startOneOnOneCall,
+                  icon: Icons.mic,
                 ),
               ]),
             ],

@@ -26,6 +26,12 @@ enum LocalUserAction: Equatable {
 
     case microphoneOnTriggered
     case microphoneOnFailed(error: Error)
+    
+    case screenShareOnTriggered
+    case screenShareOnTriggeredFailed(error: Error)
+    
+    case screenShareOffTriggered
+    case screenShareOffTriggeredFailed(error: Error)
 
     case microphoneOffTriggered
     case microphoneOffFailed(error: Error)
@@ -78,6 +84,8 @@ enum LocalUserAction: Equatable {
             let (.cameraPausedFailed(lErr), .cameraPausedFailed(rErr)),
             let (.microphoneOnFailed(lErr), .microphoneOnFailed(rErr)),
             let (.microphoneOffFailed(lErr), .microphoneOffFailed(rErr)),
+            let (.screenShareOnTriggeredFailed(lErr), .screenShareOnTriggeredFailed(rErr)),
+            let (.screenShareOffTriggeredFailed(lErr), .screenShareOffTriggeredFailed(rErr)),
             let (.audioDeviceChangeFailed(lErr), .audioDeviceChangeFailed(rErr)):
 
             return (lErr as NSError).code == (rErr as NSError).code
@@ -96,6 +104,8 @@ enum LocalUserAction: Equatable {
             (.gridLayoutSelected, .gridLayoutSelected),
             (.speakerLayoutSelected, .speakerLayoutSelected),
             (.muteIncomingAudioRequested, .muteIncomingAudioRequested),
+            (.screenShareOnTriggered, .screenShareOnTriggered),
+            (.screenShareOffTriggered, .screenShareOffTriggered),
             (.microphonePreviewOff, .microphonePreviewOff):
             return true
 
