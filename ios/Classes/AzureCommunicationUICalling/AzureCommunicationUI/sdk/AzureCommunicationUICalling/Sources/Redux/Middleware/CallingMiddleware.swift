@@ -121,6 +121,8 @@ private func handleLocalUserAction(_ action: LocalUserAction,
         actionHandler.startScreenSharing(state: getState(), dispatch: dispatch)
     case .screenShareOffTriggered:
         actionHandler.stopScreenSharing(state: getState(), dispatch: dispatch)
+    case .showChat:
+        actionHandler.showChat()
         
     case .cameraOnSucceeded,
             .cameraOnFailed,

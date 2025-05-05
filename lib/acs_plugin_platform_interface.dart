@@ -62,6 +62,10 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('setUserData() has not been implemented.');
   }
 
+  Future<void> returnToCall() async {
+    throw UnimplementedError('returnToCall() has not been implemented.');
+  }
+
   Stream<Map<String, dynamic>> get eventStream {
     throw UnimplementedError('eventStream has not been implemented.');
   }

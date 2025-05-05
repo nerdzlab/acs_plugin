@@ -103,6 +103,7 @@ protocol CallingSDKWrapperProtocol {
     func unMuteCall() async throws
     func enableNoiseSuppression()
     func disableNoiseSuppression()
+    func showChat()
 }
 
 protocol CallingSDKEventsHandling {

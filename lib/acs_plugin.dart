@@ -54,6 +54,11 @@ class AcsPlugin {
     );
   }
 
+  // Need to show call ui
+  Future<void> returnToCall() async {
+    await AcsPluginPlatform.instance.returnToCall();
+  }
+
 // Stream to listen for events
   Stream<Map<String, dynamic>> get eventStream {
     return AcsPluginPlatform.instance.eventStream;

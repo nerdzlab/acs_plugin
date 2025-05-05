@@ -136,7 +136,8 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                              captionsOptions: localOptions?.captionsOptions ?? CaptionsOptions(),
                                              capabilitiesManager: self.capabilitiesManager,
                                              callScreenOptions: callScreenOptions ?? CallScreenOptions(),
-                                             rendererViewManager: rendererViewManager)
+                                             rendererViewManager: rendererViewManager,
+                                             isChatEnable: localOptions?.isChatEnabled ?? false)
             self.setupViewModel = nil
             self.callingViewModel = viewModel
             return viewModel
@@ -410,9 +411,10 @@ extension CompositeViewModelFactory {
     
     func makeInfoHeaderViewModel(dispatchAction: @escaping ActionDispatch,
                                  localUserState: LocalUserState,
-                                 callScreenInfoHeaderState: CallScreenInfoHeaderState
+                                 callScreenInfoHeaderState: CallScreenInfoHeaderState,
+                                 isChatEnable: Bool,
                                  /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
-                                 ,
+                                
                                  buttonViewDataState: ButtonViewDataState,
                                  controlHeaderViewData: CallScreenHeaderViewData?
                                  /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
@@ -425,9 +427,10 @@ extension CompositeViewModelFactory {
                             dispatchAction: dispatchAction,
                             enableMultitasking: enableMultitasking,
                             enableSystemPipWhenMultitasking: enableSystemPipWhenMultitasking,
-                            callScreenInfoHeaderState: callScreenInfoHeaderState
+                            callScreenInfoHeaderState: callScreenInfoHeaderState,
+                            isChatEnable: isChatEnable,
                             /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
-                            ,
+                            
                             buttonViewDataState: buttonViewDataState,
                             controlHeaderViewData: controlHeaderViewData
                             /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */

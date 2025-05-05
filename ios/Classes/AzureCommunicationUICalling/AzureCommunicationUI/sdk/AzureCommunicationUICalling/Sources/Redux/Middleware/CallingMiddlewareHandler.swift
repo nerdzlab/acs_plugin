@@ -169,6 +169,8 @@ protocol CallingMiddlewareHandling {
         state: AppState,
         dispatch: @escaping ActionDispatch
     ) -> Task<Void, Never>
+    
+    func showChat()
 }
 
 // swiftlint:disable type_body_length
@@ -876,6 +878,10 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
                 handle(error: error, errorType: .muteFailed, dispatch: dispatch)
             }
         }
+    }
+    
+    func showChat() {
+        callingService.showChat()
     }
 }
 

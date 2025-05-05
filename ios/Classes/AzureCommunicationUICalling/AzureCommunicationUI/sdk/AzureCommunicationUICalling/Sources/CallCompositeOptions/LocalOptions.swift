@@ -20,6 +20,8 @@ public struct LocalOptions {
 
     /// Determines if the microphone is enabled upon joining the call, bypassing the setup screen.
     let microphoneOn: Bool?
+    
+    let isChatEnabled: Bool?
 
     /// Indicates whether to skip the setup screen and use default or specified settings.
     let skipSetupScreen: Bool?
@@ -47,6 +49,7 @@ public struct LocalOptions {
     public init(participantViewData: ParticipantViewData? = nil,
                 setupScreenViewData: SetupScreenViewData? = nil,
                 cameraOn: Bool? = false,
+                isChatEnable: Bool? = false,
                 microphoneOn: Bool? = false,
                 skipSetupScreen: Bool? = false,
                 audioVideoMode: CallCompositeAudioVideoMode = .audioAndVideo,
@@ -62,6 +65,7 @@ public struct LocalOptions {
         self.captionsOptions = captionsOptions
         self.setupScreenOptions = setupScreenOptions
         self.callScreenOptions = callScreenOptions
+        self.isChatEnabled = isChatEnable
     }
 
     /// Determines the actual state of the camera

@@ -859,6 +859,10 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         call.liveOutgoingAudioFilters.acousticEchoCancellationEnabled = false
         call.liveOutgoingAudioFilters.noiseSuppressionMode = .off
     }
+    
+    func showChat() {
+        callingSDKInitializer.showChat()
+    }
 }
 
 extension CallingSDKWrapper {

@@ -84,6 +84,7 @@ protocol CallingServiceProtocol {
     
     func startScreenSharing() async throws
     func stopScreenSharing() async throws
+    func showChat()
 }
 
 class CallingService: NSObject, CallingServiceProtocol {
@@ -286,5 +287,9 @@ class CallingService: NSObject, CallingServiceProtocol {
     
     func stopScreenSharing() async throws {
         try await callingSDKWrapper.stopScreenSharingStream()
+    }
+    
+    func showChat() {
+        callingSDKWrapper.showChat()
     }
 }

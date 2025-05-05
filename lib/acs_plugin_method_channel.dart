@@ -100,4 +100,11 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       },
     );
   }
+
+  @override
+  Future<void> returnToCall() async {
+    await methodChannel.invokeMethod(
+      'returnToCall',
+    );
+  }
 }
