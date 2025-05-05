@@ -748,7 +748,6 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             return
         }
         
-        call.liveOutgoingAudioFilters.musicModeEnabled = false
         call.liveOutgoingAudioFilters.acousticEchoCancellationEnabled = false
         call.liveOutgoingAudioFilters.noiseSuppressionMode = .off
     }
