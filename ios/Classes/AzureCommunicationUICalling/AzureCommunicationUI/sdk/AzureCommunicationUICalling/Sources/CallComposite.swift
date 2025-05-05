@@ -43,6 +43,8 @@ public class CallComposite {
         public var onIncomingCallAcceptedFromCallKit: ((_ callId: String) -> Void)?
         /// Closure to execute when participant has left a call inside Call Composite
         public var onRemoteParticipantLeft: (([CommunicationIdentifier]) -> Void)?
+        /// Closure to show shat
+        public var onShowUserChat: (() -> Void)?
         /* <CALL_START_TIME>
         /// Closure to call start time updated.
         public var onCallStartTimeUpdated: ((Date) -> Void)?

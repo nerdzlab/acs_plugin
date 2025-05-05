@@ -75,6 +75,8 @@ enum LocalUserAction: Equatable {
     case participantRoleChanged(participantRole: ParticipantRoleEnum)
     case setCapabilities(capabilities: Set<ParticipantCapabilityType>)
     case onCapabilitiesChanged(event: CapabilitiesChangedEvent)
+    
+    case showChat
 
     static func == (lhs: LocalUserAction, rhs: LocalUserAction) -> Bool {
 

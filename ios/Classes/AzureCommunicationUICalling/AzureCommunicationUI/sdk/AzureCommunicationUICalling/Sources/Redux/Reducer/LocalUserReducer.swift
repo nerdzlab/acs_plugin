@@ -155,6 +155,8 @@ extension Reducer where State == LocalUserState,
         case .screenShareOffTriggeredFailed(error: let error):
             //MTODO need to handle error state
             shareScreenStatus = .screenIsSharing
+        case .showChat:
+            break
         }
 
         let cameraState = LocalUserState.CameraState(operation: cameraStatus,

@@ -45,7 +45,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         didSet {
             guard let userData else { return }
             
-            AcsPlugin.shared.createCallComposite(token: userData.token, userId: userData.userId)?.registerPushNotifications(deviceRegistrationToken: voipToken ?? Data()) { result in
+            AcsPlugin.shared.getCallComposite(token: userData.token, userId: userData.userId)?.registerPushNotifications(deviceRegistrationToken: voipToken ?? Data()) { result in
                 switch result {
                 case .success:
                     print("Successfully registered for VoIP push notifications.")
@@ -91,9 +91,17 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         case "requestCameraPermissions":
             requestCameraPermissions(result: result)
             
+        case "returnToCall":
+            returnToCall()
+            
         case "initializeRoomCall":
-            if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String, let roomId = arguments["roomId"] as? String, let userId = arguments["userId"] as? String {
-                initializeRoomCall(token: token, roomId: roomId, userId: userId, result: result)
+            if let arguments = call.arguments as? [String: Any],
+                let token = arguments["token"] as? String,
+                let roomId = arguments["roomId"] as? String,
+                let userId = arguments["userId"] as? String,
+                let isChatEnable = arguments["isChatEnable"] as? Bool
+            {
+                initializeRoomCall(token: token, roomId: roomId, userId: userId, isChatEnable: isChatEnable, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
@@ -126,10 +134,10 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         callService.requestCameraPermissions(result: result)
     }
     
-    private func initializeRoomCall(token: String, roomId: String, userId: String, result: @escaping FlutterResult) {
-        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
+    private func initializeRoomCall(token: String, roomId: String, userId: String, isChatEnable: Bool, result: @escaping FlutterResult) {
+        let localOptions = LocalOptions(cameraOn: true, isChatEnable: isChatEnable, microphoneOn: true)
         
-        createCallComposite(token: token, userId: userId)?.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
+        getCallComposite(token: token, userId: userId)?.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
         
         //        callComposite.launch(locator: .teamsMeeting(teamsLink: "https://teams.microsoft.com/l/meetup-join/19:meeting_NWM5YjYyYWUtNWNjYy00YjRhLWIwYWItYjg3YzkxOTMyZmEw@thread.v2/0?context=%7B%22Tid%22:%2241d68bdf-c355-4709-9c3f-40e323196d74%22,%22Oid%22:%2285555719-0dd7-410b-8f00-fa039800f874%22%7D"), localOptions: localOptions)
         
@@ -141,13 +149,13 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     private func startOneOnOneCall(token: String, participantId: String, userId: String, result: @escaping FlutterResult) {
         let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
         
-        createCallComposite(token: token, userId: userId)?.launch(
+        getCallComposite(token: token, userId: userId)?.launch(
             participants: [CommunicationUserIdentifier(participantId)],
             localOptions: localOptions
         )
     }
     
-    private func createCallComposite(token: String, userId: String) ->  CallComposite? {
+    private func getCallComposite(token: String, userId: String) ->  CallComposite? {
         guard let credential = try? CommunicationTokenCredential(token: token) else { return nil }
         
         let callCompositeOptions = CallCompositeOptions(
@@ -198,6 +206,13 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         return
     }
     
+    private func returnToCall() {
+        guard let userData else { return }
+        
+        let callComposit = getCallComposite(token: userData.token, userId: userData.userId)
+        callComposit?.isHidden = false
+    }
+    
     private func setupPushKit() {
         let registry = PKPushRegistry(queue: .main)
         registry.delegate = self
@@ -213,6 +228,20 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         }
         
         callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted
+        
+        let showChatEvent: () -> Void = { [weak self] in
+            self?.showChatEvent()
+        }
+        
+        callComposite.events.onShowUserChat = showChatEvent
+        
+        let callCompositDismissed: ((CallCompositeDismissed) -> Void)? = { [weak self] _ in
+            self?.callUIClosed()
+        }
+        
+        callComposite.events.onDismissed = callCompositDismissed
+        
+        
     }
     
     //    private func getCallKitOptions() -> CallKitOptions {
@@ -332,4 +361,23 @@ extension AcsPlugin: FlutterStreamHandler {
             eventSink(error)
         }
     }
+    
+    public func showChatEvent() {
+        guard let eventSink = eventSink else { return }
+        
+        let eventData: [String: Any?] = [
+            "event": "onShowChat",
+        ]
+        eventSink(eventData)
+    }
+    
+    public func callUIClosed() {
+        guard let eventSink = eventSink else { return }
+        
+        let eventData: [String: Any?] = [
+            "event": "onCallUIClosed",
+        ]
+        eventSink(eventData)
+    }
+
 }

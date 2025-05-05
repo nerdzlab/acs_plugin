@@ -22,6 +22,7 @@ internal class CallingViewModel: ObservableObject {
     private let callType: CompositeCallType
     private let captionsOptions: CaptionsOptions
     private let callScreenOptions: CallScreenOptions
+    private let isChatEnabled: Bool
 
     private var cancellables = Set<AnyCancellable>()
     private var callHasConnected = false
@@ -69,7 +70,8 @@ internal class CallingViewModel: ObservableObject {
          captionsOptions: CaptionsOptions,
          capabilitiesManager: CapabilitiesManager,
          callScreenOptions: CallScreenOptions,
-         rendererViewManager: RendererViewManager
+         rendererViewManager: RendererViewManager,
+         isChatEnable: Bool
     ) {
         self.store = store
         self.compositeViewModelFactory = compositeViewModelFactory
@@ -81,6 +83,7 @@ internal class CallingViewModel: ObservableObject {
         self.callType = callType
         self.captionsOptions = captionsOptions
         self.callScreenOptions = callScreenOptions
+        self.isChatEnabled = isChatEnable
         self.shareMeetingLinkViewModel = compositeViewModelFactory.makeShareMeetingInfoActivityViewModel()
 
         let actionDispatch: ActionDispatch = store.dispatch
@@ -114,9 +117,9 @@ internal class CallingViewModel: ObservableObject {
         infoHeaderViewModel = compositeViewModelFactory
             .makeInfoHeaderViewModel(dispatchAction: actionDispatch,
                                      localUserState: store.state.localUserState,
-                                     callScreenInfoHeaderState: store.state.callScreenInfoHeaderState
+                                     callScreenInfoHeaderState: store.state.callScreenInfoHeaderState,
+                                     isChatEnable: isChatEnable,
                                      /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
-                                     ,
                                      buttonViewDataState: store.state.buttonViewDataState,
                                      controlHeaderViewData: callScreenOptions.headerViewData
                                      /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */

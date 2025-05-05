@@ -44,19 +44,19 @@ class _CallScreenState extends State<CallScreen> {
   // Configuration constants - move to a config file in a real app
   String get _acsToken {
     if (isRealDevice) {
-      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNy0zMDllLWVlOTQtMDU4Ni1hZjNhMGQwMDhiZmEiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDYxODUwNDYiLCJleHAiOjE3NDYyNzE0NDYsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDYxODUwNDZ9.DCj8wQlPdNdZuIeVPoBW0Jg9a6h2BDNQhB1s9U70MSDRUJkAACQJLtFoYnQY6NpvFUvjTyUeZd0pqHcOuQV-b0pcTRhCCsedb8KlPHMoyHIrdb7oNiVrZdhc7g1xxnZDKFEg6le-p1t1242RK-_TaRZFpkM2uMe--K4JB5ilK81el3r19AY6s1FIlEg71-tSiarX71Rze60KbeZmNYno281Lh5WEUxMvvmXq5POHAH96C3WU0BFgfq_PIJHF2mwOenGer9hEuD1jBrySOZYGdVgmwShr62jF61h-UF0Wc7qH20VAdoLLtIXdMyHYjo9AU-OuxUz40NP1DGqBiRI68w";
+      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi03MWQyLWIxYmUtYTdhYy00NzNhMGQwMDA2YzIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDY0MzIzNDEiLCJleHAiOjE3NDY1MTg3NDEsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDY0MzIzNDF9.q9nwzMKPbRMsD3rgjZmFRhnt0gPWVXt7lysTY-oKumDZaZMENr5_mYBn-C4KdPSC0jIvrzFhSLuCkBYFguQ6mOAuSF2iC9wJWX0azWa7qbPGN-6klwQWPQhJKKRnDzKadkjxqXPKz_cZhczwTZvJBZ-7JeiOvOWhXsXOpWmJyvk27xqSTIjMNM8KrhISkd1FLXZ1QO8u0RgHvRuBlGGG5awmZn2r6W92LJp7z2cfY50N_GHVbZpSfRaHn7Oyri2ix5yEt8nSaCZHDUds0-L2kKb0SWkFUnDssO012ukTPvrHIKF8wefxvi42adqbSQJca5vJr3aF9H2PbOv6vwGhSA";
     } else {
-      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi05MWFmLWU3YWEtM2Y4Mi1hZjNhMGQwMGIzZDIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDYxNzA4NDQiLCJleHAiOjE3NDYyNTcyNDQsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDYxNzA4NDR9.cfDZbw_4SYhTWlXC66iH2MBMXK504mttx_UwrJu4yc3DCP1L3VZxQlwCHwSZYUGb3gANRu4bvxSoVG8yMI8SNkVSJtpL9IWPkQI0A-2QFBShYbUg82ANv7OPFk6qAjqkybkqaxc7vINwckJf7aUbODZboK4JZoyVvPQHNdaxVhXz1KapJ3fgugsyK5X6yEyQOMfZyWJxKPalALZXo3lVVmp8GQHtQ6lObg0HUfISFp3vyxDZLqyu4Olbha4Puxl7mUW8ztY1tUBC0QgNwqp6P6zzFd8vWsDMPpUKMmeTaIZ9xX-I_PzY_AtYUH02Gv4Ruu2qETwMaxhOIlUMt9CF6A";
+      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi05MWFmLWU3YWEtM2Y4Mi1hZjNhMGQwMGIzZDIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDY0MzIzODkiLCJleHAiOjE3NDY1MTg3ODksInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDY0MzIzODl9.RiC89hlmv4Ms5tHmKhBIpd5SVfTjHfdl7aVD_MDpFIYFp894BGxuUkzSMY533vCVVZwsJ95QQUewpcV9-L9pBbEYrL-x1VEHyxBrE0moYY8NOK_4SlEg3JM4ZJJGqqBgvolL3_CZBUgqg3aBuxI78yS-vpH0xoRhuQw63jnI4OAE1O42He6KsfUECHKo4N9wqFyARaD8m9UPDPjbyQCBf8ivM76cvfC_IwObctUu49OUISaC1X_cCrc05-vm2QveZfAZw9nosp2Us7pXtVlvO9ijym0Yjq-Y066keuj8lC3_Go58rCmNOrv8ed__mpR5J3RR29yqupETmjwAso84Rg";
     }
   }
 
-  static const String _roomId = "99594083154089769";
+  static const String _roomId = "99518168072799768";
 
   String get _userId {
     if (isRealDevice) {
-      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000027-309e-ee94-0586-af3a0d008bfa";
+      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000026-71d2-b1be-a7ac-473a0d0006c2";
     } else {
-      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000027-2aec-a2ce-59fe-ad3a0d00df36";
+      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000026-91af-e7aa-3f82-af3a0d00b3d2";
     }
   }
 
@@ -92,6 +92,11 @@ class _CallScreenState extends State<CallScreen> {
     final String eventName = event['event'];
 
     switch (eventName) {
+      case 'onShowChat':
+        _shwoSnacBar("Show chat");
+
+      case 'onCallUIClosed':
+        _shwoSnacBar("Call ui closed");
       default:
         log('Unhandled event type: $eventName');
         break;
@@ -182,7 +187,11 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> initializeRoomCall() async {
     try {
       await _acsPlugin.initializeRoomCall(
-          token: _acsToken, roomId: _roomId, userId: _userId);
+        token: _acsToken,
+        roomId: _roomId,
+        userId: _userId,
+        isChatEnable: true,
+      );
       log('Room call initialized successfully');
       _shwoSnacBar('Room call initialized successfully');
     } on PlatformException catch (error) {

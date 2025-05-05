@@ -69,9 +69,9 @@ protocol CompositeViewModelFactoryProtocol {
                                  buttonViewDataState: ButtonViewDataState) -> ControlBarViewModel
     func makeInfoHeaderViewModel(dispatchAction: @escaping ActionDispatch,
                                  localUserState: LocalUserState,
-                                 callScreenInfoHeaderState: CallScreenInfoHeaderState
+                                 callScreenInfoHeaderState: CallScreenInfoHeaderState,
+                                 isChatEnable: Bool,
                                  /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
-                                 ,
                                  buttonViewDataState: ButtonViewDataState,
                                  controlHeaderViewData: CallScreenHeaderViewData?
                                  /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */

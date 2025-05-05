@@ -18,11 +18,13 @@ class AcsPlugin {
     required String token,
     required String roomId,
     required String userId,
+    required bool isChatEnable,
   }) async {
     await AcsPluginPlatform.instance.initializeRoomCall(
       token: token,
       roomId: roomId,
       userId: userId,
+      isChatEnable: isChatEnable,
     );
   }
 
@@ -50,6 +52,11 @@ class AcsPlugin {
       name: name,
       userId: userId,
     );
+  }
+
+  // Need to show call ui
+  Future<void> returnToCall() async {
+    await AcsPluginPlatform.instance.returnToCall();
   }
 
 // Stream to listen for events

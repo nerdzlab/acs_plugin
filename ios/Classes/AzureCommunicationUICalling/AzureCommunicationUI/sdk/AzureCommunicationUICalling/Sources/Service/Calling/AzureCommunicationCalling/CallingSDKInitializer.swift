@@ -229,6 +229,10 @@ internal class CallingSDKInitializer: NSObject {
         incomingCall?.delegate = nil
         incomingCall = nil
     }
+    
+    func showChat() {
+        events.onShowUserChat?()
+    }
 
     private func makeCallClient() -> CallClient {
         let clientOptions = CallClientOptions()
