@@ -58,24 +58,54 @@ class Client {
     func readData() {
         DispatchQueue.global().async {
             while true {
-                var buffer = [UInt8](repeating: 0, count: 1024)
                 guard let socketDescriptor = self.socketDescriptor else {
                     self.logError("Socket descriptor is nil")
                     return
                 }
-                let bytesRead = read(socketDescriptor, &buffer, buffer.count)
-                if bytesRead <= 0 {
-                    self.logError("Error reading from socket or connection closed")
-                    break // exit loop on error or closure of connection
+
+                // Step 1: Read 4-byte header (data length)
+                var lengthBuffer = [UInt8](repeating: 0, count: 4)
+                var totalRead = 0
+                while totalRead < 4 {
+                    let bytesRead = lengthBuffer.withUnsafeMutableBytes {
+                        read(socketDescriptor, $0.baseAddress!.advanced(by: totalRead), 4 - totalRead)
+                    }
+                    if bytesRead <= 0 {
+                        self.logError("Failed to read length header or connection closed")
+                        return
+                    }
+                    totalRead += bytesRead
                 }
 
-                // Print the data for debugging purposes
-                let data = Data(buffer[..<bytesRead])
-                self.log("Received data: \(data)")
-                
-                if let str = String(data: data, encoding: .utf8) {
-                    // Now you have converted the Data back to a string
-                    print(str)
+                // Convert to UInt32 (big endian)
+                let dataLength = lengthBuffer.withUnsafeBytes {
+                    $0.load(as: UInt32.self).bigEndian
+                }
+                self.log("Expecting \(dataLength) bytes of data")
+
+                // Step 2: Read full payload
+                var dataBuffer = Data(count: Int(dataLength))
+                dataBuffer.withUnsafeMutableBytes { rawBuffer in
+                    var offset = 0
+                    while offset < dataLength {
+                        let bytesRead = read(socketDescriptor, rawBuffer.baseAddress!.advanced(by: offset), Int(dataLength) - offset)
+                        if bytesRead <= 0 {
+                            self.logError("Failed to read full payload or connection closed")
+                            return
+                        }
+                        offset += bytesRead
+                    }
+                }
+
+                // Step 3: Use received data
+                self.log("Received full data payload of size \(dataBuffer.count) bytes")
+                if let image = UIImage(data: dataBuffer) {
+                    DispatchQueue.main.async {
+                        // You can update UI here or pass the image to another component
+                        self.log("Image created successfully")
+                    }
+                } else {
+                    self.logError("Failed to decode UIImage from received data")
                 }
             }
 
@@ -84,6 +114,8 @@ class Client {
             }
         }
     }
+
+
 
     /// Logs a message.
     /// - Parameter message: The message to log.

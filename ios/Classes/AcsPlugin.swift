@@ -410,9 +410,6 @@ extension AcsPlugin: FlutterStreamHandler {
             observer, { (_, observer, name, _, _) -> Void in
                 let mySelf = Unmanaged<AcsPlugin>.fromOpaque(observer!).takeUnretainedValue()
                 mySelf.sendEvent("onStartScreenShare")
-//                mySelf.receiver = ScreenShareReceiver(appGroupIdentifier: "group.acsPluginExample")
-//                mySelf.receiver.start()
-//                mySelf.waitForSocketAndOpen()
                 mySelf.client = Client(appGroup: "group.acsPluginExample", socketName: "socet.rtc_SSFD")
                 mySelf.client.connect()
             },

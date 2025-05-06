@@ -7,7 +7,7 @@
 import Foundation
 
 class Server {
-    
+
     private var socket: Int32?
     private var clientSocket: Int32?
     private let socketPath: String
@@ -52,7 +52,7 @@ class Server {
                 _ = strcpy(dest, ptr)
             }
         }
-        
+
         unlink(socketPath) // Remove any existing socket file
 
         if Darwin.bind(socket, withUnsafePointer(to: &address, { $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { $0 } }), socklen_t(MemoryLayout<sockaddr_un>.size)) == -1 {
@@ -87,7 +87,7 @@ class Server {
         var clientAddress = sockaddr_un()
         var clientAddressLen = socklen_t(MemoryLayout<sockaddr_un>.size)
         clientSocket = Darwin.accept(socket, withUnsafeMutablePointer(to: &clientAddress, { $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { $0 } }), &clientAddressLen)
-        
+
         if clientSocket == -1 {
             logError("Error accepting connection - \(String(cString: strerror(errno)))")
             return
@@ -95,29 +95,21 @@ class Server {
         log("Connection accepted!")
     }
 
-    /// Sends the provided data to the connected client.
-    /// - Parameter data: The data to send.
-    func sendData(_ data: Data) {
+    func sendImageData(_ data: Data) {
         guard let clientSocket = clientSocket else {
-            logError("No connected client.")
+            print("No connected client.")
             return
         }
 
-        if data.isEmpty {
-            logError("No data to send!")
-            return
+        var length = UInt32(data.count).bigEndian
+        let header = Data(bytes: &length, count: 4)
+        let packet = header + data
+
+        _ = packet.withUnsafeBytes {
+            send(clientSocket, $0.baseAddress!, packet.count, 0)
         }
 
-        data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) in
-            let pointer = bytes.bindMemory(to: UInt8.self)
-            let bytesWritten = Darwin.send(clientSocket, pointer.baseAddress!, data.count, 0)
-
-            if bytesWritten == -1 {
-                logError("Error sending data")
-                return
-            }
-            log("\(bytesWritten) bytes written")
-        }
+        print("Sent frame (\(data.count) bytes)")
     }
 
     /// Stops the server and closes any open connections.
