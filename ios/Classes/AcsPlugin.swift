@@ -1,4 +1,5 @@
 import Flutter
+import ReplayKit
 import UIKit
 import AzureCommunicationCalling
 import AzureCommunicationCommon
@@ -26,6 +27,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         return CallService.getOrCreateInstance()
     }
     
+    private var broadcastServer: BroadcastServer?
     private var pushRegistry: PKPushRegistry?
     private var voipToken: Data?
     private var eventChannel: FlutterEventChannel?
@@ -96,10 +98,10 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             
         case "initializeRoomCall":
             if let arguments = call.arguments as? [String: Any],
-                let token = arguments["token"] as? String,
-                let roomId = arguments["roomId"] as? String,
-                let userId = arguments["userId"] as? String,
-                let isChatEnable = arguments["isChatEnable"] as? Bool
+               let token = arguments["token"] as? String,
+               let roomId = arguments["roomId"] as? String,
+               let userId = arguments["userId"] as? String,
+               let isChatEnable = arguments["isChatEnable"] as? Bool
             {
                 initializeRoomCall(token: token, roomId: roomId, userId: userId, isChatEnable: isChatEnable, result: result)
             } else {
@@ -230,13 +232,13 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted
         
         let showChatEvent: () -> Void = { [weak self] in
-            self?.showChatEvent()
+            self?.sendEvent("onShowChat")
         }
         
         callComposite.events.onShowUserChat = showChatEvent
         
         let callCompositDismissed: ((CallCompositeDismissed) -> Void)? = { [weak self] _ in
-            self?.callUIClosed()
+            self?.sendEvent("onCallUIClosed")
         }
         
         callComposite.events.onDismissed = callCompositDismissed
@@ -343,11 +345,66 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         //            }
         //        }
     }
+    
+    private func startBroadcastServer() {
+        guard broadcastServer == nil else { return }
+        
+        broadcastServer = BroadcastServer(appGroup: "group.acsPluginExample")
+        broadcastServer?.onFrameReceived = { frameData in
+            // Feed the frame data to your video SDK for processing
+            
+        }
+        
+        broadcastServer?.startListening()
+    }
+    
+    private func startBroadcastSession() {
+        DispatchQueue.main.async {
+            // Start listening BEFORE picker
+            
+            let pickerView = RPSystemBroadcastPickerView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+            let extensionId = Bundle.main.object(forInfoDictionaryKey: "RTCScreenSharingExtension") as? String
+            pickerView.preferredExtension = extensionId
+            (pickerView.subviews.first as? UIButton)?.sendActions(for: .touchUpInside)
+        }
+    }
 }
 
 extension AcsPlugin: FlutterStreamHandler {
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         self.eventSink = events
+        
+        let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
+        let observer = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
+        let notificationStartName = "videosdk.flutter.startScreenShare"as CFString
+        let notificationStopName = "videosdk.flutter.stopScreenShare"as CFString
+        
+        /// Listen to start screen share event
+        CFNotificationCenterAddObserver(
+            notificationCenter,
+            observer, { (_, observer, name, _, _) -> Void in
+                let mySelf = Unmanaged<AcsPlugin>.fromOpaque(observer!).takeUnretainedValue()
+                mySelf.sendEvent("onStartScreenShare")
+            },
+            notificationStartName,
+            nil,
+            CFNotificationSuspensionBehavior.deliverImmediately
+        )
+        
+        /// Listen to stop screen share event
+        CFNotificationCenterAddObserver(
+            notificationCenter,
+            observer,
+            { (_, observer, name, _, _) -> Void in
+                let mySelf = Unmanaged<AcsPlugin>.fromOpaque(
+                    observer!).takeUnretainedValue()
+                mySelf.sendEvent("onStopScreenShare")
+            },
+            notificationStopName,
+            nil,
+            CFNotificationSuspensionBehavior.deliverImmediately
+        )
+        
         return nil
     }
     
@@ -362,22 +419,12 @@ extension AcsPlugin: FlutterStreamHandler {
         }
     }
     
-    public func showChatEvent() {
+    public func sendEvent(_ event: String) {
         guard let eventSink = eventSink else { return }
         
         let eventData: [String: Any?] = [
-            "event": "onShowChat",
+            "event": event,
         ]
         eventSink(eventData)
     }
-    
-    public func callUIClosed() {
-        guard let eventSink = eventSink else { return }
-        
-        let eventData: [String: Any?] = [
-            "event": "onCallUIClosed",
-        ]
-        eventSink(eventData)
-    }
-
 }
