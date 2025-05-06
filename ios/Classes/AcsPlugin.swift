@@ -26,6 +26,11 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     private var callService: CallService {
         return CallService.getOrCreateInstance()
     }
+    private var socketConnection: SocketConnection?
+    
+    private var receiver: ScreenShareReceiver!
+    
+    private var client: Client!
     
     private var broadcastServer: BroadcastServer?
     private var pushRegistry: PKPushRegistry?
@@ -97,16 +102,17 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             returnToCall()
             
         case "initializeRoomCall":
-            if let arguments = call.arguments as? [String: Any],
-               let token = arguments["token"] as? String,
-               let roomId = arguments["roomId"] as? String,
-               let userId = arguments["userId"] as? String,
-               let isChatEnable = arguments["isChatEnable"] as? Bool
-            {
-                initializeRoomCall(token: token, roomId: roomId, userId: userId, isChatEnable: isChatEnable, result: result)
-            } else {
-                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
-            }
+            startBroadcastSession()
+//            if let arguments = call.arguments as? [String: Any],
+//               let token = arguments["token"] as? String,
+//               let roomId = arguments["roomId"] as? String,
+//               let userId = arguments["userId"] as? String,
+//               let isChatEnable = arguments["isChatEnable"] as? Bool
+//            {
+//                initializeRoomCall(token: token, roomId: roomId, userId: userId, isChatEnable: isChatEnable, result: result)
+//            } else {
+//                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
+//            }
             
         case "startOneOnOneCall":
             if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String, let participantId = arguments["participantId"] as? String, let userId = arguments["userId"] as? String {
@@ -368,6 +374,25 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             (pickerView.subviews.first as? UIButton)?.sendActions(for: .touchUpInside)
         }
     }
+    
+    var socketFilePath: String {
+      let sharedContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.acsPluginExample")
+        return sharedContainer?.appendingPathComponent("socet.rtc_SSFD").path ?? ""
+    }
+    
+//    func waitForSocketAndOpen(maxWait: TimeInterval = 5.0) {
+//        let deadline = Date().addingTimeInterval(maxWait)
+//        while Date() < deadline {
+//            if FileManager.default.fileExists(atPath: socketFilePath) {
+//                let socket = SocketConnection(filePath: socketFilePath)
+//                socketConnection = socket
+//                socket?.open()
+//                return
+//            }
+//            Thread.sleep(forTimeInterval: 0.05)
+//        }
+//        print("Plugin: timeout waiting for socket")
+//    }
 }
 
 extension AcsPlugin: FlutterStreamHandler {
@@ -385,6 +410,11 @@ extension AcsPlugin: FlutterStreamHandler {
             observer, { (_, observer, name, _, _) -> Void in
                 let mySelf = Unmanaged<AcsPlugin>.fromOpaque(observer!).takeUnretainedValue()
                 mySelf.sendEvent("onStartScreenShare")
+//                mySelf.receiver = ScreenShareReceiver(appGroupIdentifier: "group.acsPluginExample")
+//                mySelf.receiver.start()
+//                mySelf.waitForSocketAndOpen()
+                mySelf.client = Client(appGroup: "group.acsPluginExample", socketName: "socet.rtc_SSFD")
+                mySelf.client.connect()
             },
             notificationStartName,
             nil,
