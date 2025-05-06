@@ -1,0 +1,61 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <dimen name="mtrl_exposed_dropdown_menu_popup_vertical_padding" tools:override="true">0dp
+    </dimen>
+
+    <!-- Elevation -->
+    <dimen name="elevation_0dp">0dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="text_size_48">48sp</dimen>
+    <dimen name="text_size_24">24sp</dimen>
+    <dimen name="text_size_32">32sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
+    <dimen name="text_size_18">18sp</dimen>
+    <dimen name="text_size_12">12sp</dimen>
+    <dimen name="text_size_14">14sp</dimen>
+    <dimen name="text_size_10">10sp</dimen>
+    <dimen name="text_size_40">40sp</dimen>
+    <dimen name="text_size_6">6sp</dimen>
+
+    <dimen name="text_1_step">1sp</dimen>
+
+    <!-- Button heights -->
+    <dimen name="button_height_44dp">44dp</dimen>
+    <dimen name="button_height_32dp">32dp</dimen>
+
+    <!-- Margins -->
+    <dimen name="margin_16dp">16dp</dimen>
+    <dimen name="margin_4dp">4dp</dimen>
+    <dimen name="margin_8dp">8dp</dimen>
+    <dimen name="margin_6dp">6dp</dimen>
+    <dimen name="margin_24dp">24dp</dimen>
+    <dimen name="margin_12dp">12dp</dimen>
+    <dimen name="margin_18dp">18dp</dimen>
+    <dimen name="margin_10dp">10dp</dimen>
+    <dimen name="margin_minus_12dp">-12dp</dimen>
+    <dimen name="margin_minus_8dp">-8dp</dimen>
+    <dimen name="margin_minus_6dp">-6dp</dimen>
+    <dimen name="margin_minus_4dp">-4dp</dimen>
+
+    <!-- Paddings -->
+    <dimen name="padding_0dp">0dp</dimen>
+    <dimen name="padding_1dp">1dp</dimen>
+    <dimen name="padding_2dp">2dp</dimen>
+    <dimen name="padding_3dp">3dp</dimen>
+    <dimen name="padding_4dp">4dp</dimen>
+    <dimen name="padding_6dp">6dp</dimen>
+    <dimen name="padding_8dp">8dp</dimen>
+    <dimen name="padding_16dp">16dp</dimen>
+    <dimen name="padding_24dp">24dp</dimen>
+    <dimen name="padding_32dp">32dp</dimen>
+    <dimen name="padding_38dp">38dp</dimen>
+
+    <!-- Corner radius -->
+    <dimen name="corner_radius_6dp">6dp</dimen>
+
+    <!-- Stroke -->
+    <dimen name="stroke_width_1dp">1dp</dimen>
+    <dimen name="stroke_width_2dp">2dp</dimen>
+
+</resources>

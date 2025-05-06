@@ -6,21 +6,20 @@ package com.acs_plugin.calling.presentation.fragment.setup.components
 import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.view.View
-import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import com.acs_plugin.R
 import com.acs_plugin.calling.logger.Logger
 import com.acs_plugin.calling.models.CallCompositeLocalOptions
+import com.google.android.material.textview.MaterialTextView
 
 internal class ToolbarView : LinearLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    private lateinit var navigationButton: ImageButton
-    private lateinit var toolbarTitle: TextView
-    private lateinit var toolbarSubtitle: TextView
+    private lateinit var navigationButton: AppCompatImageView
+    private lateinit var toolbarTitle: MaterialTextView
+    private lateinit var toolbarSubtitle: MaterialTextView
     private lateinit var logger: Logger
     private var callCompositeLocalOptions: CallCompositeLocalOptions? = null
 
@@ -54,23 +53,17 @@ internal class ToolbarView : LinearLayout {
         val titleText = if (!TextUtils.isEmpty(localOptions?.setupScreenViewData?.title)) {
             localOptions?.setupScreenViewData?.title
         } else {
-            context.getString(R.string.azure_communication_ui_calling_call_setup_action_bar_title)
+            context.getString(R.string.start_your_call)
         }
 
         toolbarTitle.text = titleText
 
-        // Only set the subtitle if the title has also been set
-        if (!TextUtils.isEmpty(localOptions?.setupScreenViewData?.subtitle)) {
-            if (!TextUtils.isEmpty(localOptions?.setupScreenViewData?.title)) {
-                val subtitleText = localOptions?.setupScreenViewData?.subtitle
-                toolbarSubtitle.visibility = View.VISIBLE
-                toolbarSubtitle.text = subtitleText
-                toolbarSubtitle.contentDescription = subtitleText + " " + context.getString(R.string.azure_communication_ui_calling_call_setup_toolbar_subtitle_announcement)
-            } else {
-                logger.error(
-                    "Provided setupScreenViewData has subtitle, but no title provided. In this case subtitle is not displayed."
-                )
-            }
+        val subtitleText = if (!localOptions?.setupScreenViewData?.subtitle.isNullOrEmpty()) {
+            localOptions.setupScreenViewData?.subtitle
+        } else {
+            context.getString(R.string.check_your_video_audio)
         }
+
+        toolbarSubtitle.text = subtitleText
     }
 }

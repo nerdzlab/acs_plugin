@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Text">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Circular Std Bold-->
+    <style name="Text.CircularStdBold">
+        <item name="android:fontFamily">@font/circular_std_bold</item>
+    </style>
+
+    <style name="Text.CircularStdBold.24sp">
+        <item name="android:textSize">@dimen/text_size_24</item>
+    </style>
+
+     <!-- Circular Std Book-->
+    <style name="Text.CircularStdBook">
+        <item name="android:fontFamily">@font/circular_std_book</item>
+    </style>
+
+    <style name="Text.CircularStdBook.16sp">
+        <item name="android:textSize">@dimen/text_size_16</item>
+    </style>
+
+</resources>
