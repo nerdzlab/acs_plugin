@@ -6,15 +6,14 @@ package com.acs_plugin.calling.presentation.fragment.setup.components
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
-import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
-import com.acs_plugin.calling.redux.state.AudioDeviceSelectionStatus
 import com.acs_plugin.calling.redux.state.AudioOperationalStatus
-import com.acs_plugin.calling.redux.state.AudioState
 import com.acs_plugin.calling.redux.state.CameraOperationalStatus
-import kotlinx.coroutines.flow.collect
+import com.acs_plugin.extension.onSingleClickListener
 import kotlinx.coroutines.launch
 
 internal class SetupControlBarView : LinearLayout {
@@ -22,24 +21,30 @@ internal class SetupControlBarView : LinearLayout {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     private lateinit var viewModel: SetupControlBarViewModel
-    private lateinit var micButton: SetupButton
-    private lateinit var cameraButton: SetupButton
-    private lateinit var audioDeviceButton: AudioDeviceSetupButton
+    private lateinit var micButton: AppCompatImageView
+    private lateinit var cameraButton: AppCompatImageView
+    private lateinit var cameraSwitchButton: AppCompatImageView
+    private lateinit var cameraBlurButton: AppCompatImageView
+    private lateinit var audioDeviceButton: AppCompatImageView
+
+    private var isCameraOn: Boolean = false
+    private var isMicOn: Boolean = false
+    private var isBlurOn: Boolean = false
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        micButton = findViewById(R.id.azure_communication_ui_setup_audio_button)
-        cameraButton = findViewById(R.id.azure_communication_ui_setup_camera_button)
-        audioDeviceButton = findViewById(R.id.azure_communication_ui_setup_audio_device_button)
-        micButton.setOnClickListener {
-            toggleAudio()
-        }
-        cameraButton.setOnClickListener {
-            toggleVideo()
-        }
-        audioDeviceButton.setOnClickListener {
-            viewModel.audioDeviceClicked(context)
-        }
+        micButton = findViewById(R.id.setupMicButton)
+        cameraButton = findViewById(R.id.setupCameraButton)
+        cameraSwitchButton = findViewById(R.id.setupCameraSwitchButton)
+        cameraBlurButton = findViewById(R.id.setupBlurButton)
+        audioDeviceButton = findViewById(R.id.setupAudioButton)
+
+
+        micButton.onSingleClickListener { toggleAudio() }
+        cameraButton.onSingleClickListener { toggleVideo() }
+        cameraSwitchButton.onSingleClickListener { viewModel.switchCamera() }
+        cameraBlurButton.onSingleClickListener { toggleBlur() }
+        audioDeviceButton.onSingleClickListener { viewModel.audioDeviceClicked(context) }
     }
 
     fun start(
@@ -47,6 +52,12 @@ internal class SetupControlBarView : LinearLayout {
         setupControlBarViewModel: SetupControlBarViewModel,
     ) {
         viewModel = setupControlBarViewModel
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isVisibleState.collect { visible ->
+                visibility = if (visible) VISIBLE else INVISIBLE
+            }
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.cameraIsEnabled.collect {
@@ -61,14 +72,8 @@ internal class SetupControlBarView : LinearLayout {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.isVisibleState.collect { visible ->
-                visibility = if (visible) VISIBLE else INVISIBLE
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.audioOperationalStatusStat.collect {
-                setMicButtonState(it)
+            viewModel.cameraState.collect {
+                setCameraButtonState(it)
             }
         }
 
@@ -79,27 +84,32 @@ internal class SetupControlBarView : LinearLayout {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.cameraState.collect {
-                setCameraButtonState(it)
-                setButtonColorOnCameraState(it)
+            viewModel.micVisible.collect {
+                micButton.visibility = if (it) VISIBLE else GONE
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.audioDeviceSelectionStatusState.collect {
-                setAudioDeviceButtonState(it)
+            viewModel.audioOperationalStatusStat.collect {
+                setMicButtonState(it)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.switchCameraEnabled.collect {
+                cameraSwitchButton.isEnabled = it
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.blurEnabled.collect {
+                cameraBlurButton.isEnabled = it
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.audioDeviceButtonEnabled.collect {
                 audioDeviceButton.isEnabled = it
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.micVisible.collect {
-                micButton.visibility = if (it) VISIBLE else GONE
             }
         }
 
@@ -111,152 +121,49 @@ internal class SetupControlBarView : LinearLayout {
     }
 
     private fun setMicButtonState(audioOperationalStatus: AudioOperationalStatus) {
-        when (audioOperationalStatus) {
-            AudioOperationalStatus.ON -> {
-                micButton.isON = true
-                micButton.text = context.getString(R.string.azure_communication_ui_calling_setup_view_button_mic_on)
+        micButton.apply {
+            when (audioOperationalStatus) {
+                AudioOperationalStatus.ON -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_microphone))
+                AudioOperationalStatus.OFF -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_microphone_off))
+                else -> {}
             }
-            AudioOperationalStatus.OFF -> {
-                micButton.isON = false
-                micButton.text = context.getString(R.string.azure_communication_ui_calling_setup_view_button_mic_off)
-            }
-            else -> {}
         }
-        micButton.refreshDrawableState()
     }
 
     private fun setCameraButtonState(operation: CameraOperationalStatus) {
-        when (operation) {
-            CameraOperationalStatus.ON -> {
-                cameraButton.isON = true
-                cameraButton.text = context.getString(R.string.azure_communication_ui_calling_setup_view_button_video_on)
-            }
-            CameraOperationalStatus.OFF -> {
-                cameraButton.isON = false
-                cameraButton.text = context.getString(R.string.azure_communication_ui_calling_setup_view_button_video_off)
-            }
-            else -> {}
-        }
-        cameraButton.refreshDrawableState()
-    }
-
-    private fun setButtonColorOnCameraState(cameraOperationalStatus: CameraOperationalStatus) {
-        cameraButton.isCameraON = cameraOperationalStatus == CameraOperationalStatus.ON
-        micButton.isCameraON = cameraOperationalStatus == CameraOperationalStatus.ON
-        audioDeviceButton.isCameraON = cameraOperationalStatus == CameraOperationalStatus.ON
-
-        cameraButton.refreshDrawableState()
-        micButton.refreshDrawableState()
-        audioDeviceButton.refreshDrawableState()
-    }
-
-    private fun setAudioDeviceButtonState(audioState: AudioState) {
-        audioDeviceButton.text = when (audioState.device) {
-            AudioDeviceSelectionStatus.SPEAKER_SELECTED -> {
-                context.getString(R.string.azure_communication_ui_calling_audio_device_drawer_speaker)
-            }
-            AudioDeviceSelectionStatus.RECEIVER_SELECTED -> {
-                when (audioState.isHeadphonePlugged) {
-                    true -> context.getString(R.string.azure_communication_ui_calling_audio_device_drawer_headphone)
-                    false -> context.getString(R.string.azure_communication_ui_calling_audio_device_drawer_android)
-                }
-            }
-            AudioDeviceSelectionStatus.BLUETOOTH_SCO_SELECTED -> {
-                if (audioState.bluetoothState.deviceName.isNotBlank()) {
-                    audioState.bluetoothState.deviceName
-                } else {
-                    context.getString(R.string.azure_communication_ui_calling_audio_device_drawer_bluetooth)
-                }
-            }
-            else -> {
-                ""
+        cameraButton.apply {
+            when (operation) {
+                CameraOperationalStatus.ON -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_camera))
+                CameraOperationalStatus.OFF -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_camera_off))
+                else -> {}
             }
         }
-
-        audioDeviceButton.contentDescription =
-            context.getString(
-                R.string.azure_communication_ui_calling_setup_audio_device_select_content_description,
-                audioDeviceButton.text
-            )
-
-        audioDeviceButton.isSpeakerON =
-            audioState.device == AudioDeviceSelectionStatus.SPEAKER_SELECTED
-        audioDeviceButton.isReceiverON =
-            audioState.device == AudioDeviceSelectionStatus.RECEIVER_SELECTED
-        audioDeviceButton.isBluetoothON =
-            audioState.device == AudioDeviceSelectionStatus.BLUETOOTH_SCO_SELECTED
-
-        audioDeviceButton.refreshDrawableState()
     }
 
     private fun toggleAudio() {
-        if (micButton.isON) {
+        if (isMicOn) {
             viewModel.turnMicOff(context)
         } else {
             viewModel.turnMicOn(context)
         }
+        isMicOn = !isMicOn
     }
 
     private fun toggleVideo() {
-        if (cameraButton.isON) {
+        if (isCameraOn) {
             viewModel.turnCameraOff(context)
         } else {
             viewModel.turnCameraOn(context)
         }
+        isCameraOn = !isCameraOn
     }
-}
 
-internal open class SetupButton(context: Context, attrs: AttributeSet?) :
-    AppCompatButton(context, attrs) {
-
-    var isCameraON = false
-    var isON = false
-
-    override fun onCreateDrawableState(extraSpace: Int): IntArray? {
-        val drawableState = super.onCreateDrawableState(extraSpace + 2)
-        if (isCameraON) {
-            mergeDrawableStates(
-                drawableState,
-                intArrayOf(R.attr.azure_communication_ui_calling_state_setup_camera_on)
-            )
+    private fun toggleBlur() {
+        if (isBlurOn) {
+            viewModel.turnBlurOff()
+        } else {
+            viewModel.turnBlurOn()
         }
-        if (isON) {
-            mergeDrawableStates(
-                drawableState,
-                intArrayOf(R.attr.azure_communication_ui_calling_state_on)
-            )
-        }
-        return drawableState
-    }
-}
-
-internal class AudioDeviceSetupButton(context: Context, attrs: AttributeSet?) :
-    SetupButton(context, attrs) {
-
-    var isSpeakerON = false
-    var isReceiverON = false
-    var isBluetoothON = false
-
-    override fun onCreateDrawableState(extraSpace: Int): IntArray? {
-        val drawableState = super.onCreateDrawableState(extraSpace + 3)
-        if (isSpeakerON) {
-            mergeDrawableStates(
-                drawableState,
-                intArrayOf(R.attr.azure_communication_ui_calling_state_setup_audio_device_speaker)
-            )
-        }
-        if (isReceiverON) {
-            mergeDrawableStates(
-                drawableState,
-                intArrayOf(R.attr.azure_communication_ui_calling_state_setup_audio_device_receiver)
-            )
-        }
-        if (isBluetoothON) {
-            mergeDrawableStates(
-                drawableState,
-                intArrayOf(R.attr.azure_communication_ui_calling_state_setup_audio_device_bluetooth)
-            )
-        }
-        return drawableState
+        isBlurOn = !isBlurOn
     }
 }

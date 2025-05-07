@@ -10,4 +10,6 @@
     <color name="success">#2EEE63</color>
     <color name="error">#DC2626</color>
     <color name="white">#FFFFFF</color>
+
+    <color name="purple_op_60">#996048DE</color>
 </resources>

@@ -41,9 +41,13 @@ internal class SetupControlBarViewModel(
 
     private lateinit var isAudioDeviceButtonVisibleFlow: MutableStateFlow<Boolean>
     private lateinit var audioOperationalStatusStateFlow: MutableStateFlow<AudioOperationalStatus>
-    private lateinit var audioDeviceSelectionStatusStateFlow: MutableStateFlow<AudioState>
 
     private lateinit var openAudioDeviceSelectionMenu: () -> Unit
+
+    private lateinit var isBlurActiveStateFlow: MutableStateFlow<Boolean>
+    private lateinit var isBlurEnabledStateFlow: MutableStateFlow<Boolean>
+
+    private lateinit var isCameraSwitchEnabledStateFlow: MutableStateFlow<Boolean>
 
     private var cameraButton: CallCompositeButtonViewData? = null
     private var micButton: CallCompositeButtonViewData? = null
@@ -75,7 +79,10 @@ internal class SetupControlBarViewModel(
         cameraStateFlow = MutableStateFlow(cameraState.operation)
         audioOperationalStatusStateFlow = MutableStateFlow(audioState.operation)
         openAudioDeviceSelectionMenu = openAudioDeviceSelectionMenuCallback
-        audioDeviceSelectionStatusStateFlow = MutableStateFlow(audioState)
+
+        isCameraSwitchEnabledStateFlow = MutableStateFlow(shouldSwitchCameraBeEnabled(cameraState.operation))
+
+        isBlurEnabledStateFlow = MutableStateFlow(shouldBlurBeEnabled(cameraState.operation))
 
         if (permissionState.audioPermissionState == PermissionStatus.NOT_ASKED) {
             requestAudioPermission()
@@ -102,7 +109,10 @@ internal class SetupControlBarViewModel(
 
         cameraStateFlow.value = cameraState.operation
         audioOperationalStatusStateFlow.value = audioState.operation
-        audioDeviceSelectionStatusStateFlow.value = audioState
+
+        isCameraSwitchEnabledStateFlow.value = shouldSwitchCameraBeEnabled(cameraState.operation)
+
+        isBlurEnabledStateFlow.value = shouldBlurBeEnabled(cameraState.operation)
     }
 
     private fun isVisible(audioPermissionState: PermissionStatus): Boolean {
@@ -120,7 +130,10 @@ internal class SetupControlBarViewModel(
     val cameraState: StateFlow<CameraOperationalStatus> get() = cameraStateFlow
 
     val audioOperationalStatusStat: StateFlow<AudioOperationalStatus> get() = audioOperationalStatusStateFlow
-    val audioDeviceSelectionStatusState: StateFlow<AudioState> get() = audioDeviceSelectionStatusStateFlow
+
+    val switchCameraEnabled: StateFlow<Boolean> get() = isCameraSwitchEnabledStateFlow
+
+    val blurEnabled: StateFlow<Boolean> get() = isBlurEnabledStateFlow
 
     fun turnCameraOn(context: Context) {
         callOnClickHandler(context, cameraButton)
@@ -149,6 +162,11 @@ internal class SetupControlBarViewModel(
             action = LocalParticipantAction.MicPreviewOffTriggered()
         )
     }
+
+    fun switchCamera() = dispatch(LocalParticipantAction.CameraSwitchTriggered())
+
+    fun turnBlurOn() {} //TODO Implement blur logic
+    fun turnBlurOff() {} //TODO Implement blur logic
 
     fun audioDeviceClicked(context: Context) {
         callOnClickHandler(context, audioDeviceButton)
@@ -211,6 +229,14 @@ internal class SetupControlBarViewModel(
         if (callingState.isDisconnected())
             return false
         return callingState.joinCallIsRequested || callingState.callingStatus != CallingStatus.NONE
+    }
+
+    private fun shouldSwitchCameraBeEnabled(cameraOperationalStatus: CameraOperationalStatus): Boolean {
+        return cameraOperationalStatus == CameraOperationalStatus.ON
+    }
+
+    private fun shouldBlurBeEnabled(cameraOperationalStatus: CameraOperationalStatus): Boolean {
+        return cameraOperationalStatus == CameraOperationalStatus.ON
     }
 
     private fun callOnClickHandler(

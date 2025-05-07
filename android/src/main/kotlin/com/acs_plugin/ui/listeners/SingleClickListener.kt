@@ -8,7 +8,7 @@ import android.view.View
  */
 class SingleClickListener(private val onClickAction: (View) -> Unit) : View.OnClickListener {
 
-    private var interval: Int = 1000
+    private var interval: Int = 500
     private var lastTimeClicked: Long = 0
 
     override fun onClick(view: View?) {

@@ -5,10 +5,7 @@ package com.acs_plugin.calling.presentation.fragment.setup.components
 
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.os.Build
 import android.view.View
-import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
@@ -22,7 +19,6 @@ import com.acs_plugin.calling.models.CallCompositeEventCode
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_FADE
 import com.microsoft.fluentui.snackbar.Snackbar
 import com.microsoft.fluentui.R as fluentUiR
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class ErrorInfoView(private val rootView: View) {
@@ -81,7 +77,6 @@ internal class ErrorInfoView(private val rootView: View) {
 
             view.contentDescription =
                 "${context.getString(R.string.azure_communication_ui_calling_alert_title)}: $errorMessage"
-            view.accessibilityFocus()
         }
     }
 
@@ -140,17 +135,5 @@ internal class ErrorInfoView(private val rootView: View) {
                 ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES
             )
         }
-    }
-
-    private fun View.accessibilityFocus(): View {
-        post {
-            performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
-            sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                accessibilityTraversalAfter = R.id.azure_communication_ui_setup_audio_device_button
-                accessibilityTraversalBefore = R.id.azure_communication_ui_setup_join_call_holder
-            }
-        }
-        return this
     }
 }

@@ -9,7 +9,6 @@
     android:id="@+id/azure_communication_ui_setup_frame_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:gravity="center_horizontal"
     tools:context="com.acs_plugin.calling.presentation.fragment.setup.SetupFragment">
 
@@ -24,8 +23,8 @@
         android:id="@+id/azure_communication_ui_setup_video_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/azure_communication_ui_calling_corner_radius_rectangle_4dp"
-        android:backgroundTint="@color/azure_communication_ui_calling_color_surface"
+        android:background="@color/light_purple"
+        android:layout_marginBottom="@dimen/margin_minus_12dp"
         app:layout_constraintBottom_toTopOf="@id/actionsLayer"
         app:layout_constraintTop_toBottomOf="@id/azure_communication_setup_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,10 +37,8 @@
             android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.acs_plugin.calling.presentation.fragment.setup.components.SetupParticipantAvatarView
             android:id="@+id/azure_communication_ui_setup_default_avatar"
@@ -52,8 +49,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.acs_plugin.calling.presentation.fragment.setup.components.PermissionWarningView
             android:id="@+id/azure_communication_ui_setup_permission_info"
@@ -66,8 +62,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/azure_communication_ui_setup_missing_image"
@@ -76,8 +71,7 @@
                 android:layout_marginTop="100dp"
                 android:layout_marginBottom="24dp"
                 android:contentDescription="@string/azure_communication_ui_calling_setup_view_warning_missing_text"
-                app:tint="@color/azure_communication_ui_calling_color_on_surface"
-                />
+                app:tint="@color/azure_communication_ui_calling_color_on_surface" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/azure_communication_ui_setup_missing_text"
@@ -88,8 +82,7 @@
                 android:gravity="center"
                 android:lineSpacingExtra="8sp"
                 android:text="@string/azure_communication_ui_calling_setup_view_warning_missing_text"
-                android:textColor="@color/azure_communication_ui_calling_color_on_surface"
-                />
+                android:textColor="@color/azure_communication_ui_calling_color_on_surface" />
 
             <com.microsoft.fluentui.widget.Button
                 android:id="@+id/azure_communication_ui_setup_settings_button"
@@ -99,7 +92,6 @@
                 android:background="@drawable/azure_communication_ui_calling_button_outline"
                 android:text="@string/azure_communication_ui_calling_setup_view_go_to_settings" />
 
-
         </com.acs_plugin.calling.presentation.fragment.setup.components.PermissionWarningView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -108,7 +100,7 @@
         android:id="@+id/actionsLayer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_16dp"
+        android:paddingVertical="@dimen/padding_16dp"
         android:background="@drawable/bg_top_rounded_r12_white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -116,69 +108,62 @@
 
         <com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarView
             android:id="@+id/azure_communication_ui_setup_buttons"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginHorizontal="@dimen/margin_10dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <com.acs_plugin.calling.presentation.fragment.setup.components.SetupButton
-                android:id="@+id/azure_communication_ui_setup_camera_button"
-                style="@style/Widget.FluentUI.Button.Borderless"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/setupMicButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/azure_communication_ui_calling_image_button"
-                android:drawableTop="@drawable/azure_communication_ui_calling_toggle_selector_camera_for_setup"
-                android:drawablePadding="5dp"
-                android:drawableTint="@color/azure_communication_ui_calling_toggle_selector"
-                android:ellipsize="end"
-                android:gravity="center|top"
-                android:maxLines="3"
-                android:text="@string/azure_communication_ui_calling_setup_view_button_video_off"
-                android:textAllCaps="false"
-                android:textColor="@color/azure_communication_ui_calling_toggle_selector"
-                android:textSize="13sp"
-                />
+                android:padding="@dimen/padding_8dp"
+                app:tint="@color/setup_control_button_color_selector"
+                app:srcCompat="@drawable/ic_microphone_off" />
 
-            <com.acs_plugin.calling.presentation.fragment.setup.components.SetupButton
-                android:id="@+id/azure_communication_ui_setup_audio_button"
-                style="@style/Widget.FluentUI.Button.Borderless"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/setupCameraButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/azure_communication_ui_calling_image_button"
-                android:drawableTop="@drawable/azure_communication_ui_calling_toggle_selector_mic_for_setup"
-                android:drawablePadding="5dp"
-                android:drawableTint="@color/azure_communication_ui_calling_toggle_selector"
-                android:ellipsize="end"
-                android:gravity="center|top"
-                android:maxLines="3"
-                android:text="@string/azure_communication_ui_calling_setup_view_button_mic_off"
-                android:textAllCaps="false"
-                android:textColor="@color/azure_communication_ui_calling_toggle_selector"
-                android:textSize="13sp"
-                />
+                android:layout_marginStart="@dimen/margin_8dp"
+                android:padding="@dimen/padding_8dp"
+                app:tint="@color/setup_control_button_color_selector"
+                app:srcCompat="@drawable/ic_camera_off" />
 
-            <com.acs_plugin.calling.presentation.fragment.setup.components.AudioDeviceSetupButton
-                android:id="@+id/azure_communication_ui_setup_audio_device_button"
-                style="@style/Widget.FluentUI.Button.Borderless"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/setupCameraSwitchButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/azure_communication_ui_calling_image_button"
-                android:drawableTop="@drawable/azure_communication_ui_calling_toggle_selector_device_for_setup"
-                android:drawablePadding="5dp"
-                android:drawableTint="@color/azure_communication_ui_calling_toggle_selector"
-                android:ellipsize="end"
-                android:gravity="center|top"
-                android:maxLines="3"
-                android:text="@string/azure_communication_ui_calling_audio_device_drawer_speaker"
-                android:textAllCaps="false"
-                android:textColor="@color/azure_communication_ui_calling_toggle_selector"
-                android:textSize="13sp"
-                />
+                android:layout_marginStart="@dimen/margin_8dp"
+                android:padding="@dimen/padding_8dp"
+                app:tint="@color/setup_control_button_color_selector"
+                app:srcCompat="@drawable/ic_camera_reverse" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/setupBlurButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_8dp"
+                android:padding="@dimen/padding_8dp"
+                app:tint="@color/setup_control_button_color_selector"
+                app:srcCompat="@drawable/ic_blur" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/setupAudioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_8dp"
+                app:tint="@color/setup_control_button_color_selector"
+                app:srcCompat="@drawable/ic_speaker" />
+
         </com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarView>
 
         <com.acs_plugin.calling.presentation.fragment.setup.components.JoinCallButtonHolderView
