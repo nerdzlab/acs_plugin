@@ -19,7 +19,6 @@ import com.acs_plugin.calling.presentation.fragment.setup.components.JoinCallBut
 import com.acs_plugin.calling.presentation.fragment.setup.components.PermissionWarningView
 import com.acs_plugin.calling.presentation.fragment.setup.components.PreviewAreaView
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarView
-import com.acs_plugin.calling.presentation.fragment.setup.components.SetupGradientView
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupParticipantAvatarView
 import com.acs_plugin.calling.presentation.fragment.setup.components.ToolbarView
 
@@ -34,7 +33,6 @@ internal class SetupFragment :
     private lateinit var participantAvatarView: SetupParticipantAvatarView
     private lateinit var localParticipantRendererView: PreviewAreaView
     private lateinit var audioDeviceListView: AudioDeviceListView
-    private lateinit var setupGradientView: SetupGradientView
     private lateinit var errorInfoView: ErrorInfoView
     private lateinit var setupJoinCallButtonHolderView: JoinCallButtonHolderView
     private lateinit var toolbarView: ToolbarView
@@ -52,8 +50,6 @@ internal class SetupFragment :
             activityViewModel.container.logger,
             this::exitComposite
         )
-        setupGradientView = view.findViewById(R.id.azure_communication_ui_setup_gradient)
-        setupGradientView.start(viewLifecycleOwner, viewModel.setupGradientViewModel)
 
         setupJoinCallButtonHolderView =
             view.findViewById(R.id.azure_communication_ui_setup_join_call_holder)

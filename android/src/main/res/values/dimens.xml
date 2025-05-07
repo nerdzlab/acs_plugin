@@ -53,6 +53,7 @@
 
     <!-- Corner radius -->
     <dimen name="corner_radius_6dp">6dp</dimen>
+    <dimen name="corner_radius_12dp">12dp</dimen>
 
     <!-- Stroke -->
     <dimen name="stroke_width_1dp">1dp</dimen>

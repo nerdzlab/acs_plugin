@@ -28,7 +28,6 @@ internal class SetupViewModel(
     val localParticipantRendererViewModel = setupViewModelProvider.previewAreaViewModel
     val audioDeviceListViewModel = setupViewModelProvider.audioDeviceListViewModel
     val errorInfoViewModel = setupViewModelProvider.errorInfoViewModel
-    val setupGradientViewModel = setupViewModelProvider.setupGradientViewModel
     val participantAvatarViewModel = setupViewModelProvider.participantAvatarViewModel
     val joinCallButtonHolderViewModel = setupViewModelProvider.joinCallButtonHolderViewModel
 
@@ -72,10 +71,6 @@ internal class SetupViewModel(
             state.localParticipantState.audioState,
             state.visibilityState
         )
-        setupGradientViewModel.init(
-            state.localParticipantState.videoStreamID,
-            state.localParticipantState.cameraState.operation
-        )
         participantAvatarViewModel.init(
             state.localParticipantState.displayName,
             state.localParticipantState.videoStreamID,
@@ -117,10 +112,6 @@ internal class SetupViewModel(
         state.localParticipantState.cameraState.error?.let {
             errorInfoViewModel.updateCallCompositeError(it)
         }
-        setupGradientViewModel.update(
-            state.localParticipantState.videoStreamID,
-            state.localParticipantState.cameraState.operation
-        )
         participantAvatarViewModel.update(
             state.localParticipantState.videoStreamID,
             state.permissionState

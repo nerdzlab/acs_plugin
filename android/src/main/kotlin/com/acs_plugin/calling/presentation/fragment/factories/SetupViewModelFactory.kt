@@ -11,7 +11,6 @@ import com.acs_plugin.calling.presentation.fragment.common.audiodevicelist.Audio
 import com.acs_plugin.calling.presentation.fragment.setup.components.JoinCallButtonHolderViewModel
 import com.acs_plugin.calling.presentation.fragment.setup.components.PreviewAreaViewModel
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarViewModel
-import com.acs_plugin.calling.presentation.fragment.setup.components.SetupGradientViewModel
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupParticipantAvatarViewModel
 import com.acs_plugin.calling.redux.Store
 import com.acs_plugin.calling.redux.state.ReduxState
@@ -37,10 +36,6 @@ internal class SetupViewModelFactory(
             store::dispatch,
             logger,
         )
-    }
-
-    val setupGradientViewModel by lazy {
-        SetupGradientViewModel()
     }
 
     val participantAvatarViewModel by lazy {
