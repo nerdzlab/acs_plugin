@@ -45,6 +45,8 @@ public class CallComposite {
         public var onRemoteParticipantLeft: (([CommunicationIdentifier]) -> Void)?
         /// Closure to show shat
         public var onShowUserChat: (() -> Void)?
+        /// Closure to start screen share
+        public var onStartScreenSharing: (() -> Void)?
         /* <CALL_START_TIME>
         /// Closure to call start time updated.
         public var onCallStartTimeUpdated: ((Date) -> Void)?
@@ -122,6 +124,14 @@ public class CallComposite {
     /// Get call state for the Call Composite.
     public var callState: CallState {
         return store?.state.callingState.status.toCallCompositeCallState() ?? CallState.none
+    }
+    
+    public func startScreenSharing() async {
+        try? await callingSDKWrapper?.startScreenSharingStream()
+    }
+    
+    public func sendVideoBuffer(sampleBuffer: CMSampleBuffer) {
+        callingSDKWrapper?.captureOutput(sampleBuffer: sampleBuffer, sampleBufferType: .video, error: nil)
     }
 
     /// Create an instance of CallComposite with options.

@@ -82,7 +82,7 @@ protocol CallingServiceProtocol {
     func noiseSuppressionCallOn()
     func noiseSuppressionCallOff()
     
-    func startScreenSharing() async throws
+    func requestScreenSharingStream()
     func stopScreenSharing() async throws
     func showChat()
 }
@@ -281,8 +281,8 @@ class CallingService: NSObject, CallingServiceProtocol {
         callingSDKWrapper.disableNoiseSuppression()
     }
     
-    func startScreenSharing() async throws {
-        try await callingSDKWrapper.startScreenSharingStream()
+    func requestScreenSharingStream() {
+        callingSDKWrapper.requestScreenSharingStream()
     }
     
     func stopScreenSharing() async throws {

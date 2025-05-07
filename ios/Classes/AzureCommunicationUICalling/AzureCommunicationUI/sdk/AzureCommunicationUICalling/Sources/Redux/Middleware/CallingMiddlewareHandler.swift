@@ -159,7 +159,7 @@ protocol CallingMiddlewareHandling {
     ) -> Task<Void, Never>
     
     @discardableResult
-    func startScreenSharing(
+    func requestScreenSharingStream(
         state: AppState,
         dispatch: @escaping ActionDispatch
     ) -> Task<Void, Never>
@@ -858,13 +858,9 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
         }
     }
     
-    func startScreenSharing(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+    func requestScreenSharingStream(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
-            do {
-                try await callingService.startScreenSharing()
-            } catch {
-                dispatch(.localUserAction(.screenShareOnTriggeredFailed(error: error)))
-            }
+            callingService.requestScreenSharingStream()
         }
     }
     

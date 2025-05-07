@@ -26,13 +26,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     private var callService: CallService {
         return CallService.getOrCreateInstance()
     }
-    private var socketConnection: SocketConnection?
-    
-    private var receiver: ScreenShareReceiver!
     
     private var client: Client!
-    
-    private var broadcastServer: BroadcastServer?
     private var pushRegistry: PKPushRegistry?
     private var voipToken: Data?
     private var eventChannel: FlutterEventChannel?
@@ -102,17 +97,16 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             returnToCall()
             
         case "initializeRoomCall":
-            startBroadcastSession()
-//            if let arguments = call.arguments as? [String: Any],
-//               let token = arguments["token"] as? String,
-//               let roomId = arguments["roomId"] as? String,
-//               let userId = arguments["userId"] as? String,
-//               let isChatEnable = arguments["isChatEnable"] as? Bool
-//            {
-//                initializeRoomCall(token: token, roomId: roomId, userId: userId, isChatEnable: isChatEnable, result: result)
-//            } else {
-//                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
-//            }
+            if let arguments = call.arguments as? [String: Any],
+               let token = arguments["token"] as? String,
+               let roomId = arguments["roomId"] as? String,
+               let userId = arguments["userId"] as? String,
+               let isChatEnable = arguments["isChatEnable"] as? Bool
+            {
+                initializeRoomCall(token: token, roomId: roomId, userId: userId, isChatEnable: isChatEnable, result: result)
+            } else {
+                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
+            }
             
         case "startOneOnOneCall":
             if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String, let participantId = arguments["participantId"] as? String, let userId = arguments["userId"] as? String {
@@ -248,6 +242,12 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         }
         
         callComposite.events.onDismissed = callCompositDismissed
+                
+        let onStartScreenSharing: () -> Void = { [weak self] in
+            self?.startBroadcastSession()
+        }
+        
+        callComposite.events.onStartScreenSharing = onStartScreenSharing
         
         
     }
@@ -352,47 +352,17 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         //        }
     }
     
-    private func startBroadcastServer() {
-        guard broadcastServer == nil else { return }
-        
-        broadcastServer = BroadcastServer(appGroup: "group.acsPluginExample")
-        broadcastServer?.onFrameReceived = { frameData in
-            // Feed the frame data to your video SDK for processing
-            
-        }
-        
-        broadcastServer?.startListening()
-    }
-    
     private func startBroadcastSession() {
         DispatchQueue.main.async {
             // Start listening BEFORE picker
             
             let pickerView = RPSystemBroadcastPickerView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-            let extensionId = Bundle.main.object(forInfoDictionaryKey: "RTCScreenSharingExtension") as? String
+            let extensionId = Bundle.main.object(forInfoDictionaryKey: "com.example.acsPluginExample.ScreenBroadcast") as? String
+            pickerView.showsMicrophoneButton = false
             pickerView.preferredExtension = extensionId
             (pickerView.subviews.first as? UIButton)?.sendActions(for: .touchUpInside)
         }
     }
-    
-    var socketFilePath: String {
-      let sharedContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.acsPluginExample")
-        return sharedContainer?.appendingPathComponent("socet.rtc_SSFD").path ?? ""
-    }
-    
-//    func waitForSocketAndOpen(maxWait: TimeInterval = 5.0) {
-//        let deadline = Date().addingTimeInterval(maxWait)
-//        while Date() < deadline {
-//            if FileManager.default.fileExists(atPath: socketFilePath) {
-//                let socket = SocketConnection(filePath: socketFilePath)
-//                socketConnection = socket
-//                socket?.open()
-//                return
-//            }
-//            Thread.sleep(forTimeInterval: 0.05)
-//        }
-//        print("Plugin: timeout waiting for socket")
-//    }
 }
 
 extension AcsPlugin: FlutterStreamHandler {
@@ -412,6 +382,15 @@ extension AcsPlugin: FlutterStreamHandler {
                 mySelf.sendEvent("onStartScreenShare")
                 mySelf.client = Client(appGroup: "group.acsPluginExample", socketName: "socet.rtc_SSFD")
                 mySelf.client.connect()
+                mySelf.listenBufferData()
+                
+                guard let userData = mySelf.userData  else {
+                    return
+                }
+                
+                Task {
+                    await mySelf.getCallComposite(token: userData.token, userId: userData.userId)?.startScreenSharing()
+                }
             },
             notificationStartName,
             nil,
@@ -453,5 +432,17 @@ extension AcsPlugin: FlutterStreamHandler {
             "event": event,
         ]
         eventSink(eventData)
+    }
+    
+    public func listenBufferData() {
+        client.onBufferReceived = { [weak self] data in
+            print("Received buffer data")
+            
+            guard let userData = self?.userData, let buffer = data  else {
+                return
+            }
+            
+            self?.getCallComposite(token: userData.token, userId: userData.userId)?.sendVideoBuffer(sampleBuffer: buffer)
+        }
     }
 }

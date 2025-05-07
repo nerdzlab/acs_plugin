@@ -118,7 +118,7 @@ private func handleLocalUserAction(_ action: LocalUserAction,
     case .noiseSuppressionCallOff:
         actionHandler.noiseSuppressionCallOff(state: getState(), dispatch: dispatch)
     case .screenShareOnTriggered:
-        actionHandler.startScreenSharing(state: getState(), dispatch: dispatch)
+        actionHandler.requestScreenSharingStream(state: getState(), dispatch: dispatch)
     case .screenShareOffTriggered:
         actionHandler.stopScreenSharing(state: getState(), dispatch: dispatch)
     case .showChat:

@@ -62,17 +62,21 @@ class SampleHandler: RPBroadcastSampleHandler {
             return
         }
         
-        server?.sendImageData(imageData)
+//        let imageData = prepare(sample: sampleBuffer)
+        
+//        if let data = imageData {
+            server?.sendImageData(imageData)
+//        }
     }
     
-    func imageFromSampleBuffer(_ sampleBuffer: CMSampleBuffer) -> UIImage? {
+    private func imageFromSampleBuffer(_ sampleBuffer: CMSampleBuffer) -> UIImage? {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return nil
         }
         
         let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
         let context = CIContext()
-        
+
         guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else {
             return nil
         }
