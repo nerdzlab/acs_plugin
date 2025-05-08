@@ -62,6 +62,14 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('setUserData() has not been implemented.');
   }
 
+  Future<void> setBroadcastExtensionData({
+    required String appGroupIdentifier,
+    required String extensionBubdleId,
+  }) {
+    throw UnimplementedError(
+        'setBroadcastExtensionData() has not been implemented.');
+  }
+
   Future<void> returnToCall() async {
     throw UnimplementedError('returnToCall() has not been implemented.');
   }

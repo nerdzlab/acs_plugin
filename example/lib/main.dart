@@ -51,6 +51,9 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   static const String _roomId = "99594083154089769";
+  static const _appGroupIdentifier = "group.acsPluginExample";
+  static const _extensionBubdleId =
+      "com.example.acsPluginExample.ScreenBroadcast";
 
   String get _userId {
     if (isRealDevice) {
@@ -72,6 +75,7 @@ class _CallScreenState extends State<CallScreen> {
   initState() {
     super.initState();
     _getPlatformVersion();
+    _setBroadcastExtensionData();
     _setDeviceType();
 
     // Subscribe to event stream
@@ -229,6 +233,22 @@ class _CallScreenState extends State<CallScreen> {
     } on PlatformException catch (error) {
       log('Failed to set user data: ${error.message}');
       _shwoSnacBar('Failed to set user data: ${error.message}');
+    }
+  }
+
+  // Set broadcast extension data
+  // Only for iOS
+  Future<void> _setBroadcastExtensionData() async {
+    try {
+      await _acsPlugin.setBroadcastExtensionData(
+        appGroupIdentifier: _appGroupIdentifier,
+        extensionBubdleId: _extensionBubdleId,
+      );
+      log('Set broadcast extension data successfully');
+      _shwoSnacBar('Set broadcast data successfully');
+    } on PlatformException catch (error) {
+      log('Failed to set broadcast data: ${error.message}');
+      _shwoSnacBar('Failed to set broadcast data: ${error.message}');
     }
   }
 

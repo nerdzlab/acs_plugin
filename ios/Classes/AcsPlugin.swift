@@ -19,11 +19,14 @@ public struct UserData {
     let userId: String
 }
 
+public struct BroadcastExtensionData {
+    let appGroupIdentifier: String
+    let extensionBubdleId: String
+}
+
 private enum Constants {
     enum Broadcast {
-        static let appGroupIdentifier = "group.acsPluginExample"
         static let socketName = "socet.rtc_SSFD"
-        static let extensionBubdleId = "com.example.acsPluginExample.ScreenBroadcast"
     }
     
     enum FlutterEvents {
@@ -47,6 +50,7 @@ private enum Constants {
         static let initializeRoomCall = "initializeRoomCall"
         static let startOneOnOneCall = "startOneOnOneCall"
         static let setUserData = "setUserData"
+        static let setBroadcastExtensionData = "setBroadcastExtensionData"
     }
 }
 
@@ -71,6 +75,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         return true
 #endif
     }
+    
+    private var broadcastExtensionData: BroadcastExtensionData?
     
     public var userData: UserData? {
         didSet {
@@ -155,6 +161,17 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                let userId = arguments["userId"] as? String
             {
                 self.userData = UserData(token: token, name: name, userId: userId)
+                
+            } else {
+                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, name and userId are required", details: nil))
+            }
+            
+        case Constants.MethodChannels.setBroadcastExtensionData:
+            if let arguments = call.arguments as? [String: Any],
+               let appGroupIdentifier = arguments["appGroupIdentifier"] as? String,
+               let extensionBubdleId = arguments["extensionBubdleId"] as? String
+            {
+                self.broadcastExtensionData = BroadcastExtensionData(appGroupIdentifier: appGroupIdentifier, extensionBubdleId: extensionBubdleId)
                 
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, name and userId are required", details: nil))
@@ -262,7 +279,6 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         }
         
         callComposite.events.onStopScreenSharing = onStopScreenSharing
-        
     }
     
     //    private func getCallKitOptions() -> CallKitOptions {
@@ -368,9 +384,16 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     // MARK: - Broadcasting
     
     private func startBroadcastSession() {
+        guard let broadcastExtensionData = broadcastExtensionData else {
+            return
+        }
+        
         DispatchQueue.main.async {
-            let pickerView = RPSystemBroadcastPickerView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-            let extensionId = Bundle.main.object(forInfoDictionaryKey: Constants.Broadcast.extensionBubdleId) as? String
+            let pickerView = RPSystemBroadcastPickerView(
+                frame: CGRect(x: 0, y: 0, width: 0, height: 0)
+            )
+            let extensionId = Bundle.main.object(forInfoDictionaryKey: broadcastExtensionData.extensionBubdleId) as? String
+            
             pickerView.showsMicrophoneButton = false
             pickerView.preferredExtension = extensionId
             (pickerView.subviews.first as? UIButton)?.sendActions(for: .touchUpInside)
@@ -387,7 +410,11 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             
             self.sendEvent(Constants.FlutterEvents.onStartScreenShare)
             
-            self.client = Client(appGroup: Constants.Broadcast.appGroupIdentifier, socketName: Constants.Broadcast.socketName)
+            guard let broadcastExtensionData = broadcastExtensionData else {
+                return
+            }
+            
+            self.client = Client(appGroup: broadcastExtensionData.appGroupIdentifier, socketName: Constants.Broadcast.socketName)
             self.client.connect()
             self.listenBufferData()
             

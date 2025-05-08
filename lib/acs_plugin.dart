@@ -54,6 +54,25 @@ class AcsPlugin {
     );
   }
 
+// Sets the broadcast extension data for screen sharing on iOS.
+  ///
+  /// This is required to configure the screen broadcasting extension
+  /// with the necessary app group and extension identifiers.
+  ///
+  /// This method is **iOS-only**.
+  ///
+  /// - [appGroupIdentifier]: The App Group identifier shared between the main app and the broadcast extension.
+  /// - [extensionBubdleId]: The bundle ID of the broadcast upload extension.
+  Future<void> setBroadcastExtensionData({
+    required String appGroupIdentifier,
+    required String extensionBubdleId,
+  }) async {
+    await AcsPluginPlatform.instance.setBroadcastExtensionData(
+      appGroupIdentifier: appGroupIdentifier,
+      extensionBubdleId: extensionBubdleId,
+    );
+  }
+
   // Need to show call ui
   Future<void> returnToCall() async {
     await AcsPluginPlatform.instance.returnToCall();

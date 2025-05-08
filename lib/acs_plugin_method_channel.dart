@@ -102,6 +102,20 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
+  Future<void> setBroadcastExtensionData({
+    required String appGroupIdentifier,
+    required String extensionBubdleId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'setBroadcastExtensionData',
+      {
+        'appGroupIdentifier': appGroupIdentifier,
+        'extensionBubdleId': extensionBubdleId,
+      },
+    );
+  }
+
+  @override
   Future<void> returnToCall() async {
     await methodChannel.invokeMethod(
       'returnToCall',
