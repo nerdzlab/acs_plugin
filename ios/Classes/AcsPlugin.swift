@@ -3,8 +3,6 @@ import ReplayKit
 import UIKit
 import AzureCommunicationCalling
 import AzureCommunicationCommon
-
-import UIKit
 import SwiftUI
 import FluentUI
 import AVKit
