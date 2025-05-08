@@ -15,6 +15,7 @@ class Client {
     var onBufferReceived: ((CMSampleBuffer?) -> Void)?
     
     private var socketDescriptor: Int32?
+    private var isRunning = false
     private let socketPath: String
     
     /// Initializes the Client with an app group identifier and a socket name.
@@ -32,6 +33,7 @@ class Client {
     func connect() {
         log("Attempting to connect to socket path: \(socketPath)")
         
+        isRunning = true
         socketDescriptor = Darwin.socket(AF_UNIX, SOCK_STREAM, 0)
         guard let socketDescriptor = socketDescriptor, socketDescriptor != -1 else {
             logError("Error creating socket")
@@ -59,13 +61,23 @@ class Client {
             self.readData()
         })
     }
+    
+    func stop() {
+        if let socket = socketDescriptor {
+            log("Closing socket")
+            isRunning = false
+            Darwin.close(socket)
+            socketDescriptor = nil
+        }
+    }
 
     func readData() {
         DispatchQueue.global(qos: .userInteractive).async {
-            while true {
+            while self.isRunning {
                 autoreleasepool {
                     guard let socketDescriptor = self.socketDescriptor else {
                         self.logError("Socket descriptor is nil")
+                        self.isRunning = false
                         return
                     }
 

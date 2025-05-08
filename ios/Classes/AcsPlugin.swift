@@ -402,6 +402,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         DarwinNotificationCenter.shared.subscribe(.stopBroadcast, observer: self) { [weak self] in
             guard let self = self else { return }
             
+            self.client.stop()
             self.sendEvent(Constants.FlutterEvents.onStopScreenShare)
             
             guard let userData = self.userData else { return }
