@@ -124,4 +124,6 @@ internal class SetupViewModel(
             state.localParticipantState.cameraState.camerasCount
         )
     }
+
+    fun onUserNameChanged(name: String) {} //TODO Implement logic with user name updates
 }

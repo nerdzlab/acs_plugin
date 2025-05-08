@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -36,6 +38,7 @@ internal class SetupFragment :
     private lateinit var errorInfoView: ErrorInfoView
     private lateinit var setupJoinCallButtonHolderView: JoinCallButtonHolderView
     private lateinit var toolbarView: ToolbarView
+    private lateinit var userNameInput: AppCompatEditText
 
     private val videoViewManager get() = activityViewModel.container.videoViewManager
     private val avatarViewManager get() = activityViewModel.container.avatarViewManager
@@ -94,6 +97,9 @@ internal class SetupFragment :
         errorInfoView = ErrorInfoView(view)
         errorInfoView.start(viewLifecycleOwner, viewModel.errorInfoViewModel)
 
+        userNameInput = view.findViewById(R.id.setup_user_name_edit_text)
+        setupUserNameInput()
+
         viewModel.setupCall()
     }
 
@@ -125,5 +131,12 @@ internal class SetupFragment :
 
     private fun exitComposite() {
         viewModel.exitComposite()
+    }
+
+    private fun setupUserNameInput() {
+        userNameInput.apply {
+            setText(viewModel.displayName.orEmpty())
+            doOnTextChanged { text, _, _, _ -> viewModel.onUserNameChanged(text.toString().trim()) }
+        }
     }
 }

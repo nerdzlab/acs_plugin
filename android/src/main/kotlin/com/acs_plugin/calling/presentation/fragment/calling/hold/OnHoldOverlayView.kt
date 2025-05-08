@@ -7,8 +7,11 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -116,6 +119,7 @@ internal class OnHoldOverlayView : LinearLayout {
 
             view.contentDescription =
                 "${context.getString(R.string.azure_communication_ui_calling_alert_title)}: $errorMessage"
+            view.accessibilityFocus()
         }
     }
 
@@ -170,5 +174,19 @@ internal class OnHoldOverlayView : LinearLayout {
         resumeButton.setOnClickListener {
             viewModel.resumeCall()
         }
+    }
+
+
+
+    private fun View.accessibilityFocus(): View {
+        post {
+            performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
+            sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                accessibilityTraversalAfter = R.id.setup_audio_button
+                accessibilityTraversalBefore = R.id.azure_communication_ui_setup_join_call_holder
+            }
+        }
+        return this
     }
 }

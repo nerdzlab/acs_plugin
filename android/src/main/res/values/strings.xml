@@ -2,4 +2,5 @@
 <resources>
     <string name="start_your_call" translatable="false">Start your call</string>
     <string name="check_your_video_audio" translatable="false">Check your video and audio.</string>
+    <string name="user_name" translatable="false">User Name</string>
 </resources>

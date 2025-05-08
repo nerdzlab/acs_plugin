@@ -21,7 +21,7 @@
             android:layout_marginStart="@dimen/margin_12dp"
             android:layout_marginTop="@dimen/margin_8dp"
             android:padding="@dimen/padding_4dp"
-            android:background="@drawable/bg_light_pink_rounder_6dp"
+            android:background="@drawable/bg_light_pink_rounder_r6"
             app:srcCompat="@drawable/ic_arrow_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

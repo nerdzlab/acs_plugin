@@ -33,11 +33,11 @@ internal class SetupControlBarView : LinearLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        micButton = findViewById(R.id.setupMicButton)
-        cameraButton = findViewById(R.id.setupCameraButton)
-        cameraSwitchButton = findViewById(R.id.setupCameraSwitchButton)
-        cameraBlurButton = findViewById(R.id.setupBlurButton)
-        audioDeviceButton = findViewById(R.id.setupAudioButton)
+        micButton = findViewById(R.id.setup_mic_button)
+        cameraButton = findViewById(R.id.setup_camera_button)
+        cameraSwitchButton = findViewById(R.id.setup_camera_switch_button)
+        cameraBlurButton = findViewById(R.id.setup_blur_button)
+        audioDeviceButton = findViewById(R.id.setup_audio_button)
 
 
         micButton.onSingleClickListener { toggleAudio() }
