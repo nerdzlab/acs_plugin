@@ -15,6 +15,7 @@ let broadcastLogger = OSLog(subsystem: "logs_acs_plugin", category: "Broadcast")
 
 private enum Constants {
     static let appGroupIdentifier = "group.acsPluginExample"
+    static let socketName = "socet.rtc_SSFD"
 }
 
 class SampleHandler: RPBroadcastSampleHandler {
@@ -26,16 +27,13 @@ class SampleHandler: RPBroadcastSampleHandler {
     
     override init() {
         super.init()
-        server = Server(appGroup: Constants.appGroupIdentifier, socketName: "socet.rtc_SSFD")
+        server = Server(appGroup: Constants.appGroupIdentifier, socketName: Constants.socketName)
         startListeningForStopNotification()
     }
     
     override func broadcastStarted(withSetupInfo setupInfo: [String: NSObject]?) {
         server?.startBroadcasting()
         DarwinNotificationCenter.shared.postNotification(.broadcastStarted)
-        
-        let notificationName = CFNotificationName("videosdk.flutter.startScreenShare" as CFString)
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), notificationName, nil, nil, true)
     }
     
     override func broadcastPaused() {
@@ -49,9 +47,6 @@ class SampleHandler: RPBroadcastSampleHandler {
     override func broadcastFinished() {
         server?.stopBroadcasting()
         DarwinNotificationCenter.shared.postNotification(.broadcastStopped)
-        
-        let notificationName = CFNotificationName("videosdk.flutter.stopScreenShare" as CFString)
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), notificationName, nil, nil, true)
     }
     
     override func processSampleBuffer(_ sampleBuffer: CMSampleBuffer, with sampleBufferType: RPSampleBufferType) {
@@ -90,27 +85,39 @@ class SampleHandler: RPBroadcastSampleHandler {
     }
     
     private func startListeningForStopNotification() {
-        let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
-        let observer = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
-        let notificationName = "videosdk.flutter.stopScreenShare" as CFString
-
-        CFNotificationCenterAddObserver(
-            notificationCenter,
-            observer,
-            { (_, observer, _, _, _) in
-                guard let observer = observer else { return }
-                let handler = Unmanaged<SampleHandler>.fromOpaque(observer).takeUnretainedValue()
-
-                let error = NSError(
-                    domain: "com.yourcompany.broadcast",
-                    code: 1001,
-                    userInfo: [NSLocalizedDescriptionKey: "You have stopped screen sharing"]
-                )
-                handler.finishBroadcastWithError(error)
-            },
-            notificationName,
-            nil,
-            .deliverImmediately
-        )
+        DarwinNotificationCenter.shared.subscribe(.broadcastStopped, observer: self) { [weak self] in
+            guard let self = self else { return }
+            
+            let error = NSError(
+                domain: "",
+                code: 1001,
+                userInfo: [NSLocalizedDescriptionKey: "You have stopped screen sharing"]
+            )
+            self.finishBroadcastWithError(error)
+        }
+        
+        
+        //        let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
+        //        let observer = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
+        //        let notificationName = "videosdk.flutter.stopScreenShare" as CFString
+        //
+        //        CFNotificationCenterAddObserver(
+        //            notificationCenter,
+        //            observer,
+        //            { (_, observer, _, _, _) in
+        //                guard let observer = observer else { return }
+        //                let handler = Unmanaged<SampleHandler>.fromOpaque(observer).takeUnretainedValue()
+        //
+        //                let error = NSError(
+        //                    domain: "com.yourcompany.broadcast",
+        //                    code: 1001,
+        //                    userInfo: [NSLocalizedDescriptionKey: "You have stopped screen sharing"]
+        //                )
+        //                handler.finishBroadcastWithError(error)
+        //            },
+        //            notificationName,
+        //            nil,
+        //            .deliverImmediately
+        //        )
     }
 }

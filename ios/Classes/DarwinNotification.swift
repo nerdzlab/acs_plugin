@@ -1,15 +1,15 @@
 //
 //  DarwinNotification.swift
-//  Runner
+//  Pods
 //
-//  Created by Yriy Malyts on 05.05.2025.
+//  Created by Yriy Malyts on 08.05.2025.
 //
 
 import Foundation
 
 enum DarwinNotification: String {
-    case broadcastStarted = "videosdk.flutter.startScreenShare"
-    case broadcastStopped = "videosdk.flutter.stopScreenShare"
+    case startBroadcast = "videosdk.flutter.startScreenShare"
+    case stopBroadcast = "videosdk.flutter.stopScreenShare"
 }
 
 class DarwinNotificationCenter {
@@ -83,6 +83,5 @@ class DarwinNotificationCenter {
         handler?()
     }
 }
-
 
 

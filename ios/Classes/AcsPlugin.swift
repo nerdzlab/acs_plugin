@@ -21,6 +21,37 @@ public struct UserData {
     let userId: String
 }
 
+private enum Constants {
+    enum Broadcast {
+        static let appGroupIdentifier = "group.acsPluginExample"
+        static let socketName = "socet.rtc_SSFD"
+        static let extensionBubdleId = "com.example.acsPluginExample.ScreenBroadcast"
+    }
+    
+    enum FlutterEvents {
+        static let onStopScreenShare = "onStopScreenShare"
+        static let onStartScreenShare = "onStartScreenShare"
+        static let onShowChat = "onShowChat"
+        static let onCallUIClosed = "onCallUIClosed"
+    }
+    
+    enum CustomFonts {
+        static let circularStdBold = "CircularStd-Bold"
+        static let circularStdBook = "CircularStd-Book"
+        static let circularStdMedium = "CircularStd-Medium"
+    }
+    
+    enum MethodChannels {
+        static let getPlatformVersion = "getPlatformVersion"
+        static let requestMicrophonePermissions = "requestMicrophonePermissions"
+        static let requestCameraPermissions = "requestCameraPermissions"
+        static let returnToCall = "returnToCall"
+        static let initializeRoomCall = "initializeRoomCall"
+        static let startOneOnOneCall = "startOneOnOneCall"
+        static let setUserData = "setUserData"
+    }
+}
+
 public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     
     private var callService: CallService {
@@ -67,9 +98,9 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         let instance = AcsPlugin.shared
         registrar.addMethodCallDelegate(instance, channel: channel)
         
-        registerCustomFont(withName: "CircularStd-Bold")
-        registerCustomFont(withName: "CircularStd-Book")
-        registerCustomFont(withName: "CircularStd-Medium")
+        registerCustomFont(withName: Constants.CustomFonts.circularStdBold)
+        registerCustomFont(withName: Constants.CustomFonts.circularStdBook)
+        registerCustomFont(withName: Constants.CustomFonts.circularStdMedium)
         
         // Add event channel setup
         let eventChannel = FlutterEventChannel(name: "acs_plugin_events", binaryMessenger: registrar.messenger())
@@ -84,19 +115,19 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
-        case "getPlatformVersion":
+        case Constants.MethodChannels.getPlatformVersion:
             result("iOS " + UIDevice.current.systemVersion)
             
-        case "requestMicrophonePermissions":
+        case Constants.MethodChannels.requestMicrophonePermissions:
             requestMicrophonePermissions(result: result)
             
-        case "requestCameraPermissions":
+        case Constants.MethodChannels.requestCameraPermissions:
             requestCameraPermissions(result: result)
             
-        case "returnToCall":
+        case Constants.MethodChannels.returnToCall:
             returnToCall()
             
-        case "initializeRoomCall":
+        case Constants.MethodChannels.initializeRoomCall:
             if let arguments = call.arguments as? [String: Any],
                let token = arguments["token"] as? String,
                let roomId = arguments["roomId"] as? String,
@@ -108,15 +139,23 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
             
-        case "startOneOnOneCall":
-            if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String, let participantId = arguments["participantId"] as? String, let userId = arguments["userId"] as? String {
+        case Constants.MethodChannels.startOneOnOneCall:
+            if let arguments = call.arguments as? [String: Any],
+               let token = arguments["token"] as? String,
+               let participantId = arguments["participantId"] as? String,
+               let userId = arguments["userId"] as? String
+            {
                 startOneOnOneCall(token: token, participantId: participantId, userId: userId, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, participantId and userId are required", details: nil))
             }
             
-        case "setUserData":
-            if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String, let name = arguments["name"] as? String, let userId = arguments["userId"] as? String {
+        case Constants.MethodChannels.setUserData:
+            if let arguments = call.arguments as? [String: Any],
+               let token = arguments["token"] as? String,
+               let name = arguments["name"] as? String,
+               let userId = arguments["userId"] as? String
+            {
                 self.userData = UserData(token: token, name: name, userId: userId)
                 
             } else {
@@ -179,35 +218,6 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         return callComposite
     }
     
-    private static func registerCustomFont(withName name: String, fileExtension: String = "ttf") {
-        // Use the correct bundle (Flutter plugin bundle)
-        
-        let bundle = Bundle(for: Self.self) // Use the current class for plugin context
-        
-        guard let fontPath = bundle.path(forResource: name, ofType: "ttf"),
-              let data = try? Data(contentsOf: URL(fileURLWithPath: fontPath)),
-              let provider = CGDataProvider(data: data as CFData),
-              let font = CGFont(provider) else {
-            print("❌ Could not load font '\(name)' from bundle.")
-            return
-        }
-        
-        var error: Unmanaged<CFError>?
-        let success = CTFontManagerRegisterGraphicsFont(font, &error)
-        
-        if !success {
-            if let cfError = error?.takeUnretainedValue() {
-                print("❌ Failed to register font '\(name)': \(cfError.localizedDescription)")
-            } else {
-                print("❌ Failed to register font '\(name)': Unknown error.")
-            }
-            return
-        }
-        
-        print("✅ Successfully registered font '\(name)'")
-        return
-    }
-    
     private func returnToCall() {
         guard let userData else { return }
         
@@ -232,13 +242,13 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted
         
         let showChatEvent: () -> Void = { [weak self] in
-            self?.sendEvent("onShowChat")
+            self?.sendEvent(Constants.FlutterEvents.onShowChat)
         }
         
         callComposite.events.onShowUserChat = showChatEvent
         
         let callCompositDismissed: ((CallCompositeDismissed) -> Void)? = { [weak self] _ in
-            self?.sendEvent("onCallUIClosed")
+            self?.sendEvent(Constants.FlutterEvents.onCallUIClosed)
         }
         
         callComposite.events.onDismissed = callCompositDismissed
@@ -357,12 +367,12 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         //        }
     }
     
+    // MARK: - Broadcasting
+    
     private func startBroadcastSession() {
         DispatchQueue.main.async {
-            // Start listening BEFORE picker
-            
             let pickerView = RPSystemBroadcastPickerView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-            let extensionId = Bundle.main.object(forInfoDictionaryKey: "com.example.acsPluginExample.ScreenBroadcast") as? String
+            let extensionId = Bundle.main.object(forInfoDictionaryKey: Constants.Broadcast.extensionBubdleId) as? String
             pickerView.showsMicrophoneButton = false
             pickerView.preferredExtension = extensionId
             (pickerView.subviews.first as? UIButton)?.sendActions(for: .touchUpInside)
@@ -370,8 +380,35 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     private func stopBroadcastSession() {
-        let notificationName = CFNotificationName("videosdk.flutter.stopScreenShare" as CFString)
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), notificationName, nil, nil, true)
+        DarwinNotificationCenter.shared.postNotification(.stopBroadcast)
+    }
+    
+    private func startListenBroadcastEvents() {
+        DarwinNotificationCenter.shared.subscribe(.startBroadcast, observer: self) { [weak self] in
+            guard let self = self else { return }
+            
+            self.sendEvent(Constants.FlutterEvents.onStartScreenShare)
+            
+            self.client = Client(appGroup: Constants.Broadcast.appGroupIdentifier, socketName: Constants.Broadcast.socketName)
+            self.client.connect()
+            self.listenBufferData()
+            
+            guard let userData = self.userData else { return }
+            Task {
+                await self.getCallComposite(token: userData.token, userId: userData.userId)?.startScreenSharing()
+            }
+        }
+        
+        DarwinNotificationCenter.shared.subscribe(.stopBroadcast, observer: self) { [weak self] in
+            guard let self = self else { return }
+            
+            self.sendEvent(Constants.FlutterEvents.onStopScreenShare)
+            
+            guard let userData = self.userData else { return }
+            Task {
+                await self.getCallComposite(token: userData.token, userId: userData.userId)?.stopScreenSharing()
+            }
+        }
     }
 }
 
@@ -379,56 +416,7 @@ extension AcsPlugin: FlutterStreamHandler {
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         self.eventSink = events
         
-        let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
-        let observer = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
-        let notificationStartName = "videosdk.flutter.startScreenShare"as CFString
-        let notificationStopName = "videosdk.flutter.stopScreenShare"as CFString
-        
-        /// Listen to start screen share event
-        CFNotificationCenterAddObserver(
-            notificationCenter,
-            observer, { (_, observer, name, _, _) -> Void in
-                let selfInstance = Unmanaged<AcsPlugin>.fromOpaque(observer!).takeUnretainedValue()
-                selfInstance.sendEvent("onStartScreenShare")
-                selfInstance.client = Client(appGroup: "group.acsPluginExample", socketName: "socet.rtc_SSFD")
-                selfInstance.client.connect()
-                selfInstance.listenBufferData()
-                
-                guard let userData = selfInstance.userData  else {
-                    return
-                }
-                
-                Task {
-                    await selfInstance.getCallComposite(token: userData.token, userId: userData.userId)?.startScreenSharing()
-                }
-            },
-            notificationStartName,
-            nil,
-            CFNotificationSuspensionBehavior.deliverImmediately
-        )
-        
-        /// Listen to stop screen share event
-        CFNotificationCenterAddObserver(
-            notificationCenter,
-            observer,
-            { (_, observer, name, _, _) -> Void in
-                let selfInstance = Unmanaged<AcsPlugin>.fromOpaque(
-                    observer!).takeUnretainedValue()
-                selfInstance.sendEvent("onStopScreenShare")
-                
-                guard let userData = selfInstance.userData  else {
-                    return
-                }
-                
-                Task {
-                    await selfInstance.getCallComposite(token: userData.token, userId: userData.userId)?.stopScreenSharing()
-                }
-                
-            },
-            notificationStopName,
-            nil,
-            CFNotificationSuspensionBehavior.deliverImmediately
-        )
+        startListenBroadcastEvents()
         
         return nil
     }
@@ -463,5 +451,35 @@ extension AcsPlugin: FlutterStreamHandler {
             
             self?.getCallComposite(token: userData.token, userId: userData.userId)?.sendVideoBuffer(sampleBuffer: buffer)
         }
+    }
+}
+
+
+extension AcsPlugin {
+    private static func registerCustomFont(withName name: String, fileExtension: String = "ttf") {
+        let bundle = Bundle(for: Self.self) // Use the current class for plugin context
+        
+        guard let fontPath = bundle.path(forResource: name, ofType: "ttf"),
+              let data = try? Data(contentsOf: URL(fileURLWithPath: fontPath)),
+              let provider = CGDataProvider(data: data as CFData),
+              let font = CGFont(provider) else {
+            print("❌ Could not load font '\(name)' from bundle.")
+            return
+        }
+        
+        var error: Unmanaged<CFError>?
+        let success = CTFontManagerRegisterGraphicsFont(font, &error)
+        
+        if !success {
+            if let cfError = error?.takeUnretainedValue() {
+                print("❌ Failed to register font '\(name)': \(cfError.localizedDescription)")
+            } else {
+                print("❌ Failed to register font '\(name)': Unknown error.")
+            }
+            return
+        }
+        
+        print("✅ Successfully registered font '\(name)'")
+        return
     }
 }
