@@ -27,6 +27,7 @@ class SampleHandler: RPBroadcastSampleHandler {
     override init() {
         super.init()
         server = Server(appGroup: Constants.appGroupIdentifier, socketName: "socet.rtc_SSFD")
+        startListeningForStopNotification()
     }
     
     override func broadcastStarted(withSetupInfo setupInfo: [String: NSObject]?) {
@@ -56,31 +57,60 @@ class SampleHandler: RPBroadcastSampleHandler {
     override func processSampleBuffer(_ sampleBuffer: CMSampleBuffer, with sampleBufferType: RPSampleBufferType) {
         guard sampleBufferType == .video else { return }
         
-        guard let image = imageFromSampleBuffer(sampleBuffer),
-              let imageData = image.jpegData(compressionQuality: 0.5) else {
-            print("Failed to get image from sample buffer")
-            return
+        if let data = sampleBufferToRawPacket(sampleBuffer) {
+            server?.sendRawPixelBufferData(data)
         }
-        
-//        let imageData = prepare(sample: sampleBuffer)
-        
-//        if let data = imageData {
-            server?.sendImageData(imageData)
-//        }
     }
     
-    private func imageFromSampleBuffer(_ sampleBuffer: CMSampleBuffer) -> UIImage? {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            return nil
-        }
+    private func sampleBufferToRawPacket(_ sampleBuffer: CMSampleBuffer) -> Data? {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return nil }
         
-        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
-        let context = CIContext()
+        CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+        
+        let width = UInt32(CVPixelBufferGetWidth(pixelBuffer))
+        let height = UInt32(CVPixelBufferGetHeight(pixelBuffer))
+        let bytesPerRow = UInt32(CVPixelBufferGetBytesPerRow(pixelBuffer))
+        let pixelFormat = UInt32(CVPixelBufferGetPixelFormatType(pixelBuffer))
+        let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer)!
+        
+        let bufferSize = bytesPerRow * height
+        let rawBytes = Data(bytes: baseAddress, count: Int(bufferSize))
+        
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
+        
+        // Header: [width (4)] + [height (4)] + [bytesPerRow (4)] + [pixelFormat (4)]
+        var packet = Data()
+        packet.append(contentsOf: withUnsafeBytes(of: width.bigEndian, Array.init))
+        packet.append(contentsOf: withUnsafeBytes(of: height.bigEndian, Array.init))
+        packet.append(contentsOf: withUnsafeBytes(of: bytesPerRow.bigEndian, Array.init))
+        packet.append(contentsOf: withUnsafeBytes(of: pixelFormat.bigEndian, Array.init))
+        packet.append(rawBytes)
+        
+        return packet
+    }
+    
+    private func startListeningForStopNotification() {
+        let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
+        let observer = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
+        let notificationName = "videosdk.flutter.stopScreenShare" as CFString
 
-        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else {
-            return nil
-        }
-        
-        return UIImage(cgImage: cgImage)
+        CFNotificationCenterAddObserver(
+            notificationCenter,
+            observer,
+            { (_, observer, _, _, _) in
+                guard let observer = observer else { return }
+                let handler = Unmanaged<SampleHandler>.fromOpaque(observer).takeUnretainedValue()
+
+                let error = NSError(
+                    domain: "com.yourcompany.broadcast",
+                    code: 1001,
+                    userInfo: [NSLocalizedDescriptionKey: "You have stopped screen sharing"]
+                )
+                handler.finishBroadcastWithError(error)
+            },
+            notificationName,
+            nil,
+            .deliverImmediately
+        )
     }
 }

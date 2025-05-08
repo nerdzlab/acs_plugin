@@ -249,6 +249,11 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         
         callComposite.events.onStartScreenSharing = onStartScreenSharing
         
+        let onStopScreenSharing: () -> Void = { [weak self] in
+            self?.stopBroadcastSession()
+        }
+        
+        callComposite.events.onStopScreenSharing = onStopScreenSharing
         
     }
     
@@ -363,6 +368,11 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             (pickerView.subviews.first as? UIButton)?.sendActions(for: .touchUpInside)
         }
     }
+    
+    private func stopBroadcastSession() {
+        let notificationName = CFNotificationName("videosdk.flutter.stopScreenShare" as CFString)
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), notificationName, nil, nil, true)
+    }
 }
 
 extension AcsPlugin: FlutterStreamHandler {
@@ -378,18 +388,18 @@ extension AcsPlugin: FlutterStreamHandler {
         CFNotificationCenterAddObserver(
             notificationCenter,
             observer, { (_, observer, name, _, _) -> Void in
-                let mySelf = Unmanaged<AcsPlugin>.fromOpaque(observer!).takeUnretainedValue()
-                mySelf.sendEvent("onStartScreenShare")
-                mySelf.client = Client(appGroup: "group.acsPluginExample", socketName: "socet.rtc_SSFD")
-                mySelf.client.connect()
-                mySelf.listenBufferData()
+                let selfInstance = Unmanaged<AcsPlugin>.fromOpaque(observer!).takeUnretainedValue()
+                selfInstance.sendEvent("onStartScreenShare")
+                selfInstance.client = Client(appGroup: "group.acsPluginExample", socketName: "socet.rtc_SSFD")
+                selfInstance.client.connect()
+                selfInstance.listenBufferData()
                 
-                guard let userData = mySelf.userData  else {
+                guard let userData = selfInstance.userData  else {
                     return
                 }
                 
                 Task {
-                    await mySelf.getCallComposite(token: userData.token, userId: userData.userId)?.startScreenSharing()
+                    await selfInstance.getCallComposite(token: userData.token, userId: userData.userId)?.startScreenSharing()
                 }
             },
             notificationStartName,
@@ -402,9 +412,18 @@ extension AcsPlugin: FlutterStreamHandler {
             notificationCenter,
             observer,
             { (_, observer, name, _, _) -> Void in
-                let mySelf = Unmanaged<AcsPlugin>.fromOpaque(
+                let selfInstance = Unmanaged<AcsPlugin>.fromOpaque(
                     observer!).takeUnretainedValue()
-                mySelf.sendEvent("onStopScreenShare")
+                selfInstance.sendEvent("onStopScreenShare")
+                
+                guard let userData = selfInstance.userData  else {
+                    return
+                }
+                
+                Task {
+                    await selfInstance.getCallComposite(token: userData.token, userId: userData.userId)?.stopScreenSharing()
+                }
+                
             },
             notificationStopName,
             nil,

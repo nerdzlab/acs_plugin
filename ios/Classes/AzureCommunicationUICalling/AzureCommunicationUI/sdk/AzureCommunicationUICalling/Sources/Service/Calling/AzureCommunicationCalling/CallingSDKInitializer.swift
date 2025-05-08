@@ -237,6 +237,10 @@ internal class CallingSDKInitializer: NSObject {
     func requestScreenSharing() {
         events.onStartScreenSharing?()
     }
+    
+    func requestStopSharing() {
+        events.onStopScreenSharing?()
+    }
 
     private func makeCallClient() -> CallClient {
         let clientOptions = CallClientOptions()

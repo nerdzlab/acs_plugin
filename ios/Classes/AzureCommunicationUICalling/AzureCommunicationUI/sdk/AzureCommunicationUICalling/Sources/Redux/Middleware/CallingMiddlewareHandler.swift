@@ -68,7 +68,7 @@ protocol CallingMiddlewareHandling {
                        language: String) -> Task<Void, Never>
     @discardableResult
     func stopCaptions(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never>
-
+    
     @discardableResult
     func setCaptionsSpokenLanguage(state: AppState,
                                    dispatch: @escaping ActionDispatch,
@@ -80,12 +80,12 @@ protocol CallingMiddlewareHandling {
     func setCapabilities(capabilities: Set<ParticipantCapabilityType>,
                          state: AppState,
                          dispatch: @escaping ActionDispatch) -> Task<Void, Never>
-
+    
     @discardableResult
     func onCapabilitiesChanged(event: CapabilitiesChangedEvent,
                                state: AppState,
                                dispatch: @escaping ActionDispatch) -> Task<Void, Never>
-
+    
     @discardableResult
     func onNetworkQualityCallDiagnosticsUpdated(state: AppState,
                                                 dispatch: @escaping ActionDispatch,
@@ -98,11 +98,11 @@ protocol CallingMiddlewareHandling {
     func onMediaCallDiagnosticsUpdated(state: AppState,
                                        dispatch: @escaping ActionDispatch,
                                        diagnisticModel: MediaDiagnosticModel) -> Task<Void, Never>
-
+    
     @discardableResult
     func dismissNotification(state: AppState,
                              dispatch: @escaping ActionDispatch) -> Task<Void, Never>
-
+    
     @discardableResult
     func removeParticipant(state: AppState,
                            dispatch: @escaping ActionDispatch,
@@ -165,7 +165,7 @@ protocol CallingMiddlewareHandling {
     ) -> Task<Void, Never>
     
     @discardableResult
-    func stopScreenSharing(
+    func requestStopScreenSharingStream(
         state: AppState,
         dispatch: @escaping ActionDispatch
     ) -> Task<Void, Never>
@@ -181,7 +181,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
     private let subscription = CancelBag()
     private let capabilitiesManager: CapabilitiesManager
     private let callType: CompositeCallType
-
+    
     init(callingService: CallingServiceProtocol,
          logger: Logger,
          callType: CompositeCallType,
@@ -191,7 +191,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
         self.callType = callType
         self.capabilitiesManager = capabilitiesManager
     }
-
+    
     func setupCall(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
@@ -211,7 +211,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func startCall(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
@@ -229,7 +229,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func endCall(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
@@ -241,13 +241,13 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func holdCall(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard state.callingState.status == .connected else {
                 return
             }
-
+            
             do {
                 try await callingService.holdCall()
                 await requestCameraPause(state: state, dispatch: dispatch).value
@@ -256,13 +256,13 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func resumeCall(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard state.callingState.status == .localHold else {
                 return
             }
-
+            
             do {
                 try await callingService.resumeCall()
                 if state.localUserState.cameraState.operation == .paused {
@@ -273,7 +273,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func recordingStateUpdated(state: AppState,
                                dispatch: @escaping ActionDispatch,
                                isRecordingActive: Bool) -> Task<Void, Never> {
@@ -286,12 +286,12 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
                     recordingState = .stopped
                 }
             }
-
+            
             dispatch(.callingAction(.recordingUpdated(recordingStatus: recordingState)))
             if isRecordingActive {
                 dispatch(.callingAction(.dismissRecordingTranscriptionBannedUpdated(isDismissed: false)))
             }
-
+            
             if isRecordingActive && !state.callingState.isTranscriptionActive {
                 if state.callingState.transcriptionStatus != .off {
                     dispatch(.callingAction(.transcriptionUpdated(transcriptionStatus: .off)))
@@ -299,7 +299,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func transcriptionStateUpdated(state: AppState,
                                    dispatch: @escaping ActionDispatch,
                                    isTranscriptionActive: Bool) -> Task<Void, Never> {
@@ -312,13 +312,13 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
                     transcriptiongState = .stopped
                 }
             }
-
+            
             dispatch(.callingAction(.transcriptionUpdated(transcriptionStatus: transcriptiongState)))
-
+            
             if isTranscriptionActive {
                 dispatch(.callingAction(.dismissRecordingTranscriptionBannedUpdated(isDismissed: false)))
             }
-
+            
             if isTranscriptionActive && !state.callingState.isRecordingActive {
                 if state.callingState.recordingStatus != .off {
                     dispatch(.callingAction(.recordingUpdated(recordingStatus: .off)))
@@ -326,13 +326,13 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func enterBackground(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             await requestCameraPause(state: state, dispatch: dispatch).value
         }
     }
-
+    
     func enterForeground(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard state.lifeCycleState.currentStatus == .background,
@@ -343,7 +343,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             await requestCameraOn(state: state, dispatch: dispatch).value
         }
     }
-
+    
     func willTerminate(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard state.callingState.status == .connected else {
@@ -352,7 +352,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             dispatch(.callingAction(.callEndRequested))
         }
     }
-
+    
     func requestCameraPreviewOn(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             if state.permissionState.cameraPermission == .notAsked {
@@ -369,7 +369,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func requestCameraOn(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             if state.permissionState.cameraPermission == .notAsked {
@@ -385,7 +385,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func requestCameraOff(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
@@ -396,14 +396,14 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func requestCameraPause(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard state.callingState.status == .connected,
                   state.localUserState.cameraState.operation == .on else {
                 return
             }
-
+            
             do {
                 try await callingService.stopLocalVideoStream()
                 dispatch(.localUserAction(.cameraPausedSucceeded))
@@ -412,7 +412,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func requestCameraSwitch(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             let currentCamera = state.localUserState.cameraState.device
@@ -436,7 +436,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func requestLowerHand(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
@@ -457,7 +457,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func requestMicrophoneMute(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
@@ -467,7 +467,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func requestMicrophoneUnmute(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
@@ -477,13 +477,13 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func onCameraPermissionIsSet(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard state.permissionState.cameraPermission == .requesting else {
                 return
             }
-
+            
             switch state.localUserState.cameraState.transmission {
             case .local:
                 if state.navigationState.status == .inCall {
@@ -496,32 +496,32 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func onMicPermissionIsGranted(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard state.permissionState.audioPermission == .requesting else {
                 return
             }
-             _ = setupCall(state: state, dispatch: dispatch)
+            _ = setupCall(state: state, dispatch: dispatch)
         }
     }
-
+    
     func audioSessionInterrupted(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard state.callingState.status == .connected else {
                 return
             }
-
+            
             dispatch(.callingAction(.holdRequested))
         }
     }
-
+    
     func admitAllLobbyParticipants(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard state.callingState.status == .connected else {
                 return
             }
-
+            
             do {
                 try await callingService.admitAllLobbyParticipants()
             } catch {
@@ -530,7 +530,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func declineAllLobbyParticipants(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard state.callingState.status == .connected else {
@@ -541,7 +541,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }.map { participant in
                 participant.userIdentifier
             }
-
+            
             for participantId in participantIds {
                 do {
                     try await callingService.declineLobbyParticipant(participantId)
@@ -552,7 +552,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func admitLobbyParticipant(state: AppState,
                                dispatch: @escaping ActionDispatch,
                                participantId: String) -> Task<Void, Never> {
@@ -560,7 +560,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             guard state.callingState.status == .connected else {
                 return
             }
-
+            
             do {
                 try await callingService.admitLobbyParticipant(participantId)
             } catch {
@@ -569,7 +569,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func declineLobbyParticipant(state: AppState,
                                  dispatch: @escaping ActionDispatch,
                                  participantId: String) -> Task<Void, Never> {
@@ -577,7 +577,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             guard state.callingState.status == .connected else {
                 return
             }
-
+            
             do {
                 try await callingService.declineLobbyParticipant(participantId)
             } catch {
@@ -586,7 +586,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func setCapabilities(capabilities: Set<ParticipantCapabilityType>,
                          state: AppState,
                          dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
@@ -594,14 +594,14 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             guard state.callingState.status != .disconnected else {
                 return
             }
-
+            
             do {
                 if !capabilitiesManager.hasCapability(capabilities: capabilities,
                                                       capability: ParticipantCapabilityType.turnVideoOn) &&
                     state.localUserState.cameraState.operation != .off {
                     dispatch(.localUserAction(.cameraOffTriggered))
                 }
-
+                
                 if !capabilitiesManager.hasCapability(capabilities: capabilities,
                                                       capability: ParticipantCapabilityType.unmuteMicrophone) &&
                     state.localUserState.audioState.operation != .off {
@@ -610,7 +610,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func startCaptions(state: AppState, dispatch: @escaping ActionDispatch, language: String) -> Task<Void, Never> {
         Task {
             guard state.captionsState.isStarted == false else {
@@ -629,7 +629,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
                             .fatalErrorUpdated(internalError: .micNotAvailable, error: nil)))
                     case CallCompositeCaptionsErrorsDescription.captionsStartFailedSpokenLanguageNotSupported.rawValue:
                         dispatch(.errorAction(.fatalErrorUpdated(internalError:
-                                    .captionsStartFailedSpokenLanguageNotSupported, error: nil)))
+                                .captionsStartFailedSpokenLanguageNotSupported, error: nil)))
                     default:
                         return
                     }
@@ -637,7 +637,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func stopCaptions(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
@@ -648,7 +648,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func setCaptionsSpokenLanguage(state: AppState, dispatch: @escaping ActionDispatch, language: String)
     -> Task<Void, Never> {
         Task {
@@ -660,7 +660,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func setCaptionsLanguage(state: AppState, dispatch: @escaping ActionDispatch, language: String)
     -> Task<Void, Never> {
         Task {
@@ -680,7 +680,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func onCapabilitiesChanged(event: CapabilitiesChangedEvent,
                                state: AppState,
                                dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
@@ -688,21 +688,21 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             guard state.callingState.status != .disconnected else {
                 return
             }
-
+            
             do {
                 let capabilities = try await self.callingService.getCapabilities()
                 dispatch(.localUserAction(.setCapabilities(capabilities: capabilities)))
-
+                
                 let anyLostCapability = event.changedCapabilities.contains(where: { capability in
                     (capability.type == .unmuteMicrophone && !capability.allowed) ||
                     (capability.type == .turnVideoOn && !capability.allowed) ||
                     (capability.type == .manageLobby && !capability.allowed) ||
                     (capability.type == .removeParticipant && !capability.allowed)
                 })
-
+                
                 if anyLostCapability || !state.localUserState.currentCapabilitiesAreDefault {
                     var notificationType = ToastNotificationKind.someFeaturesGained
-
+                    
                     if anyLostCapability {
                         notificationType = ToastNotificationKind.someFeaturesLost
                     }
@@ -713,7 +713,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func onNetworkQualityCallDiagnosticsUpdated(state: AppState,
                                                 dispatch: @escaping ActionDispatch,
                                                 diagnisticModel: NetworkQualityDiagnosticModel) -> Task<Void, Never> {
@@ -732,7 +732,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func onNetworkCallDiagnosticsUpdated(state: AppState,
                                          dispatch: @escaping ActionDispatch,
                                          diagnisticModel: NetworkDiagnosticModel) -> Task<Void, Never> {
@@ -747,7 +747,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func onMediaCallDiagnosticsUpdated(state: AppState,
                                        dispatch: @escaping ActionDispatch,
                                        diagnisticModel: MediaDiagnosticModel) -> Task<Void, Never> {
@@ -772,7 +772,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func dismissNotification(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             guard let toastState = state.toastNotificationState.status else {
@@ -800,7 +800,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             }
         }
     }
-
+    
     func removeParticipant(state: AppState,
                            dispatch: @escaping ActionDispatch,
                            participantId: String) -> Task<Void, Never> {
@@ -808,7 +808,7 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             guard state.callingState.status == .connected else {
                 return
             }
-
+            
             do {
                 try await callingService.removeParticipant(participantId)
             } catch {
@@ -864,13 +864,9 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
         }
     }
     
-    func stopScreenSharing(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
+    func requestStopScreenSharingStream(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
-            do {
-                try await callingService.stopScreenSharing()
-            } catch {
-                dispatch(.localUserAction(.screenShareOffTriggeredFailed(error: error)))
-            }
+            callingService.requestStopScreenSharingStream()
         }
     }
     
@@ -888,7 +884,7 @@ extension CallingMiddlewareHandler {
             .sink { list in
                 dispatch(.remoteParticipantsAction(.participantListUpdated(participants: list)))
             }.store(in: subscription)
-
+        
         callingService.callInfoSubject
             .sink { [weak self] callInfoModel in
                 guard let self = self else {
@@ -898,7 +894,7 @@ extension CallingMiddlewareHandler {
                 let callingStatus = callInfoModel.status
                 self.handle(callInfoModel: callInfoModel, dispatch: dispatch, callType: self.callType)
                 self.logger.debug("Dispatch State Update: \(callingStatus)")
-
+                
                 if let internalError = internalError {
                     self.handleCallInfo(internalError: internalError,
                                         dispatch: dispatch) {
@@ -915,45 +911,45 @@ extension CallingMiddlewareHandler {
                     dispatch(.compositeExitAction)
                     self.subscription.cancel()
                 }
-
+                
             }.store(in: subscription)
-
+        
         callingService.isRecordingActiveSubject
             .removeDuplicates()
             .sink { isRecordingActive in
                 dispatch(.callingAction(.recordingStateUpdated(isRecordingActive: isRecordingActive)))
             }.store(in: subscription)
-
+        
         callingService.isTranscriptionActiveSubject
             .removeDuplicates()
             .sink { isTranscriptionActive in
                 dispatch(.callingAction(.transcriptionStateUpdated(isTranscriptionActive: isTranscriptionActive)))
             }.store(in: subscription)
-
+        
         callingService.isLocalUserMutedSubject
             .removeDuplicates()
             .sink { isLocalUserMuted in
                 dispatch(.localUserAction(.microphoneMuteStateUpdated(isMuted: isLocalUserMuted)))
             }.store(in: subscription)
-
+        
         callingService.callIdSubject
             .removeDuplicates()
             .sink { callId in
                 dispatch(.callingAction(.callIdUpdated(callId: callId)))
             }.store(in: subscription)
-
+        
         callingService.dominantSpeakersSubject
             .throttle(for: 0.5, scheduler: DispatchQueue.main, latest: true)
             .sink { speakers in
                 dispatch(.remoteParticipantsAction(.dominantSpeakersUpdated(speakers: speakers)))
             }.store(in: subscription)
-
+        
         callingService.participantRoleSubject
             .removeDuplicates()
             .sink { participantRole in
                 dispatch(.localUserAction(.participantRoleChanged(participantRole: participantRole)))
             }.store(in: subscription)
-
+        
         callingService.totalParticipantCountSubject
             .removeDuplicates()
             .sink { participantCount in
@@ -966,36 +962,36 @@ extension CallingMiddlewareHandler {
                 dispatch(.localUserAction(.backgroundEffectSetFailed(error: error)))
             }.store(in: subscription)
         /* <CALL_START_TIME>
-        callingService.callStartTimeSubject
-            .removeDuplicates()
-            .sink { startTime in
-                dispatch(.callingAction(.callStartTimeUpdated(startTime: startTime)))
-            }.store(in: subscription)
-        </CALL_START_TIME> */
+         callingService.callStartTimeSubject
+         .removeDuplicates()
+         .sink { startTime in
+         dispatch(.callingAction(.callStartTimeUpdated(startTime: startTime)))
+         }.store(in: subscription)
+         </CALL_START_TIME> */
         subscribeOnDiagnostics(dispatch: dispatch)
         subscribeCapabilitiesUpdate(dispatch: dispatch)
     }
-
+    
     private func subscribeOnDiagnostics(dispatch: @escaping ActionDispatch) {
-
+        
         callingService.networkDiagnosticsSubject
             .removeDuplicates()
             .sink { networkDiagnostic in
                 dispatch(.callDiagnosticAction(.network(diagnostic: networkDiagnostic)))
             }.store(in: subscription)
-
+        
         callingService.networkQualityDiagnosticsSubject
             .removeDuplicates()
             .sink { networkQualityDiagnostic in
                 dispatch(.callDiagnosticAction(.networkQuality(diagnostic: networkQualityDiagnostic)))
             }.store(in: subscription)
-
+        
         callingService.mediaDiagnosticsSubject
             .removeDuplicates()
             .sink { mediaDiagnostic in
                 dispatch(.callDiagnosticAction(.media(diagnostic: mediaDiagnostic)))
             }.store(in: subscription)
-
+        
         callingService.supportedSpokenLanguagesSubject
             .removeDuplicates()
             .sink { supportSpokenLanguage in
@@ -1017,7 +1013,7 @@ extension CallingMiddlewareHandler {
             dispatch(.captionsAction(.typeChanged(type: captionsType)))
         }.store(in: subscription)
     }
-
+    
     private func subscribeCapabilitiesUpdate(dispatch: @escaping ActionDispatch) {
         callingService.capabilitiesChangedSubject
             .removeDuplicates()

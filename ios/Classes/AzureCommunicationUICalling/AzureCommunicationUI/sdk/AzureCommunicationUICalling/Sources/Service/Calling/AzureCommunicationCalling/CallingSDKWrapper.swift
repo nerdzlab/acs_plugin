@@ -352,7 +352,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
     func requestScreenSharingStream() {
         callingSDKInitializer.requestScreenSharing()
     }
-        
+    
     private func startCallScreenShareStream(
         _ videoStream: AzureCommunicationCalling.ScreenShareOutgoingVideoStream
     ) async throws {
@@ -362,15 +362,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             throw error
         }
         do {
-            
             try await call.startVideo(stream: videoStream)
-            
-//            screenRecorder = RPScreenRecorder.shared()
-//            
-//            if screenRecorder.isAvailable {
-//                try await screenRecorder.startCapture(handler: captureOutput)
-//                try await call.startVideo(stream: videoStream)
-//            }
             
             logger.debug("Screen share video started successfully")
         } catch {
@@ -388,79 +380,25 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return
         }
-
-//         Optionally convert the pixel buffer (e.g., BGRA to YUV420)
-        if let convertedPixelBuffer = convertPixelBufferToYUV420(pixelBuffer: pixelBuffer) {
-            // Create raw video frame buffer to send
-            let rawVideoFrameBuffer = RawVideoFrameBuffer()
-            rawVideoFrameBuffer.buffer = convertedPixelBuffer
+        
+        let rawVideoFrameBuffer = RawVideoFrameBuffer()
+        rawVideoFrameBuffer.buffer = pixelBuffer
+        
+        // Set the format if necessary
+        if let format = localScreenShareOutgoingVideoStream?.format {
+            let width = CVPixelBufferGetWidth(pixelBuffer)
+            let height = CVPixelBufferGetHeight(pixelBuffer)
+            let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
             
-            // Set the format if necessary
-            if let format = localScreenShareOutgoingVideoStream?.format {
-                let width = CVPixelBufferGetWidth(convertedPixelBuffer)
-                let height = CVPixelBufferGetHeight(convertedPixelBuffer)
-                let bytesPerRow = CVPixelBufferGetBytesPerRow(convertedPixelBuffer)
-                
-                format.width = Int32(width)
-                format.height = Int32(height)
-                format.stride1 = Int32(bytesPerRow)
-                rawVideoFrameBuffer.streamFormat = format
-            }
-
-            // Send the raw video frame
-            sendRawVideoFrame(rawVideoFrameBuffer: rawVideoFrameBuffer)
+            format.width = Int32(width)
+            format.height = Int32(height)
+            format.stride1 = Int32(bytesPerRow)
+            rawVideoFrameBuffer.streamFormat = format
         }
+        
+        // Send the raw video frame
+        sendRawVideoFrame(rawVideoFrameBuffer: rawVideoFrameBuffer)
     }
-    
-    func convertPixelBufferToYUV420(pixelBuffer: CVPixelBuffer) -> CVPixelBuffer? {
-        let width = CVPixelBufferGetWidth(pixelBuffer)
-        let height = CVPixelBufferGetHeight(pixelBuffer)
-        
-        // Create YUV420 PixelBuffer
-        var yuvPixelBuffer: CVPixelBuffer?
-        let status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, nil, &yuvPixelBuffer)
-        
-        guard status == kCVReturnSuccess, let yuvBuffer = yuvPixelBuffer else {
-            print("Failed to create YUV420 pixel buffer")
-            return nil
-        }
-        
-        // Lock base address of both buffers
-        CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-        CVPixelBufferLockBaseAddress(yuvBuffer, [])
-        
-        let bgraBaseAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
-        let yBaseAddress = CVPixelBufferGetBaseAddressOfPlane(yuvBuffer, 0)
-        let uvBaseAddress = CVPixelBufferGetBaseAddressOfPlane(yuvBuffer, 1)
-        
-        // Perform conversion (simplified for BGRA to YUV420)
-        for y in 0..<height {
-            for x in 0..<width {
-                let pixelIndex = (y * width + x) * 4
-                let blue = bgraBaseAddress!.load(fromByteOffset: pixelIndex, as: UInt8.self)
-                let green = bgraBaseAddress!.load(fromByteOffset: pixelIndex + 1, as: UInt8.self)
-                let red = bgraBaseAddress!.load(fromByteOffset: pixelIndex + 2, as: UInt8.self)
-                
-                let yValue = 0.299 * Float(red) + 0.587 * Float(green) + 0.114 * Float(blue)
-                let uValue = -0.169 * Float(red) - 0.331 * Float(green) + 0.5 * Float(blue)
-                let vValue = 0.5 * Float(red) - 0.419 * Float(green) - 0.0813 * Float(blue)
-                
-                // Store Y, U, V values into the YUV420 buffer
-                yBaseAddress!.storeBytes(of: yValue, toByteOffset: (y * width + x), as: Float.self)
-                
-                if x % 2 == 0 && y % 2 == 0 {
-                    uvBaseAddress!.storeBytes(of: uValue, toByteOffset: ((y / 2) * (width / 2) + (x / 2)), as: Float.self)
-                    uvBaseAddress!.storeBytes(of: vValue, toByteOffset: ((y / 2) * (width / 2) + (x / 2) + (width / 2) * (height / 2)), as: Float.self)
-                }
-            }
-        }
-        
-        CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
-        CVPixelBufferUnlockBaseAddress(yuvBuffer, [])
-        
-        return yuvBuffer
-    }
-
     
     private func sendRawVideoFrame(rawVideoFrameBuffer: RawVideoFrameBuffer) {
         let canSendRawVideoFrames = localScreenShareOutgoingVideoStream != nil &&
@@ -471,13 +409,18 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             localScreenShareOutgoingVideoStream?.send(frame: rawVideoFrameBuffer) { [weak self] error in
                 if (error != nil) {
                     Task {
-//                        try? await self?.stopScreenSharingStream()
+                        self?.callingSDKInitializer.requestStopSharing()
+                        try? await self?.stopScreenSharingStream()
                     }
                     
                     self?.logger.debug("Share screen error \(error!)")
                 }
             }
         }
+    }
+    
+    func requestStopScreenSharingStream() {
+        callingSDKInitializer.requestStopSharing()
     }
     
     func stopScreenSharingStream() async throws {
@@ -812,7 +755,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         guard let videoEffectsFeature = localVideoStream?.feature(Features.localVideoEffects) else {
             return
         }
-                
+        
         switch effect {
         case .none:
             // Disable both known effect types just to be sure
@@ -1128,125 +1071,3 @@ extension CallingSDKWrapper: ScreenShareOutgoingVideoStreamDelegate {
         }
     }
 }
-
-//extension UIImage {
-//
-//    var cvPixelBuffer: CVPixelBuffer? {
-//        let attrs = [
-//            String(kCVPixelBufferCGImageCompatibilityKey): kCFBooleanTrue,
-//            String(kCVPixelBufferCGBitmapContextCompatibilityKey): kCFBooleanTrue
-//            ] as [String: Any]
-//        var buffer: CVPixelBuffer?
-//        let status = CVPixelBufferCreate(kCFAllocatorDefault, Int(self.size.width), Int(self.size.height), kCVPixelFormatType_32ARGB, attrs as CFDictionary, &buffer)
-//        guard status == kCVReturnSuccess else {
-//            return nil
-//        }
-//
-//        CVPixelBufferLockBaseAddress(buffer!, CVPixelBufferLockFlags(rawValue: 0))
-//        let pixelData = CVPixelBufferGetBaseAddress(buffer!)
-//
-//        let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
-//        let context = CGContext(data: pixelData, width: Int(self.size.width), height: Int(self.size.height), bitsPerComponent: 8, bytesPerRow: CVPixelBufferGetBytesPerRow(buffer!), space: rgbColorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue)
-//
-//        context?.translateBy(x: 0, y: self.size.height)
-//        context?.scaleBy(x: 1.0, y: -1.0)
-//
-//        UIGraphicsPushContext(context!)
-//        self.draw(in: CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height))
-//        UIGraphicsPopContext()
-//        CVPixelBufferUnlockBaseAddress(buffer!, CVPixelBufferLockFlags(rawValue: 0))
-//
-//        return buffer
-//    }
-//        
-//    func createCMSampleBuffer(from pixelBuffer: CVPixelBuffer) -> CMSampleBuffer? {
-//        var sampleBuffer: CMSampleBuffer?
-//        var videoInfo: CMVideoFormatDescription?
-//
-//        // Create format description
-//        let formatStatus = CMVideoFormatDescriptionCreateForImageBuffer(
-//            allocator: kCFAllocatorDefault,
-//            imageBuffer: pixelBuffer,
-//            formatDescriptionOut: &videoInfo
-//        )
-//
-//        guard formatStatus == noErr, let videoFormat = videoInfo else {
-//            print("Failed to create CMVideoFormatDescription")
-//            return nil
-//        }
-//
-//        // Provide default timing info (example: 30 FPS)
-//        var timingInfo = CMSampleTimingInfo(
-//            duration: CMTime(value: 1, timescale: 30),
-//            presentationTimeStamp: CMTime(value: 0, timescale: 30),
-//            decodeTimeStamp: CMTime.invalid
-//        )
-//
-//        // Create the CMSampleBuffer
-//        let bufferStatus = CMSampleBufferCreateForImageBuffer(
-//            allocator: kCFAllocatorDefault,
-//            imageBuffer: pixelBuffer,
-//            dataReady: true,
-//            makeDataReadyCallback: nil,
-//            refcon: nil,
-//            formatDescription: videoFormat,
-//            sampleTiming: &timingInfo,
-//            sampleBufferOut: &sampleBuffer
-//        )
-//
-//        guard bufferStatus == noErr else {
-//            print("Failed to create CMSampleBuffer")
-//            return nil
-//        }
-//
-//        return sampleBuffer
-//    }
-//
-//    
-//}
-//
-//
-//extension Data {
-//    func toCVPixelBuffer(width: Int, height: Int, pixelFormat: OSType = kCVPixelFormatType_32BGRA) -> CVPixelBuffer? {
-//        let attrs: [String: Any] = [
-//            kCVPixelBufferCGImageCompatibilityKey as String: true,
-//            kCVPixelBufferCGBitmapContextCompatibilityKey as String: true
-//        ]
-//
-//        var pixelBuffer: CVPixelBuffer?
-//        let status = CVPixelBufferCreate(
-//            kCFAllocatorDefault,
-//            width,
-//            height,
-//            pixelFormat,
-//            attrs as CFDictionary,
-//            &pixelBuffer
-//        )
-//
-//        guard status == kCVReturnSuccess, let buffer = pixelBuffer else {
-//            print("Failed to create CVPixelBuffer")
-//            return nil
-//        }
-//
-//        CVPixelBufferLockBaseAddress(buffer, [])
-//
-//        if let baseAddress = CVPixelBufferGetBaseAddress(buffer) {
-//            let bytesPerRow = CVPixelBufferGetBytesPerRow(buffer)
-//            let expectedBytes = height * bytesPerRow
-//
-//            guard self.count >= expectedBytes else {
-//                print("Data too small: expected \(expectedBytes), got \(self.count)")
-//                CVPixelBufferUnlockBaseAddress(buffer, [])
-//                return nil
-//            }
-//
-//            self.withUnsafeBytes { rawBuffer in
-//                memcpy(baseAddress, rawBuffer.baseAddress!, expectedBytes)
-//            }
-//        }
-//
-//        CVPixelBufferUnlockBaseAddress(buffer, [])
-//
-//        return buffer
-//    }
-//}

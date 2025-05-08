@@ -75,6 +75,7 @@ protocol CallingSDKWrapperProtocol {
     func requestScreenSharingStream()
     func startScreenSharingStream() async throws
     func stopScreenSharingStream() async throws
+    func requestStopScreenSharingStream()
     func switchCamera() async throws -> CameraDevice
     func muteLocalMic() async throws
     func unmuteLocalMic() async throws

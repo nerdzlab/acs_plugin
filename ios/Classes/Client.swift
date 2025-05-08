@@ -59,109 +59,106 @@ class Client {
             self.readData()
         })
     }
-    
+
     func readData() {
-        DispatchQueue.global().async {
+        DispatchQueue.global(qos: .userInteractive).async {
             while true {
-                guard let socketDescriptor = self.socketDescriptor else {
-                    self.logError("Socket descriptor is nil")
-                    return
-                }
-
-                // Step 1: Read 4-byte length header
-                var lengthBuffer = [UInt8](repeating: 0, count: 4)
-                var totalRead = 0
-                while totalRead < 4 {
-                    let bytesRead = lengthBuffer.withUnsafeMutableBytes {
-                        read(socketDescriptor, $0.baseAddress!.advanced(by: totalRead), 4 - totalRead)
-                    }
-                    if bytesRead <= 0 {
-                        self.logError("Failed to read length header or connection closed")
+                autoreleasepool {
+                    guard let socketDescriptor = self.socketDescriptor else {
+                        self.logError("Socket descriptor is nil")
                         return
                     }
-                    totalRead += bytesRead
-                }
 
-                let dataLength = lengthBuffer.withUnsafeBytes {
-                    $0.load(as: UInt32.self).bigEndian
-                }
+                    // Step 1: Read 4-byte length header
+                    var lengthBuffer = [UInt8](repeating: 0, count: 4)
+                    var totalRead = 0
+                    while totalRead < 4 {
+                        let bytesRead = lengthBuffer.withUnsafeMutableBytes {
+                            read(socketDescriptor, $0.baseAddress!.advanced(by: totalRead), 4 - totalRead)
+                        }
+                        if bytesRead <= 0 {
+                            self.logError("Failed to read length header or connection closed")
+                            return
+                        }
+                        totalRead += bytesRead
+                    }
 
-                let maxSize: UInt32 = 10_000_000 // 10 MB limit
-                if dataLength == 0 || dataLength > maxSize {
-                    self.logError("Data length out of bounds: \(dataLength)")
-                    return
-                }
+                    let dataLength = lengthBuffer.withUnsafeBytes {
+                        $0.load(as: UInt32.self).bigEndian
+                    }
 
-                self.log("Expecting \(dataLength) bytes of data")
-
-                // Step 2: Read payload in chunks
-                var dataBuffer = Data(capacity: Int(dataLength))
-                var received: UInt32 = 0
-                while received < dataLength {
-                    let chunkSize = min(4096, Int(dataLength - received)) // Limit the chunk size to 4 KB
-                    var chunk = [UInt8](repeating: 0, count: chunkSize)
-                    let bytesRead = read(socketDescriptor, &chunk, chunk.count)
-                    if bytesRead <= 0 {
-                        self.logError("Failed to read payload or connection closed")
+                    let maxSize: UInt32 = 20_000_000 // 20 MB safety limit
+                    if dataLength == 0 || dataLength > maxSize {
+                        self.logError("Data length out of bounds: \(dataLength)")
                         return
                     }
-                    dataBuffer.append(contentsOf: chunk.prefix(bytesRead))
-                    received += UInt32(bytesRead)
-                }
 
-                self.log("✅ Received full payload: \(dataBuffer.count) bytes")
+                    self.log("Expecting \(dataLength) bytes of data")
 
-                // Assuming raw RGB data, we will create a CVPixelBuffer directly from the socket data
-                let pixelBuffer = self.createPixelBufferFromRawData(dataBuffer)
+                    // Step 2: Read the full data payload
+                    var dataBuffer = Data(capacity: Int(dataLength))
+                    var received: UInt32 = 0
+                    while received < dataLength {
+                        let chunkSize = min(4096, Int(dataLength - received))
+                        var chunk = [UInt8](repeating: 0, count: chunkSize)
+                        let bytesRead = read(socketDescriptor, &chunk, chunk.count)
+                        if bytesRead <= 0 {
+                            self.logError("Failed to read payload or connection closed")
+                            return
+                        }
+                        dataBuffer.append(contentsOf: chunk.prefix(bytesRead))
+                        received += UInt32(bytesRead)
+                    }
 
-                if let pixelBuffer = pixelBuffer {
-                    // Step 3: Pass pixelBuffer to your processing pipeline directly
-                    self.processPixelBuffer(pixelBuffer)
-                } else {
-                    self.logError("❌ Failed to create CVPixelBuffer from raw data")
+                    self.log("✅ Received full payload: \(dataBuffer.count) bytes")
+
+                    // Step 3: Extract metadata and raw pixel bytes
+                    guard dataBuffer.count > 16 else {
+                        self.logError("Data too short")
+                        return
+                    }
+
+                    let width = dataBuffer[0..<4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian }
+                    let height = dataBuffer[4..<8].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian }
+                    let bytesPerRow = dataBuffer[8..<12].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian }
+                    let pixelFormat = dataBuffer[12..<16].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian }
+
+                    let rawBytes = dataBuffer.advanced(by: 16)
+
+                    // Step 4: Create pixel buffer
+                    var pixelBuffer: CVPixelBuffer?
+                    let attrs = [kCVPixelBufferIOSurfacePropertiesKey: [:]] as CFDictionary
+                    let status = CVPixelBufferCreate(kCFAllocatorDefault,
+                                                     Int(width),
+                                                     Int(height),
+                                                     pixelFormat,
+                                                     attrs,
+                                                     &pixelBuffer)
+
+                    guard status == kCVReturnSuccess, let buffer = pixelBuffer else {
+                        self.logError("❌ Failed to create CVPixelBuffer")
+                        return
+                    }
+
+                    CVPixelBufferLockBaseAddress(buffer, [])
+                    if let dest = CVPixelBufferGetBaseAddress(buffer) {
+                        memcpy(dest, (rawBytes as NSData).bytes, rawBytes.count)
+                    }
+                    CVPixelBufferUnlockBaseAddress(buffer, [])
+
+                    self.log("✅ Created CVPixelBuffer: \(width)x\(height)")
+
+                    // Step 5: Wrap in CMSampleBuffer
+                    if let sampleBuffer = self.createSampleBuffer(from: buffer) {
+                        self.onBufferReceived?(sampleBuffer)
+                    } else {
+                        self.logError("❌ Failed to create CMSampleBuffer")
+                    }
+
+                    // Step 6: Let system breathe
+                    usleep(10_000) // 10ms pause (~100fps max)
                 }
             }
-        }
-    }
-
-    func createPixelBufferFromRawData(_ data: Data) -> CVPixelBuffer? {
-        let width = 1920 // Example width, replace with actual
-        let height = 1080 // Example height, replace with actual
-        let bytesPerRow = width * 4 // For RGB format with 4 bytes per pixel
-
-        var pixelBuffer: CVPixelBuffer?
-        let status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
-
-        guard let buffer = pixelBuffer, status == kCVReturnSuccess else {
-            return nil
-        }
-
-        // Lock pixel buffer
-        CVPixelBufferLockBaseAddress(buffer, .readOnly)
-
-        // Access raw data from the Data object
-        data.withUnsafeBytes { rawBuffer in
-            // Copy raw data into pixel buffer
-            let pixelBufferBaseAddress = CVPixelBufferGetBaseAddress(buffer)
-            memcpy(pixelBufferBaseAddress, rawBuffer.baseAddress, data.count)
-        }
-
-        // Unlock pixel buffer after modification
-        CVPixelBufferUnlockBaseAddress(buffer, .readOnly)
-
-        return buffer
-    }
-
-    func processPixelBuffer(_ pixelBuffer: CVPixelBuffer) {
-        // Use the pixelBuffer for video processing or rendering
-        self.log("✅ Successfully created pixel buffer from raw data")
-
-        // Convert the pixel buffer to CMSampleBuffer if needed
-        let sampleBuffer = self.createSampleBuffer(from: pixelBuffer)
-
-        // If you need to use captureOutput directly
-        if let sampleBuffer = sampleBuffer {
-            onBufferReceived?(sampleBuffer)
         }
     }
 
@@ -201,8 +198,6 @@ class Client {
         
         return sampleBuffer
     }
-
-
     
     /// Logs a message.
     /// - Parameter message: The message to log.

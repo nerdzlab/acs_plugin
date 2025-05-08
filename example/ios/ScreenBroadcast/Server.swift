@@ -94,22 +94,18 @@ class Server {
         }
         log("Connection accepted!")
     }
-
-    func sendImageData(_ data: Data) {
-        guard let clientSocket = clientSocket else {
-            print("No connected client.")
-            return
-        }
+    
+    func sendRawPixelBufferData(_ data: Data) {
+        guard let socket = clientSocket else { return }
 
         var length = UInt32(data.count).bigEndian
-        let header = Data(bytes: &length, count: 4)
-        let packet = header + data
+        var packet = Data()
+        packet.append(Data(bytes: &length, count: 4))
+        packet.append(data)
 
         _ = packet.withUnsafeBytes {
-            send(clientSocket, $0.baseAddress!, packet.count, 0)
+            send(socket, $0.baseAddress!, packet.count, 0)
         }
-
-        print("Sent frame (\(data.count) bytes)")
     }
 
     /// Stops the server and closes any open connections.
