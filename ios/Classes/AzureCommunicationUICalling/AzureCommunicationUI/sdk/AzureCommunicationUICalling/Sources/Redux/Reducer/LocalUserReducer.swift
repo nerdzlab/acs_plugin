@@ -145,9 +145,11 @@ extension Reducer where State == LocalUserState,
             selectedReaction = ReactionPayload(reaction: reaction, receivedOn: Date())
         case .resetLocalUserReaction:
             selectedReaction = nil
-        case .screenShareOnTriggered:
+        case .screenShareOnSucceeded:
             shareScreenStatus = .screenIsSharing
-        case .screenShareOffTriggered:
+        case .screenShareOffRequested:
+            shareScreenStatus = .screenNotShared
+        case .screenShareOffSucceeded:
             shareScreenStatus = .screenNotShared
         case .screenShareOnTriggeredFailed(error: let error):
             shareScreenStatus = .screenNotShared
@@ -155,7 +157,7 @@ extension Reducer where State == LocalUserState,
         case .screenShareOffTriggeredFailed(error: let error):
             //MTODO need to handle error state
             shareScreenStatus = .screenIsSharing
-        case .showChat:
+        case .showChat, .screenShareOnRequested:
             break
         }
 

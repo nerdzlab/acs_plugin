@@ -117,9 +117,9 @@ private func handleLocalUserAction(_ action: LocalUserAction,
         actionHandler.noiseSuppressionCallOn(state: getState(), dispatch: dispatch)
     case .noiseSuppressionCallOff:
         actionHandler.noiseSuppressionCallOff(state: getState(), dispatch: dispatch)
-    case .screenShareOnTriggered:
+    case .screenShareOnRequested:
         actionHandler.requestScreenSharingStream(state: getState(), dispatch: dispatch)
-    case .screenShareOffTriggered:
+    case .screenShareOffRequested:
         actionHandler.requestStopScreenSharingStream(state: getState(), dispatch: dispatch)
     case .showChat:
         actionHandler.showChat()
@@ -152,6 +152,8 @@ private func handleLocalUserAction(_ action: LocalUserAction,
             .screenShareOnTriggeredFailed,
             .screenShareOffTriggeredFailed,
             .resetLocalUserReaction,
+            .screenShareOnSucceeded,
+            .screenShareOffSucceeded,
             .participantRoleChanged:
         break
     }

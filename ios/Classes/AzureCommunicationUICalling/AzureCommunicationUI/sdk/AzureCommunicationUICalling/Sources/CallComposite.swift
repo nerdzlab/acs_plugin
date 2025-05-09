@@ -130,10 +130,12 @@ public class CallComposite {
     
     public func startScreenSharing() async {
         try? await callingSDKWrapper?.startScreenSharingStream()
+        store?.dispatch(action: .localUserAction(.screenShareOnSucceeded))
     }
     
     public func stopScreenSharing() async {
         try? await callingSDKWrapper?.stopScreenSharingStream()
+        store?.dispatch(action: .localUserAction(.screenShareOffSucceeded))
     }
     
     public func sendVideoBuffer(sampleBuffer: CMSampleBuffer) {

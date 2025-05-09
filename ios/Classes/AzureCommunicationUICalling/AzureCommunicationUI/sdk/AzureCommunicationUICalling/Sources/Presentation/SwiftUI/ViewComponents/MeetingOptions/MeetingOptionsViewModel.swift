@@ -120,7 +120,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? EffectsButtonState.off : EffectsButtonState.on,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-            isDisabled: localUserState.cameraState.operation == .off,
+            isDisabled: localUserState.cameraState.operation != .on,
             isVisible: true,
             action: { [weak self] in
                 if (localUserState.backgroundEffectsState.operation == .off) {
@@ -206,7 +206,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? EffectsButtonState.off : EffectsButtonState.on,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-            isDisabled: localUserState.cameraState.operation == .off,
+            isDisabled: localUserState.cameraState.operation != .on,
             isVisible: true,
             action: { [weak self] in
                 if (localUserState.backgroundEffectsState.operation == .off) {

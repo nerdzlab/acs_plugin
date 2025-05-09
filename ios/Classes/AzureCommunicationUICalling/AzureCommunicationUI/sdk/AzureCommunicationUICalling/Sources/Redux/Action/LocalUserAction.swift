@@ -27,10 +27,12 @@ enum LocalUserAction: Equatable {
     case microphoneOnTriggered
     case microphoneOnFailed(error: Error)
     
-    case screenShareOnTriggered
+    case screenShareOnRequested
+    case screenShareOnSucceeded
     case screenShareOnTriggeredFailed(error: Error)
     
-    case screenShareOffTriggered
+    case screenShareOffRequested
+    case screenShareOffSucceeded
     case screenShareOffTriggeredFailed(error: Error)
 
     case microphoneOffTriggered
@@ -106,8 +108,9 @@ enum LocalUserAction: Equatable {
             (.gridLayoutSelected, .gridLayoutSelected),
             (.speakerLayoutSelected, .speakerLayoutSelected),
             (.muteIncomingAudioRequested, .muteIncomingAudioRequested),
-            (.screenShareOnTriggered, .screenShareOnTriggered),
-            (.screenShareOffTriggered, .screenShareOffTriggered),
+            (.screenShareOnRequested, .screenShareOnRequested),
+            (.screenShareOffRequested, .screenShareOffRequested),
+            (.screenShareOffSucceeded, .screenShareOffSucceeded),
             (.microphonePreviewOff, .microphonePreviewOff):
             return true
 

@@ -183,10 +183,10 @@ internal class CallingViewModel: ObservableObject {
             localUserState: store.state.localUserState,
             localizationProvider: localizationProvider,
             onShareScreen: {
-                store.dispatch(action: .localUserAction(.screenShareOnTriggered))
+                store.dispatch(action: .localUserAction(.screenShareOnRequested))
             },
             onStopShareScreen: {
-                store.dispatch(action: .localUserAction(.screenShareOffTriggered))
+                store.dispatch(action: .localUserAction(.screenShareOffRequested))
             },
             onChat: {
                 print("On chat screen")
@@ -318,7 +318,7 @@ internal class CallingViewModel: ObservableObject {
         )
         
         if (!isParticipantGridDisplayed && state.localUserState.shareScreenState.operation == .screenIsSharing) {
-            store.dispatch(action: .localUserAction(.screenShareOffTriggered))
+            store.dispatch(action: .localUserAction(.screenShareOffRequested))
         }
         
         layoutOptionsViewModel.update(
