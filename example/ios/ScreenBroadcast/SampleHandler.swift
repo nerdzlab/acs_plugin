@@ -95,29 +95,5 @@ class SampleHandler: RPBroadcastSampleHandler {
             )
             self.finishBroadcastWithError(error)
         }
-        
-        
-        //        let notificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
-        //        let observer = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque())
-        //        let notificationName = "videosdk.flutter.stopScreenShare" as CFString
-        //
-        //        CFNotificationCenterAddObserver(
-        //            notificationCenter,
-        //            observer,
-        //            { (_, observer, _, _, _) in
-        //                guard let observer = observer else { return }
-        //                let handler = Unmanaged<SampleHandler>.fromOpaque(observer).takeUnretainedValue()
-        //
-        //                let error = NSError(
-        //                    domain: "com.yourcompany.broadcast",
-        //                    code: 1001,
-        //                    userInfo: [NSLocalizedDescriptionKey: "You have stopped screen sharing"]
-        //                )
-        //                handler.finishBroadcastWithError(error)
-        //            },
-        //            notificationName,
-        //            nil,
-        //            .deliverImmediately
-        //        )
     }
 }

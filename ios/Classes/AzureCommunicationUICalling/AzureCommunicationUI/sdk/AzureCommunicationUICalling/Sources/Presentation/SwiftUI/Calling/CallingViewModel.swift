@@ -317,6 +317,10 @@ internal class CallingViewModel: ObservableObject {
             isRemoteParticipantsPresent: isParticipantGridDisplayed
         )
         
+        if (!isParticipantGridDisplayed && state.localUserState.shareScreenState.operation == .screenIsSharing) {
+            store.dispatch(action: .localUserAction(.screenShareOffTriggered))
+        }
+        
         layoutOptionsViewModel.update(
             localUserState: state.localUserState,
             isDisplayed: state.navigationState.layoutOptionsVisible
