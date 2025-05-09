@@ -19,12 +19,14 @@ class AcsPlugin {
     required String roomId,
     required String userId,
     required bool isChatEnable,
+    required bool isRejoin,
   }) async {
     await AcsPluginPlatform.instance.initializeRoomCall(
       token: token,
       roomId: roomId,
       userId: userId,
       isChatEnable: isChatEnable,
+      isRejoin: isRejoin,
     );
   }
 

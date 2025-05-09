@@ -195,6 +195,7 @@ class _CallScreenState extends State<CallScreen> {
         roomId: _roomId,
         userId: _userId,
         isChatEnable: true,
+        isRejoin: false,
       );
       log('Room call initialized successfully');
       _shwoSnacBar('Room call initialized successfully');

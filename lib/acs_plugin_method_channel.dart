@@ -57,6 +57,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
     required String roomId,
     required String userId,
     required bool isChatEnable,
+    required bool isRejoin,
   }) async {
     await methodChannel.invokeMethod(
       'initializeRoomCall',
@@ -65,6 +66,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         'roomId': roomId,
         'userId': userId,
         'isChatEnable': isChatEnable,
+        'isRejoin': isRejoin,
       },
     );
   }

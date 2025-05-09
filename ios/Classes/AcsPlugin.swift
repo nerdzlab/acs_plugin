@@ -136,9 +136,10 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                let token = arguments["token"] as? String,
                let roomId = arguments["roomId"] as? String,
                let userId = arguments["userId"] as? String,
-               let isChatEnable = arguments["isChatEnable"] as? Bool
+               let isChatEnable = arguments["isChatEnable"] as? Bool,
+               let isRejoin = arguments["isRejoin"] as? Bool
             {
-                initializeRoomCall(token: token, roomId: roomId, userId: userId, isChatEnable: isChatEnable, result: result)
+                initializeRoomCall(token: token, roomId: roomId, userId: userId, isChatEnable: isChatEnable, isRejoin: isRejoin, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
@@ -190,8 +191,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         callService.requestCameraPermissions(result: result)
     }
     
-    private func initializeRoomCall(token: String, roomId: String, userId: String, isChatEnable: Bool, result: @escaping FlutterResult) {
-        let localOptions = LocalOptions(cameraOn: true, isChatEnable: isChatEnable, microphoneOn: true)
+    private func initializeRoomCall(token: String, roomId: String, userId: String, isChatEnable: Bool, isRejoin: Bool, result: @escaping FlutterResult) {
+        let localOptions = LocalOptions(cameraOn: true, isChatEnable: isChatEnable, microphoneOn: true, skipSetupScreen: isRejoin)
         
         getCallComposite(token: token, userId: userId)?.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
         

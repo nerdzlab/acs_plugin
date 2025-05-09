@@ -42,6 +42,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     required String roomId,
     required String userId,
     required bool isChatEnable,
+    required bool isRejoin,
   }) {
     throw UnimplementedError('initializeRoomCall() has not been implemented.');
   }
