@@ -15,6 +15,8 @@ import PushKit
 
 class BroadcastExtensionHandler: MethodHandler {
     
+    private var logger: Logger = DefaultLogger(category: "Calling")
+    
     struct BroadcastExtensionData {
         let appGroupIdentifier: String
         let extensionBubdleId: String
