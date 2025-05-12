@@ -101,6 +101,9 @@ class _CallScreenState extends State<CallScreen> {
 
       case 'onCallUIClosed':
         _shwoSnacBar("Call ui closed");
+
+      case 'onPluginStarted':
+        _shwoSnacBar("Plugin started");
       default:
         log('Unhandled event type: $eventName');
         break;

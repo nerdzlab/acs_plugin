@@ -34,6 +34,7 @@ private enum Constants {
         static let onStartScreenShare = "onStartScreenShare"
         static let onShowChat = "onShowChat"
         static let onCallUIClosed = "onCallUIClosed"
+        static let onPluginStarted = "onPluginStarted"
     }
     
     enum CustomFonts {
@@ -280,6 +281,12 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         }
         
         callComposite.events.onStopScreenSharing = onStopScreenSharing
+        
+        let onPluginStarted: () -> Void = { [weak self] in
+            self?.sendEvent(Constants.FlutterEvents.onPluginStarted)
+        }
+        
+        callComposite.events.onPluginStarted = onPluginStarted
     }
     
     //    private func getCallKitOptions() -> CallKitOptions {

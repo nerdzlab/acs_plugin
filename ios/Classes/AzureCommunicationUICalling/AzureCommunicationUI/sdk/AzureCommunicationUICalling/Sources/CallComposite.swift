@@ -49,6 +49,8 @@ public class CallComposite {
         public var onStartScreenSharing: (() -> Void)?
         /// Closure to stop screen share
         public var onStopScreenSharing: (() -> Void)?
+        /// Closure to stop screen share
+        public var onPluginStarted: (() -> Void)?
         /* <CALL_START_TIME>
         /// Closure to call start time updated.
         public var onCallStartTimeUpdated: ((Date) -> Void)?
@@ -102,11 +104,18 @@ public class CallComposite {
     private var disableInternalPushForIncomingCall = false
     private var callingSDKInitializer: CallingSDKInitializer?
     private var callConfiguration: CallConfiguration?
-    private var compositeUILaunched = false
     private var incomingCallAcceptedByCallKitCallId: String?
     private var videoViewManager: VideoViewManager?
     private var callingSDKEventsHandler: CallingSDKEventsHandler?
     private var callingSDKWrapper: CallingSDKWrapperProtocol?
+    
+    private var compositeUILaunched = false {
+        didSet {
+            if (oldValue == false && compositeUILaunched == true) {
+                events.onPluginStarted?()
+            }
+        }
+    }
     
     public var displayName: String?
     /* <CALL_START_TIME>
