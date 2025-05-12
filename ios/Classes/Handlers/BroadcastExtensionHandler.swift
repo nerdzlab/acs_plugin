@@ -157,13 +157,13 @@ class BroadcastExtensionHandler: MethodHandler {
     }
     
     public func listenBufferData() {
-        logger.debug("Start listen buffer data")
+        self.logger.debug("Start listen buffer data")
         
         client.onBufferReceived = { [weak self] data in
-            logger.debug("Received buffer data")
+            self?.logger.debug("Received buffer data")
             
             guard let callComposite = self?.onGetllComposite(), let buffer = data else {
-                logger.debug("callComposite or data is nil, ignore buffer data")
+                self?.logger.debug("callComposite or data is nil, ignore buffer data")
                 return
             }
             
