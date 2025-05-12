@@ -13,39 +13,39 @@ struct CallingView: View {
         static let maxWidth: CGFloat = 380.0
         static let height: CGFloat = 100.0
     }
-
+    
     enum ErrorInfoConstants {
         static let controlBarHeight: CGFloat = 92
         static let horizontalPadding: CGFloat = 8
     }
-
+    
     enum Constants {
         static let topAlertAreaViewTopPadding: CGFloat = 0.0
     }
-
+    
     enum DiagnosticToastInfoConstants {
         static let bottomPaddingPortrait: CGFloat = 5
         static let bottomPaddingLandscape: CGFloat = 16
     }
-
+    
     enum CaptionsInfoConstants {
         static let maxHeight: CGFloat = 115.0
     }
-
+    
     @ObservedObject var viewModel: CallingViewModel
     let avatarManager: AvatarViewManagerProtocol
     let viewManager: VideoViewManager
     
     @Environment(\.horizontalSizeClass) var widthSizeClass: UserInterfaceSizeClass?
     @Environment(\.verticalSizeClass) var heightSizeClass: UserInterfaceSizeClass?
-
+    
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
     @State var debugInfoSourceView = UIView()
-
+    
     var safeAreaIgnoreArea: Edge.Set {
         return getSizeClass() != .iphoneLandscapeScreenSize ? [] : [/* .bottom */]
     }
-
+    
     var body: some View {
 #if DEBUG
         let _ = Self._printChanges()
@@ -59,11 +59,15 @@ struct CallingView: View {
                     landscapeCallingView
                 }
                 
+                if viewModel.isScreenSharing {
+                    screenSharingIndicator
+                }
+                
                 errorInfoView
                 bottomDrawer
             }
             .frame(width: geometry.size.width,
-                    height: geometry.size.height)
+                   height: geometry.size.height)
         }
         .environment(\.screenSizeClass, getSizeClass())
         .environment(\.appPhase, viewModel.appState)
@@ -75,7 +79,7 @@ struct CallingView: View {
         }
         .ignoresSafeArea(edges: .bottom)
     }
-
+    
     var bottomDrawer: some View {
         ZStack {
             BottomDrawer(isPresented: viewModel.supportFormViewModel.isDisplayed,
@@ -87,7 +91,7 @@ struct CallingView: View {
             BottomDrawer(isPresented: viewModel.moreCallOptionsListViewModel.isDisplayed,
                          hideDrawer: viewModel.dismissDrawer) {
                 MoreCallOptionsListView(viewModel: viewModel.moreCallOptionsListViewModel,
-                avatarManager: avatarManager)
+                                        avatarManager: avatarManager)
             }
             BottomDrawer(isPresented: viewModel.audioDeviceListViewModel.isDisplayed,
                          hideDrawer: viewModel.dismissDrawer) {
@@ -128,7 +132,7 @@ struct CallingView: View {
             BottomDrawer(isPresented: viewModel.participantOptionsViewModel.isDisplayed,
                          hideDrawer: viewModel.dismissDrawer) {
                 ParticipantOptionsView(viewModel: viewModel.participantOptionsViewModel,
-                                     avatarManager: avatarManager)
+                                       avatarManager: avatarManager)
             }
             BottomDrawer(isPresented: viewModel.layoutOptionsViewModel.isDisplayed,
                          hideDrawer: viewModel.dismissDrawer) {
@@ -136,29 +140,29 @@ struct CallingView: View {
             }
             
             MeetingOptionsDrawer(isPresented: viewModel.meetingOptionsViewModel.isDisplayed,
-                         hideDrawer: viewModel.dismissDrawer) {
+                                 hideDrawer: viewModel.dismissDrawer) {
                 MeetingOptionsView(viewModel: viewModel.meetingOptionsViewModel)
             }
         }
     }
-
+    
     var portraitCallingView: some View {
         VStack(alignment: .center, spacing: 0) {
             containerView
                 .cornerRadius(12)
                 .padding(.all, 4)
             ControlBarView(viewModel: viewModel.controlBarViewModel)
-                       .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: -2)
+                .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: -2)
         }
     }
-
+    
     var landscapeCallingView: some View {
         HStack(alignment: .center, spacing: 0) {
             containerView
             ControlBarView(viewModel: viewModel.controlBarViewModel)
         }
     }
-
+    
     var containerView: some View {
         Group {
             ZStack(alignment: .bottomTrailing) {
@@ -176,7 +180,8 @@ struct CallingView: View {
                                                             avatarManager: avatarManager,
                                                             viewManager: viewManager,
                                                             orientation: $orientation,
-                                                            screenSize: getSizeClass())
+                                                            screenSize: getSizeClass()
+                                    )
                                 }
                                 .accessibilityElement(children: .contain)
                                 .accessibilityIdentifier(
@@ -198,7 +203,7 @@ struct CallingView: View {
                     .accessibilityHidden(viewModel.lobbyOverlayViewModel.isDisplayed
                                          || viewModel.onHoldOverlayViewModel.isDisplayed
                                          || viewModel.loadingOverlayViewModel.isDisplayed)
-
+                
             }
             .contentShape(Rectangle())
             .animation(.linear(duration: 0.167), value: true)
@@ -229,7 +234,7 @@ struct CallingView: View {
             .accessibilityElement(children: .contain)
         }
     }
-
+    
     var topAlertAreaView: some View {
         GeometryReader { geometry in
             let geoWidth: CGFloat = geometry.size.width
@@ -299,33 +304,33 @@ struct CallingView: View {
             .modifier(LockPhoneOrientation())
         }
     }
-
+    
     var infoHeaderView: some View {
         InfoHeaderView(viewModel: viewModel.infoHeaderViewModel,
                        avatarViewManager: avatarManager)
     }
-
+    
     var lobbyWaitingHeaderView: some View {
         LobbyWaitingHeaderView(viewModel: viewModel.lobbyWaitingHeaderViewModel,
-                       avatarViewManager: avatarManager)
+                               avatarViewManager: avatarManager)
     }
-
+    
     var lobbyActionErrorView: some View {
         LobbyErrorHeaderView(viewModel: viewModel.lobbyActionErrorViewModel,
-                       avatarViewManager: avatarManager)
+                             avatarViewManager: avatarManager)
     }
-
+    
     var bannerView: some View {
         BannerView(viewModel: viewModel.bannerViewModel)
     }
-
+    
     var participantGridsView: some View {
         ParticipantGridView(viewModel: viewModel.participantGridsViewModel,
                             avatarViewManager: avatarManager,
                             screenSize: getSizeClass())
-            .edgesIgnoringSafeArea(safeAreaIgnoreArea)
+        .edgesIgnoringSafeArea(safeAreaIgnoreArea)
     }
-
+    
     var localVideoFullscreenView: some View {
         Group {
             LocalVideoView(viewModel: viewModel.localVideoViewModel,
@@ -335,7 +340,7 @@ struct CallingView: View {
             .background(Color(UIColor.compositeColor(.lightPurple)))
         }
     }
-
+    
     var videoGridView: some View {
         Group {
             if viewModel.isParticipantGridDisplayed {
@@ -345,14 +350,14 @@ struct CallingView: View {
             }
         }
     }
-
+    
     var captionsInfoView: some View {
         return CaptionsInfoView(viewModel: viewModel.captionsInfoViewModel,
                                 avatarViewManager: avatarManager)
-            .frame(maxWidth: .infinity, maxHeight: CaptionsInfoConstants.maxHeight, alignment: .bottom)
-            .zIndex(1)
+        .frame(maxWidth: .infinity, maxHeight: CaptionsInfoConstants.maxHeight, alignment: .bottom)
+        .zIndex(1)
     }
-
+    
     var errorInfoView: some View {
         return VStack {
             Spacer()
@@ -366,7 +371,32 @@ struct CallingView: View {
                 .accessibilityAddTraits(.isModal)
         }
     }
-
+    
+    var screenSharingIndicator: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                ShareScreenIndicator(
+                    buttonLabel: viewModel.localizationProvider.getLocalizedString(LocalizationKey.stopShareScreenTitle),
+                    iconName: CompositeIcon.stopShareIcon,
+                    paddings: ShareScreenIndicator.Paddings(horizontal: 16, vertical: 10),
+                    themeOptions: ThemeColor(),
+                    onTap: {
+                        viewModel.requestStopScreenSharing()
+                    }
+                )
+                    
+                .frame(width: 152, height: 40)
+                Spacer()
+            }
+            .padding(.bottom, 110)
+            .accessibilityElement(children: .contain)
+            .accessibilityAddTraits(.isModal)
+            
+        }
+    }
+    
     var bottomToastDiagnosticsView: some View {
         VStack {
             Spacer()
@@ -375,16 +405,16 @@ struct CallingView: View {
                     EdgeInsets(top: 0,
                                leading: 0,
                                bottom:
-                                 getSizeClass() == .iphoneLandscapeScreenSize
-                                    ? DiagnosticToastInfoConstants.bottomPaddingLandscape
-                                    : DiagnosticToastInfoConstants.bottomPaddingPortrait,
+                                getSizeClass() == .iphoneLandscapeScreenSize
+                               ? DiagnosticToastInfoConstants.bottomPaddingLandscape
+                               : DiagnosticToastInfoConstants.bottomPaddingPortrait,
                                trailing: 0)
                 )
                 .accessibilityElement(children: .contain)
                 .accessibilityAddTraits(.isStaticText)
         }.frame(maxWidth: .infinity, alignment: .center)
     }
-
+    
     var captionsErrorView: some View {
         VStack {
             Spacer()
@@ -393,16 +423,16 @@ struct CallingView: View {
                     EdgeInsets(top: 0,
                                leading: 0,
                                bottom:
-                                 getSizeClass() == .iphoneLandscapeScreenSize
-                                    ? DiagnosticToastInfoConstants.bottomPaddingLandscape
-                                    : DiagnosticToastInfoConstants.bottomPaddingPortrait,
+                                getSizeClass() == .iphoneLandscapeScreenSize
+                               ? DiagnosticToastInfoConstants.bottomPaddingLandscape
+                               : DiagnosticToastInfoConstants.bottomPaddingPortrait,
                                trailing: 0)
                 )
                 .accessibilityElement(children: .contain)
                 .accessibilityAddTraits(.isStaticText)
         }.frame(maxWidth: .infinity, alignment: .center)
     }
-
+    
     var topMessageBarDiagnosticsView: some View {
         VStack {
             ForEach(viewModel.callDiagnosticsViewModel.messageBarStack) { diagnosticMessageBarViewModel in
@@ -427,13 +457,13 @@ extension CallingView {
         case (.compact, .regular):
             return .iphonePortraitScreenSize
         case (.compact, .compact),
-             (.regular, .compact):
+            (.regular, .compact):
             return .iphoneLandscapeScreenSize
         default:
             return .ipadScreenSize
         }
     }
-
+    
     private func updateChildViewIfNeededWith(newOrientation: UIDeviceOrientation) {
         let areAllOrientationsSupported = SupportedOrientationsPreferenceKey.defaultValue == .all
         if newOrientation != orientation
@@ -448,7 +478,7 @@ extension CallingView {
             }
         }
     }
-
+    
     private func resetOrientation() {
         UIDevice.current.setValue(UIDevice.current.orientation.rawValue, forKey: "orientation")
         UIViewController.attemptRotationToDeviceOrientation()

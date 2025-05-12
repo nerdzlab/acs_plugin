@@ -8,6 +8,7 @@ import Foundation
 // swiftlint:disable type_body_length
 internal class CallingViewModel: ObservableObject {
     @Published var isParticipantGridDisplayed: Bool
+    @Published var isScreenSharing: Bool
     @Published var isVideoGridViewAccessibilityAvailable = false
     @Published var appState: AppStatus = .foreground
     @Published var isInPip = false
@@ -15,9 +16,9 @@ internal class CallingViewModel: ObservableObject {
     @Published var captionsStarted = false
     @Published var isShareMeetingLinkDisplayed = false
 
+    
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
     private let store: Store<AppState, Action>
-    private let localizationProvider: LocalizationProviderProtocol
     private let accessibilityProvider: AccessibilityProviderProtocol
     private let callType: CompositeCallType
     private let captionsOptions: CaptionsOptions
@@ -28,6 +29,7 @@ internal class CallingViewModel: ObservableObject {
     private var callHasConnected = false
     private var callClientRequested = false
 
+    let localizationProvider: LocalizationProviderProtocol
     let localVideoViewModel: LocalVideoViewModel
     let participantGridsViewModel: ParticipantGridViewModel
     let bannerViewModel: BannerViewModel
@@ -179,6 +181,8 @@ internal class CallingViewModel: ObservableObject {
                 isDisplayed: store.state.navigationState.participantActionsVisible,
                 dispatchAction: store.dispatch)
         
+        isScreenSharing = store.state.localUserState.shareScreenState.operation == .screenIsSharing
+        
         meetingOptionsViewModel = compositeViewModelFactory.makeMeetingOptionsViewModel(
             localUserState: store.state.localUserState,
             localizationProvider: localizationProvider,
@@ -291,6 +295,10 @@ internal class CallingViewModel: ObservableObject {
     func dismissDrawer() {
         store.dispatch(action: .hideDrawer)
     }
+    
+    func requestStopScreenSharing() {
+        store.dispatch(action: .localUserAction(.screenShareOffRequested))
+    }
 
     func receive(_ state: AppState) {
         if appState != state.lifeCycleState.currentStatus {
@@ -310,6 +318,8 @@ internal class CallingViewModel: ObservableObject {
         
         participantOptionsViewModel.update(localUserState: state.localUserState, isDisplayed: state.navigationState.participantOptionsVisible, participantInfoModel: selectedParticipent
         )
+        
+        isScreenSharing = state.localUserState.shareScreenState.operation == .screenIsSharing
         
         meetingOptionsViewModel.update(
             localUserState: state.localUserState,
