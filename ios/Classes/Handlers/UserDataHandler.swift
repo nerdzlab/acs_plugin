@@ -1,0 +1,103 @@
+//
+//  UserDataHandler.swift
+//  Pods
+//
+//  Created by Yriy Malyts on 12.05.2025.
+//
+
+import Flutter
+import ReplayKit
+import UIKit
+import AzureCommunicationCalling
+import AzureCommunicationCommon
+import PushKit
+
+class UserDataHandler: MethodHandler {
+    
+    struct UserData {
+        let token: String
+        let name: String
+        let userId: String
+    }
+    
+    private enum Constants {
+        enum MethodChannels {
+            static let setUserData = "setUserData"
+        }
+    }
+    
+    private var userData: UserData? {
+        didSet {
+            guard let userData else { return }
+            
+            onUserDataReceived(userData)
+        }
+    }
+    
+    private let channel: FlutterMethodChannel
+    private let onSubscribeToCallCompositeEvents: (CallComposite) -> Void
+    private let onUserDataReceived: (UserData) -> Void
+    
+    private var isRealDevice: Bool {
+#if targetEnvironment(simulator)
+        return false
+#else
+        return true
+#endif
+    }
+
+    init(
+        channel: FlutterMethodChannel,
+        onSubscribeToCallCompositeEvents: @escaping (CallComposite) -> Void,
+        onUserDataReceived: @escaping (UserData) -> Void
+    ) {
+        self.channel = channel
+        self.onSubscribeToCallCompositeEvents = onSubscribeToCallCompositeEvents
+        self.onUserDataReceived = onUserDataReceived
+    }
+
+    func handle(call: FlutterMethodCall, result: @escaping FlutterResult) -> Bool {
+        switch call.method {
+        case Constants.MethodChannels.setUserData:
+            if let arguments = call.arguments as? [String: Any],
+               let token = arguments["token"] as? String,
+               let name = arguments["name"] as? String,
+               let userId = arguments["userId"] as? String
+            {
+                self.userData = UserData(token: token, name: name, userId: userId)
+                
+            } else {
+                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, name and userId are required", details: nil))
+            }
+            
+            return true
+            
+        default:
+            return false
+        }
+    }
+    
+    func getCallComposite() ->  CallComposite? {
+        guard let userData = userData else { return nil }
+        
+        guard let credential = try? CommunicationTokenCredential(token: userData.token) else { return nil }
+        
+        let callCompositeOptions = CallCompositeOptions(
+            enableMultitasking: true,
+            enableSystemPictureInPictureWhenMultitasking: true,
+            callKitOptions: isRealDevice ? CallKitOptions() : nil,
+            displayName: userData.name,
+            userId: CommunicationUserIdentifier(userData.userId)
+        )
+        
+        let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
+        
+        if (GlobalCompositeManager.callComposite == nil) {
+            onSubscribeToCallCompositeEvents(callComposite)
+        }
+        
+        GlobalCompositeManager.callComposite = callComposite
+        
+        return callComposite
+    }
+}

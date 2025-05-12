@@ -35,7 +35,6 @@ class CallScreen extends StatefulWidget {
 }
 
 class _CallScreenState extends State<CallScreen> {
-  String _platformVersion = 'Unknown';
   final _acsPlugin = AcsPlugin();
   bool isRealDevice = false;
 
@@ -74,7 +73,6 @@ class _CallScreenState extends State<CallScreen> {
   @override
   initState() {
     super.initState();
-    _getPlatformVersion();
     _setBroadcastExtensionData();
     _setDeviceType();
 
@@ -146,26 +144,6 @@ class _CallScreenState extends State<CallScreen> {
         content: Text(text),
       ),
     );
-  }
-
-  // Helper methods for platform interactions
-  Future<void> _getPlatformVersion() async {
-    try {
-      final platformVersion =
-          await _acsPlugin.getPlatformVersion() ?? 'Unknown platform version';
-      if (mounted) {
-        setState(() {
-          _platformVersion = platformVersion;
-        });
-      }
-    } on PlatformException catch (e) {
-      log('Failed to get platform version: ${e.message}');
-      if (mounted) {
-        setState(() {
-          _platformVersion = 'Failed to get platform version';
-        });
-      }
-    }
   }
 
   // Permission methods
@@ -268,11 +246,6 @@ class _CallScreenState extends State<CallScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                'Running on: $_platformVersion',
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
               // Setup Section
               _buildSectionHeader('Setup'),
               _buildButtonGrid([
