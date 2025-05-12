@@ -95,10 +95,9 @@ class BroadcastExtensionHandler: MethodHandler {
             let pickerView = RPSystemBroadcastPickerView(
                 frame: CGRect(x: 0, y: 0, width: 0, height: 0)
             )
-            let extensionId = Bundle.main.object(forInfoDictionaryKey: broadcastExtensionData.extensionBubdleId) as? String
             
             pickerView.showsMicrophoneButton = false
-            pickerView.preferredExtension = extensionId
+            pickerView.preferredExtension = broadcastExtensionData.extensionBubdleId
             (pickerView.subviews.first as? UIButton)?.sendActions(for: .touchUpInside)
         }
     }

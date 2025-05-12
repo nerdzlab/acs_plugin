@@ -380,14 +380,14 @@ struct CallingView: View {
                 ShareScreenIndicator(
                     buttonLabel: viewModel.localizationProvider.getLocalizedString(LocalizationKey.stopShareScreenTitle),
                     iconName: CompositeIcon.stopShareIcon,
-                    paddings: ShareScreenIndicator.Paddings(horizontal: 16, vertical: 10),
+                    paddings: ShareScreenIndicator.Paddings(horizontal: 8, vertical: 10),
                     themeOptions: ThemeColor(),
                     onTap: {
                         viewModel.requestStopScreenSharing()
                     }
                 )
                     
-                .frame(width: 152, height: 40)
+                .frame(width: 102, height: 40)
                 Spacer()
             }
             .padding(.bottom, 110)

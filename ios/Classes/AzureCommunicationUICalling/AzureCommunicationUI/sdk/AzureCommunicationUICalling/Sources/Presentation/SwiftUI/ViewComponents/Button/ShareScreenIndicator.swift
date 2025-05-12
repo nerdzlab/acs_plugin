@@ -56,7 +56,7 @@ struct ShareScreenIndicator: UIViewRepresentable {
         // Set title
         button.setTitle(label, for: .normal)
         button.setTitleColor(themeOptions.primaryColor, for: .normal)
-        button.titleLabel?.font = AppFont.CircularStd.bold.uiFont(size: 16)
+        button.titleLabel?.font = AppFont.CircularStd.bold.uiFont(size: 14)
         
         // Background and border
         button.backgroundColor = .white
@@ -93,10 +93,10 @@ struct ShareScreenIndicator: UIViewRepresentable {
                 top: 1,
                 left: (button.titleLabel?.intrinsicContentSize.width ?? 0) + 4,
                 bottom: 1,
-                right: -((button.titleLabel?.intrinsicContentSize.width ?? 0) + 8)
+                right: -((button.titleLabel?.intrinsicContentSize.width ?? 0) + 4)
             )
             
-            button.titleEdgeInsets = UIEdgeInsets(top: 0, left: -25, bottom: 0, right: 20)
+            button.titleEdgeInsets = UIEdgeInsets(top: 0, left: -40, bottom: 0, right: 5)
         }
         
         // Padding
