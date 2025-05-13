@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:acs_plugin_example/constants.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -43,32 +44,32 @@ class _CallScreenState extends State<CallScreen> {
   // Configuration constants - move to a config file in a real app
   String get _acsToken {
     if (isRealDevice) {
-      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNy0zZmM4LTUxMGEtOTE4ZS1hZjNhMGQwMGFmMmUiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDcwNjUzMTQiLCJleHAiOjE3NDcxNTE3MTQsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiODY3YTVkYzAtYmNkZi00ZGM3LTg2MGYtM2ZjMzNkMmEzZmVlIiwicmVzb3VyY2VMb2NhdGlvbiI6Im5vcndheSIsImlhdCI6MTc0NzA2NTMxNH0.tdcm9qyWkz0Fq8zbWuEM6XQnX0pL-PF51B_pJBeJpy_A5KTDmO6yHOgCIJnyzun7svA9urs4_xYZH_Yam1zy1PnspzkOQclG34ENWO-y-RCZEcFRt7NM9VtrKkuMatvecFuKcvYF5WLeDlKCzHC_fdTMUOJHnxoDK1GPELx0bkklN3heRQwACk5R_WoR9DQrI5pOoP7kZs2ZENEnN-KA1ucUfaockjKNCzUDikjw6Fuw4cKRdPeHEcHLq4XGkiQbr6V6b8VSO3lTZcFeVcZxi-cyrGCox3JanvTf7vPeKBx0hxSz1Lnu9dRgm2dsduqQ7iJ51M1HTdKH-uiAvqrjNw";
+      return Constants.userOneToken;
     } else {
-      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi05MWFmLWU3YWEtM2Y4Mi1hZjNhMGQwMGIzZDIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDcwMjkzMDUiLCJleHAiOjE3NDcxMTU3MDUsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDcwMjkzMDV9.v1f0KXqWWjH--SUdvRSEWyPE4AMoNqRPsS6MTpkesEsbV7V852zz0zdpW_tHljXxkCVVs5B4kuqD0p6X5j2RKswYEFoNqpX3oSr7GYi0TJPNboxAh4Diz45IB4pdlYTJTDRfTwJczLwRKhDLoGnhNSklsijMhGe53CBAPgTCwN4mX-CYupchxuhPBpgCeS--TIQMx2PPmBTN7b8P3FgECuDVx35MCqxBb0YRVCNXhAsEFTsD1Z0iGRJU8lrflz6Pf3TzBppqawssfMnqK76LIpaU9lfke9tEsTErrQAqqQkKniVoeu5uE6x_dbtksuU8ey-n4Zsk1Sj6fSlqeLB6Ag";
+      return Constants.userTwoToken;
     }
   }
 
-  static const String _roomId = "99594083154089769";
-  static const _appGroupIdentifier = "group.acsPluginExample";
-  static const _extensionBubdleId =
-      "com.example.acsPluginExample.ScreenBroadcast";
-  static const String _endpoint = "";
-  static const String _threadId = "";
+  static const String _roomId = Constants.roomId;
+  static const _appGroupIdentifier = Constants.appGroupIdentifier;
+  static const _extensionBundleId = Constants.extensionBundleId;
+
+  static const String _endpoint = Constants.enpoint;
+  static const String _threadId = Constants.threadId;
 
   String get _userId {
     if (isRealDevice) {
-      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000027-3fc8-510a-918e-af3a0d00af2e";
+      return Constants.userOneId;
     } else {
-      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000026-91af-e7aa-3f82-af3a0d00b3d2";
+      return Constants.userTwoId;
     }
   }
 
   String get _otherUserId {
     if (isRealDevice) {
-      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000026-91af-e7aa-3f82-af3a0d00b3d2";
+      return Constants.userTwoId;
     } else {
-      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000026-71d2-b1be-a7ac-473a0d0006c2";
+      return Constants.userOneId;
     }
   }
 
@@ -230,7 +231,7 @@ class _CallScreenState extends State<CallScreen> {
     try {
       await _acsPlugin.setBroadcastExtensionData(
         appGroupIdentifier: _appGroupIdentifier,
-        extensionBubdleId: _extensionBubdleId,
+        extensionBubdleId: _extensionBundleId,
       );
       log('Set broadcast extension data successfully');
       _shwoSnacBar('Set broadcast data successfully');
