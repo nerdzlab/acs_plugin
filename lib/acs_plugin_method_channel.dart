@@ -123,4 +123,18 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       'returnToCall',
     );
   }
+
+  @override
+  Future<void> setupChat({
+    required String endpoint,
+    required String threadId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'setupChat',
+      {
+        'endpoint': endpoint,
+        'threadId': threadId,
+      },
+    );
+  }
 }

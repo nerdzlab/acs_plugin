@@ -13,7 +13,7 @@ import AzureCommunicationCalling
 import AzureCommunicationCommon
 import PushKit
 
-class BroadcastExtensionHandler: MethodHandler {
+final class BroadcastExtensionHandler: MethodHandler {
     
     private var logger: Logger = DefaultLogger(category: "Calling")
     

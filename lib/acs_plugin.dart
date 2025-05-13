@@ -80,6 +80,17 @@ class AcsPlugin {
     await AcsPluginPlatform.instance.returnToCall();
   }
 
+  // Need to show call ui
+  Future<void> setupChat({
+    required String endpoint,
+    required String threadId,
+  }) async {
+    await AcsPluginPlatform.instance.setupChat(
+      endpoint: endpoint,
+      threadId: threadId,
+    );
+  }
+
 // Stream to listen for events
   Stream<Map<String, dynamic>> get eventStream {
     return AcsPluginPlatform.instance.eventStream;

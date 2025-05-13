@@ -75,6 +75,13 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('returnToCall() has not been implemented.');
   }
 
+  Future<void> setupChat({
+    required String endpoint,
+    required String threadId,
+  }) async {
+    throw UnimplementedError('setupChat() has not been implemented.');
+  }
+
   Stream<Map<String, dynamic>> get eventStream {
     throw UnimplementedError('eventStream has not been implemented.');
   }

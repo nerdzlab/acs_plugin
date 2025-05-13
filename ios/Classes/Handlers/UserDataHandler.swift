@@ -6,13 +6,10 @@
 //
 
 import Flutter
-import ReplayKit
-import UIKit
 import AzureCommunicationCalling
 import AzureCommunicationCommon
-import PushKit
 
-class UserDataHandler: MethodHandler {
+final class UserDataHandler: MethodHandler {
     
     struct UserData {
         let token: String
@@ -99,5 +96,9 @@ class UserDataHandler: MethodHandler {
         GlobalCompositeManager.callComposite = callComposite
         
         return callComposite
+    }
+    
+    func getUserData() -> UserData? {
+        return userData
     }
 }

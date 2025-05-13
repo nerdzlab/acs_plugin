@@ -24,6 +24,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     private var callHandler: CallHandler!
     private var broadcastExtensionHandler: BroadcastExtensionHandler!
     private var userDataHandler: UserDataHandler!
+    private var chatHandler: ChatHandler!
     private var handlers: [MethodHandler] = []
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -92,7 +93,17 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             }
         )
         
-        handlers = [callHandler, userDataHandler, broadcastExtensionHandler]
+        chatHandler = ChatHandler(
+            channel: channel,
+            onGetUserData: { [weak self] in
+                self?.userDataHandler.getUserData()
+            },
+            onSendEvent: { [weak self] event in
+                self?.sendEvent(event)
+            }
+        )
+        
+        handlers = [callHandler, userDataHandler, broadcastExtensionHandler, chatHandler]
     }
     
     private func setupPushKit() {

@@ -53,6 +53,8 @@ class _CallScreenState extends State<CallScreen> {
   static const _appGroupIdentifier = "group.acsPluginExample";
   static const _extensionBubdleId =
       "com.example.acsPluginExample.ScreenBroadcast";
+  static const String _endpoint = "";
+  static const String _threadId = "";
 
   String get _userId {
     if (isRealDevice) {
@@ -238,6 +240,20 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  Future<void> _setupChat() async {
+    try {
+      await _acsPlugin.setupChat(
+        endpoint: _endpoint,
+        threadId: _threadId,
+      );
+      log('Chat initialized successfully');
+      _shwoSnacBar('Chat initialized successfully');
+    } on PlatformException catch (error) {
+      log('Failed to initialize chat: ${error.message}');
+      _shwoSnacBar('Failed to initialize chat: ${error.message}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -273,6 +289,11 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'One on One call',
                   onTap: _startOneOnOneCall,
+                  icon: Icons.mic,
+                ),
+                ButtonConfig(
+                  label: 'Setup chat',
+                  onTap: _setupChat,
                   icon: Icons.mic,
                 ),
               ]),

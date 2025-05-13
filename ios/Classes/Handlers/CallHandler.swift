@@ -8,7 +8,7 @@ import Flutter
 import AzureCommunicationCalling
 import AzureCommunicationCommon
 
-class CallHandler: MethodHandler {
+final class CallHandler: MethodHandler {
     private enum Constants {
         enum FlutterEvents {
             static let onShowChat = "onShowChat"
