@@ -102,6 +102,10 @@ class _CallScreenState extends State<CallScreen> {
 
       case 'onPluginStarted':
         _shwoSnacBar("Plugin started");
+
+      case 'onUserCallEnded':
+        _shwoSnacBar("User ended call");
+
       default:
         log('Unhandled event type: $eventName');
         break;

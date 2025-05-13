@@ -181,6 +181,7 @@ protocol CompositeViewModelFactoryProtocol {
                                        isDisabled: Bool,
                                        paddings: AppCompositeButton.Paddings?,
                                        action: @escaping (() -> Void)) -> AppPrimaryButtonViewModel
+    func userTriggerEndCall()
 }
 
 extension CompositeViewModelFactoryProtocol {
