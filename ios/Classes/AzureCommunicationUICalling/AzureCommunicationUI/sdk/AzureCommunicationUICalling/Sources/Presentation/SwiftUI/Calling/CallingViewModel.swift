@@ -145,6 +145,7 @@ internal class CallingViewModel: ObservableObject {
         leaveCallConfirmationViewModel = compositeViewModelFactory.makeLeaveCallConfirmationViewModel(
             endCall: {
                 store.dispatch(action: .callingAction(.callEndRequested))
+                compositeViewModelFactory.userTriggerEndCall()
             }, dismissConfirmation: {
                 store.dispatch(action: .hideDrawer)
             }

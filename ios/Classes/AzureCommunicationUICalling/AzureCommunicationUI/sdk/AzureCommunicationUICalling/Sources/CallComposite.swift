@@ -49,8 +49,10 @@ public class CallComposite {
         public var onStartScreenSharing: (() -> Void)?
         /// Closure to stop screen share
         public var onStopScreenSharing: (() -> Void)?
-        /// Closure to stop screen share
+        /// Closure to start plugin
         public var onPluginStarted: (() -> Void)?
+        /// Closure on room call ended
+        public var onUserCallEnded: (() -> Void)?
         /* <CALL_START_TIME>
         /// Closure to call start time updated.
         public var onCallStartTimeUpdated: ((Date) -> Void)?

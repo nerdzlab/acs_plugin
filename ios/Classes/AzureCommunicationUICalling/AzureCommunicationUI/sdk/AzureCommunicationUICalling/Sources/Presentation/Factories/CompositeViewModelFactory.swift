@@ -660,4 +660,8 @@ extension CompositeViewModelFactory {
     func makeJoiningCallActivityViewModel() -> JoiningCallActivityViewModel {
         JoiningCallActivityViewModel(title: self.localizationProvider.getLocalizedString(LocalizationKey.joiningCall))
     }
+    
+    func userTriggerEndCall() {
+        events.onUserCallEnded?()
+    }
 }
