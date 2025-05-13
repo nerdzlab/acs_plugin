@@ -6,6 +6,8 @@ package com.acs_plugin.calling.presentation.fragment.setup
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
@@ -23,6 +25,8 @@ import com.acs_plugin.calling.presentation.fragment.setup.components.PreviewArea
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarView
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupParticipantAvatarView
 import com.acs_plugin.calling.presentation.fragment.setup.components.ToolbarView
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 internal class SetupFragment :
     Fragment(R.layout.azure_communication_ui_calling_fragment_setup) {
@@ -99,6 +103,11 @@ internal class SetupFragment :
 
         userNameInput = view.findViewById(R.id.setup_user_name_edit_text)
         setupUserNameInput()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getHideUserNameInputFlow().collect {
+                hideUserNameInput(it)
+            }
+        }
 
         viewModel.setupCall()
     }
@@ -138,5 +147,9 @@ internal class SetupFragment :
             setText(viewModel.displayName.orEmpty())
             doOnTextChanged { text, _, _, _ -> viewModel.onUserNameChanged(text.toString().trim()) }
         }
+    }
+
+    private fun hideUserNameInput(isHide: Boolean) {
+        userNameInput.visibility = if (isHide) GONE else VISIBLE
     }
 }

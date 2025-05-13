@@ -29,6 +29,7 @@ internal class JoinCallButtonHolderViewModel(
     private lateinit var joinCallButtonEnabledFlow: MutableStateFlow<Boolean>
     private var disableJoinCallButtonFlow = MutableStateFlow(false)
     private lateinit var networkManager: NetworkManager
+    private var onStartCallBtnClicked: () -> Unit = {}
 
     fun getJoinCallButtonEnabledFlow(): StateFlow<Boolean> = joinCallButtonEnabledFlow
 
@@ -46,6 +47,7 @@ internal class JoinCallButtonHolderViewModel(
         } else if (!normalAudioMode && !isTelecomManagerEnabled) {
             handleMicrophoneUnavailability()
         } else {
+            onStartCallBtnClicked.invoke()
             dispatch(CallingAction.CallStartRequested())
             disableJoinCallButtonFlow.value = true
         }
@@ -56,7 +58,8 @@ internal class JoinCallButtonHolderViewModel(
         cameraPermissionState: PermissionStatus,
         cameraOperationalStatus: CameraOperationalStatus,
         camerasCount: Int,
-        networkManager: NetworkManager
+        networkManager: NetworkManager,
+        onStartCallBtnClicked: () -> Unit
     ) {
         joinCallButtonEnabledFlow =
             MutableStateFlow(
@@ -66,6 +69,7 @@ internal class JoinCallButtonHolderViewModel(
             )
         disableJoinCallButtonFlow.value = false
         this.networkManager = networkManager
+        this.onStartCallBtnClicked = onStartCallBtnClicked
     }
 
     fun update(

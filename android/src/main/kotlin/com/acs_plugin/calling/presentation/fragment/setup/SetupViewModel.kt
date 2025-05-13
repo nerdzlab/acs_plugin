@@ -14,6 +14,8 @@ import com.acs_plugin.calling.redux.action.NavigationAction
 import com.acs_plugin.calling.redux.state.AudioFocusStatus
 import com.acs_plugin.calling.redux.state.ReduxState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 internal class SetupViewModel(
     store: Store<ReduxState>,
@@ -33,6 +35,10 @@ internal class SetupViewModel(
 
     val displayName: String?
         get() = store.getCurrentState().localParticipantState.displayName
+
+    private var hideUserNameInputFlow = MutableStateFlow(false)
+    fun getHideUserNameInputFlow(): StateFlow<Boolean> = hideUserNameInputFlow
+
 
     fun setupCall() {
         dispatchAction(action = CallingAction.SetupCall())
@@ -81,7 +87,8 @@ internal class SetupViewModel(
             state.permissionState.cameraPermissionState,
             state.localParticipantState.cameraState.operation,
             state.localParticipantState.cameraState.camerasCount,
-            networkManager
+            networkManager,
+            onStartCallBtnClicked = { hideUserNameInputFlow.value = true }
         )
 
         super.init(coroutineScope)

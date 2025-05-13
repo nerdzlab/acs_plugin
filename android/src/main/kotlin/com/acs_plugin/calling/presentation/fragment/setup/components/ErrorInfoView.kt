@@ -107,7 +107,7 @@ internal class ErrorInfoView(private val rootView: View) {
             animationMode = ANIMATION_MODE_FADE
             setAction(rootView.context!!.getText(R.string.azure_communication_ui_calling_snack_bar_button_dismiss)) {}
             anchorView =
-                rootView.findViewById(R.id.azure_communication_ui_setup_join_call_button)
+                rootView.findViewById(R.id.setup_join_call_button)
             view.background.colorFilter = PorterDuffColorFilter(
                 ContextCompat.getColor(
                     rootView.context,
