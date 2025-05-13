@@ -17,7 +17,7 @@ public class ChatAdapter {
         /// Closure to execute when Chat Composite UI is hidden and receive new message
         var onUnreadMessagesCountChanged: ((Int) -> Void)?
         /// Closure to execute when Chat Composite UI is hidden and receive new message
-        var onNewMessageReceived: ((ChatMessageModel) -> Void)?
+        var onNewMessageReceived: ((ChatMessageInfoModel) -> Void)?
     }
 
     /// The events handler for Chat Composite

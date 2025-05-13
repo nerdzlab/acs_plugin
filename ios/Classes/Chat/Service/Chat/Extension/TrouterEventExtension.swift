@@ -18,7 +18,9 @@ extension ChatMessageReceivedEvent {
             senderDisplayName: self.senderDisplayName,
             content: self.message,
             createdOn: self.createdOn,
-            isLocalUser: self.sender != nil && self.sender?.rawId == localUserId)
+            isLocalUser: self.sender != nil && self.sender?.rawId == localUserId,
+            metadata: self.metadata
+        )
     }
 }
 
@@ -33,7 +35,9 @@ extension ChatMessageEditedEvent {
             content: self.message,
             createdOn: self.createdOn,
             editedOn: self.editedOn,
-            isLocalUser: self.sender != nil && self.sender?.rawId == localUserId)
+            isLocalUser: self.sender != nil && self.sender?.rawId == localUserId,
+            metadata: self.metadata
+        )
     }
 }
 
@@ -47,7 +51,9 @@ extension ChatMessageDeletedEvent {
             senderDisplayName: self.senderDisplayName,
             createdOn: self.createdOn,
             deletedOn: self.deletedOn,
-            isLocalUser: self.sender != nil && self.sender?.rawId == localUserId)
+            isLocalUser: self.sender != nil && self.sender?.rawId == localUserId,
+            metadata: [:]
+        )
     }
 }
 

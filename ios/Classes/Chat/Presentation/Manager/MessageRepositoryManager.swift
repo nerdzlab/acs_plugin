@@ -150,7 +150,8 @@ class MessageRepositoryManager: MessageRepositoryManagerProtocol {
         let topicUpdatedSystemMessage = ChatMessageInfoModel(
             type: .topicUpdated,
             content: topic,
-            createdOn: chatThreadInfo.receivedOn
+            createdOn: chatThreadInfo.receivedOn,
+            metadata: [:]
         )
         messages.append(topicUpdatedSystemMessage)
     }
@@ -159,7 +160,8 @@ class MessageRepositoryManager: MessageRepositoryManagerProtocol {
         let localUserRemovedSystemMessage = ChatMessageInfoModel(
             type: .participantsRemoved,
             createdOn: Iso8601Date(),
-            isLocalUser: true
+            isLocalUser: true,
+            metadata: [:]
         )
         messages.append(localUserRemovedSystemMessage)
     }

@@ -45,6 +45,7 @@ struct ChatMessageInfoModel: BaseInfoModel, Identifiable, Equatable, Hashable {
     var deletedOn: Iso8601Date?
     var sendStatus: MessageSendStatus?
     var isLocalUser: Bool
+    var metadata: [String: String?]?
 
     // for participant added/removed only
     var participants: [ChatParticipantInfoModel]
@@ -60,7 +61,9 @@ struct ChatMessageInfoModel: BaseInfoModel, Identifiable, Equatable, Hashable {
          deletedOn: Iso8601Date? = nil,
          participants: [ChatParticipantInfoModel] = [],
          sendStatus: MessageSendStatus? = nil,
-         isLocalUser: Bool = false) {
+         isLocalUser: Bool = false,
+         metadata: [String: String?]?
+    ) {
         self.id = id ?? UUID().uuidString
         self.version = version
         self.type = type
@@ -79,6 +82,7 @@ struct ChatMessageInfoModel: BaseInfoModel, Identifiable, Equatable, Hashable {
         self.participants = participants
         self.sendStatus = sendStatus
         self.isLocalUser = isLocalUser
+        self.metadata = metadata
     }
 
     mutating func replace(id: String) {
@@ -208,23 +212,23 @@ extension ChatMessageInfoModel {
     }
 }
 
-extension ChatMessageInfoModel {
-    func toChatMessage() -> ChatMessageModel {
-        return ChatMessageModel(
-            id: self.id,
-            content: self.content ?? "not available",
-            senderId: self.senderId ?? "",
-            senderDisplayName: self.senderDisplayName ?? "")
-    }
-}
+//extension ChatMessageInfoModel {
+//    func toChatMessage() -> ChatMessageModel {
+//        return ChatMessageModel(
+//            id: self.id,
+//            content: self.content ?? "not available",
+//            senderId: self.senderId ?? "",
+//            senderDisplayName: self.senderDisplayName ?? "")
+//    }
+//}
 
-// To be public for event handlers
-struct ChatMessageModel {
-    let id: String
-    let content: String
-    let senderId: String
-    let senderDisplayName: String
-}
+//// To be public for event handlers
+//struct ChatMessageModel {
+//    let id: String
+//    let content: String
+//    let senderId: String
+//    let senderDisplayName: String
+//}
 
 extension Iso8601Date {
     var dayOfYear: Int {

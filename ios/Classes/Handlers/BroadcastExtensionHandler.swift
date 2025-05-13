@@ -40,7 +40,7 @@ final class BroadcastExtensionHandler: MethodHandler {
     
     private let channel: FlutterMethodChannel
     private let onGetllComposite: () -> CallComposite?
-    private let onSendEvent: (String) -> Void
+    private let onSendEvent: (Event) -> Void
     
     private var client: Client!
     private var broadcastExtensionData: BroadcastExtensionData?
@@ -56,7 +56,7 @@ final class BroadcastExtensionHandler: MethodHandler {
     init(
         channel: FlutterMethodChannel,
         onGetllComposite: @escaping () -> CallComposite?,
-        onSendEvent: @escaping (String) -> Void
+        onSendEvent: @escaping (Event) -> Void
     ) {
         self.channel = channel
         self.onGetllComposite = onGetllComposite
@@ -110,7 +110,7 @@ final class BroadcastExtensionHandler: MethodHandler {
         DarwinNotificationCenter.shared.subscribe(.startBroadcast, observer: self) { [weak self] in
             guard let self = self else { return }
             
-            self.onSendEvent(Constants.FlutterEvents.onStartScreenShare)
+            self.onSendEvent(Event(name: Constants.FlutterEvents.onStartScreenShare))
             
             guard let broadcastExtensionData = broadcastExtensionData else {
                 return
@@ -131,7 +131,7 @@ final class BroadcastExtensionHandler: MethodHandler {
             guard let self = self else { return }
             
             self.client.stop()
-            self.onSendEvent(Constants.FlutterEvents.onStopScreenShare)
+            self.onSendEvent(Event(name: Constants.FlutterEvents.onStopScreenShare))
             
             guard let callComposite = self.onGetllComposite() else { return }
             

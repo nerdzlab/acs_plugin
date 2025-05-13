@@ -50,6 +50,14 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  String get _chatToken {
+    return Constants.chatUserToken;
+  }
+
+  String get _chatUserId {
+    return Constants.chatUserId;
+  }
+
   static const String _roomId = Constants.roomId;
   static const _appGroupIdentifier = Constants.appGroupIdentifier;
   static const _extensionBundleId = Constants.extensionBundleId;
@@ -213,9 +221,9 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _setUserData() async {
     try {
       await _acsPlugin.setUserData(
-        token: _acsToken,
+        token: _chatToken,
         name: "Yra",
-        userId: _userId,
+        userId: _chatUserId,
       );
       log('Set user data successfully');
       _shwoSnacBar('Set user data successfully');

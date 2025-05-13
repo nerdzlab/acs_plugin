@@ -27,7 +27,7 @@ final class CallHandler: MethodHandler {
     
     private let channel: FlutterMethodChannel
     private let onGetllComposite: () -> CallComposite?
-    private let onSendEvent: (String) -> Void
+    private let onSendEvent: (Event) -> Void
     
     private var isRealDevice: Bool {
 #if targetEnvironment(simulator)
@@ -40,7 +40,7 @@ final class CallHandler: MethodHandler {
     init(
         channel: FlutterMethodChannel,
         onGetllComposite: @escaping () -> CallComposite?,
-        onSendEvent: @escaping (String) -> Void
+        onSendEvent: @escaping (Event) -> Void
     ) {
         self.channel = channel
         self.onGetllComposite = onGetllComposite
@@ -133,25 +133,25 @@ final class CallHandler: MethodHandler {
         callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted
         
         let showChatEvent: () -> Void = { [weak self] in
-            self?.onSendEvent(Constants.FlutterEvents.onShowChat)
+            self?.onSendEvent(Event(name: Constants.FlutterEvents.onShowChat))
         }
         
         callComposite.events.onShowUserChat = showChatEvent
         
         let callCompositDismissed: ((CallCompositeDismissed) -> Void)? = { [weak self] _ in
-            self?.onSendEvent(Constants.FlutterEvents.onCallUIClosed)
+            self?.onSendEvent(Event(name: Constants.FlutterEvents.onCallUIClosed))
         }
         
         callComposite.events.onDismissed = callCompositDismissed
         
         let onPluginStarted: () -> Void = { [weak self] in
-            self?.onSendEvent(Constants.FlutterEvents.onPluginStarted)
+            self?.onSendEvent(Event(name: Constants.FlutterEvents.onPluginStarted))
         }
         
         callComposite.events.onPluginStarted = onPluginStarted
         
         let onUserCallEnded: () -> Void = { [weak self] in
-            self?.onSendEvent(Constants.FlutterEvents.onUserCallEnded)
+            self?.onSendEvent(Event(name: Constants.FlutterEvents.onUserCallEnded))
         }
         
         callComposite.events.onUserCallEnded = onUserCallEnded

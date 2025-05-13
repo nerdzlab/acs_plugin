@@ -144,7 +144,9 @@ class RepositoryMiddlewareHandler: RepositoryMiddlewareHandling {
                     senderDisplayName: displayName,
                     content: content,
                     sendStatus: .sending,
-                    isLocalUser: true)
+                    isLocalUser: true,
+                    metadata: [:]
+                )
                 messageRepository.addNewSendingMessage(message: message)
                 dispatch(.repositoryAction(.repositoryUpdated))
             }
@@ -233,7 +235,9 @@ class RepositoryMiddlewareHandler: RepositoryMiddlewareHandling {
             let message = ChatMessageInfoModel(
                 type: .participantsAdded,
                 createdOn: Iso8601Date(),
-                participants: filteredParticipants)
+                participants: filteredParticipants,
+                metadata: [:]
+            )
             messageRepository.addParticipantAdded(message: message)
             dispatch(.repositoryAction(.repositoryUpdated))
         }
@@ -245,7 +249,9 @@ class RepositoryMiddlewareHandler: RepositoryMiddlewareHandling {
             let message = ChatMessageInfoModel(
                 type: .participantsRemoved,
                 createdOn: Iso8601Date(),
-                participants: participants)
+                participants: participants,
+                metadata: [:]
+            )
             messageRepository.addParticipantRemoved(message: message)
             dispatch(.repositoryAction(.repositoryUpdated))
         }

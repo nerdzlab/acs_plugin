@@ -13,6 +13,24 @@ class GlobalCompositeManager {
     static var callComposite: CallComposite?
 }
 
+public struct Event {
+    let name: String
+    let payload: Any?
+
+    init(name: String, payload: Any? = nil) {
+        self.name = name
+        self.payload = payload
+    }
+
+    func toMap() -> [String: Any] {
+        var map: [String: Any] = ["event": name]
+        if let payload = payload {
+            map["payload"] = payload
+        }
+        return map
+    }
+}
+
 public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     
     public static var shared: AcsPlugin = AcsPlugin()
@@ -43,7 +61,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         
         shared.setupPushKit()
     }
-
+    
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         for handler in handlers {
             if handler.handle(call: call, result: result) {
@@ -231,12 +249,8 @@ extension AcsPlugin: FlutterStreamHandler {
         }
     }
     
-    public func sendEvent(_ event: String) {
+    public func sendEvent(_ event: Event) {
         guard let eventSink = eventSink else { return }
-        
-        let eventData: [String: Any?] = [
-            "event": event,
-        ]
-        eventSink(eventData)
+        eventSink(event.toMap())
     }
 }
