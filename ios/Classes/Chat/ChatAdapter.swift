@@ -13,13 +13,6 @@ public class ChatAdapter {
     public class Events {
         /// Closure to execute when error event occurs inside Chat Composite.
         public var onError: ((ChatCompositeError) -> Void)?
-        /// Closures to execute when participant has joined a chat inside Chat Composite.
-        var onRemoteParticipantJoined: (([CommunicationIdentifier]) -> Void)?
-        /// Closure to execute when Chat Composite UI is hidden and receive new message
-        var onUnreadMessagesCountChanged: ((Int) -> Void)?
-        /// Closure to execute when Chat Composite UI is hidden and receive new message
-        var onNewMessageReceived: ((ChatMessageInfoModel) -> Void)?
-        
         /// Closure to execute when the real-time notification connection is established.
         var onRealTimeNotificationConnected: (() -> Void)?
         /// Closure to execute when the real-time notification connection is disconnected.
