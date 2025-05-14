@@ -19,20 +19,20 @@ protocol ChatServiceProtocol {
     func sendReadReceipt(messageId: String) async throws
     func sendTypingIndicator() async throws
 
-    var chatEventSubject: PassthroughSubject<ChatEventModel, Never> { get }
+    var chatEventSubject: PassthroughSubject<ChatEventModel, Never>? { get }
 }
 
 class ChatService: NSObject, ChatServiceProtocol {
     private let logger: Logger
     private let chatSDKWrapper: ChatSDKWrapperProtocol
 
-    var chatEventSubject: PassthroughSubject<ChatEventModel, Never>
+    var chatEventSubject: PassthroughSubject<ChatEventModel, Never>?
 
     init(logger: Logger,
          chatSDKWrapper: ChatSDKWrapperProtocol ) {
         self.logger = logger
         self.chatSDKWrapper = chatSDKWrapper
-        self.chatEventSubject = chatSDKWrapper.chatEventsHandler.chatEventSubject
+//        self.chatEventSubject = chatSDKWrapper.chatEventsHandler.chatEventSubject
     }
 
     func initialize() async throws {

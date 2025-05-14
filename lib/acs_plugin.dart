@@ -1,6 +1,68 @@
+import 'dart:async';
+
+import 'package:acs_plugin/acs_plugin_error.dart';
+import 'package:acs_plugin/chat_models/chat_message_edited_event.dart';
+import 'package:acs_plugin/chat_models/chat_message_received_event.dart';
+import 'package:acs_plugin/chat_models/chat_messge_deleted_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_created_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_deleted_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_properties_updated_event.dart';
+import 'package:acs_plugin/chat_models/event.dart';
+import 'package:acs_plugin/chat_models/event_type.dart';
+import 'package:acs_plugin/chat_models/participants_added_event.dart';
+import 'package:acs_plugin/chat_models/participants_removed_event.dart';
+import 'package:acs_plugin/chat_models/read_receipt_received_event.dart';
+import 'package:acs_plugin/chat_models/typing_indicator_receivedEvent.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
 import 'acs_plugin_platform_interface.dart';
+import 'dart:developer';
 
 class AcsPlugin {
+  StreamSubscription? _eventsSubscription;
+
+  VoidCallback? onStopScreenShare;
+  VoidCallback? onStartScreenShare;
+  VoidCallback? onShowChat;
+  VoidCallback? onCallUIClosed;
+  VoidCallback? onPluginStarted;
+  VoidCallback? onUserCallEnded;
+  VoidCallback? onRealTimeNotificationConnected;
+  VoidCallback? onRealTimeNotificationDisconnected;
+
+  Function(ChatMessageReceivedEvent)? onChatMessageReceived;
+  Function(TypingIndicatorReceivedEvent)? onTypingIndicatorReceived;
+  Function(ReadReceiptReceivedEvent)? onReadReceiptReceived;
+  Function(ChatMessageEditedEvent)? onChatMessageEdited;
+  Function(ChatMessageDeletedEvent)? onChatMessageDeleted;
+  Function(ChatThreadCreatedEvent)? onChatThreadCreated;
+  Function(ChatThreadPropertiesUpdatedEvent)? onChatThreadPropertiesUpdated;
+  Function(ChatThreadDeletedEvent)? onChatThreadDeleted;
+  Function(ParticipantsAddedEvent)? onParticipantsAdded;
+  Function(ParticipantsRemovedEvent)? onParticipantsRemoved;
+  Function(ACSPluginError error)? onError;
+
+  init() {
+    _eventsSubscription = eventStream.listen(
+      (dynamic data) {
+        final event = switch (data) {
+          Map<String, dynamic> map => Event.fromMap(map),
+          Map map => Event.fromMap(Map<String, dynamic>.from(map)),
+          _ => Event(type: EventType.unknown, payload: data),
+        };
+
+        _handleEvent(event);
+      },
+      onError: _handleError,
+      cancelOnError: false,
+    );
+  }
+
+  dispose() {
+    _eventsSubscription?.cancel();
+  }
+
   Future<String?> getPlatformVersion() {
     return AcsPluginPlatform.instance.getPlatformVersion();
   }
@@ -80,7 +142,6 @@ class AcsPlugin {
     await AcsPluginPlatform.instance.returnToCall();
   }
 
-  // Need to show call ui
   Future<void> setupChat({
     required String endpoint,
     required String threadId,
@@ -91,8 +152,154 @@ class AcsPlugin {
     );
   }
 
+  Future<void> disconnectChat() async {
+    await AcsPluginPlatform.instance.disconnectChat();
+  }
+
 // Stream to listen for events
   Stream<Map<String, dynamic>> get eventStream {
     return AcsPluginPlatform.instance.eventStream;
+  }
+
+  void _handleEvent(Event event) {
+    switch (event.type) {
+      case EventType.onStopScreenShare:
+        log("Screen sharing stopped");
+        onStopScreenShare?.call();
+        break;
+      case EventType.onStartScreenShare:
+        log("Screen sharing started");
+        onStartScreenShare?.call();
+        break;
+      case EventType.onShowChat:
+        log("Show chat triggered");
+        onShowChat?.call();
+        break;
+      case EventType.onCallUIClosed:
+        log("Call UI closed");
+        onCallUIClosed?.call();
+        break;
+      case EventType.onPluginStarted:
+        log("Plugin started");
+        onPluginStarted?.call();
+        break;
+      case EventType.onUserCallEnded:
+        log("User call ended");
+        onUserCallEnded?.call();
+        break;
+      case EventType.onRealTimeNotificationConnected:
+        log("Real-time notification connected");
+        onRealTimeNotificationConnected?.call();
+        break;
+      case EventType.onRealTimeNotificationDisconnected:
+        log("Real-time notification disconnected");
+        onRealTimeNotificationDisconnected?.call();
+        break;
+      case EventType.onChatMessageReceived:
+        log("Chat message received: ${event.payload}");
+        if (event.payload != null) {
+          final model = ChatMessageReceivedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onChatMessageReceived?.call(model);
+        }
+        break;
+      case EventType.onTypingIndicatorReceived:
+        log("Typing indicator received: ${event.payload}");
+        if (event.payload != null) {
+          final model = TypingIndicatorReceivedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onTypingIndicatorReceived?.call(model);
+        }
+        break;
+      case EventType.onReadReceiptReceived:
+        log("Read receipt received: ${event.payload}");
+        if (event.payload != null) {
+          final model = ReadReceiptReceivedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onReadReceiptReceived?.call(model);
+        }
+        break;
+      case EventType.onChatMessageEdited:
+        log("Chat message edited: ${event.payload}");
+        if (event.payload != null) {
+          final model = ChatMessageEditedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onChatMessageEdited?.call(model);
+        }
+        break;
+      case EventType.onChatMessageDeleted:
+        log("Chat message deleted: ${event.payload}");
+        if (event.payload != null) {
+          final model = ChatMessageDeletedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onChatMessageDeleted?.call(model);
+        }
+        break;
+      case EventType.onChatThreadCreated:
+        log("Chat thread created: ${event.payload}");
+        if (event.payload != null) {
+          final model = ChatThreadCreatedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onChatThreadCreated?.call(model);
+        }
+        break;
+      case EventType.onChatThreadPropertiesUpdated:
+        log("Chat thread properties updated: ${event.payload}");
+        if (event.payload != null) {
+          final model = ChatThreadPropertiesUpdatedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onChatThreadPropertiesUpdated?.call(model);
+        }
+        break;
+      case EventType.onChatThreadDeleted:
+        log("Chat thread deleted: ${event.payload}");
+        if (event.payload != null) {
+          final model = ChatThreadDeletedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onChatThreadDeleted?.call(model);
+        }
+        break;
+      case EventType.onParticipantsAdded:
+        log("Participants added: ${event.payload}");
+        if (event.payload != null) {
+          final model = ParticipantsAddedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onParticipantsAdded?.call(model);
+        }
+        break;
+      case EventType.onParticipantsRemoved:
+        log("Participants removed: ${event.payload}");
+        if (event.payload != null) {
+          final model = ParticipantsRemovedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onParticipantsRemoved?.call(model);
+        }
+        break;
+      case EventType.unknown:
+        log("Unknown event: ${event.payload}");
+        break;
+    }
+  }
+
+  _handleError(dynamic error) {
+    ACSPluginError acsError;
+
+    if (error is PlatformException) {
+      acsError = ACSPluginError(
+        code: error.code,
+        message: error.message,
+        details: error.details,
+      );
+      log('Platform error: $acsError');
+    } else {
+      acsError = ACSPluginError(
+        code: 'unknown',
+        message: error.toString(),
+        details: null,
+      );
+      log('Non-platform error: $acsError');
+    }
+
+    onError?.call(acsError);
   }
 }

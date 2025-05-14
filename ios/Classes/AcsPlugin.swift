@@ -250,7 +250,9 @@ extension AcsPlugin: FlutterStreamHandler {
     }
     
     public func sendEvent(_ event: Event) {
-        guard let eventSink = eventSink else { return }
-        eventSink(event.toMap())
+        DispatchQueue.main.async {
+            guard let eventSink = self.eventSink else { return }
+            eventSink(event.toMap())
+        }
     }
 }

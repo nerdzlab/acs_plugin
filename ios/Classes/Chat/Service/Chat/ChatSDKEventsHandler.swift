@@ -10,112 +10,71 @@ import Foundation
 
 protocol ChatSDKEventsHandling {
     func handle(response: TrouterEvent)
-    var chatEventSubject: PassthroughSubject<ChatEventModel, Never> { get }
 }
 
 class ChatSDKEventsHandler: NSObject, ChatSDKEventsHandling {
     private let logger: Logger
-    private let threadId: String
-    private let localUserId: CommunicationIdentifier
-
-    var chatEventSubject = PassthroughSubject<ChatEventModel, Never>()
-
-    init(logger: Logger,
-         threadId: String,
-         localUserId: CommunicationIdentifier) {
+    private let chatCompositeEventsHandler: ChatAdapter.Events
+    
+    init(
+        logger: Logger,
+        chatCompositeEventsHandler: ChatAdapter.Events
+    ) {
         self.logger = logger
-        self.threadId = threadId
-        self.localUserId = localUserId
+        self.chatCompositeEventsHandler = chatCompositeEventsHandler
     }
 
     // swiftlint:disable function_body_length
     func handle(response: TrouterEvent) {
-        var eventModel: ChatEventModel?
         switch response {
         case .realTimeNotificationConnected:
             logger.info("Received a RealTimeNotificationConnected event")
-            eventModel = ChatEventModel(
-                eventType: .realTimeNotificationConnected)
+            chatCompositeEventsHandler.onRealTimeNotificationConnected?()
+            
         case .realTimeNotificationDisconnected:
             logger.info("Received a RealTimeNotificationDisconnected event")
-            eventModel = ChatEventModel(
-                eventType: .realTimeNotificationDisconnected)
+            chatCompositeEventsHandler.onRealTimeNotificationDisconnected?()
+            
         case let .chatMessageReceivedEvent(event):
-            eventModel = ChatEventModel(
-                eventType: .chatMessageReceived,
-                infoModel: event.toChatMessageInfoModel(localUserId: localUserId.rawId),
-                threadId: event.threadId)
+            logger.info("Received a chatMessageReceivedEvent")
+            chatCompositeEventsHandler.onChatMessageReceived?(event)
+            
         case let .chatMessageEdited(event):
-            eventModel = ChatEventModel(
-                eventType: .chatMessageEdited,
-                infoModel: event.toChatMessageInfoModel(localUserId: localUserId.rawId),
-                threadId: event.threadId)
+            logger.info("Received a chatMessageEdited")
+            chatCompositeEventsHandler.onChatMessageEdited?(event)
+            
         case let .chatMessageDeleted(event):
-            eventModel = ChatEventModel(
-                eventType: .chatMessageDeleted,
-                infoModel: event.toChatMessageInfoModel(localUserId: localUserId.rawId),
-                threadId: event.threadId)
+            logger.info("Received a chatMessageDeleted")
+            chatCompositeEventsHandler.onChatMessageDeleted?(event)
+            
         case let .typingIndicatorReceived(event):
-            guard event.threadId == self.threadId,
-                  let userEventTimestamp = event.toUserEventTimestampModel(),
-                    userEventTimestamp.id != localUserId.stringValue else {
-                return
-            }
-            eventModel = ChatEventModel(eventType: .typingIndicatorReceived,
-                                        infoModel: userEventTimestamp,
-                                        threadId: event.threadId)
+            logger.info("Received a typingIndicatorReceived")
+            chatCompositeEventsHandler.onTypingIndicatorReceived?(event)
+            
         case let .readReceiptReceived(event):
-            eventModel = ChatEventModel(eventType: .readReceiptReceived,
-                                        infoModel: event.toReadReceiptInfoModel(),
-                                        threadId: event.threadId)
+            logger.info("Received a readReceiptReceived")
+            chatCompositeEventsHandler.onReadReceiptReceived?(event)
+            
         case let .chatThreadDeleted(event):
-            eventModel = ChatEventModel(
-                eventType: .chatThreadDeleted,
-                infoModel: event.toChatThreadInfoModel(),
-                threadId: event.threadId)
+            logger.info("Received a chatThreadDeleted")
+            chatCompositeEventsHandler.onChatThreadDeleted?(event)
+            
         case let .chatThreadPropertiesUpdated(event):
-            eventModel = ChatEventModel(
-                eventType: .chatThreadPropertiesUpdated,
-                infoModel: event.toChatThreadInfoModel(),
-                threadId: event.threadId)
+            logger.info("Received a chatThreadPropertiesUpdated")
+            chatCompositeEventsHandler.onChatThreadPropertiesUpdated?(event)
+            
         case let .participantsAdded(event):
-            guard let participants = event.participantsAdded else {
-                return
-            }
-            eventModel = ChatEventModel(
-                eventType: .participantsAdded,
-                infoModel: event.toParticipantsInfo(participantsAdded: participants,
-                                                    localParticipantId: localUserId.rawId),
-                threadId: event.threadId)
+            logger.info("Received a participantsAdded")
+            chatCompositeEventsHandler.onParticipantsAdded?(event)
+            
         case let .participantsRemoved(event):
-            guard let participants = event.participantsRemoved else {
-                return
-            }
-            eventModel = ChatEventModel(
-                eventType: .participantsRemoved,
-                infoModel: event.toParticipantsInfo(participantsRemoved: participants,
-                                                    localParticipantId: localUserId.rawId),
-                threadId: event.threadId)
-        default:
-            logger.info("Event received will not handled \(response)")
-            return
+            logger.info("Received a participantsRemoved")
+            chatCompositeEventsHandler.onParticipantsRemoved?(event)
+            
+        case let .chatThreadCreated(event):
+            logger.info("Received a chatThreadCreated")
+            chatCompositeEventsHandler.onChatThreadCreated?(event)
         }
-
-        guard let chatEventModel = eventModel,
-              isChatClientEvent(chatEventModel) ||
-               isLocalChatThread(chatEventModel)
-        else {
-            return
-        }
-        chatEventSubject.send(chatEventModel)
     }
     // swiftlint:enable function_body_length
-
-    func isChatClientEvent(_ eventModel: ChatEventModel) -> Bool {
-        return eventModel.threadId == nil
-    }
-
-    func isLocalChatThread(_ eventModel: ChatEventModel) -> Bool {
-        return eventModel.threadId == self.threadId
-    }
 }

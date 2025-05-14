@@ -4,6 +4,7 @@
 //
 
 import AzureCommunicationCommon
+import AzureCommunicationChat
 
 /// This class represents the data-layer components of the Chat Composite.
 public class ChatAdapter {
@@ -18,6 +19,31 @@ public class ChatAdapter {
         var onUnreadMessagesCountChanged: ((Int) -> Void)?
         /// Closure to execute when Chat Composite UI is hidden and receive new message
         var onNewMessageReceived: ((ChatMessageInfoModel) -> Void)?
+        
+        /// Closure to execute when the real-time notification connection is established.
+        var onRealTimeNotificationConnected: (() -> Void)?
+        /// Closure to execute when the real-time notification connection is disconnected.
+        var onRealTimeNotificationDisconnected: (() -> Void)?
+        /// Closure to execute when a new chat message is received.
+        var onChatMessageReceived: ((ChatMessageReceivedEvent) -> Void)?
+        /// Closure to execute when a typing indicator is received.
+        var onTypingIndicatorReceived: ((TypingIndicatorReceivedEvent) -> Void)?
+        /// Closure to execute when a read receipt is received.
+        var onReadReceiptReceived: ((ReadReceiptReceivedEvent) -> Void)?
+        /// Closure to execute when a chat message is edited.
+        var onChatMessageEdited: ((ChatMessageEditedEvent) -> Void)?
+        /// Closure to execute when a chat message is deleted.
+        var onChatMessageDeleted: ((ChatMessageDeletedEvent) -> Void)?
+        /// Closure to execute when a new chat thread is created.
+        var onChatThreadCreated: ((ChatThreadCreatedEvent) -> Void)?
+        /// Closure to execute when a chat thread's properties are updated.
+        var onChatThreadPropertiesUpdated: ((ChatThreadPropertiesUpdatedEvent) -> Void)?
+        /// Closure to execute when a chat thread is deleted.
+        var onChatThreadDeleted: ((ChatThreadDeletedEvent) -> Void)?
+        /// Closure to execute when participants are added to a chat thread.
+        var onParticipantsAdded: ((ParticipantsAddedEvent) -> Void)?
+        /// Closure to execute when participants are removed from a chat thread.
+        var onParticipantsRemoved: ((ParticipantsRemovedEvent) -> Void)?
     }
 
     /// The events handler for Chat Composite
@@ -28,6 +54,7 @@ public class ChatAdapter {
     var compositeViewFactory: ChatCompositeViewFactoryProtocol?
 
     private var chatConfiguration: ChatConfiguration
+    private var chatSDKWrapper: ChatSDKWrapper?
     private var errorManager: ChatErrorManagerProtocol?
     private var lifeCycleManager: ChatLifeCycleManagerProtocol?
     private var compositeManager: CompositeManagerProtocol?
@@ -108,11 +135,10 @@ public class ChatAdapter {
     ) {
         let eventHandler = ChatSDKEventsHandler(
             logger: logger,
-            threadId: chatThreadId,
-            localUserId: chatConfiguration.identifier
+            chatCompositeEventsHandler: events
         )
 
-        let chatSdk = ChatSDKWrapper(
+        chatSDKWrapper = ChatSDKWrapper(
             logger: logger,
             chatEventsHandler: eventHandler,
             chatConfiguration: chatConfiguration,
@@ -127,7 +153,7 @@ public class ChatAdapter {
             logger: logger,
             chatService: ChatService(
                 logger: logger,
-                chatSDKWrapper: chatSdk
+                chatSDKWrapper: chatSDKWrapper!
             ),
             messageRepository: repositoryManager,
             chatConfiguration: chatConfiguration,

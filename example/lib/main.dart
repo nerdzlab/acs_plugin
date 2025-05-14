@@ -1,5 +1,16 @@
 import 'dart:developer';
 
+import 'package:acs_plugin/acs_plugin_error.dart';
+import 'package:acs_plugin/chat_models/chat_message_edited_event.dart';
+import 'package:acs_plugin/chat_models/chat_message_received_event.dart';
+import 'package:acs_plugin/chat_models/chat_messge_deleted_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_created_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_deleted_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_properties_updated_event.dart';
+import 'package:acs_plugin/chat_models/participants_added_event.dart';
+import 'package:acs_plugin/chat_models/participants_removed_event.dart';
+import 'package:acs_plugin/chat_models/read_receipt_received_event.dart';
+import 'package:acs_plugin/chat_models/typing_indicator_receivedEvent.dart';
 import 'package:acs_plugin_example/constants.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -38,8 +49,6 @@ class CallScreen extends StatefulWidget {
 class _CallScreenState extends State<CallScreen> {
   final _acsPlugin = AcsPlugin();
   bool isRealDevice = false;
-
-  StreamSubscription? _eventsSubscription;
 
   // Configuration constants - move to a config file in a real app
   String get _acsToken {
@@ -86,13 +95,8 @@ class _CallScreenState extends State<CallScreen> {
     super.initState();
     _setBroadcastExtensionData();
     _setDeviceType();
-
-    // Subscribe to event stream
-    _eventsSubscription = _acsPlugin.eventStream.listen(
-      _handleEvent,
-      onError: _handleError,
-      cancelOnError: false,
-    );
+    _subscribeToEvents();
+    _acsPlugin.init();
   }
 
   _setDeviceType() async {
@@ -100,55 +104,75 @@ class _CallScreenState extends State<CallScreen> {
     _setUserData();
   }
 
-// Handle incoming events
-  _handleEvent(dynamic event) {
-    final String eventName = event['event'];
-
-    switch (eventName) {
-      case 'onShowChat':
-        _shwoSnacBar("Show chat");
-
-      case 'onCallUIClosed':
+  _subscribeToEvents() {
+    _acsPlugin
+      ..onCallUIClosed = () {
+        log("Call UI closed");
         _shwoSnacBar("Call ui closed");
-
-      case 'onPluginStarted':
+      }
+      ..onStopScreenShare = () {
+        log("Screen sharing stopped");
+      }
+      ..onStartScreenShare = () {
+        log("Screen sharing started");
+      }
+      ..onShowChat = () {
+        log("Show chat triggered");
+        _shwoSnacBar("Show chat");
+      }
+      ..onPluginStarted = () {
+        log("Plugin started");
         _shwoSnacBar("Plugin started");
-
-      case 'onUserCallEnded':
+      }
+      ..onUserCallEnded = () {
+        log("User call ended");
         _shwoSnacBar("User ended call");
-
-      default:
-        log('Unhandled event type: $eventName');
-        break;
-    }
-  }
-
-  // Handle stream errors
-  _handleError(dynamic error) {
-    if (error is PlatformException) {
-      log('Error code: ${error.code}');
-      log('Error message: ${error.message}');
-      log('Error details: ${error.details}');
-
-      _handlePlatformError(error);
-    } else {
-      log('Non-platform error: $error');
-    }
-  }
-
-// Handle platform-specific errors
-  _handlePlatformError(PlatformException error) {
-    switch (error.code) {
-      default:
-        log('Unhandled error code: ${error.code}');
-        // Handle other errors
-        break;
-    }
+      }
+      ..onRealTimeNotificationConnected = () {
+        log("Real-time notification connected");
+      }
+      ..onRealTimeNotificationDisconnected = () {
+        log("Real-time notification disconnected");
+      }
+      ..onChatMessageReceived = (ChatMessageReceivedEvent event) {
+        log("Chat message received: ${event.toJson()}");
+      }
+      ..onTypingIndicatorReceived = (TypingIndicatorReceivedEvent event) {
+        log("Typing indicator received: ${event.toJson()}");
+      }
+      ..onReadReceiptReceived = (ReadReceiptReceivedEvent event) {
+        log("Read receipt received: ${event.toJson()}");
+      }
+      ..onChatMessageEdited = (ChatMessageEditedEvent event) {
+        log("Chat message edited: ${event.toJson()}");
+      }
+      ..onChatMessageDeleted = (ChatMessageDeletedEvent event) {
+        log("Chat message deleted: ${event.toJson()}");
+      }
+      ..onChatThreadCreated = (ChatThreadCreatedEvent event) {
+        log("Chat thread created: ${event.toJson()}");
+      }
+      ..onChatThreadPropertiesUpdated =
+          (ChatThreadPropertiesUpdatedEvent event) {
+        log("Chat thread properties updated: ${event.toJson()}");
+      }
+      ..onChatThreadDeleted = (ChatThreadDeletedEvent event) {
+        log("Chat thread deleted: ${event.toJson()}");
+      }
+      ..onParticipantsAdded = (ParticipantsAddedEvent event) {
+        log("Participants added: ${event.toJson()}");
+      }
+      ..onParticipantsRemoved = (ParticipantsRemovedEvent event) {
+        log("Participants removed: ${event.toJson()}");
+      }
+      ..onError = (ACSPluginError error) {
+        log("Received error: ${error.toString()}");
+      };
   }
 
   @override
   dispose() {
-    _eventsSubscription?.cancel();
+    _acsPlugin.dispose();
     super.dispose();
   }
 
@@ -263,6 +287,17 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  Future<void> _disconnectChat() async {
+    try {
+      await _acsPlugin.disconnectChat();
+      log('Chat disconnected successfully');
+      _shwoSnacBar('Chat disconnected successfully');
+    } on PlatformException catch (error) {
+      log('Failed to disconnected chat: ${error.message}');
+      _shwoSnacBar('Failed to disconnected chat: ${error.message}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -303,7 +338,12 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'Setup chat',
                   onTap: _setupChat,
-                  icon: Icons.mic,
+                  icon: Icons.message,
+                ),
+                ButtonConfig(
+                  label: 'Disconnect chat',
+                  onTap: _disconnectChat,
+                  icon: Icons.message,
                 ),
               ]),
             ],

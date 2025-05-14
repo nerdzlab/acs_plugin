@@ -137,4 +137,11 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       },
     );
   }
+
+  @override
+  Future<void> disconnectChat() async {
+    await methodChannel.invokeMethod(
+      'disconnectChat',
+    );
+  }
 }

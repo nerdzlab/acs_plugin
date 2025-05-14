@@ -17,6 +17,7 @@ final class ChatHandler: MethodHandler {
     private enum Constants {
         enum MethodChannels {
             static let setupChat = "setupChat"
+            static let disconnectChat = "disconnectChat"
         }
         
         enum FlutterEvents {
@@ -24,6 +25,19 @@ final class ChatHandler: MethodHandler {
             static let onRemoteParticipantJoined = "onRemoteParticipantJoined"
             static let onUnreadMessagesCountChanged = "onUnreadMessagesCountChanged"
             static let onNewMessageReceived = "onNewMessageReceived"
+            
+            static let onRealTimeNotificationConnected = "onRealTimeNotificationConnected"
+            static let onRealTimeNotificationDisconnected = "onRealTimeNotificationDisconnected"
+            static let onChatMessageReceived = "onChatMessageReceived"
+            static let onTypingIndicatorReceived = "onTypingIndicatorReceived"
+            static let onReadReceiptReceived = "onReadReceiptReceived"
+            static let onChatMessageEdited = "onChatMessageEdited"
+            static let onChatMessageDeleted = "onChatMessageDeleted"
+            static let onChatThreadCreated = "onChatThreadCreated"
+            static let onChatThreadPropertiesUpdated = "onChatThreadPropertiesUpdated"
+            static let onChatThreadDeleted = "onChatThreadDeleted"
+            static let onParticipantsAdded = "onParticipantsAdded"
+            static let onParticipantsRemoved = "onParticipantsRemoved"
         }
     }
     
@@ -58,6 +72,11 @@ final class ChatHandler: MethodHandler {
             
             return true
             
+        case Constants.MethodChannels.disconnectChat:
+            disconnectChat(result: result)
+            
+            return true
+            
         default:
             return false
         }
@@ -81,6 +100,7 @@ final class ChatHandler: MethodHandler {
                 )
                 
                 try await chatAdapter?.connect()
+                self.subscribeToChatEvents()
                 
                 result("Chat connected")
             } catch {
@@ -106,57 +126,134 @@ final class ChatHandler: MethodHandler {
     }
     
     private func subscribeToChatEvents() {
-        let onChatError: (ChatCompositeError) -> Void = { [weak self] error in
+        // Listening for when the real-time notification connection is established
+        chatAdapter?.events.onRealTimeNotificationConnected = { [weak self] in
             self?.onSendEvent(
                 Event(
-                    name: Constants.FlutterEvents.onChatError,
-                    payload: [
-                        "code": error.code,
-                        "message": error.error?.localizedDescription ?? ""
-                    ]
+                    name: Constants.FlutterEvents.onRealTimeNotificationConnected
                 )
             )
         }
         
-        chatAdapter?.events.onError = onChatError
-        
-        let onRemoteParticipantJoined: ([CommunicationIdentifier]) -> Void = { [weak self] participants in
-            let participantIds = participants.map { $0.rawId }
+        // Listening for when the real-time notification connection is disconnected
+        chatAdapter?.events.onRealTimeNotificationDisconnected = { [weak self] in
             self?.onSendEvent(
                 Event(
-                    name: Constants.FlutterEvents.onRemoteParticipantJoined,
-                    payload: participantIds
+                    name: Constants.FlutterEvents.onRealTimeNotificationDisconnected
                 )
             )
         }
         
-        chatAdapter?.events.onRemoteParticipantJoined = onRemoteParticipantJoined
-        
-        let onUnreadMessagesCountChanged: (Int) -> Void = { [weak self] count in
+        // Listening for a new chat message received
+        chatAdapter?.events.onChatMessageReceived = { [weak self] event in
             self?.onSendEvent(
                 Event(
-                    name: Constants.FlutterEvents.onUnreadMessagesCountChanged,
-                    payload: count
+                    name: Constants.FlutterEvents.onChatMessageReceived,
+                    payload: event.toJson()
                 )
             )
         }
         
-        chatAdapter?.events.onUnreadMessagesCountChanged = onUnreadMessagesCountChanged
-        
-        let onNewMessageReceived: (ChatMessageInfoModel) -> Void = { [weak self] message in
+        // Listening for a typing indicator received
+        chatAdapter?.events.onTypingIndicatorReceived = { [weak self] event in
             self?.onSendEvent(
                 Event(
-                    name:Constants.FlutterEvents.onNewMessageReceived,
-                    payload: [
-                        "id": message.id,
-                        "content": message.content,
-                        "senderDisplayName": message.senderDisplayName,
-                        "createdOn": message.createdOn
-                    ]
+                    name: Constants.FlutterEvents.onTypingIndicatorReceived,
+                    payload: event.toJson()
                 )
             )
         }
         
-        chatAdapter?.events.onNewMessageReceived = onNewMessageReceived
+        // Listening for a read receipt received
+        chatAdapter?.events.onReadReceiptReceived = { [weak self] event in
+            self?.onSendEvent(
+                Event(
+                    name: Constants.FlutterEvents.onReadReceiptReceived,
+                    payload: event.toJson()
+                )
+            )
+        }
+        
+        // Listening for a chat message edited
+        chatAdapter?.events.onChatMessageEdited = { [weak self] event in
+            self?.onSendEvent(
+                Event(
+                    name: Constants.FlutterEvents.onChatMessageEdited,
+                    payload: event.toJson()
+                )
+            )
+        }
+        
+        // Listening for a chat message deleted
+        chatAdapter?.events.onChatMessageDeleted = { [weak self] event in
+            self?.onSendEvent(
+                Event(
+                    name: Constants.FlutterEvents.onChatMessageDeleted,
+                    payload: event.toJson()
+                )
+            )
+        }
+        
+        // Listening for a new chat thread created
+        chatAdapter?.events.onChatThreadCreated = { [weak self] event in
+            self?.onSendEvent(
+                Event(
+                    name: Constants.FlutterEvents.onChatThreadCreated,
+                    payload: event.toJson()
+                )
+            )
+        }
+        
+        // Listening for a chat thread properties updated
+        chatAdapter?.events.onChatThreadPropertiesUpdated = { [weak self] event in
+            self?.onSendEvent(
+                Event(
+                    name: Constants.FlutterEvents.onChatThreadPropertiesUpdated,
+                    payload: event.toJson()
+                )
+            )
+        }
+        
+        // Listening for a chat thread deleted
+        chatAdapter?.events.onChatThreadDeleted = { [weak self] event in
+            self?.onSendEvent(
+                Event(
+                    name: Constants.FlutterEvents.onChatThreadDeleted,
+                    payload: event.toJson()
+                )
+            )
+        }
+        
+        // Listening for participants added to a chat thread
+        chatAdapter?.events.onParticipantsAdded = { [weak self] event in
+            self?.onSendEvent(
+                Event(
+                    name: Constants.FlutterEvents.onParticipantsAdded,
+                    payload: event.toJson()
+                )
+            )
+        }
+        
+        // Listening for participants removed from a chat thread
+        chatAdapter?.events.onParticipantsRemoved = { [weak self] event in
+            self?.onSendEvent(
+                Event(
+                    name: Constants.FlutterEvents.onParticipantsRemoved,
+                    payload: event.toJson()
+                )
+            )
+        }
+    }
+    
+    private func disconnectChat(result: @escaping FlutterResult) {
+        Task {
+            do {
+                try await chatAdapter?.disconnect()
+                
+                result("Chat disconnected")
+            } catch {
+                handleChatError(error, result: result)
+            }
+        }
     }
 }

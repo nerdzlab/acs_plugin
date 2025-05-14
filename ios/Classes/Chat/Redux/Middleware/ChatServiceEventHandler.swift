@@ -24,7 +24,7 @@ class ChatServiceEventHandler: ChatServiceEventHandling {
     func subscription(dispatch: @escaping ChatActionDispatch) {
         logger.debug("Subscribe to chat service subjects")
 
-        chatService.chatEventSubject
+        chatService.chatEventSubject?
             .sink { [weak self] chatEvent in
                 let eventType = chatEvent.eventType
                 let infoModel = chatEvent.infoModel
