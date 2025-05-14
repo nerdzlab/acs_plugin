@@ -214,6 +214,14 @@ internal class CallingService(
         return callingSdk.setCaptionsCaptionLanguage(language)
     }
 
+    fun turnBlurOn(): CompletableFuture<Void> {
+        return callingSdk.turnOnBlur()
+    }
+
+    fun turnBlurOff(): CompletableFuture<Void> {
+        return callingSdk.turnOffBlur()
+    }
+
     fun getCaptionsSupportedSpokenLanguagesSharedFlow(): SharedFlow<List<String>> {
         return callingSdk.getCaptionsSupportedSpokenLanguagesSharedFlow()
     }

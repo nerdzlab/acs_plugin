@@ -12,10 +12,14 @@ public final class CallCompositeSetupScreenOptions {
 
     private Boolean cameraButtonEnabled = null;
     private Boolean micButtonEnabled = null;
+    private Boolean cameraSwitchButtonEnabled = null;
+    private Boolean blurButtonEnabled = null;
 
     private CallCompositeButtonViewData cameraButton;
     private CallCompositeButtonViewData micButton;
     private CallCompositeButtonViewData audioDeviceButton;
+    private CallCompositeButtonViewData blurButton;
+    private CallCompositeButtonViewData cameraSwitchButton;
 
     /**
      * Creates {@link CallCompositeSetupScreenOptions}.
@@ -66,6 +70,42 @@ public final class CallCompositeSetupScreenOptions {
     }
 
     /**
+     * Set blur button enabled on the setup screen.
+     * @param enabled true if the blur button should be enabled.
+     * @return This CallCompositeSetupScreenOptions instance.
+     */
+    public CallCompositeSetupScreenOptions setBlurButtonEnabled(final Boolean enabled) {
+        this.blurButtonEnabled = enabled;
+        return this;
+    }
+
+    /**
+     * Check if blur button is enabled on the setup screen.
+     * @return true if enabled, false otherwise.
+     */
+    public Boolean isBlurButtonEnabled() {
+        return this.blurButtonEnabled;
+    }
+
+    /**
+     * Set camera switch button enabled on the setup screen.
+     * @param enabled true if the camera switch button should be enabled.
+     * @return This CallCompositeSetupScreenOptions instance.
+     */
+    public CallCompositeSetupScreenOptions setCameraSwitchButtonEnabled(final Boolean enabled) {
+        this.cameraSwitchButtonEnabled = enabled;
+        return this;
+    }
+
+    /**
+     * Check if camera switch button is enabled on the setup screen.
+     * @return true if enabled, false otherwise.
+     */
+    public Boolean isCameraSwitchButtonEnabled() {
+        return this.cameraSwitchButtonEnabled;
+    }
+
+    /**
      * Set customization to the camera button.
      * @param buttonOptions {@link CallCompositeButtonViewData}
      */
@@ -113,5 +153,41 @@ public final class CallCompositeSetupScreenOptions {
      */
     public CallCompositeButtonViewData getAudioDeviceButton() {
         return audioDeviceButton;
+    }
+
+    /**
+     * Sets the blur button on the setup screen.
+     * @param button The button configuration.
+     * @return This CallCompositeSetupScreenOptions instance.
+     */
+    public CallCompositeSetupScreenOptions setBlurButton(final CallCompositeButtonViewData button) {
+        this.blurButton = button;
+        return this;
+    }
+
+    /**
+     * Gets the blur button on the setup screen.
+     * @return The blur button configuration.
+     */
+    public CallCompositeButtonViewData getBlurButton() {
+        return this.blurButton;
+    }
+
+    /**
+     * Sets the camera switch button on the setup screen.
+     * @param button The button configuration.
+     * @return This CallCompositeSetupScreenOptions instance.
+     */
+    public CallCompositeSetupScreenOptions setCameraSwitchButton(final CallCompositeButtonViewData button) {
+        this.cameraSwitchButton = button;
+        return this;
+    }
+
+    /**
+     * Gets the camera switch button on the setup screen.
+     * @return The camera switch button configuration.
+     */
+    public CallCompositeButtonViewData getCameraSwitchButton() {
+        return this.cameraSwitchButton;
     }
 }

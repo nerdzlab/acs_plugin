@@ -109,11 +109,23 @@ internal class UpdatableOptionsManager(
             cameraButton?.setVisibleChangedEventHandler {
                 store.dispatch(ButtonViewDataAction.SetupScreenCameraButtonIsVisibleUpdated(it))
             }
+            cameraSwitchButton?.setEnabledChangedEventHandler {
+                store.dispatch(ButtonViewDataAction.SetupScreenCameraSwitchButtonIsEnabledUpdated(it))
+            }
+            cameraSwitchButton?.setVisibleChangedEventHandler {
+                store.dispatch(ButtonViewDataAction.SetupScreenCameraSwitchButtonIsVisibleUpdated(it))
+            }
             microphoneButton?.setEnabledChangedEventHandler {
                 store.dispatch(ButtonViewDataAction.SetupScreenMicButtonIsEnabledUpdated(it))
             }
             microphoneButton?.setVisibleChangedEventHandler {
                 store.dispatch(ButtonViewDataAction.SetupScreenMicButtonIsVisibleUpdated(it))
+            }
+            blurButton?.setEnabledChangedEventHandler {
+                store.dispatch(ButtonViewDataAction.SetupScreenBlurButtonIsEnabledUpdated(it))
+            }
+            blurButton?.setVisibleChangedEventHandler {
+                store.dispatch(ButtonViewDataAction.SetupScreenBlurButtonIsVisibleUpdated(it))
             }
             audioDeviceButton?.setEnabledChangedEventHandler {
                 store.dispatch(ButtonViewDataAction.SetupScreenAudioDeviceButtonIsEnabledUpdated(it))

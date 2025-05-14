@@ -74,6 +74,18 @@ internal class ButtonViewDataReducerImpl : ButtonViewDataReducer {
             is ButtonViewDataAction.SetupScreenMicButtonIsVisibleUpdated -> {
                 state.copy(setupScreenMicButtonState = state.setupScreenMicButtonState?.copy(isVisible = action.isVisible))
             }
+            is ButtonViewDataAction.SetupScreenCameraSwitchButtonIsEnabledUpdated -> {
+                state.copy(setupScreenCameraButtonState = state.setupScreenCameraSwitchButtonState?.copy(isEnabled = action.isEnabled))
+            }
+            is ButtonViewDataAction.SetupScreenCameraSwitchButtonIsVisibleUpdated -> {
+                state.copy(setupScreenCameraButtonState = state.setupScreenCameraSwitchButtonState?.copy(isVisible = action.isVisible))
+            }
+            is ButtonViewDataAction.SetupScreenBlurButtonIsEnabledUpdated -> {
+                state.copy(setupScreenMicButtonState = state.setupScreenBlurButtonState?.copy(isEnabled = action.isEnabled))
+            }
+            is ButtonViewDataAction.SetupScreenBlurButtonIsVisibleUpdated -> {
+                state.copy(setupScreenMicButtonState = state.setupScreenBlurButtonState?.copy(isVisible = action.isVisible))
+            }
             is ButtonViewDataAction.SetupScreenAudioDeviceButtonIsEnabledUpdated -> {
                 state.copy(setupScreenAudioDeviceButtonState = state.setupScreenAudioDeviceButtonState?.copy(isEnabled = action.isEnabled))
             }

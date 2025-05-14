@@ -45,7 +45,8 @@ internal class AppReduxState(
             CameraState(
                 operation = CameraOperationalStatus.OFF,
                 device = CameraDeviceSelectionStatus.FRONT,
-                transmission = CameraTransmissionStatus.LOCAL
+                transmission = CameraTransmissionStatus.LOCAL,
+                blurStatus = BlurStatus.OFF
             ),
             AudioState(
                 operation = AudioOperationalStatus.OFF,
@@ -153,6 +154,14 @@ internal class AppReduxState(
         setupScreenMicButtonState = DefaultButtonState(
             isEnabled = localOptions?.setupScreenOptions?.microphoneButton?.isEnabled,
             isVisible = localOptions?.setupScreenOptions?.microphoneButton?.isVisible,
+        ),
+        setupScreenBlurButtonState = DefaultButtonState(
+            isEnabled = localOptions?.setupScreenOptions?.blurButton?.isEnabled,
+            isVisible = localOptions?.setupScreenOptions?.blurButton?.isVisible,
+        ),
+        setupScreenCameraSwitchButtonState = DefaultButtonState(
+            isEnabled = localOptions?.setupScreenOptions?.cameraSwitchButton?.isEnabled,
+            isVisible = localOptions?.setupScreenOptions?.cameraSwitchButton?.isVisible,
         ),
         callScreenCustomButtonsState = localOptions?.callScreenOptions?.controlBarOptions?.customButtons?.map {
             CustomButtonState(

@@ -12,6 +12,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
 import com.acs_plugin.calling.redux.state.AudioOperationalStatus
+import com.acs_plugin.calling.redux.state.BlurStatus
 import com.acs_plugin.calling.redux.state.CameraOperationalStatus
 import com.acs_plugin.extension.onSingleClickListener
 import kotlinx.coroutines.launch
@@ -42,7 +43,7 @@ internal class SetupControlBarView : LinearLayout {
 
         micButton.onSingleClickListener { toggleAudio() }
         cameraButton.onSingleClickListener { toggleVideo() }
-        cameraSwitchButton.onSingleClickListener { viewModel.switchCamera() }
+        cameraSwitchButton.onSingleClickListener { viewModel.switchCamera(context) }
         cameraBlurButton.onSingleClickListener { toggleBlur() }
         audioDeviceButton.onSingleClickListener { viewModel.audioDeviceClicked(context) }
     }
@@ -74,6 +75,12 @@ internal class SetupControlBarView : LinearLayout {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.cameraState.collect {
                 setCameraButtonState(it)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.blurState.collect {
+                setBlurButtonState(it)
             }
         }
 
@@ -140,6 +147,15 @@ internal class SetupControlBarView : LinearLayout {
         }
     }
 
+    private fun setBlurButtonState(status: BlurStatus) {
+        cameraBlurButton.apply {
+            when (status) {
+                BlurStatus.ON -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_blur))
+                BlurStatus.OFF -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_blur_off))
+            }
+        }
+    }
+
     private fun toggleAudio() {
         if (isMicOn) {
             viewModel.turnMicOff(context)
@@ -160,9 +176,9 @@ internal class SetupControlBarView : LinearLayout {
 
     private fun toggleBlur() {
         if (isBlurOn) {
-            viewModel.turnBlurOff()
+            viewModel.turnBlurOff(context)
         } else {
-            viewModel.turnBlurOn()
+            viewModel.turnBlurOn(context)
         }
         isBlurOn = !isBlurOn
     }

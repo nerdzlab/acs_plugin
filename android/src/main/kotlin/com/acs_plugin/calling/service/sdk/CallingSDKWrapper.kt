@@ -41,6 +41,8 @@ import com.acs_plugin.calling.redux.state.CameraOperationalStatus
 import com.acs_plugin.calling.redux.state.CameraState
 import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.calling.utilities.toJavaUtil
+import com.azure.android.communication.calling.BackgroundBlurEffect
+import com.azure.android.communication.calling.LocalVideoEffectsFeature
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 /*  <CALL_START_TIME>
@@ -606,6 +608,34 @@ internal class CallingSDKWrapper(
             }
         }
         return resultFuture
+    }
+
+    override fun turnOnBlur(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            val nativeStream = localVideoStreamCompletableFuture?.get()?.native as? NativeLocalVideoStream
+            val feature = nativeStream?.feature(Features.LOCAL_VIDEO_EFFECTS)
+            feature?.enableEffect(BackgroundBlurEffect())
+        } catch (e: Exception) {
+            logger?.error("Error enabling blur effect", e)
+        }
+
+        return completableFuture
+    }
+
+    override fun turnOffBlur(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            val nativeStream = localVideoStreamCompletableFuture?.get()?.native as? NativeLocalVideoStream
+            val feature = nativeStream?.feature(Features.LOCAL_VIDEO_EFFECTS)
+            feature?.disableEffect(BackgroundBlurEffect())
+        } catch (e: Exception) {
+            logger?.error("Error disabling blur effect", e)
+        }
+
+        return completableFuture
     }
     //endregion
 

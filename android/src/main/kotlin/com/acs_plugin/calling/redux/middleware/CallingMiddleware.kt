@@ -74,6 +74,12 @@ internal class CallingMiddlewareImpl(
                 is LocalParticipantAction.AudioStateOperationUpdated -> {
                     callingMiddlewareActionHandler.onUpdateAudioStateOperation(action.audioOperationalStatus, store)
                 }
+                is LocalParticipantAction.BlurPreviewOnTriggered -> {
+                    callingMiddlewareActionHandler.turnBlurOn(store)
+                }
+                is LocalParticipantAction.BlurPreviewOffTriggered -> {
+                    callingMiddlewareActionHandler.turnBlurOff(store)
+                }
                 is CallingAction.HoldRequested -> {
                     callingMiddlewareActionHandler.hold(store)
                 }

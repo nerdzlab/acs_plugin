@@ -109,6 +109,8 @@ internal interface CallingMiddlewareActionHandler {
         audioOperationalStatus: AudioOperationalStatus,
         store: Store<ReduxState>
     )
+    fun turnBlurOn(store: Store<ReduxState>)
+    fun turnBlurOff(store: Store<ReduxState>)
 }
 
 internal class CallingMiddlewareActionHandlerImpl(
@@ -966,6 +968,34 @@ internal class CallingMiddlewareActionHandlerImpl(
         if (audioOperationalStatus == AudioOperationalStatus.OFF) {
             store.dispatch(ToastNotificationAction.DismissNotification(ToastNotificationKind.UNMUTED))
             store.dispatch(ToastNotificationAction.ShowNotification(ToastNotificationKind.MUTED))
+        }
+    }
+
+    override fun turnBlurOn(store: Store<ReduxState>) {
+        callingService.turnBlurOn().whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.BlurOnFailed(
+                        CallCompositeError(ErrorCode.ENABLE_BLUR_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.BlurOnSucceeded)
+            }
+        }
+    }
+
+    override fun turnBlurOff(store: Store<ReduxState>) {
+        callingService.turnBlurOff().whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.BlurOffFailed(
+                        CallCompositeError(ErrorCode.DISABLE_BLUR_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.BlurOffSucceeded)
+            }
         }
     }
 

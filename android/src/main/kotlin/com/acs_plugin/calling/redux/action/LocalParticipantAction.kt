@@ -75,4 +75,12 @@ internal sealed class LocalParticipantAction : Action {
     class RoleChanged(val participantRole: ParticipantRole?) : LocalParticipantAction()
 
     class SetCapabilities(val capabilities: Set<ParticipantCapabilityType>) : LocalParticipantAction()
+
+    class BlurPreviewOnTriggered : LocalParticipantAction()
+    object BlurOnSucceeded : LocalParticipantAction()
+    data class BlurOnFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class BlurPreviewOffTriggered : LocalParticipantAction()
+    object BlurOffSucceeded : LocalParticipantAction()
+    data class BlurOffFailed(val error: CallCompositeError) : LocalParticipantAction()
 }
