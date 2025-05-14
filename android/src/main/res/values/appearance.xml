@@ -15,6 +15,10 @@
         <item name="android:textSize">@dimen/text_size_24</item>
     </style>
 
+    <style name="Text.CircularStdBold.20sp">
+        <item name="android:textSize">@dimen/text_size_20</item>
+    </style>
+
      <!-- Circular Std Book-->
     <style name="Text.CircularStdBook">
         <item name="android:fontFamily">@font/circular_std_book</item>

@@ -32,9 +32,8 @@ internal class AudioDeviceListView(
     private lateinit var bottomCellAdapter: BottomCellAdapter
 
     init {
-        inflate(context, R.layout.azure_communication_ui_calling_listview, this)
+        inflate(context, R.layout.audio_device_list_view, this)
         deviceTable = findViewById(R.id.bottom_drawer_table)
-        this.setBackgroundResource(R.color.azure_communication_ui_calling_color_bottom_drawer_background)
     }
 
     fun start(viewLifecycleOwner: LifecycleOwner) {
@@ -103,7 +102,7 @@ internal class AudioDeviceListView(
                     BottomCellItem(
                         icon = ContextCompat.getDrawable(
                             context,
-                            R.drawable.azure_communication_ui_calling_ic_fluent_speaker_2_24_regular_composite_button_filled
+                            R.drawable.ic_speaker
                         ),
                         title = when (viewModel.audioStateFlow.value.isHeadphonePlugged) {
                             true -> context.getString(R.string.azure_communication_ui_calling_audio_device_drawer_headphone)
@@ -128,7 +127,7 @@ internal class AudioDeviceListView(
                 BottomCellItem(
                     icon = ContextCompat.getDrawable(
                         context,
-                        R.drawable.azure_communication_ui_calling_ic_fluent_speaker_2_24_filled_composite_button_enabled
+                        R.drawable.ic_speaker
                     ),
                     title = context.getString(R.string.azure_communication_ui_calling_audio_device_drawer_speaker),
                     accessoryImage = ContextCompat.getDrawable(
@@ -152,7 +151,7 @@ internal class AudioDeviceListView(
                     BottomCellItem(
                         icon = ContextCompat.getDrawable(
                             context,
-                            R.drawable.azure_communication_ui_calling_ic_fluent_speaker_bluetooth_24_regular
+                            R.drawable.ic_speaker_bluetooth
                         ),
                         title = viewModel.audioStateFlow.value.bluetoothState.deviceName,
                         accessoryImage = ContextCompat.getDrawable(
@@ -169,6 +168,28 @@ internal class AudioDeviceListView(
                     )
                 )
             }
+
+            bottomCellItems.add(
+                BottomCellItem(
+                    icon = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_speaker_off
+                    ),
+                    title = context.getString(R.string.turn_off_audio),
+                    accessoryImage = ContextCompat.getDrawable(
+                        context,
+                        fluentUiR.drawable.ms_ic_checkmark_24_filled
+                    ),
+                    accessoryImageDescription = context.getString(R.string.azure_communication_ui_calling_setup_view_audio_device_selected_accessibility_label),
+                    isChecked = initialDevice == AudioDeviceSelectionStatus.AUDIO_OFF_SELECTED,
+                    isOnHold = false,
+                    onClickAction = {
+                        viewModel.switchAudioDevice(AudioDeviceSelectionStatus.AUDIO_OFF_REQUESTED)
+                        audioDeviceDrawer.dismiss()
+                    }
+                )
+            )
+
             return bottomCellItems
         }
 
@@ -190,6 +211,8 @@ internal class AudioDeviceListView(
                 context.getString(R.string.azure_communication_ui_calling_audio_device_drawer_android)
             AudioDeviceSelectionStatus.SPEAKER_REQUESTED, AudioDeviceSelectionStatus.SPEAKER_SELECTED ->
                 context.getString(R.string.azure_communication_ui_calling_audio_device_drawer_speaker)
+            AudioDeviceSelectionStatus.AUDIO_OFF_REQUESTED, AudioDeviceSelectionStatus.AUDIO_OFF_SELECTED ->
+                context.getString(R.string.turn_off_audio)
             AudioDeviceSelectionStatus.BLUETOOTH_SCO_SELECTED, AudioDeviceSelectionStatus.BLUETOOTH_SCO_REQUESTED ->
                 audioState.bluetoothState.deviceName
         }

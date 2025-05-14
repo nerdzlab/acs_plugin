@@ -49,6 +49,8 @@ internal enum class AudioDeviceSelectionStatus {
     RECEIVER_REQUESTED,
     BLUETOOTH_SCO_SELECTED,
     BLUETOOTH_SCO_REQUESTED,
+    AUDIO_OFF_SELECTED,
+    AUDIO_OFF_REQUESTED,
 }
 
 internal data class CameraState(
