@@ -63,18 +63,6 @@ class AcsPlugin {
     _eventsSubscription?.cancel();
   }
 
-  Future<String?> getPlatformVersion() {
-    return AcsPluginPlatform.instance.getPlatformVersion();
-  }
-
-  Future<bool> requestMicrophonePermissions() async {
-    return await AcsPluginPlatform.instance.requestMicrophonePermissions();
-  }
-
-  Future<bool> requestCameraPermissions() async {
-    return await AcsPluginPlatform.instance.requestCameraPermissions();
-  }
-
   // Initialize the room call
   Future<void> initializeRoomCall({
     required String token,
@@ -161,7 +149,7 @@ class AcsPlugin {
     return AcsPluginPlatform.instance.eventStream;
   }
 
-  void _handleEvent(Event event) {
+  _handleEvent(Event event) {
     switch (event.type) {
       case EventType.onStopScreenShare:
         log("Screen sharing stopped");

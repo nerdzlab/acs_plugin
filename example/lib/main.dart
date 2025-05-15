@@ -185,28 +185,6 @@ class _CallScreenState extends State<CallScreen> {
     );
   }
 
-  // Permission methods
-  Future<void> _requestMicrophonePermissions() async {
-    try {
-      final result = await _acsPlugin.requestMicrophonePermissions();
-      log('Microphone permissions granted: $result');
-      _shwoSnacBar("Microphone permissions granted: $result");
-    } on PlatformException catch (error) {
-      log('Microphone permission error: ${error.message}');
-    }
-  }
-
-  Future<void> _requestCameraPermissions() async {
-    try {
-      final result = await _acsPlugin.requestCameraPermissions();
-      log('Camera permissions granted: $result');
-      _shwoSnacBar('Camera permissions granted: $result');
-    } on PlatformException catch (error) {
-      log('Camera permission error: ${error.message}');
-      _shwoSnacBar('Camera permission error: ${error.message}');
-    }
-  }
-
   // Call management methods
   Future<void> initializeRoomCall() async {
     try {
@@ -314,27 +292,17 @@ class _CallScreenState extends State<CallScreen> {
               _buildSectionHeader('Setup'),
               _buildButtonGrid([
                 ButtonConfig(
-                  label: 'Microphone',
-                  onTap: _requestMicrophonePermissions,
-                  icon: Icons.mic,
-                ),
-                ButtonConfig(
-                  label: 'Camera',
-                  onTap: _requestCameraPermissions,
-                  icon: Icons.camera_alt,
-                ),
-                ButtonConfig(
                   label: 'Init room call',
                   onTap: initializeRoomCall,
                   icon: Icons.cloud,
                 ),
-              ]),
-              _buildButtonGrid([
                 ButtonConfig(
                   label: 'One on One call',
                   onTap: _startOneOnOneCall,
                   icon: Icons.mic,
                 ),
+              ]),
+              _buildButtonGrid([
                 ButtonConfig(
                   label: 'Setup chat',
                   onTap: _setupChat,

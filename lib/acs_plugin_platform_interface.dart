@@ -23,20 +23,6 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
-  }
-
-  Future<bool> requestMicrophonePermissions() {
-    throw UnimplementedError(
-        'requestMicrophonePermissions() has not been implemented.');
-  }
-
-  Future<bool> requestCameraPermissions() {
-    throw UnimplementedError(
-        'requestCameraPermissions() has not been implemented.');
-  }
-
   Future<void> initializeRoomCall({
     required String token,
     required String roomId,

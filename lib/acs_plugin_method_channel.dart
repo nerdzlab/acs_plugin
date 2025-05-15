@@ -35,23 +35,6 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
-  }
-
-  @override
-  Future<bool> requestMicrophonePermissions() async {
-    return await methodChannel.invokeMethod('requestMicrophonePermissions');
-  }
-
-  @override
-  Future<bool> requestCameraPermissions() async {
-    return await methodChannel.invokeMethod('requestCameraPermissions');
-  }
-
-  @override
   Future<void> initializeRoomCall({
     required String token,
     required String roomId,
