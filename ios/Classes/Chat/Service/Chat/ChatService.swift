@@ -36,48 +36,53 @@ class ChatService: NSObject, ChatServiceProtocol {
     }
 
     func initialize() async throws {
-        try await chatSDKWrapper.initializeChat()
+//        try await chatSDKWrapper.initializeChat()
     }
 
     func disconnectChatService() async throws {
-        try await chatSDKWrapper.unregisterRealTimeNotifications()
+//        try await chatSDKWrapper.unregisterRealTimeNotifications()
     }
     func getInitialMessages() async throws -> [ChatMessageInfoModel] {
-        return try await chatSDKWrapper.getInitialMessages()
+        return []
+//        return try await chatSDKWrapper.getInitialMessages()
     }
 
     func getMaskedParticipantIds() async throws -> Set<String> {
-        guard let createdBy = try await chatSDKWrapper.retrieveChatThreadProperties().createdBy else {
-            return Set<String>()
-        }
-        let maskedParticipantIdsSet: Set = [createdBy]
-        return maskedParticipantIdsSet
+//        guard let createdBy = try await chatSDKWrapper.retrieveChatThreadProperties().createdBy else {
+//            return Set<String>()
+//        }
+//        let maskedParticipantIdsSet: Set = [createdBy]
+//        return maskedParticipantIdsSet
+        return []
     }
 
     func getListOfParticipants() async throws -> [ChatParticipantInfoModel] {
-        return try await chatSDKWrapper.getListOfParticipants()
+        return []
+//        return try await chatSDKWrapper.getListOfParticipants()
     }
     func getPreviousMessages() async throws -> [ChatMessageInfoModel] {
-        return try await chatSDKWrapper.getPreviousMessages()
+        return []
+//        return try await chatSDKWrapper.getPreviousMessages()
     }
 
     func sendMessage(content: String, senderDisplayName: String) async throws -> String {
-        return try await chatSDKWrapper.sendMessage(content: content, senderDisplayName: senderDisplayName)
+        return ""
+//        return try await chatSDKWrapper.sendMessage(content: content, senderDisplayName: senderDisplayName)
     }
 
     func editMessage(messageId: String, content: String) async throws {
-        try await chatSDKWrapper.editMessage(messageId: messageId, content: content)
+//        try await chatSDKWrapper.editMessage(messageId: messageId, content: content)
     }
 
     func deleteMessage(messageId: String) async throws {
-        try await chatSDKWrapper.deleteMessage(messageId: messageId)
+//        try await chatSDKWrapper.deleteMessage(messageId: messageId)
     }
 
     func sendReadReceipt(messageId: String) async throws {
-        try await chatSDKWrapper.sendReadReceipt(messageId: messageId)
+//        try await chatSDKWrapper.sendReadReceipt(messageId: messageId)
     }
 
     func sendTypingIndicator() async throws {
-        try await chatSDKWrapper.sendTypingIndicator()
+//        try await chatSDKWrapper.sendTypingIndicator()
     }
 }

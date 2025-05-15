@@ -14,14 +14,9 @@ protocol ChatLifeCycleManagerProtocol {
 class ChatUIKitAppLifeCycleManager: ChatLifeCycleManagerProtocol {
 
     private let logger: Logger
-    private let store: Store<ChatAppState, ActionChat>
 
-    var cancellables = Set<AnyCancellable>()
-
-    init(store: Store<ChatAppState, ActionChat>,
-         logger: Logger) {
+    init(logger: Logger) {
         self.logger = logger
-        self.store = store
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(willDeactivate),
                                                name: UIScene.willDeactivateNotification,
@@ -34,11 +29,9 @@ class ChatUIKitAppLifeCycleManager: ChatLifeCycleManagerProtocol {
 
     @objc func willDeactivate(_ notification: Notification) {
         logger.debug("Will Deactivate")
-        store.dispatch(action: .lifecycleAction(.backgroundEntered))
     }
 
     @objc func didActivate(_ notification: Notification) {
         logger.debug("Did Activate")
-        store.dispatch(action: .lifecycleAction(.foregroundEntered))
     }
 }

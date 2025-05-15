@@ -1,4 +1,5 @@
 import 'package:acs_plugin/chat_models/communication_identifier.dart';
+import 'package:acs_plugin/chat_models/chat_message_type.dart';
 
 class ChatMessageDeletedEvent {
   final String threadId;
@@ -8,7 +9,7 @@ class ChatMessageDeletedEvent {
   final String senderDisplayName;
   final String createdOn;
   final String version;
-  final String type;
+  final ChatMessageType type;
   final String? deletedOn;
 
   ChatMessageDeletedEvent({
@@ -32,7 +33,7 @@ class ChatMessageDeletedEvent {
       'senderDisplayName': senderDisplayName,
       'createdOn': createdOn,
       'version': version,
-      'type': type,
+      'type': type.toJson(),
       'deletedOn': deletedOn,
     };
   }
@@ -50,7 +51,7 @@ class ChatMessageDeletedEvent {
       senderDisplayName: json['senderDisplayName'],
       createdOn: json['createdOn'],
       version: json['version'],
-      type: json['type'],
+      type: ChatMessageType.fromString(json['type']),
       deletedOn: json['deletedOn'],
     );
   }

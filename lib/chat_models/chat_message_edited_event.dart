@@ -1,4 +1,5 @@
 import 'package:acs_plugin/chat_models/communication_identifier.dart';
+import 'package:acs_plugin/chat_models/chat_message_type.dart';
 
 class ChatMessageEditedEvent {
   final String threadId;
@@ -8,7 +9,7 @@ class ChatMessageEditedEvent {
   final String senderDisplayName;
   final String createdOn;
   final String version;
-  final String type;
+  final ChatMessageType type;
   final String message;
   final String? editedOn;
   final Map<String, dynamic>? metadata;
@@ -36,7 +37,7 @@ class ChatMessageEditedEvent {
       'senderDisplayName': senderDisplayName,
       'createdOn': createdOn,
       'version': version,
-      'type': type,
+      'type': type.toJson(),
       'message': message,
       'editedOn': editedOn,
       'metadata': metadata,
@@ -56,10 +57,12 @@ class ChatMessageEditedEvent {
       senderDisplayName: json['senderDisplayName'],
       createdOn: json['createdOn'],
       version: json['version'],
-      type: json['type'],
+      type: ChatMessageType.fromString(json['type']),
       message: json['message'],
       editedOn: json['editedOn'],
-      metadata: json['metadata'],
+      metadata: json['metadata'] != null
+          ? Map<String, dynamic>.from(json['metadata'])
+          : null,
     );
   }
 }

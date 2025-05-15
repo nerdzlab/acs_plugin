@@ -8,10 +8,10 @@ import Combine
 
 protocol ChatSDKWrapperProtocol {
     func initializeChat() async throws
-    func getInitialMessages() async throws -> [ChatMessageInfoModel]
-    func retrieveChatThreadProperties() async throws -> ChatThreadInfoModel
-    func getListOfParticipants() async throws -> [ChatParticipantInfoModel]
-    func getPreviousMessages() async throws -> [ChatMessageInfoModel]
+    func getInitialMessages() async throws -> [ChatMessage]
+    func retrieveChatThreadProperties() async throws -> ChatThreadProperties
+    func getListOfParticipants() async throws -> [ChatParticipant]
+    func getPreviousMessages() async throws -> [ChatMessage]
     func sendMessage(content: String, senderDisplayName: String) async throws -> String
     func editMessage(messageId: String, content: String) async throws
     func deleteMessage(messageId: String) async throws

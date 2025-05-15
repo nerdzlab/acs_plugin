@@ -4,6 +4,7 @@
 //
 
 import AzureCore
+import SwiftUI
 
 enum MessageType: Equatable {
     case custom(String)
@@ -245,5 +246,31 @@ extension Date {
 
         let components = calendar.dateComponents([.day], from: from, to: to)
         return components.day!
+    }
+}
+
+enum ChatCompositeIcon: String {
+    case leftArrow = "ic_ios_arrow_left_24_filled"
+    case downArrow = "ic_fluent_arrow_down_24_filled"
+    case send = "ic_fluent_send_24_filled"
+    case sendDisabled = "ic_fluent_send_24_regular"
+    case readReceipt = "ic_fluent_eye_12_regular"
+    case messageSending = "ic_fluent_circle_12_regular"
+    case messageSent = "ic_fluent_checkmark_circle_12_regular"
+    case messageSendFailed = "ic_fluent_error_circle_12_regular"
+    case systemJoin = "ic_fluent_person_add_24_regular"
+    case systemLeave = "ic_fluent_person_remove_24_regular"
+}
+
+struct ChatIconProvider {
+    func getUIImage(for iconName: ChatCompositeIcon) -> UIImage? {
+        UIImage(named: "Icon/\(iconName.rawValue)",
+                in: Bundle(for: ChatAdapter.self),
+                compatibleWith: nil)
+    }
+    func getImage(for iconName: ChatCompositeIcon) -> Image {
+        Image("Icon/\(iconName.rawValue)", bundle: Bundle(for: ChatAdapter.self))
+            .resizable()
+            .renderingMode(.template)
     }
 }

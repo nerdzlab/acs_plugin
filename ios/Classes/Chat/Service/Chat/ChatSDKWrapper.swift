@@ -47,21 +47,17 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         }
     }
 
-    func getInitialMessages() async throws -> [ChatMessageInfoModel] {
+    func getInitialMessages() async throws -> [ChatMessage] {
         do {
             let listChatMessagesOptions = ListChatMessagesOptions(
                 maxPageSize: chatConfiguration.pageSize)
+
             return try await withCheckedThrowingContinuation { continuation in
                 chatThreadClient?.listMessages(withOptions: listChatMessagesOptions) { result, _ in
                     switch result {
                     case .success(let messagesResult):
                         self.pagedCollection = messagesResult
-                        let messages = self.pagedCollection?.pageItems?
-                            .map({
-                                $0.toChatMessageInfoModel(
-                                    localUserId: self.chatConfiguration.identifier.rawId)
-                            })
-                        continuation.resume(returning: messages?.reversed() ?? [])
+                        continuation.resume(returning: self.pagedCollection?.items ?? [])
                     case .failure(let error):
                         self.pagedCollection = nil
                         continuation.resume(throwing: error)
@@ -69,12 +65,12 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
                 }
             }
         } catch {
-            logger.error("Retrieve Thread Topic failed: \(error)")
+            logger.error("Failed to retrieve initial messages: \(error)")
             throw error
         }
     }
 
-    func retrieveChatThreadProperties() async throws -> ChatThreadInfoModel {
+    func retrieveChatThreadProperties() async throws -> ChatThreadProperties {
         do {
             return try await withCheckedThrowingContinuation { continuation in
                 chatThreadClient?.getProperties { result, _ in
@@ -83,10 +79,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
                         let topic = threadProperties.topic
                         let createdBy = threadProperties.createdBy.stringValue
                         self.logger.info("Retrieved thread topic: \(topic) and createdBy: \(createdBy)")
-                        let chatThreadInfo = ChatThreadInfoModel(topic: topic,
-                                                                 receivedOn: Iso8601Date(),
-                                                                 createdBy: createdBy)
-                        continuation.resume(returning: chatThreadInfo)
+                        continuation.resume(returning: threadProperties)
                     case .failure(let error):
                         self.logger.error("Retrieve Thread Properties failed: \(error.errorDescription ?? "")")
                         continuation.resume(throwing: error)
@@ -99,7 +92,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         }
     }
 
-    func getListOfParticipants() async throws -> [ChatParticipantInfoModel] {
+    func getListOfParticipants() async throws -> [ChatParticipant] {
         do {
             let participantsPageSize: Int32 = 200
             let listParticipantsOptions = ListChatParticipantsOptions(maxPageSize: participantsPageSize)
@@ -109,14 +102,12 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
                   let items = pagedResult.items else {
                 return []
             }
-            var allChatParticipants = items.map({
-                $0.toParticipantInfoModel(self.chatConfiguration.identifier.rawId)
-            })
+            var allChatParticipants = items
+            
             while !pagedResult.isExhausted {
                 let nextPage = try await pagedResult.nextPage()
-                let pageParticipants = nextPage.map {
-                    $0.toParticipantInfoModel(self.chatConfiguration.identifier.rawId)
-                }
+                let pageParticipants = nextPage
+                
                 allChatParticipants.append(contentsOf: pageParticipants)
             }
             return allChatParticipants
@@ -126,11 +117,12 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         }
     }
 
-    func getPreviousMessages() async throws -> [ChatMessageInfoModel] {
+    func getPreviousMessages() async throws -> [ChatMessage] {
         do {
             guard let messagePagedCollection = self.pagedCollection else {
                 return try await self.getInitialMessages()
             }
+            
             return try await withCheckedThrowingContinuation { continuation in
                 if messagePagedCollection.isExhausted {
                     continuation.resume(returning: [])
@@ -138,10 +130,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
                     messagePagedCollection.nextPage { result in
                         switch result {
                         case .success(let messagesResult):
-                            let previousMessages = messagesResult.map({
-                                $0.toChatMessageInfoModel(
-                                    localUserId: self.chatConfiguration.identifier.rawId)
-                            })
+                            let previousMessages = messagesResult
                             continuation.resume(returning: previousMessages)
                         case .failure(let error):
                             continuation.resume(throwing: error)

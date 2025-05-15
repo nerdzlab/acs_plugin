@@ -1,4 +1,5 @@
 import 'package:acs_plugin/chat_models/communication_identifier.dart';
+import 'package:acs_plugin/chat_models/chat_message_type.dart';
 
 class ChatMessageReceivedEvent {
   final String threadId;
@@ -9,7 +10,7 @@ class ChatMessageReceivedEvent {
   final CommunicationIdentifier? recipient;
   final String? senderDisplayName;
   final String? createdOn;
-  final String type;
+  final ChatMessageType type;
   final Map<String, dynamic>? metadata;
 
   ChatMessageReceivedEvent({
@@ -35,7 +36,7 @@ class ChatMessageReceivedEvent {
       'recipient': recipient?.toJson(),
       'senderDisplayName': senderDisplayName,
       'createdOn': createdOn,
-      'type': type,
+      'type': type.toJson(),
       'metadata': metadata,
     };
   }
@@ -54,8 +55,10 @@ class ChatMessageReceivedEvent {
           : null,
       senderDisplayName: json['senderDisplayName'],
       createdOn: json['createdOn'],
-      type: json['type'],
-      metadata: json['metadata'],
+      type: ChatMessageType.fromString(json['type']),
+      metadata: json['metadata'] != null
+          ? Map<String, dynamic>.from(json['metadata'])
+          : null,
     );
   }
 }

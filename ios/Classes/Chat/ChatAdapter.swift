@@ -8,7 +8,7 @@ import AzureCommunicationChat
 
 /// This class represents the data-layer components of the Chat Composite.
 public class ChatAdapter {
-
+    
     /// The class to configure events closures for Chat Composite.
     public class Events {
         /// Closure to execute when error event occurs inside Chat Composite.
@@ -38,20 +38,17 @@ public class ChatAdapter {
         /// Closure to execute when participants are removed from a chat thread.
         var onParticipantsRemoved: ((ParticipantsRemovedEvent) -> Void)?
     }
-
+    
     /// The events handler for Chat Composite
     public let events: Events
-
+    
     // Dependencies
     var logger: Logger = DefaultLogger(category: "ChatComponent")
-    var compositeViewFactory: ChatCompositeViewFactoryProtocol?
-
+    
     private var chatConfiguration: ChatConfiguration
-    private var chatSDKWrapper: ChatSDKWrapper?
-    private var errorManager: ChatErrorManagerProtocol?
+    private var chatSDKWrapper: ChatSDKWrapper!
     private var lifeCycleManager: ChatLifeCycleManagerProtocol?
-    private var compositeManager: CompositeManagerProtocol?
-
+    
     private var threadId: String = ""
     /// Create an instance of this class with options.
     /// - Parameters:
@@ -75,114 +72,95 @@ public class ChatAdapter {
         self.events = Events()
         self.threadId = threadId
     }
-
+    
     deinit {
         logger.debug("Composite deallocated")
     }
-
-    /// Start connection with chat client and registers for chat events
-    /// This function should be called before adding the ChatComposite to a view
-    /// - Parameters:
-    ///    - completionHandler: The closure that will be called back when connection is established
-    public func connect(completionHandler: ((Result<Void, ChatCompositeError>) -> Void)?) {
-        constructDependencies(
-            chatConfiguration: self.chatConfiguration,
-            chatThreadId: threadId,
-            chatCompositeEventsHandler: events,
-            connectEventHandler: completionHandler
-        )
-        compositeManager?.start()
-    }
-
+    
     /// Start connection with chat client and registers for chat events
     /// This function should be called before adding the Chat Composite to a view
     public func connect() async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            connect { result in
-                continuation.resume(with: result)
-            }
-        }
+        constructDependencies(
+            chatConfiguration: self.chatConfiguration,
+            chatThreadId: threadId,
+            chatCompositeEventsHandler: events
+        )
+        
+        try await initializeChat()
     }
-
-    /// Unsubscribe all the chat client events from Azure Communication Service
-    /// - Parameters:
-    ///    - completionHandler: The closure that will be called back when disconnection is complete
-    public func disconnect(completionHandler: @escaping ((Result<Void, ChatCompositeError>) -> Void)) {
-        compositeManager?.stop(completionHandler: completionHandler)
-    }
-
+    
     /// Unsubscribe all the chat client events from Azure Communication Service
     public func disconnect() async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            compositeManager?.stop(completionHandler: { result in
-                continuation.resume(with: result)
-            })
-        }
+        try await unregisterRealTimeNotifications()
     }
-
+    
+    public func getInitialMessages() async throws -> [ChatMessage] {
+        try await chatSDKWrapper.getInitialMessages()
+    }
+    
+    public func retrieveChatThreadProperties() async throws -> ChatThreadProperties {
+        return try await chatSDKWrapper.retrieveChatThreadProperties()
+    }
+    
+    public func getListOfParticipants() async throws -> [ChatParticipant] {
+        try await chatSDKWrapper.getListOfParticipants()
+    }
+    
+    public func getPreviousMessages() async throws -> [ChatMessage] {
+        try await chatSDKWrapper.getPreviousMessages()
+    }
+    
+    public func sendMessage(content: String, senderDisplayName: String) async throws -> String {
+        return try await chatSDKWrapper.sendMessage(content: content, senderDisplayName: senderDisplayName)
+    }
+    
+    public func editMessage(messageId: String, content: String) async throws {
+        try await chatSDKWrapper.editMessage(messageId: messageId, content: content)
+    }
+    
+    public func deleteMessage(messageId: String) async throws {
+        try await chatSDKWrapper.deleteMessage(messageId: messageId)
+    }
+    
+    public func sendReadReceipt(messageId: String) async throws {
+        try await chatSDKWrapper.sendReadReceipt(messageId: messageId)
+    }
+    
+    public func sendTypingIndicator() async throws {
+        try await chatSDKWrapper.sendTypingIndicator()
+    }
+    
+    private func unregisterRealTimeNotifications() async throws {
+        try await chatSDKWrapper.unregisterRealTimeNotifications()
+    }
+    
+    private func initializeChat() async throws {
+        try await chatSDKWrapper.initializeChat()
+    }
+    
+    private func cleanUpComposite() {
+        self.lifeCycleManager = nil
+    }
+    
     private func constructDependencies(
         chatConfiguration: ChatConfiguration,
         chatThreadId: String,
-        chatCompositeEventsHandler: ChatAdapter.Events,
-        connectEventHandler: ((Result<Void, ChatCompositeError>) -> Void)? = nil
+        chatCompositeEventsHandler: ChatAdapter.Events
     ) {
         let eventHandler = ChatSDKEventsHandler(
             logger: logger,
             chatCompositeEventsHandler: events
         )
-
+        
         chatSDKWrapper = ChatSDKWrapper(
             logger: logger,
             chatEventsHandler: eventHandler,
             chatConfiguration: chatConfiguration,
             chatThreadId: chatThreadId
         )
-
-        let repositoryManager = MessageRepositoryManager(
-            chatCompositeEventsHandler: chatCompositeEventsHandler
-        )
-
-        let store = Store.constructStore(
-            logger: logger,
-            chatService: ChatService(
-                logger: logger,
-                chatSDKWrapper: chatSDKWrapper!
-            ),
-            messageRepository: repositoryManager,
-            chatConfiguration: chatConfiguration,
-            chatThreadId: chatThreadId,
-            connectEventHandler: connectEventHandler
-        )
-
-        let localizationProvider = ChatLocalizationProvider(logger: logger)
-
-        compositeViewFactory = ChatCompositeViewFactory(
-            logger: logger,
-            compositeViewModelFactory: ChatCompositeViewModelFactory(
-                logger: logger,
-                localizationProvider: localizationProvider,
-                messageRepositoryManager: repositoryManager,
-                store: store
-            )
-        )
-
-        errorManager = ErrorManager(
-            store: store,
-            chatCompositeEventsHandler: chatCompositeEventsHandler
-        )
-
+        
         lifeCycleManager = ChatUIKitAppLifeCycleManager(
-            store: store,
             logger: logger
         )
-        compositeManager = CompositeManager(
-            store: store,
-            logger: logger
-        )
-    }
-
-    private func cleanUpComposite() {
-        self.errorManager = nil
-        self.lifeCycleManager = nil
     }
 }
