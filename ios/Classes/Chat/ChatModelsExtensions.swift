@@ -180,7 +180,7 @@ extension SignalingChatParticipant {
 
 extension ChatThreadCreatedEvent {
     func toJson() -> [String: Any] {
-        var json: [String: Any] = [
+        let json: [String: Any] = [
             "threadId": threadId,
             "version": version,
             "createdOn": createdOn?.requestString ?? "",
@@ -195,7 +195,7 @@ extension ChatThreadCreatedEvent {
 
 extension ChatThreadPropertiesUpdatedEvent {
     func toJson() -> [String: Any] {
-        var json: [String: Any] = [
+        let json: [String: Any] = [
             "threadId": threadId,
             "version": version,
             "updatedOn": updatedOn?.requestString ?? "",
@@ -209,7 +209,7 @@ extension ChatThreadPropertiesUpdatedEvent {
 
 extension ChatThreadDeletedEvent {
     func toJson() -> [String: Any] {
-        var json: [String: Any] = [
+        let json: [String: Any] = [
             "threadId": threadId,
             "version": version,
             "deletedOn": deletedOn?.requestString ?? "",
@@ -222,7 +222,7 @@ extension ChatThreadDeletedEvent {
 
 extension ParticipantsAddedEvent {
     func toJson() -> [String: Any] {
-        var json: [String: Any] = [
+        let json: [String: Any] = [
             "threadId": threadId,
             "version": version,
             "addedOn": addedOn?.requestString ?? "",
@@ -236,7 +236,7 @@ extension ParticipantsAddedEvent {
 
 extension ParticipantsRemovedEvent {
     func toJson() -> [String: Any] {
-        var json: [String: Any] = [
+        let json: [String: Any] = [
             "threadId": threadId,
             "version": version,
             "removedOn": removedOn?.requestString ?? "",
@@ -244,6 +244,103 @@ extension ParticipantsRemovedEvent {
             "removedBy": removedBy?.toJson() ?? [:]
         ]
         
+        return json
+    }
+}
+
+extension ChatMessage {
+    func toJson() -> [String: Any] {
+        var json: [String: Any] = [
+            "id": id,
+            "type": type.requestString,
+            "sequenceId": sequenceId,
+            "version": version,
+            "createdOn": createdOn.requestString
+        ]
+
+        if let content = content {
+            json["content"] = content.toJson()
+        }
+
+        if let senderDisplayName = senderDisplayName {
+            json["senderDisplayName"] = senderDisplayName
+        }
+
+        if let sender = sender {
+            json["sender"] = sender.toJson()
+        }
+
+        if let deletedOn = deletedOn {
+            json["deletedOn"] = deletedOn.requestString
+        }
+
+        if let editedOn = editedOn {
+            json["editedOn"] = editedOn.requestString
+        }
+
+        if let metadata = metadata {
+            json["metadata"] = metadata
+        }
+
+        return json
+    }
+}
+
+extension ChatMessageContent {
+    func toJson() -> [String: Any] {
+        var json: [String: Any] = [:]
+
+        if let message = message {
+            json["message"] = message
+        }
+
+        if let topic = topic {
+            json["topic"] = topic
+        }
+
+        if let participants = participants {
+            json["participants"] = participants.map { $0.toJson() }
+        }
+
+        if let initiator = initiator {
+            json["initiator"] = initiator.toJson()
+        }
+
+        return json
+    }
+}
+
+extension ChatParticipant {
+    func toJson() -> [String: Any] {
+        var json: [String: Any] = [
+            "id": id.toJson()
+        ]
+
+        if let displayName = displayName {
+            json["displayName"] = displayName
+        }
+
+        if let shareHistoryTime = shareHistoryTime {
+            json["shareHistoryTime"] = shareHistoryTime.requestString
+        }
+
+        return json
+    }
+}
+
+extension ChatThreadProperties {
+    func toJson() -> [String: Any] {
+        var json: [String: Any] = [
+            "id": id,
+            "topic": topic,
+            "createdOn": createdOn.requestString,
+            "createdBy": createdBy.toJson()
+        ]
+
+        if let deletedOn = deletedOn {
+            json["deletedOn"] = deletedOn.requestString
+        }
+
         return json
     }
 }
