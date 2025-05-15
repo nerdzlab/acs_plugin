@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:acs_plugin/acs_plugin_error.dart';
+import 'package:acs_plugin/chat_models/chat_message.dart';
 import 'package:acs_plugin/chat_models/chat_message_edited_event.dart';
 import 'package:acs_plugin/chat_models/chat_message_received_event.dart';
 import 'package:acs_plugin/chat_models/chat_messge_deleted_event.dart';
+import 'package:acs_plugin/chat_models/chat_participant.dart';
 import 'package:acs_plugin/chat_models/chat_thread_created_event.dart';
 import 'package:acs_plugin/chat_models/chat_thread_deleted_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_properties.dart';
 import 'package:acs_plugin/chat_models/chat_thread_properties_updated_event.dart';
 import 'package:acs_plugin/chat_models/event.dart';
 import 'package:acs_plugin/chat_models/event_type.dart';
@@ -289,5 +292,77 @@ class AcsPlugin {
     }
 
     onError?.call(acsError);
+  }
+
+  Future<List<ChatParticipant>> getListOfParticipants() async {
+    final result = await AcsPluginPlatform.instance.getListOfParticipants();
+    return result
+        .cast<Map>()
+        .map((e) => ChatParticipant.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
+  Future<List<ChatMessage>> getInitialMessages() async {
+    final result = await AcsPluginPlatform.instance.getInitialMessages();
+    return result
+        .cast<Map>()
+        .map((e) => ChatMessage.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
+  Future<ChatThreadProperties> retrieveChatThreadProperties() async {
+    final result =
+        await AcsPluginPlatform.instance.retrieveChatThreadProperties();
+    return ChatThreadProperties.fromJson(result);
+  }
+
+  Future<List<ChatMessage>> getPreviousMessages() async {
+    final result = await AcsPluginPlatform.instance.getPreviousMessages();
+    return result
+        .cast<Map>()
+        .map((e) => ChatMessage.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
+  Future<String?> sendMessage({
+    required String content,
+    required String senderDisplayName,
+  }) async {
+    final result = await AcsPluginPlatform.instance.sendMessage(
+      content: content,
+      senderDisplayName: senderDisplayName,
+    );
+
+    return result;
+  }
+
+  Future<void> editMessage({
+    required String messageId,
+    required String content,
+  }) async {
+    await AcsPluginPlatform.instance.editMessage(
+      messageId: messageId,
+      content: content,
+    );
+  }
+
+  Future<void> deleteMessage({
+    required String messageId,
+  }) async {
+    await AcsPluginPlatform.instance.deleteMessage(
+      messageId: messageId,
+    );
+  }
+
+  Future<void> sendReadReceipt({
+    required String messageId,
+  }) async {
+    await AcsPluginPlatform.instance.sendReadReceipt(
+      messageId: messageId,
+    );
+  }
+
+  Future<void> sendTypingIndicator() async {
+    await AcsPluginPlatform.instance.sendTypingIndicator();
   }
 }

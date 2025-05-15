@@ -5,7 +5,6 @@ import 'acs_plugin_platform_interface.dart';
 
 /// An implementation of [AcsPluginPlatform] that uses method channels.
 class MethodChannelAcsPlugin extends AcsPluginPlatform {
-  /// The method channel used to interact with the native platform.
   @visibleForTesting
   final methodChannel = const MethodChannel('acs_plugin');
 
@@ -20,14 +19,11 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         .receiveBroadcastStream()
         .map((dynamic event) {
           if (event is Map) {
-            // Convert the event to Map<String, dynamic>
             return Map<String, dynamic>.from(event);
           }
-          return {}; // Return an empty map if it's not of type Map
+          return {};
         })
-        .cast<
-            Map<String,
-                dynamic>>() // Cast the stream to Stream<Map<String, dynamic>>
+        .cast<Map<String, dynamic>>()
         .handleError((error, stackTrace) {
           throw error;
         });
@@ -102,9 +98,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> returnToCall() async {
-    await methodChannel.invokeMethod(
-      'returnToCall',
-    );
+    await methodChannel.invokeMethod('returnToCall');
   }
 
   @override
@@ -123,8 +117,98 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> disconnectChat() async {
-    await methodChannel.invokeMethod(
-      'disconnectChat',
+    await methodChannel.invokeMethod('disconnectChat');
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getInitialMessages() async {
+    final result = await methodChannel.invokeMethod('getInitialMessages');
+    return (result as List)
+        .cast<Map>()
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
+  }
+
+  @override
+  Future<Map<String, dynamic>> retrieveChatThreadProperties() async {
+    final result =
+        await methodChannel.invokeMethod('retrieveChatThreadProperties');
+    return Map<String, dynamic>.from(result);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getListOfParticipants() async {
+    final result = await methodChannel.invokeMethod('getListOfParticipants');
+    return (result as List)
+        .cast<Map>()
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getPreviousMessages() async {
+    final result = await methodChannel.invokeMethod('getPreviousMessages');
+    return (result as List)
+        .cast<Map>()
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
+  }
+
+  @override
+  Future<String?> sendMessage({
+    required String content,
+    required String senderDisplayName,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'sendMessage',
+      {
+        'content': content,
+        'senderDisplayName': senderDisplayName,
+      },
     );
+    return result as String?;
+  }
+
+  @override
+  Future<void> editMessage({
+    required String messageId,
+    required String content,
+  }) async {
+    await methodChannel.invokeMethod(
+      'editMessage',
+      {
+        'messageId': messageId,
+        'content': content,
+      },
+    );
+  }
+
+  @override
+  Future<void> deleteMessage({
+    required String messageId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'deleteMessage',
+      {
+        'messageId': messageId,
+      },
+    );
+  }
+
+  @override
+  Future<void> sendReadReceipt({
+    required String messageId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'sendReadReceipt',
+      {
+        'messageId': messageId,
+      },
+    );
+  }
+
+  @override
+  Future<void> sendTypingIndicator() async {
+    await methodChannel.invokeMethod('sendTypingIndicator');
   }
 }
