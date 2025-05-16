@@ -123,10 +123,12 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   @override
   Future<List<Map<String, dynamic>>> getInitialMessages() async {
     final result = await methodChannel.invokeMethod('getInitialMessages');
-    return (result as List)
-        .cast<Map>()
-        .map((e) => Map<String, dynamic>.from(e as Map))
-        .toList();
+
+    if (result == null) return [];
+
+    // Cast each item in the result to Map<String, dynamic>
+    final List<dynamic> rawList = result as List<dynamic>;
+    return rawList.map((item) => Map<String, dynamic>.from(item)).toList();
   }
 
   @override

@@ -1,16 +1,16 @@
 import 'dart:developer';
 
 import 'package:acs_plugin/acs_plugin_error.dart';
-import 'package:acs_plugin/chat_models/chat_message_edited_event.dart';
-import 'package:acs_plugin/chat_models/chat_message_received_event.dart';
-import 'package:acs_plugin/chat_models/chat_messge_deleted_event.dart';
-import 'package:acs_plugin/chat_models/chat_thread_created_event.dart';
-import 'package:acs_plugin/chat_models/chat_thread_deleted_event.dart';
-import 'package:acs_plugin/chat_models/chat_thread_properties_updated_event.dart';
-import 'package:acs_plugin/chat_models/participants_added_event.dart';
-import 'package:acs_plugin/chat_models/participants_removed_event.dart';
-import 'package:acs_plugin/chat_models/read_receipt_received_event.dart';
-import 'package:acs_plugin/chat_models/typing_indicator_receivedEvent.dart';
+import 'package:acs_plugin/chat_models/chat_message_edited_event/chat_message_edited_event.dart';
+import 'package:acs_plugin/chat_models/chat_message_received_event/chat_message_received_event.dart';
+import 'package:acs_plugin/chat_models/chat_messge_deleted_event/chat_messge_deleted_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_created_event/chat_thread_created_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_deleted_event/chat_thread_deleted_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_properties_updated_event/chat_thread_properties_updated_event.dart';
+import 'package:acs_plugin/chat_models/participants_added_event/participants_added_event.dart';
+import 'package:acs_plugin/chat_models/participants_removed_event/participants_removed_event.dart';
+import 'package:acs_plugin/chat_models/read_receipt_received_event/read_receipt_received_event.dart';
+import 'package:acs_plugin/chat_models/typing_indicator_received_event/typing_indicator_received_event.dart';
 import 'package:acs_plugin_example/constants.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -135,35 +135,35 @@ class _CallScreenState extends State<CallScreen> {
         log("Real-time notification disconnected");
       }
       ..onChatMessageReceived = (ChatMessageReceivedEvent event) {
-        log("Chat message received: ${event.toJson()}");
+        log("Chat message received: ${event.toString()}");
       }
       ..onTypingIndicatorReceived = (TypingIndicatorReceivedEvent event) {
-        log("Typing indicator received: ${event.toJson()}");
+        log("Typing indicator received: ${event.toString()}");
       }
       ..onReadReceiptReceived = (ReadReceiptReceivedEvent event) {
-        log("Read receipt received: ${event.toJson()}");
+        log("Read receipt received: ${event.toString()}");
       }
       ..onChatMessageEdited = (ChatMessageEditedEvent event) {
-        log("Chat message edited: ${event.toJson()}");
+        log("Chat message edited: ${event.toString()}");
       }
       ..onChatMessageDeleted = (ChatMessageDeletedEvent event) {
-        log("Chat message deleted: ${event.toJson()}");
+        log("Chat message deleted: ${event.toString()}");
       }
       ..onChatThreadCreated = (ChatThreadCreatedEvent event) {
-        log("Chat thread created: ${event.toJson()}");
+        log("Chat thread created: ${event.toString()}");
       }
       ..onChatThreadPropertiesUpdated =
           (ChatThreadPropertiesUpdatedEvent event) {
-        log("Chat thread properties updated: ${event.toJson()}");
+        log("Chat thread properties updated: ${event.toString()}");
       }
       ..onChatThreadDeleted = (ChatThreadDeletedEvent event) {
-        log("Chat thread deleted: ${event.toJson()}");
+        log("Chat thread deleted: ${event.toString()}");
       }
       ..onParticipantsAdded = (ParticipantsAddedEvent event) {
-        log("Participants added: ${event.toJson()}");
+        log("Participants added: ${event.toString()}");
       }
       ..onParticipantsRemoved = (ParticipantsRemovedEvent event) {
-        log("Participants removed: ${event.toJson()}");
+        log("Participants removed: ${event.toString()}");
       }
       ..onError = (ACSPluginError error) {
         log("Received error: ${error.toString()}");
@@ -265,6 +265,17 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  Future<void> _getChatMessages() async {
+    try {
+      final messages = await _acsPlugin.getInitialMessages();
+      log('Chat initialized successfully');
+      _shwoSnacBar('Chat messages successfully fetched');
+    } catch (error) {
+      log('Failed to get chat messages: ${error.toString()}');
+      // _shwoSnacBar('Failed to get chat messages: ${error.message}');
+    }
+  }
+
   Future<void> _disconnectChat() async {
     try {
       await _acsPlugin.disconnectChat();
@@ -311,6 +322,11 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'Disconnect chat',
                   onTap: _disconnectChat,
+                  icon: Icons.message,
+                ),
+                ButtonConfig(
+                  label: 'Get chat messages',
+                  onTap: _getChatMessages,
                   icon: Icons.message,
                 ),
               ]),

@@ -1,21 +1,21 @@
 import 'dart:async';
 
 import 'package:acs_plugin/acs_plugin_error.dart';
-import 'package:acs_plugin/chat_models/chat_message.dart';
-import 'package:acs_plugin/chat_models/chat_message_edited_event.dart';
-import 'package:acs_plugin/chat_models/chat_message_received_event.dart';
-import 'package:acs_plugin/chat_models/chat_messge_deleted_event.dart';
-import 'package:acs_plugin/chat_models/chat_participant.dart';
-import 'package:acs_plugin/chat_models/chat_thread_created_event.dart';
-import 'package:acs_plugin/chat_models/chat_thread_deleted_event.dart';
-import 'package:acs_plugin/chat_models/chat_thread_properties.dart';
-import 'package:acs_plugin/chat_models/chat_thread_properties_updated_event.dart';
-import 'package:acs_plugin/chat_models/event.dart';
-import 'package:acs_plugin/chat_models/event_type.dart';
-import 'package:acs_plugin/chat_models/participants_added_event.dart';
-import 'package:acs_plugin/chat_models/participants_removed_event.dart';
-import 'package:acs_plugin/chat_models/read_receipt_received_event.dart';
-import 'package:acs_plugin/chat_models/typing_indicator_receivedEvent.dart';
+import 'package:acs_plugin/chat_models/chat_message/chat_message.dart';
+import 'package:acs_plugin/chat_models/chat_message_edited_event/chat_message_edited_event.dart';
+import 'package:acs_plugin/chat_models/chat_message_received_event/chat_message_received_event.dart';
+import 'package:acs_plugin/chat_models/chat_messge_deleted_event/chat_messge_deleted_event.dart';
+import 'package:acs_plugin/chat_models/chat_participant/chat_participant.dart';
+import 'package:acs_plugin/chat_models/chat_thread_created_event/chat_thread_created_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_deleted_event/chat_thread_deleted_event.dart';
+import 'package:acs_plugin/chat_models/chat_thread_properties/chat_thread_properties.dart';
+import 'package:acs_plugin/chat_models/chat_thread_properties_updated_event/chat_thread_properties_updated_event.dart';
+import 'package:acs_plugin/chat_models/event/event.dart';
+import 'package:acs_plugin/chat_models/event/event_type.dart';
+import 'package:acs_plugin/chat_models/participants_added_event/participants_added_event.dart';
+import 'package:acs_plugin/chat_models/participants_removed_event/participants_removed_event.dart';
+import 'package:acs_plugin/chat_models/read_receipt_received_event/read_receipt_received_event.dart';
+import 'package:acs_plugin/chat_models/typing_indicator_received_event/typing_indicator_received_event.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -304,10 +304,8 @@ class AcsPlugin {
 
   Future<List<ChatMessage>> getInitialMessages() async {
     final result = await AcsPluginPlatform.instance.getInitialMessages();
-    return result
-        .cast<Map>()
-        .map((e) => ChatMessage.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
+
+    return result.map(ChatMessage.fromJson).toList();
   }
 
   Future<ChatThreadProperties> retrieveChatThreadProperties() async {
