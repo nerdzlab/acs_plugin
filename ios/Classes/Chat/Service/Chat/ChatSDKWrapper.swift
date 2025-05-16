@@ -244,7 +244,17 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
     }
     
     func isChatHasMoreMessages() async throws -> Bool {
-        
+        do {
+            guard let messagePagedCollection = self.pagedCollection else {
+                _ = try await self.getInitialMessages()
+                return !(self.pagedCollection?.isExhausted ?? false)
+            }
+            
+            return !(messagePagedCollection.isExhausted)
+        } catch {
+            logger.error("Failed to get info about more messages: \(error)")
+            throw error
+        }
     }
 
     private func createChatClient() throws {
