@@ -4,6 +4,7 @@ import 'package:acs_plugin/acs_plugin_error.dart';
 import 'package:acs_plugin/chat_models/chat_message/chat_message.dart';
 import 'package:acs_plugin/chat_models/chat_message_edited_event/chat_message_edited_event.dart';
 import 'package:acs_plugin/chat_models/chat_message_received_event/chat_message_received_event.dart';
+import 'package:acs_plugin/chat_models/chat_message_type/chat_message_type.dart';
 import 'package:acs_plugin/chat_models/chat_messge_deleted_event/chat_messge_deleted_event.dart';
 import 'package:acs_plugin/chat_models/chat_participant/chat_participant.dart';
 import 'package:acs_plugin/chat_models/chat_thread_created_event/chat_thread_created_event.dart';
@@ -325,10 +326,14 @@ class AcsPlugin {
   Future<String?> sendMessage({
     required String content,
     required String senderDisplayName,
+    ChatMessageType? type,
+    Map<String, String>? metadata,
   }) async {
     final result = await AcsPluginPlatform.instance.sendMessage(
       content: content,
       senderDisplayName: senderDisplayName,
+      type: type?.name,
+      metadata: metadata,
     );
 
     return result;
@@ -337,10 +342,12 @@ class AcsPlugin {
   Future<void> editMessage({
     required String messageId,
     required String content,
+    Map<String, String>? metadata,
   }) async {
     await AcsPluginPlatform.instance.editMessage(
       messageId: messageId,
       content: content,
+      metadata: metadata,
     );
   }
 
@@ -358,6 +365,11 @@ class AcsPlugin {
     await AcsPluginPlatform.instance.sendReadReceipt(
       messageId: messageId,
     );
+  }
+
+  Future<bool> isChatHasMoreMessages() async {
+    final result = await AcsPluginPlatform.instance.isChatHasMoreMessages();
+    return result;
   }
 
   Future<void> sendTypingIndicator() async {

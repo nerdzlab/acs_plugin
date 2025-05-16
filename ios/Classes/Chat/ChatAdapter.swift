@@ -110,12 +110,30 @@ public class ChatAdapter {
         try await chatSDKWrapper.getPreviousMessages()
     }
     
-    public func sendMessage(content: String, senderDisplayName: String) async throws -> String {
-        return try await chatSDKWrapper.sendMessage(content: content, senderDisplayName: senderDisplayName)
+    public func sendMessage(
+        content: String,
+        senderDisplayName: String,
+        type: ChatMessageType?,
+        metadata: [String : String]?
+    ) async throws -> String {
+        return try await chatSDKWrapper.sendMessage(
+            content: content,
+            senderDisplayName: senderDisplayName,
+            type: type,
+            metadata: metadata
+        )
     }
     
-    public func editMessage(messageId: String, content: String) async throws {
-        try await chatSDKWrapper.editMessage(messageId: messageId, content: content)
+    public func editMessage(
+        messageId: String,
+        content: String,
+        metadata: [String : String]?
+    ) async throws {
+        try await chatSDKWrapper.editMessage(
+            messageId: messageId,
+            content: content,
+            metadata: metadata
+        )
     }
     
     public func deleteMessage(messageId: String) async throws {
@@ -140,6 +158,10 @@ public class ChatAdapter {
     
     private func cleanUpComposite() {
         self.lifeCycleManager = nil
+    }
+    
+    public func isChatHasMoreMessages() async throws -> Bool {
+        return try await chatSDKWrapper.isChatHasMoreMessages()
     }
     
     private func constructDependencies(

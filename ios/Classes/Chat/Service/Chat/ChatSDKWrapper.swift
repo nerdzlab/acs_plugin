@@ -144,11 +144,18 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         }
     }
 
-    func sendMessage(content: String, senderDisplayName: String) async throws -> String {
+    func sendMessage(
+        content: String,
+        senderDisplayName: String,
+        type: ChatMessageType?,
+        metadata: [String: String]?
+    ) async throws -> String {
         do {
             let messageRequest = SendChatMessageRequest(
                 content: content,
-                senderDisplayName: senderDisplayName
+                senderDisplayName: senderDisplayName,
+                type: type,
+                metadata: metadata
             )
             return try await withCheckedThrowingContinuation { continuation in
                 chatThreadClient?.send(message: messageRequest) { result, _ in
@@ -166,10 +173,15 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         }
     }
 
-    func editMessage(messageId: String, content: String) async throws {
+    func editMessage(
+        messageId: String,
+        content: String,
+        metadata: [String: String]?
+    ) async throws {
         do {
             let messageRequest = UpdateChatMessageRequest(
-                content: content
+                content: content,
+                metadata: metadata
             )
             return try await withCheckedThrowingContinuation { continuation in
                 chatThreadClient?.update(message: messageId, parameters: messageRequest) { result, _ in

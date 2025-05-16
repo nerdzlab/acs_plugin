@@ -11,6 +11,7 @@ import UIKit
 import AzureCommunicationCalling
 import AzureCommunicationCommon
 import PushKit
+import AzureCommunicationChat
 
 final class ChatHandler: MethodHandler {
     
@@ -27,6 +28,7 @@ final class ChatHandler: MethodHandler {
             static let deleteMessage = "deleteMessage"
             static let sendReadReceipt = "sendReadReceipt"
             static let sendTypingIndicator = "sendTypingIndicator"
+            static let isChatHasMoreMessages = "isChatHasMoreMessages"
         }
         
         enum FlutterEvents {
@@ -87,7 +89,26 @@ final class ChatHandler: MethodHandler {
                 result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'content' or 'senderDisplayName'", details: nil))
                 return true
             }
-            sendMessage(content: content, senderDisplayName: senderDisplayName, result: result)
+            
+            var type: ChatMessageType?
+            
+            if let rawType = args["type"] as? String {
+                type = ChatMessageType(rawType)
+            }
+            
+            var metadata: [String : String]?
+            
+            if let rawMetaData = args["metadata"] as? [String : String] {
+                metadata = rawMetaData
+            }
+            
+            sendMessage(
+                content: content,
+                senderDisplayName: senderDisplayName,
+                type: type,
+                metadata: metadata,
+                result: result
+            )
             return true
 
         case Constants.MethodChannels.editMessage:
@@ -98,7 +119,19 @@ final class ChatHandler: MethodHandler {
                 result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'messageId' or 'content'", details: nil))
                 return true
             }
-            editMessage(messageId: messageId, content: content, result: result)
+            
+            var metadata: [String : String]?
+            
+            if let rawMetaData = args["metadata"] as? [String : String] {
+                metadata = rawMetaData
+            }
+            
+            editMessage(
+                messageId: messageId,
+                content: content,
+                metadata: metadata,
+                result: result
+            )
             return true
 
         case Constants.MethodChannels.deleteMessage:
@@ -145,6 +178,9 @@ final class ChatHandler: MethodHandler {
             getPreviousMessages(result: result)
             return true
 
+        case Constants.MethodChannels.isChatHasMoreMessages:
+            isChatHasMoreMessages(result: result)
+            return true
 
         default:
             return false
@@ -369,10 +405,21 @@ final class ChatHandler: MethodHandler {
         }
     }
 
-    private func sendMessage(content: String, senderDisplayName: String, result: @escaping FlutterResult) {
+    private func sendMessage(
+        content: String,
+        senderDisplayName: String,
+        type: ChatMessageType?,
+        metadata: [String: String]?,
+        result: @escaping FlutterResult
+    ) {
         Task {
             do {
-                let messageId = try await chatAdapter?.sendMessage(content: content, senderDisplayName: senderDisplayName)
+                let messageId = try await chatAdapter?.sendMessage(
+                    content: content,
+                    senderDisplayName: senderDisplayName,
+                    type: type,
+                    metadata: metadata
+                )
                 result(messageId)
             } catch {
                 handleChatError(error, result: result)
@@ -380,10 +427,19 @@ final class ChatHandler: MethodHandler {
         }
     }
 
-    private func editMessage(messageId: String, content: String, result: @escaping FlutterResult) {
+    private func editMessage(
+        messageId: String,
+        content: String,
+        metadata: [String: String]?,
+        result: @escaping FlutterResult
+    ) {
         Task {
             do {
-                try await chatAdapter?.editMessage(messageId: messageId, content: content)
+                try await chatAdapter?.editMessage(
+                    messageId: messageId,
+                    content: content,
+                    metadata: metadata
+                )
                 result(nil)
             } catch {
                 handleChatError(error, result: result)
@@ -418,6 +474,17 @@ final class ChatHandler: MethodHandler {
             do {
                 try await chatAdapter?.sendTypingIndicator()
                 result(nil)
+            } catch {
+                handleChatError(error, result: result)
+            }
+        }
+    }
+    
+    private func isChatHasMoreMessages(result: @escaping FlutterResult) {
+        Task {
+            do {
+                let isChatHasMoreMessages = try await chatAdapter?.isChatHasMoreMessages()
+                result(isChatHasMoreMessages)
             } catch {
                 handleChatError(error, result: result)
             }

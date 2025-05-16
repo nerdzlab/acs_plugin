@@ -1,6 +1,6 @@
-import 'package:acs_plugin/chat_models/chat_message/chat_message.dart';
 import 'package:acs_plugin/chat_models/chat_participant/chat_participant.dart';
 import 'package:acs_plugin/chat_models/communication_identifier/communication_identifier.dart';
+import 'package:acs_plugin/chat_models/utilities/map_helpers.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 

@@ -86,6 +86,8 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   Future<String?> sendMessage({
     required String content,
     required String senderDisplayName,
+    String? type,
+    Map<String, String>? metadata,
   }) async {
     throw UnimplementedError('sendMessage() has not been implemented.');
   }
@@ -93,6 +95,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   Future<void> editMessage({
     required String messageId,
     required String content,
+    Map<String, String>? metadata,
   }) async {
     throw UnimplementedError('editMessage() has not been implemented.');
   }
@@ -111,6 +114,11 @@ abstract class AcsPluginPlatform extends PlatformInterface {
 
   Future<void> sendTypingIndicator() async {
     throw UnimplementedError('sendTypingIndicator() has not been implemented.');
+  }
+
+  Future<bool> isChatHasMoreMessages() async {
+    throw UnimplementedError(
+        'isChatHasMoreMessages() has not been implemented.');
   }
 
   // Event stream for chat events etc.

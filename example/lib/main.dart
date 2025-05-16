@@ -287,6 +287,18 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  // Get info if chat has more messages
+  Future<void> _isChatHasMoreMessages() async {
+    try {
+      final isChatHasMoreMessages = await _acsPlugin.isChatHasMoreMessages();
+      log('Chat has more messages: $isChatHasMoreMessages');
+      _shwoSnacBar('Chat has more messages: $isChatHasMoreMessages');
+    } on PlatformException catch (error) {
+      log('Failed to fetch isChatHasMoreMessages: ${error.message}');
+      _shwoSnacBar('Failed to fetch isChatHasMoreMessages: ${error.message}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -327,6 +339,13 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'Get chat messages',
                   onTap: _getChatMessages,
+                  icon: Icons.message,
+                ),
+              ]),
+              _buildButtonGrid([
+                ButtonConfig(
+                  label: 'Check more messages',
+                  onTap: _isChatHasMoreMessages,
                   icon: Icons.message,
                 ),
               ]),

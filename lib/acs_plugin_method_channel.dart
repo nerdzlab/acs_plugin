@@ -1,3 +1,4 @@
+import 'package:acs_plugin/chat_models/chat_message_type/chat_message_type.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -160,12 +161,16 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   Future<String?> sendMessage({
     required String content,
     required String senderDisplayName,
+    String? type,
+    Map<String, String>? metadata,
   }) async {
     final result = await methodChannel.invokeMethod(
       'sendMessage',
       {
         'content': content,
         'senderDisplayName': senderDisplayName,
+        if (type != null) 'type': type,
+        if (metadata != null) 'metadata': metadata,
       },
     );
     return result as String?;
@@ -175,12 +180,14 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   Future<void> editMessage({
     required String messageId,
     required String content,
+    Map<String, String>? metadata,
   }) async {
     await methodChannel.invokeMethod(
       'editMessage',
       {
         'messageId': messageId,
         'content': content,
+        if (metadata != null) 'metadata': metadata,
       },
     );
   }
@@ -207,6 +214,15 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         'messageId': messageId,
       },
     );
+  }
+
+  @override
+  Future<bool> isChatHasMoreMessages() async {
+    final result = await methodChannel.invokeMethod(
+      'isChatHasMoreMessages',
+    );
+
+    return result as bool;
   }
 
   @override
