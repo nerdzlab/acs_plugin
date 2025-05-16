@@ -242,6 +242,10 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
+    
+    func isChatHasMoreMessages() async throws -> Bool {
+        
+    }
 
     private func createChatClient() throws {
         do {
