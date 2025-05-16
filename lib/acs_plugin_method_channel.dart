@@ -1,4 +1,3 @@
-import 'package:acs_plugin/chat_models/chat_message_type/chat_message_type.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -103,27 +102,44 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
-  Future<void> setupChat({
+  Future<void> setupChatService({
     required String endpoint,
+  }) async {
+    await methodChannel.invokeMethod(
+      'setupChatService',
+      {
+        'endpoint': endpoint,
+      },
+    );
+  }
+
+  @override
+  Future<void> initChatThread({
     required String threadId,
   }) async {
     await methodChannel.invokeMethod(
-      'setupChat',
+      'initChatThread',
       {
-        'endpoint': endpoint,
         'threadId': threadId,
       },
     );
   }
 
   @override
-  Future<void> disconnectChat() async {
-    await methodChannel.invokeMethod('disconnectChat');
+  Future<void> disconnectChatService() async {
+    await methodChannel.invokeMethod('disconnectChatService');
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getInitialMessages() async {
-    final result = await methodChannel.invokeMethod('getInitialMessages');
+  Future<List<Map<String, dynamic>>> getInitialMessages({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'getInitialMessages',
+      {
+        'threadId': threadId,
+      },
+    );
 
     if (result == null) return [];
 
@@ -133,15 +149,28 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
-  Future<Map<String, dynamic>> retrieveChatThreadProperties() async {
-    final result =
-        await methodChannel.invokeMethod('retrieveChatThreadProperties');
+  Future<Map<String, dynamic>> retrieveChatThreadProperties({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'retrieveChatThreadProperties',
+      {
+        'threadId': threadId,
+      },
+    );
     return Map<String, dynamic>.from(result);
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getListOfParticipants() async {
-    final result = await methodChannel.invokeMethod('getListOfParticipants');
+  Future<List<Map<String, dynamic>>> getListOfParticipants({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'getListOfParticipants',
+      {
+        'threadId': threadId,
+      },
+    );
     return (result as List)
         .cast<Map>()
         .map((e) => Map<String, dynamic>.from(e as Map))
@@ -149,8 +178,15 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getPreviousMessages() async {
-    final result = await methodChannel.invokeMethod('getPreviousMessages');
+  Future<List<Map<String, dynamic>>> getPreviousMessages({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'getPreviousMessages',
+      {
+        'threadId': threadId,
+      },
+    );
     return (result as List)
         .cast<Map>()
         .map((e) => Map<String, dynamic>.from(e as Map))
@@ -159,6 +195,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<String?> sendMessage({
+    required String threadId,
     required String content,
     required String senderDisplayName,
     String? type,
@@ -169,6 +206,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       {
         'content': content,
         'senderDisplayName': senderDisplayName,
+        'threadId': threadId,
         if (type != null) 'type': type,
         if (metadata != null) 'metadata': metadata,
       },
@@ -178,6 +216,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> editMessage({
+    required String threadId,
     required String messageId,
     required String content,
     Map<String, String>? metadata,
@@ -187,6 +226,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       {
         'messageId': messageId,
         'content': content,
+        'threadId': threadId,
         if (metadata != null) 'metadata': metadata,
       },
     );
@@ -194,39 +234,55 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> deleteMessage({
+    required String threadId,
     required String messageId,
   }) async {
     await methodChannel.invokeMethod(
       'deleteMessage',
       {
         'messageId': messageId,
+        'threadId': threadId,
       },
     );
   }
 
   @override
   Future<void> sendReadReceipt({
+    required String threadId,
     required String messageId,
   }) async {
     await methodChannel.invokeMethod(
       'sendReadReceipt',
       {
         'messageId': messageId,
+        'threadId': threadId,
       },
     );
   }
 
   @override
-  Future<bool> isChatHasMoreMessages() async {
+  Future<bool> isChatHasMoreMessages({
+    required String threadId,
+  }) async {
     final result = await methodChannel.invokeMethod(
       'isChatHasMoreMessages',
+      {
+        'threadId': threadId,
+      },
     );
 
     return result as bool;
   }
 
   @override
-  Future<void> sendTypingIndicator() async {
-    await methodChannel.invokeMethod('sendTypingIndicator');
+  Future<void> sendTypingIndicator({
+    required String threadId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'sendTypingIndicator',
+      {
+        'threadId': threadId,
+      },
+    );
   }
 }

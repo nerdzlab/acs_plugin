@@ -62,7 +62,6 @@ public class ChatAdapter {
     public init(endpoint: String,
                 identifier: CommunicationIdentifier,
                 credential: CommunicationTokenCredential,
-                threadId: String,
                 displayName: String? = nil) {
         self.chatConfiguration = ChatConfiguration(
             endpoint: endpoint,
@@ -70,7 +69,6 @@ public class ChatAdapter {
             credential: credential,
             displayName: displayName)
         self.events = Events()
-        self.threadId = threadId
     }
     
     deinit {
@@ -82,11 +80,14 @@ public class ChatAdapter {
     public func connect() async throws {
         constructDependencies(
             chatConfiguration: self.chatConfiguration,
-            chatThreadId: threadId,
             chatCompositeEventsHandler: events
         )
         
         try await initializeChat()
+    }
+    
+    public func initializeChatThread(threadId: String) async throws {
+        try await chatSDKWrapper.initializeChatThread(threadId: threadId)
     }
     
     /// Unsubscribe all the chat client events from Azure Communication Service
@@ -94,29 +95,31 @@ public class ChatAdapter {
         try await unregisterRealTimeNotifications()
     }
     
-    public func getInitialMessages() async throws -> [ChatMessage] {
-        try await chatSDKWrapper.getInitialMessages()
+    public func getInitialMessages(threadId: String) async throws -> [ChatMessage] {
+        try await chatSDKWrapper.getInitialMessages(for: threadId)
     }
     
-    public func retrieveChatThreadProperties() async throws -> ChatThreadProperties {
-        return try await chatSDKWrapper.retrieveChatThreadProperties()
+    public func retrieveChatThreadProperties(threadId: String) async throws -> ChatThreadProperties {
+        return try await chatSDKWrapper.retrieveChatThreadProperties(for: threadId)
     }
     
-    public func getListOfParticipants() async throws -> [ChatParticipant] {
-        try await chatSDKWrapper.getListOfParticipants()
+    public func getListOfParticipants(threadId: String) async throws -> [ChatParticipant] {
+        try await chatSDKWrapper.getListOfParticipants(for: threadId)
     }
     
-    public func getPreviousMessages() async throws -> [ChatMessage] {
-        try await chatSDKWrapper.getPreviousMessages()
+    public func getPreviousMessages(threadId: String) async throws -> [ChatMessage] {
+        try await chatSDKWrapper.getPreviousMessages(for: threadId)
     }
     
     public func sendMessage(
+        threadId: String,
         content: String,
         senderDisplayName: String,
         type: ChatMessageType?,
         metadata: [String : String]?
     ) async throws -> String {
         return try await chatSDKWrapper.sendMessage(
+            threadId: threadId,
             content: content,
             senderDisplayName: senderDisplayName,
             type: type,
@@ -125,27 +128,29 @@ public class ChatAdapter {
     }
     
     public func editMessage(
+        threadId: String,
         messageId: String,
         content: String,
         metadata: [String : String]?
     ) async throws {
         try await chatSDKWrapper.editMessage(
+            threadId: threadId,
             messageId: messageId,
             content: content,
             metadata: metadata
         )
     }
     
-    public func deleteMessage(messageId: String) async throws {
-        try await chatSDKWrapper.deleteMessage(messageId: messageId)
+    public func deleteMessage(threadId: String, messageId: String) async throws {
+        try await chatSDKWrapper.deleteMessage(threadId: threadId, messageId: messageId)
     }
     
-    public func sendReadReceipt(messageId: String) async throws {
-        try await chatSDKWrapper.sendReadReceipt(messageId: messageId)
+    public func sendReadReceipt(threadId: String, messageId: String) async throws {
+        try await chatSDKWrapper.sendReadReceipt(threadId: threadId, messageId: messageId)
     }
     
-    public func sendTypingIndicator() async throws {
-        try await chatSDKWrapper.sendTypingIndicator()
+    public func sendTypingIndicator(threadId: String) async throws {
+        try await chatSDKWrapper.sendTypingIndicator(threadId: threadId)
     }
     
     private func unregisterRealTimeNotifications() async throws {
@@ -160,13 +165,12 @@ public class ChatAdapter {
         self.lifeCycleManager = nil
     }
     
-    public func isChatHasMoreMessages() async throws -> Bool {
-        return try await chatSDKWrapper.isChatHasMoreMessages()
+    public func isChatHasMoreMessages(threadId: String) async throws -> Bool {
+        return try await chatSDKWrapper.isChatHasMoreMessages(threadId: threadId)
     }
     
     private func constructDependencies(
         chatConfiguration: ChatConfiguration,
-        chatThreadId: String,
         chatCompositeEventsHandler: ChatAdapter.Events
     ) {
         let eventHandler = ChatSDKEventsHandler(
@@ -177,8 +181,7 @@ public class ChatAdapter {
         chatSDKWrapper = ChatSDKWrapper(
             logger: logger,
             chatEventsHandler: eventHandler,
-            chatConfiguration: chatConfiguration,
-            chatThreadId: chatThreadId
+            chatConfiguration: chatConfiguration
         )
         
         lifeCycleManager = ChatUIKitAppLifeCycleManager(

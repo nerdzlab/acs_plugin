@@ -54,36 +54,51 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('returnToCall() has not been implemented.');
   }
 
-  Future<void> setupChat({
+  Future<void> setupChatService({
     required String endpoint,
+  }) async {
+    throw UnimplementedError('setupChatService() has not been implemented.');
+  }
+
+  Future<void> initChatThread({
     required String threadId,
   }) async {
-    throw UnimplementedError('setupChat() has not been implemented.');
+    throw UnimplementedError('initChatThread() has not been implemented.');
   }
 
-  Future<void> disconnectChat() async {
-    throw UnimplementedError('disconnectChat() has not been implemented.');
+  Future<void> disconnectChatService() async {
+    throw UnimplementedError(
+        'disconnectChatService() has not been implemented.');
   }
 
-  Future<List<Map<String, dynamic>>> getInitialMessages() async {
+  Future<List<Map<String, dynamic>>> getInitialMessages({
+    required String threadId,
+  }) async {
     throw UnimplementedError('getInitialMessages() has not been implemented.');
   }
 
-  Future<Map<String, dynamic>> retrieveChatThreadProperties() async {
+  Future<Map<String, dynamic>> retrieveChatThreadProperties({
+    required String threadId,
+  }) async {
     throw UnimplementedError(
         'retrieveChatThreadProperties() has not been implemented.');
   }
 
-  Future<List<Map<String, dynamic>>> getListOfParticipants() async {
+  Future<List<Map<String, dynamic>>> getListOfParticipants({
+    required String threadId,
+  }) async {
     throw UnimplementedError(
         'getListOfParticipants() has not been implemented.');
   }
 
-  Future<List<Map<String, dynamic>>> getPreviousMessages() async {
+  Future<List<Map<String, dynamic>>> getPreviousMessages({
+    required String threadId,
+  }) async {
     throw UnimplementedError('getPreviousMessages() has not been implemented.');
   }
 
   Future<String?> sendMessage({
+    required String threadId,
     required String content,
     required String senderDisplayName,
     String? type,
@@ -93,6 +108,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   }
 
   Future<void> editMessage({
+    required String threadId,
     required String messageId,
     required String content,
     Map<String, String>? metadata,
@@ -101,22 +117,28 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   }
 
   Future<void> deleteMessage({
+    required String threadId,
     required String messageId,
   }) async {
     throw UnimplementedError('deleteMessage() has not been implemented.');
   }
 
   Future<void> sendReadReceipt({
+    required String threadId,
     required String messageId,
   }) async {
     throw UnimplementedError('sendReadReceipt() has not been implemented.');
   }
 
-  Future<void> sendTypingIndicator() async {
+  Future<void> sendTypingIndicator({
+    required String threadId,
+  }) async {
     throw UnimplementedError('sendTypingIndicator() has not been implemented.');
   }
 
-  Future<bool> isChatHasMoreMessages() async {
+  Future<bool> isChatHasMoreMessages({
+    required String threadId,
+  }) async {
     throw UnimplementedError(
         'isChatHasMoreMessages() has not been implemented.');
   }

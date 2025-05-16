@@ -344,3 +344,15 @@ extension ChatThreadProperties {
         return json
     }
 }
+
+extension ChatThreadClient: @retroactive Equatable {
+    public static func == (lhs: ChatThreadClient, rhs: ChatThreadClient) -> Bool {
+        return lhs.threadId == rhs.threadId
+    }
+}
+
+extension ChatThreadClient: @retroactive Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(threadId)
+    }
+}

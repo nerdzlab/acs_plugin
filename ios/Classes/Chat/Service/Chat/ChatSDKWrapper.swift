@@ -10,56 +10,62 @@ import Foundation
 // swiftlint:disable type_body_length
 class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
     let chatEventsHandler: ChatSDKEventsHandling
-
+    
     private let logger: Logger
     private let chatConfiguration: ChatConfiguration
-    private let threadId: String
     private var chatClient: ChatClient?
-    private var chatThreadClient: ChatThreadClient?
-    private var pagedCollection: PagedCollection<ChatMessage>?
-
-    init(logger: Logger,
+    
+    private var chatThreadClients: Set<ChatThreadClient> = []
+    private var pagedCollections: [String: PagedCollection<ChatMessage>] = [:]
+    
+    init(
+        logger: Logger,
          chatEventsHandler: ChatSDKEventsHandling,
-         chatConfiguration: ChatConfiguration,
-         chatThreadId: String) {
+         chatConfiguration: ChatConfiguration
+    ) {
         self.logger = logger
         self.chatEventsHandler = chatEventsHandler
         self.chatConfiguration = chatConfiguration
-        self.threadId = chatThreadId
         super.init()
     }
-
+    
     deinit {
         logger.debug("ChatSDKWrapper deallocated")
     }
-
+    
     func initializeChat() async throws {
         do {
             try createChatClient()
-            try createChatThreadClient()
-
-            // Make request to ChatSDK to verfy token
-            _ = try await retrieveChatThreadProperties().topic
-
             try registerRealTimeNotifications()
         } catch {
             throw error
         }
     }
-
-    func getInitialMessages() async throws -> [ChatMessage] {
+    
+    func initializeChatThread(threadId: String) async throws {
+        do {
+            _ = try await createChatThreadClient(threadId: threadId)
+            _ = try await retrieveChatThreadProperties(for: threadId).topic
+        } catch {
+            throw error
+        }
+    }
+    
+    func getInitialMessages(for threadId: String) async throws -> [ChatMessage] {
         do {
             let listChatMessagesOptions = ListChatMessagesOptions(
                 maxPageSize: chatConfiguration.pageSize)
-
+            
+            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
+            
             return try await withCheckedThrowingContinuation { continuation in
-                chatThreadClient?.listMessages(withOptions: listChatMessagesOptions) { result, _ in
+                chatThreadClient.listMessages(withOptions: listChatMessagesOptions) { result, _ in
                     switch result {
                     case .success(let messagesResult):
-                        self.pagedCollection = messagesResult
-                        continuation.resume(returning: self.pagedCollection?.items ?? [])
+                        self.pagedCollections[threadId] = messagesResult
+                        continuation.resume(returning: messagesResult.items ?? [])
                     case .failure(let error):
-                        self.pagedCollection = nil
+                        self.pagedCollections.removeValue(forKey: threadId)
                         continuation.resume(throwing: error)
                     }
                 }
@@ -69,11 +75,13 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-
-    func retrieveChatThreadProperties() async throws -> ChatThreadProperties {
+        
+    func retrieveChatThreadProperties(for threadId: String) async throws -> ChatThreadProperties {
         do {
+            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
+            
             return try await withCheckedThrowingContinuation { continuation in
-                chatThreadClient?.getProperties { result, _ in
+                chatThreadClient.getProperties { result, _ in
                     switch result {
                     case .success(let threadProperties):
                         let topic = threadProperties.topic
@@ -91,21 +99,23 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-
-    func getListOfParticipants() async throws -> [ChatParticipant] {
+    
+    func getListOfParticipants(for threadId: String) async throws -> [ChatParticipant] {
         do {
             let participantsPageSize: Int32 = 200
             let listParticipantsOptions = ListChatParticipantsOptions(maxPageSize: participantsPageSize)
-            let pagedCollectionResult = try await chatThreadClient?.listParticipants(
+            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
+            
+            let pagedCollectionResult = try await chatThreadClient.listParticipants(
                 withOptions: listParticipantsOptions)
-            guard let pagedResult = pagedCollectionResult,
-                  let items = pagedResult.items else {
+            
+            guard let items = pagedCollectionResult.items else {
                 return []
             }
             var allChatParticipants = items
             
-            while !pagedResult.isExhausted {
-                let nextPage = try await pagedResult.nextPage()
+            while !pagedCollectionResult.isExhausted {
+                let nextPage = try await pagedCollectionResult.nextPage()
                 let pageParticipants = nextPage
                 
                 allChatParticipants.append(contentsOf: pageParticipants)
@@ -116,11 +126,11 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-
-    func getPreviousMessages() async throws -> [ChatMessage] {
+    
+    func getPreviousMessages(for threadId: String) async throws -> [ChatMessage] {
         do {
-            guard let messagePagedCollection = self.pagedCollection else {
-                return try await self.getInitialMessages()
+            guard let messagePagedCollection = self.pagedCollections[threadId] else {
+                return try await self.getInitialMessages(for: threadId)
             }
             
             return try await withCheckedThrowingContinuation { continuation in
@@ -143,8 +153,9 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func sendMessage(
+        threadId: String,
         content: String,
         senderDisplayName: String,
         type: ChatMessageType?,
@@ -157,8 +168,11 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
                 type: type,
                 metadata: metadata
             )
+            
+            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
+            
             return try await withCheckedThrowingContinuation { continuation in
-                chatThreadClient?.send(message: messageRequest) { result, _ in
+                chatThreadClient.send(message: messageRequest) { result, _ in
                     switch result {
                     case let .success(result):
                         continuation.resume(returning: result.id)
@@ -172,8 +186,9 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     func editMessage(
+        threadId: String,
         messageId: String,
         content: String,
         metadata: [String: String]?
@@ -183,8 +198,11 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
                 content: content,
                 metadata: metadata
             )
+            
+            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
+            
             return try await withCheckedThrowingContinuation { continuation in
-                chatThreadClient?.update(message: messageId, parameters: messageRequest) { result, _ in
+                chatThreadClient.update(message: messageId, parameters: messageRequest) { result, _ in
                     switch result {
                     case .success:
                         continuation.resume()
@@ -198,11 +216,13 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-
-    func deleteMessage(messageId: String) async throws {
+    
+    func deleteMessage(threadId: String, messageId: String) async throws {
         do {
+            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
+            
             return try await withCheckedThrowingContinuation { continuation in
-                chatThreadClient?.delete(message: messageId) { result, _ in
+                chatThreadClient.delete(message: messageId) { result, _ in
                     switch result {
                     case .success:
                         continuation.resume()
@@ -216,31 +236,35 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-
-    func sendReadReceipt(messageId: String) async throws {
+    
+    func sendReadReceipt(threadId: String, messageId: String) async throws {
         do {
+            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
+            
             return try await withCheckedThrowingContinuation { continuation in
-                chatThreadClient?.sendReadReceipt(
-                                        forMessage: messageId,
-                                        withOptions: SendChatReadReceiptOptions()) { result, error  in
-                    switch result {
-                    case .success:
-                        continuation.resume(returning: Void())
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
+                chatThreadClient.sendReadReceipt(
+                    forMessage: messageId,
+                    withOptions: SendChatReadReceiptOptions()) { result, error  in
+                        switch result {
+                        case .success:
+                            continuation.resume(returning: Void())
+                        case .failure(let error):
+                            continuation.resume(throwing: error)
+                        }
                     }
-                }
             }
         } catch {
             logger.error("Failed to send read receipt: \(error)")
             throw error
         }
     }
-
-    func sendTypingIndicator() async throws {
+    
+    func sendTypingIndicator(threadId: String) async throws {
         do {
+            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
+            
             return try await withCheckedThrowingContinuation { continuation in
-                self.chatThreadClient?.sendTypingNotification(from: self.chatConfiguration.displayName) { result, _ in
+                chatThreadClient.sendTypingNotification(from: self.chatConfiguration.displayName) { result, _ in
                     switch result {
                     case .success:
                         continuation.resume(returning: Void())
@@ -255,11 +279,11 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         }
     }
     
-    func isChatHasMoreMessages() async throws -> Bool {
+    func isChatHasMoreMessages(threadId: String) async throws -> Bool {
         do {
-            guard let messagePagedCollection = self.pagedCollection else {
-                _ = try await self.getInitialMessages()
-                return !(self.pagedCollection?.isExhausted ?? false)
+            guard let messagePagedCollection = self.pagedCollections[threadId] else {
+                _ = try await self.getInitialMessages(for: threadId)
+                return !(self.pagedCollections[threadId]?.isExhausted ?? false)
             }
             
             return !(messagePagedCollection.isExhausted)
@@ -268,7 +292,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     private func createChatClient() throws {
         do {
             logger.info("Creating Chat Client...")
@@ -285,18 +309,39 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-
-    private func createChatThreadClient() throws {
-        do {
-            logger.info("Creating Chat Thread Client...")
-            self.chatThreadClient = try chatClient?.createClient(
-                forThread: self.threadId)
-        } catch {
-            logger.error("Create Chat Thread Client failed: \(error)")
-            throw error
+    
+    private func createChatThreadClient(threadId: String) async throws -> ChatThreadClient {
+        return try await withCheckedThrowingContinuation { continuation in
+            do {
+                logger.info("Creating Chat Thread Client...")
+                
+                guard let chatThreadClient = try chatClient?.createClient(forThread: threadId) else {
+                    throw NSError(
+                        domain: "ChatThreadClientCreation",
+                        code: 0,
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to create chat thread client"]
+                    )
+                }
+                
+                chatThreadClients.insert(chatThreadClient)
+                continuation.resume(returning: chatThreadClient)
+            } catch {
+                logger.error("Create Chat Thread Client failed: \(error)")
+                continuation.resume(throwing: error)
+            }
         }
     }
+    
+    private func getChatThreadClient(threadId: String) async throws -> ChatThreadClient {
+        // Check if already present
+        if let existingClient = chatThreadClients.first(where: { $0.threadId == threadId }) {
+            return existingClient
+        }
 
+        // If not present, create and return
+        return try await createChatThreadClient(threadId: threadId)
+    }
+    
     private func registerRealTimeNotifications() throws {
         self.chatClient?.startRealTimeNotifications { [self] (result: Result<Void, AzureError>) in
             switch result {
@@ -308,12 +353,12 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             }
         }
     }
-
+    
     func unregisterRealTimeNotifications() async throws {
         guard let client = self.chatClient else {
             return
         }
-
+        
         do {
             return try await withCheckedThrowingContinuation { continuation in
                 client.stopRealTimeNotifications()
@@ -324,7 +369,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-
+    
     private func registerEvents() {
         guard let client = self.chatClient else {
             return

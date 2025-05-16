@@ -134,18 +134,24 @@ class AcsPlugin {
     await AcsPluginPlatform.instance.returnToCall();
   }
 
-  Future<void> setupChat({
+  Future<void> setupChatService({
     required String endpoint,
+  }) async {
+    await AcsPluginPlatform.instance.setupChatService(
+      endpoint: endpoint,
+    );
+  }
+
+  Future<void> initChatThread({
     required String threadId,
   }) async {
-    await AcsPluginPlatform.instance.setupChat(
-      endpoint: endpoint,
+    await AcsPluginPlatform.instance.initChatThread(
       threadId: threadId,
     );
   }
 
-  Future<void> disconnectChat() async {
-    await AcsPluginPlatform.instance.disconnectChat();
+  Future<void> disconnectChatService() async {
+    await AcsPluginPlatform.instance.disconnectChatService();
   }
 
 // Stream to listen for events
@@ -295,28 +301,39 @@ class AcsPlugin {
     onError?.call(acsError);
   }
 
-  Future<List<ChatParticipant>> getListOfParticipants() async {
-    final result = await AcsPluginPlatform.instance.getListOfParticipants();
+  Future<List<ChatParticipant>> getListOfParticipants({
+    required String threadId,
+  }) async {
+    final result = await AcsPluginPlatform.instance
+        .getListOfParticipants(threadId: threadId);
     return result
         .cast<Map>()
         .map((e) => ChatParticipant.fromJson(Map<String, dynamic>.from(e)))
         .toList();
   }
 
-  Future<List<ChatMessage>> getInitialMessages() async {
-    final result = await AcsPluginPlatform.instance.getInitialMessages();
+  Future<List<ChatMessage>> getInitialMessages({
+    required String threadId,
+  }) async {
+    final result =
+        await AcsPluginPlatform.instance.getInitialMessages(threadId: threadId);
 
     return result.map(ChatMessage.fromJson).toList();
   }
 
-  Future<ChatThreadProperties> retrieveChatThreadProperties() async {
-    final result =
-        await AcsPluginPlatform.instance.retrieveChatThreadProperties();
+  Future<ChatThreadProperties> retrieveChatThreadProperties({
+    required String threadId,
+  }) async {
+    final result = await AcsPluginPlatform.instance
+        .retrieveChatThreadProperties(threadId: threadId);
     return ChatThreadProperties.fromJson(result);
   }
 
-  Future<List<ChatMessage>> getPreviousMessages() async {
-    final result = await AcsPluginPlatform.instance.getPreviousMessages();
+  Future<List<ChatMessage>> getPreviousMessages({
+    required String threadId,
+  }) async {
+    final result = await AcsPluginPlatform.instance
+        .getPreviousMessages(threadId: threadId);
     return result
         .cast<Map>()
         .map((e) => ChatMessage.fromJson(Map<String, dynamic>.from(e)))
@@ -324,12 +341,14 @@ class AcsPlugin {
   }
 
   Future<String?> sendMessage({
+    required String threadId,
     required String content,
     required String senderDisplayName,
     ChatMessageType? type,
     Map<String, String>? metadata,
   }) async {
     final result = await AcsPluginPlatform.instance.sendMessage(
+      threadId: threadId,
       content: content,
       senderDisplayName: senderDisplayName,
       type: type?.name,
@@ -340,11 +359,13 @@ class AcsPlugin {
   }
 
   Future<void> editMessage({
+    required String threadId,
     required String messageId,
     required String content,
     Map<String, String>? metadata,
   }) async {
     await AcsPluginPlatform.instance.editMessage(
+      threadId: threadId,
       messageId: messageId,
       content: content,
       metadata: metadata,
@@ -352,27 +373,36 @@ class AcsPlugin {
   }
 
   Future<void> deleteMessage({
+    required String threadId,
     required String messageId,
   }) async {
     await AcsPluginPlatform.instance.deleteMessage(
+      threadId: threadId,
       messageId: messageId,
     );
   }
 
   Future<void> sendReadReceipt({
+    required String threadId,
     required String messageId,
   }) async {
     await AcsPluginPlatform.instance.sendReadReceipt(
+      threadId: threadId,
       messageId: messageId,
     );
   }
 
-  Future<bool> isChatHasMoreMessages() async {
-    final result = await AcsPluginPlatform.instance.isChatHasMoreMessages();
+  Future<bool> isChatHasMoreMessages({
+    required String threadId,
+  }) async {
+    final result = await AcsPluginPlatform.instance
+        .isChatHasMoreMessages(threadId: threadId);
     return result;
   }
 
-  Future<void> sendTypingIndicator() async {
-    await AcsPluginPlatform.instance.sendTypingIndicator();
+  Future<void> sendTypingIndicator({
+    required String threadId,
+  }) async {
+    await AcsPluginPlatform.instance.sendTypingIndicator(threadId: threadId);
   }
 }

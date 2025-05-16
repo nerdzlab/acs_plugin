@@ -251,10 +251,23 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
-  Future<void> _setupChat() async {
+  Future<void> _setupChatService() async {
     try {
-      await _acsPlugin.setupChat(
+      await _acsPlugin.setupChatService(
         endpoint: _endpoint,
+      );
+      _initChatThread();
+      log('Chat initialized successfully');
+      _shwoSnacBar('Chat initialized successfully');
+    } on PlatformException catch (error) {
+      log('Failed to initialize chat: ${error.message}');
+      _shwoSnacBar('Failed to initialize chat: ${error.message}');
+    }
+  }
+
+  Future<void> _initChatThread() async {
+    try {
+      await _acsPlugin.initChatThread(
         threadId: _threadId,
       );
       log('Chat initialized successfully');
@@ -267,7 +280,7 @@ class _CallScreenState extends State<CallScreen> {
 
   Future<void> _getChatMessages() async {
     try {
-      final messages = await _acsPlugin.getInitialMessages();
+      final messages = await _acsPlugin.getInitialMessages(threadId: _threadId);
       log('Chat initialized successfully');
       _shwoSnacBar('Chat messages successfully fetched');
     } catch (error) {
@@ -276,9 +289,9 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
-  Future<void> _disconnectChat() async {
+  Future<void> _disconnectChatService() async {
     try {
-      await _acsPlugin.disconnectChat();
+      await _acsPlugin.disconnectChatService();
       log('Chat disconnected successfully');
       _shwoSnacBar('Chat disconnected successfully');
     } on PlatformException catch (error) {
@@ -290,7 +303,8 @@ class _CallScreenState extends State<CallScreen> {
   // Get info if chat has more messages
   Future<void> _isChatHasMoreMessages() async {
     try {
-      final isChatHasMoreMessages = await _acsPlugin.isChatHasMoreMessages();
+      final isChatHasMoreMessages =
+          await _acsPlugin.isChatHasMoreMessages(threadId: _threadId);
       log('Chat has more messages: $isChatHasMoreMessages');
       _shwoSnacBar('Chat has more messages: $isChatHasMoreMessages');
     } on PlatformException catch (error) {
@@ -327,13 +341,13 @@ class _CallScreenState extends State<CallScreen> {
               ]),
               _buildButtonGrid([
                 ButtonConfig(
-                  label: 'Setup chat',
-                  onTap: _setupChat,
+                  label: 'Setup chat service',
+                  onTap: _setupChatService,
                   icon: Icons.message,
                 ),
                 ButtonConfig(
-                  label: 'Disconnect chat',
-                  onTap: _disconnectChat,
+                  label: 'Disconnect chat service',
+                  onTap: _disconnectChatService,
                   icon: Icons.message,
                 ),
                 ButtonConfig(

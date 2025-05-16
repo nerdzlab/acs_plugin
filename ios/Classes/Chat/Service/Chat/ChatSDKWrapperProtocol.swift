@@ -8,18 +8,19 @@ import Combine
 
 protocol ChatSDKWrapperProtocol {
     func initializeChat() async throws
-    func getInitialMessages() async throws -> [ChatMessage]
-    func retrieveChatThreadProperties() async throws -> ChatThreadProperties
-    func getListOfParticipants() async throws -> [ChatParticipant]
-    func getPreviousMessages() async throws -> [ChatMessage]
-    func deleteMessage(messageId: String) async throws
-    func sendReadReceipt(messageId: String) async throws
-    func sendTypingIndicator() async throws
-    func isChatHasMoreMessages() async throws -> Bool
+    func getInitialMessages(for threadId: String) async throws -> [ChatMessage]
+    func retrieveChatThreadProperties(for threadId: String) async throws -> ChatThreadProperties
+    func getListOfParticipants(for threadId: String) async throws -> [ChatParticipant]
+    func getPreviousMessages(for threadId: String) async throws -> [ChatMessage]
+    func deleteMessage(threadId: String, messageId: String) async throws
+    func sendReadReceipt(threadId: String, messageId: String) async throws
+    func sendTypingIndicator(threadId: String) async throws
+    func isChatHasMoreMessages(threadId: String) async throws -> Bool
     func unregisterRealTimeNotifications() async throws
     var chatEventsHandler: ChatSDKEventsHandling { get }
     
     func sendMessage(
+        threadId: String,
         content: String,
         senderDisplayName: String,
         type: ChatMessageType?,
@@ -27,6 +28,7 @@ protocol ChatSDKWrapperProtocol {
     ) async throws -> String
     
     func editMessage(
+        threadId: String,
         messageId: String,
         content: String,
         metadata: [String: String]?

@@ -17,8 +17,9 @@ final class ChatHandler: MethodHandler {
     
     private enum Constants {
         enum MethodChannels {
-            static let setupChat = "setupChat"
-            static let disconnectChat = "disconnectChat"
+            static let setupChatService = "setupChatService"
+            static let disconnectChatService = "disconnectChatService"
+            static let initChatThread = "initChatThread"
             static let getInitialMessages = "getInitialMessages"
             static let retrieveChatThreadProperties = "retrieveChatThreadProperties"
             static let getListOfParticipants = "getListOfParticipants"
@@ -70,7 +71,7 @@ final class ChatHandler: MethodHandler {
     
     func handle(call: FlutterMethodCall, result: @escaping FlutterResult) -> Bool {
         switch call.method {
-        case Constants.MethodChannels.setupChat:
+        case Constants.MethodChannels.setupChatService:
             guard let args = call.arguments as? [String: Any],
                   let endpoint = args["endpoint"] as? String,
                   let threadId = args["threadId"] as? String
@@ -80,11 +81,24 @@ final class ChatHandler: MethodHandler {
             }
             setupChatAdapter(endpoint: endpoint, threadId: threadId, result: result)
             return true
+            
+        case Constants.MethodChannels.initChatThread:
+            guard let args = call.arguments as? [String: Any],
+                  let threadId = args["threadId"] as? String
+            else {
+                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
+                return true
+            }
+            
+            initializeChatThread(threadId: threadId, result: result)
+            return true
+            
 
         case Constants.MethodChannels.sendMessage:
             guard let args = call.arguments as? [String: Any],
                   let content = args["content"] as? String,
-                  let senderDisplayName = args["senderDisplayName"] as? String
+                  let senderDisplayName = args["senderDisplayName"] as? String,
+                  let threadId = args["threadId"] as? String
             else {
                 result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'content' or 'senderDisplayName'", details: nil))
                 return true
@@ -103,6 +117,7 @@ final class ChatHandler: MethodHandler {
             }
             
             sendMessage(
+                threadId: threadId,
                 content: content,
                 senderDisplayName: senderDisplayName,
                 type: type,
@@ -114,7 +129,8 @@ final class ChatHandler: MethodHandler {
         case Constants.MethodChannels.editMessage:
             guard let args = call.arguments as? [String: Any],
                   let messageId = args["messageId"] as? String,
-                  let content = args["content"] as? String
+                  let content = args["content"] as? String,
+                  let threadId = args["threadId"] as? String
             else {
                 result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'messageId' or 'content'", details: nil))
                 return true
@@ -127,6 +143,7 @@ final class ChatHandler: MethodHandler {
             }
             
             editMessage(
+                threadId: threadId,
                 messageId: messageId,
                 content: content,
                 metadata: metadata,
@@ -136,50 +153,94 @@ final class ChatHandler: MethodHandler {
 
         case Constants.MethodChannels.deleteMessage:
             guard let args = call.arguments as? [String: Any],
-                  let messageId = args["messageId"] as? String
+                  let messageId = args["messageId"] as? String,
+                  let threadId = args["threadId"] as? String
             else {
                 result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'messageId'", details: nil))
                 return true
             }
-            deleteMessage(messageId: messageId, result: result)
+            deleteMessage(threadId: threadId, messageId: messageId, result: result)
             return true
 
         case Constants.MethodChannels.sendReadReceipt:
             guard let args = call.arguments as? [String: Any],
-                  let messageId = args["messageId"] as? String
+                  let messageId = args["messageId"] as? String,
+                  let threadId = args["threadId"] as? String
             else {
                 result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'messageId'", details: nil))
                 return true
             }
-            sendReadReceipt(messageId: messageId, result: result)
+            sendReadReceipt(threadId: threadId, messageId: messageId, result: result)
             return true
 
         case Constants.MethodChannels.sendTypingIndicator:
-            sendTypingIndicator(result: result)
+            guard let args = call.arguments as? [String: Any],
+                  let threadId = args["threadId"] as? String
+            else {
+                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
+                return true
+            }
+            
+            sendTypingIndicator(threadId: threadId, result: result)
             return true
             
-        case Constants.MethodChannels.disconnectChat:
-            disconnectChat(result: result)
+        case Constants.MethodChannels.disconnectChatService:
+            disconnectChatService(result: result)
             return true
 
         case Constants.MethodChannels.getInitialMessages:
-            getInitialMessages(result: result)
+            guard let args = call.arguments as? [String: Any],
+                  let threadId = args["threadId"] as? String
+            else {
+                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
+                return true
+            }
+            
+            getInitialMessages(threadId: threadId, result: result)
             return true
 
         case Constants.MethodChannels.retrieveChatThreadProperties:
-            retrieveChatThreadProperties(result: result)
+            guard let args = call.arguments as? [String: Any],
+                  let threadId = args["threadId"] as? String
+            else {
+                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
+                return true
+            }
+            
+            retrieveChatThreadProperties(threadId: threadId, result: result)
             return true
 
         case Constants.MethodChannels.getListOfParticipants:
-            getListOfParticipants(result: result)
+            guard let args = call.arguments as? [String: Any],
+                  let threadId = args["threadId"] as? String
+            else {
+                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
+                return true
+            }
+            
+            getListOfParticipants(threadId: threadId, result: result)
             return true
 
         case Constants.MethodChannels.getPreviousMessages:
-            getPreviousMessages(result: result)
+            guard let args = call.arguments as? [String: Any],
+                  let threadId = args["threadId"] as? String
+            else {
+                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
+                return true
+            }
+            
+            getPreviousMessages(threadId: threadId, result: result)
             return true
 
         case Constants.MethodChannels.isChatHasMoreMessages:
-            isChatHasMoreMessages(result: result)
+            guard let args = call.arguments as? [String: Any],
+                  let threadId = args["threadId"] as? String
+            else {
+                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
+                return true
+            }
+            
+            isChatHasMoreMessages(threadId: threadId, result: result)
             return true
 
         default:
@@ -320,13 +381,23 @@ final class ChatHandler: MethodHandler {
                     endpoint: endpoint,
                     identifier: CommunicationUserIdentifier(userData.userId),
                     credential: credential,
-                    threadId: threadId,
                     displayName: userData.name
                 )
                 
                 try await chatAdapter?.connect()
                 self.subscribeToChatEvents()
                 
+                result(nil)
+            } catch {
+                handleChatError(error, result: result)
+            }
+        }
+    }
+    
+    private func initializeChatThread(threadId: String, result: @escaping FlutterResult) {
+        Task {
+            do {
+                try await chatAdapter?.initializeChatThread(threadId: threadId)
                 result(nil)
             } catch {
                 handleChatError(error, result: result)
@@ -350,7 +421,7 @@ final class ChatHandler: MethodHandler {
         }
     }
     
-    private func disconnectChat(result: @escaping FlutterResult) {
+    private func disconnectChatService(result: @escaping FlutterResult) {
         Task {
             do {
                 try await chatAdapter?.disconnect()
@@ -361,10 +432,10 @@ final class ChatHandler: MethodHandler {
         }
     }
     
-    private func getInitialMessages(result: @escaping FlutterResult) {
+    private func getInitialMessages(threadId: String, result: @escaping FlutterResult) {
         Task {
             do {
-                let messages = try await chatAdapter?.getInitialMessages() ?? []
+                let messages = try await chatAdapter?.getInitialMessages(threadId: threadId) ?? []
                 result(messages.map { $0.toJson() })
             } catch {
                 handleChatError(error, result: result)
@@ -372,10 +443,10 @@ final class ChatHandler: MethodHandler {
         }
     }
 
-    private func retrieveChatThreadProperties(result: @escaping FlutterResult) {
+    private func retrieveChatThreadProperties(threadId: String, result: @escaping FlutterResult) {
         Task {
             do {
-                let properties = try await chatAdapter?.retrieveChatThreadProperties()
+                let properties = try await chatAdapter?.retrieveChatThreadProperties(threadId: threadId)
                 result(properties?.toJson())
             } catch {
                 handleChatError(error, result: result)
@@ -383,10 +454,10 @@ final class ChatHandler: MethodHandler {
         }
     }
 
-    private func getListOfParticipants(result: @escaping FlutterResult) {
+    private func getListOfParticipants(threadId: String, result: @escaping FlutterResult) {
         Task {
             do {
-                let participants = try await chatAdapter?.getListOfParticipants() ?? []
+                let participants = try await chatAdapter?.getListOfParticipants(threadId: threadId) ?? []
                 result(participants.map { $0.toJson() })
             } catch {
                 handleChatError(error, result: result)
@@ -394,10 +465,10 @@ final class ChatHandler: MethodHandler {
         }
     }
 
-    private func getPreviousMessages(result: @escaping FlutterResult) {
+    private func getPreviousMessages(threadId: String, result: @escaping FlutterResult) {
         Task {
             do {
-                let messages = try await chatAdapter?.getPreviousMessages() ?? []
+                let messages = try await chatAdapter?.getPreviousMessages(threadId: threadId) ?? []
                 result(messages.map { $0.toJson() })
             } catch {
                 handleChatError(error, result: result)
@@ -406,6 +477,7 @@ final class ChatHandler: MethodHandler {
     }
 
     private func sendMessage(
+        threadId: String,
         content: String,
         senderDisplayName: String,
         type: ChatMessageType?,
@@ -415,6 +487,7 @@ final class ChatHandler: MethodHandler {
         Task {
             do {
                 let messageId = try await chatAdapter?.sendMessage(
+                    threadId: threadId,
                     content: content,
                     senderDisplayName: senderDisplayName,
                     type: type,
@@ -428,6 +501,7 @@ final class ChatHandler: MethodHandler {
     }
 
     private func editMessage(
+        threadId: String,
         messageId: String,
         content: String,
         metadata: [String: String]?,
@@ -436,6 +510,7 @@ final class ChatHandler: MethodHandler {
         Task {
             do {
                 try await chatAdapter?.editMessage(
+                    threadId: threadId,
                     messageId: messageId,
                     content: content,
                     metadata: metadata
@@ -447,10 +522,10 @@ final class ChatHandler: MethodHandler {
         }
     }
 
-    private func deleteMessage(messageId: String, result: @escaping FlutterResult) {
+    private func deleteMessage(threadId: String, messageId: String, result: @escaping FlutterResult) {
         Task {
             do {
-                try await chatAdapter?.deleteMessage(messageId: messageId)
+                try await chatAdapter?.deleteMessage(threadId: threadId, messageId: messageId)
                 result(nil)
             } catch {
                 handleChatError(error, result: result)
@@ -458,10 +533,10 @@ final class ChatHandler: MethodHandler {
         }
     }
 
-    private func sendReadReceipt(messageId: String, result: @escaping FlutterResult) {
+    private func sendReadReceipt(threadId: String, messageId: String, result: @escaping FlutterResult) {
         Task {
             do {
-                try await chatAdapter?.sendReadReceipt(messageId: messageId)
+                try await chatAdapter?.sendReadReceipt(threadId: threadId, messageId: messageId)
                 result(nil)
             } catch {
                 handleChatError(error, result: result)
@@ -469,10 +544,10 @@ final class ChatHandler: MethodHandler {
         }
     }
 
-    private func sendTypingIndicator(result: @escaping FlutterResult) {
+    private func sendTypingIndicator(threadId: String, result: @escaping FlutterResult) {
         Task {
             do {
-                try await chatAdapter?.sendTypingIndicator()
+                try await chatAdapter?.sendTypingIndicator(threadId: threadId)
                 result(nil)
             } catch {
                 handleChatError(error, result: result)
@@ -480,10 +555,10 @@ final class ChatHandler: MethodHandler {
         }
     }
     
-    private func isChatHasMoreMessages(result: @escaping FlutterResult) {
+    private func isChatHasMoreMessages(threadId: String, result: @escaping FlutterResult) {
         Task {
             do {
-                let isChatHasMoreMessages = try await chatAdapter?.isChatHasMoreMessages()
+                let isChatHasMoreMessages = try await chatAdapter?.isChatHasMoreMessages(threadId: threadId)
                 result(isChatHasMoreMessages)
             } catch {
                 handleChatError(error, result: result)
