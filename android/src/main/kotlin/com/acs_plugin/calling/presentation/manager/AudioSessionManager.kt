@@ -254,8 +254,10 @@ internal class AudioSessionManager(
 
     private fun onAudioDeviceStateChange(audioDeviceSelectionStatus: AudioDeviceSelectionStatus) {
         when (audioDeviceSelectionStatus) {
-            AudioDeviceSelectionStatus.SPEAKER_REQUESTED, AudioDeviceSelectionStatus.RECEIVER_REQUESTED, AudioDeviceSelectionStatus.BLUETOOTH_SCO_REQUESTED ->
-                switchAudioDevice(audioDeviceSelectionStatus)
+            AudioDeviceSelectionStatus.SPEAKER_REQUESTED,
+            AudioDeviceSelectionStatus.RECEIVER_REQUESTED,
+            AudioDeviceSelectionStatus.AUDIO_OFF_REQUESTED,
+            AudioDeviceSelectionStatus.BLUETOOTH_SCO_REQUESTED -> switchAudioDevice(audioDeviceSelectionStatus)
             else -> {}
         }
     }
@@ -283,6 +285,13 @@ internal class AudioSessionManager(
                 store.dispatch(
                     LocalParticipantAction.AudioDeviceChangeSucceeded(
                         AudioDeviceSelectionStatus.BLUETOOTH_SCO_SELECTED
+                    )
+                )
+            }
+            AudioDeviceSelectionStatus.AUDIO_OFF_REQUESTED -> {
+                store.dispatch(
+                    LocalParticipantAction.AudioDeviceChangeSucceeded(
+                        AudioDeviceSelectionStatus.AUDIO_OFF_SELECTED
                     )
                 )
             }

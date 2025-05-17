@@ -51,6 +51,7 @@ internal class AppReduxState(
             AudioState(
                 operation = AudioOperationalStatus.OFF,
                 device = AudioDeviceSelectionStatus.SPEAKER_SELECTED,
+                noiseSuppression = NoiseSuppressionStatus.ON,
                 bluetoothState = BluetoothState(
                     available = false,
                     deviceName = ""

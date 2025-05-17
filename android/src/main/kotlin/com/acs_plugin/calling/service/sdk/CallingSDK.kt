@@ -56,6 +56,10 @@ internal interface CallingSDK {
     fun resume(): CompletableFuture<Void>
     fun turnOnBlur(): CompletableFuture<Void>
     fun turnOffBlur(): CompletableFuture<Void>
+    fun turnOnNoiseSuppression(): CompletableFuture<Void>
+    fun turnOffNoiseSuppression(): CompletableFuture<Void>
+    fun muteAudio(): CompletableFuture<Void>
+    fun unMuteAudio(): CompletableFuture<Void>
 
     // State.
     fun getLocalVideoStream(): CompletableFuture<LocalVideoStream>

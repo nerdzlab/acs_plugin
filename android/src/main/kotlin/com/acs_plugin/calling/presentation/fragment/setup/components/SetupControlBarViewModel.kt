@@ -42,13 +42,14 @@ internal class SetupControlBarViewModel(
 
     private lateinit var isAudioDeviceButtonVisibleFlow: MutableStateFlow<Boolean>
     private lateinit var audioOperationalStatusStateFlow: MutableStateFlow<AudioOperationalStatus>
-
-    private lateinit var openAudioDeviceSelectionMenu: () -> Unit
+    private lateinit var audioDeviceSelectionStatusStateFlow: MutableStateFlow<AudioState>
 
     private lateinit var blurStateFlow: MutableStateFlow<BlurStatus>
     private lateinit var isBlurEnabledStateFlow: MutableStateFlow<Boolean>
 
     private lateinit var isCameraSwitchEnabledStateFlow: MutableStateFlow<Boolean>
+
+    private lateinit var openAudioDeviceSelectionMenu: () -> Unit
 
     private var cameraButton: CallCompositeButtonViewData? = null
     private var cameraSwitchButton: CallCompositeButtonViewData? = null
@@ -82,6 +83,7 @@ internal class SetupControlBarViewModel(
         cameraStateFlow = MutableStateFlow(cameraState.operation)
         audioOperationalStatusStateFlow = MutableStateFlow(audioState.operation)
         openAudioDeviceSelectionMenu = openAudioDeviceSelectionMenuCallback
+        audioDeviceSelectionStatusStateFlow = MutableStateFlow(audioState)
 
         isCameraSwitchEnabledStateFlow = MutableStateFlow(shouldSwitchCameraBeEnabled(cameraState.operation))
 
@@ -113,6 +115,7 @@ internal class SetupControlBarViewModel(
 
         cameraStateFlow.value = cameraState.operation
         audioOperationalStatusStateFlow.value = audioState.operation
+        audioDeviceSelectionStatusStateFlow.value = audioState
 
         isCameraSwitchEnabledStateFlow.value = shouldSwitchCameraBeEnabled(cameraState.operation)
 
@@ -135,6 +138,7 @@ internal class SetupControlBarViewModel(
     val cameraState: StateFlow<CameraOperationalStatus> get() = cameraStateFlow
 
     val audioOperationalStatusStat: StateFlow<AudioOperationalStatus> get() = audioOperationalStatusStateFlow
+    val audioDeviceSelectionStatusState: StateFlow<AudioState> get() = audioDeviceSelectionStatusStateFlow
 
     val switchCameraEnabled: StateFlow<Boolean> get() = isCameraSwitchEnabledStateFlow
 

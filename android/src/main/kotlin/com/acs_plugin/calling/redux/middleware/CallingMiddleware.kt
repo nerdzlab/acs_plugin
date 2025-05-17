@@ -80,6 +80,12 @@ internal class CallingMiddlewareImpl(
                 is LocalParticipantAction.BlurPreviewOffTriggered -> {
                     callingMiddlewareActionHandler.turnBlurOff(store)
                 }
+                is LocalParticipantAction.NoiseSuppressionOnTriggered -> {
+                    callingMiddlewareActionHandler.turnBlurOn(store)//TODO
+                }
+                is LocalParticipantAction.NoiseSuppressionOffTriggered -> {
+                    callingMiddlewareActionHandler.turnBlurOff(store)//TODO
+                }
                 is CallingAction.HoldRequested -> {
                     callingMiddlewareActionHandler.hold(store)
                 }

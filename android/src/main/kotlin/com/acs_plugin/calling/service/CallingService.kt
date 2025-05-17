@@ -222,6 +222,14 @@ internal class CallingService(
         return callingSdk.turnOffBlur()
     }
 
+    fun turnOnNoiseSuppression(): CompletableFuture<Void> {
+        return callingSdk.turnOnNoiseSuppression()
+    }
+
+    fun turnOffNoiseSuppression(): CompletableFuture<Void> {
+        return callingSdk.turnOffNoiseSuppression()
+    }
+
     fun getCaptionsSupportedSpokenLanguagesSharedFlow(): SharedFlow<List<String>> {
         return callingSdk.getCaptionsSupportedSpokenLanguagesSharedFlow()
     }

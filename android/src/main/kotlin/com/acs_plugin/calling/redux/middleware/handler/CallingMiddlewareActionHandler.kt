@@ -111,6 +111,8 @@ internal interface CallingMiddlewareActionHandler {
     )
     fun turnBlurOn(store: Store<ReduxState>)
     fun turnBlurOff(store: Store<ReduxState>)
+    fun turnNoiseSuppressionOn(store: Store<ReduxState>)
+    fun turnNoiseSuppressionOff(store: Store<ReduxState>)
 }
 
 internal class CallingMiddlewareActionHandlerImpl(
@@ -530,6 +532,7 @@ internal class CallingMiddlewareActionHandlerImpl(
                     AudioDeviceSelectionStatus.SPEAKER_SELECTED -> CallCompositeAudioSelectionMode.SPEAKER
                     AudioDeviceSelectionStatus.RECEIVER_SELECTED -> CallCompositeAudioSelectionMode.RECEIVER
                     AudioDeviceSelectionStatus.BLUETOOTH_SCO_SELECTED -> CallCompositeAudioSelectionMode.BLUETOOTH
+                    AudioDeviceSelectionStatus.AUDIO_OFF_SELECTED -> CallCompositeAudioSelectionMode.AUDIO_OFF
                     else -> return
                 }
                 val event = buildCallCompositeAudioSelectionChangedEvent(audioSelectionType)
@@ -995,6 +998,34 @@ internal class CallingMiddlewareActionHandlerImpl(
                 )
             } else {
                 store.dispatch(LocalParticipantAction.BlurOffSucceeded)
+            }
+        }
+    }
+
+    override fun turnNoiseSuppressionOn(store: Store<ReduxState>) {
+        callingService.turnOnNoiseSuppression().whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.NoiseSuppressionOnFailed(
+                        CallCompositeError(ErrorCode.ENABLE_NOISE_SUPPRESSION_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.NoiseSuppressionOnSucceeded)
+            }
+        }
+    }
+
+    override fun turnNoiseSuppressionOff(store: Store<ReduxState>) {
+        callingService.turnOffNoiseSuppression().whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.NoiseSuppressionOffFailed(
+                        CallCompositeError(ErrorCode.DISABLE_NOISE_SUPPRESSION_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.NoiseSuppressionOffSucceeded)
             }
         }
     }

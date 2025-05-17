@@ -11,10 +11,13 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
+import com.acs_plugin.calling.redux.state.AudioDeviceSelectionStatus
 import com.acs_plugin.calling.redux.state.AudioOperationalStatus
+import com.acs_plugin.calling.redux.state.AudioState
 import com.acs_plugin.calling.redux.state.BlurStatus
 import com.acs_plugin.calling.redux.state.CameraOperationalStatus
 import com.acs_plugin.extension.onSingleClickListener
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class SetupControlBarView : LinearLayout {
@@ -125,6 +128,12 @@ internal class SetupControlBarView : LinearLayout {
                 audioDeviceButton.visibility = if (it) VISIBLE else GONE
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.audioDeviceSelectionStatusState.collect {
+                setAudioDeviceButtonState(it)
+            }
+        }
     }
 
     private fun setMicButtonState(audioOperationalStatus: AudioOperationalStatus) {
@@ -152,6 +161,18 @@ internal class SetupControlBarView : LinearLayout {
             when (status) {
                 BlurStatus.ON -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_blur))
                 BlurStatus.OFF -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_blur_off))
+            }
+        }
+    }
+
+    private fun setAudioDeviceButtonState(audioState: AudioState) {
+        audioDeviceButton.apply {
+            when (audioState.device) {
+                AudioDeviceSelectionStatus.SPEAKER_SELECTED -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_speaker))
+                AudioDeviceSelectionStatus.RECEIVER_SELECTED -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_speaker))
+                AudioDeviceSelectionStatus.BLUETOOTH_SCO_SELECTED -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_speaker_bluetooth))
+                AudioDeviceSelectionStatus.AUDIO_OFF_SELECTED -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_speaker_off))
+                else -> Unit
             }
         }
     }

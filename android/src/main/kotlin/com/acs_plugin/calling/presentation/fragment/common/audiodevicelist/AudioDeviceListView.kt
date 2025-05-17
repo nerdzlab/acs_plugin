@@ -5,6 +5,7 @@ package com.acs_plugin.calling.presentation.fragment.common.audiodevicelist
 
 import android.content.Context
 import android.widget.RelativeLayout
+import android.widget.Switch
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.acs_plugin.R
 import com.acs_plugin.calling.redux.state.AudioDeviceSelectionStatus
 import com.acs_plugin.calling.redux.state.AudioState
+import com.acs_plugin.calling.redux.state.NoiseSuppressionStatus
 import com.acs_plugin.calling.utilities.BottomCellAdapter
 import com.acs_plugin.calling.utilities.BottomCellItem
 import com.acs_plugin.calling.utilities.implementation.CompositeDrawerDialog
@@ -30,10 +32,12 @@ internal class AudioDeviceListView(
     private var deviceTable: RecyclerView
     private lateinit var audioDeviceDrawer: DrawerDialog
     private lateinit var bottomCellAdapter: BottomCellAdapter
+    private var noiseSuppressionSwitch: Switch
 
     init {
         inflate(context, R.layout.audio_device_list_view, this)
         deviceTable = findViewById(R.id.bottom_drawer_table)
+        noiseSuppressionSwitch = findViewById(R.id.noise_suppression_switch)
     }
 
     fun start(viewLifecycleOwner: LifecycleOwner) {
@@ -41,6 +45,7 @@ internal class AudioDeviceListView(
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.audioStateFlow.collect {
                 updateSelectedAudioDevice(it)
+                updateNoiseSuppressionState(it)
             }
         }
 
@@ -216,5 +221,9 @@ internal class AudioDeviceListView(
             AudioDeviceSelectionStatus.BLUETOOTH_SCO_SELECTED, AudioDeviceSelectionStatus.BLUETOOTH_SCO_REQUESTED ->
                 audioState.bluetoothState.deviceName
         }
+    }
+
+    private fun updateNoiseSuppressionState(audioState: AudioState) {
+        noiseSuppressionSwitch.isChecked = audioState.noiseSuppression == NoiseSuppressionStatus.ON
     }
 }

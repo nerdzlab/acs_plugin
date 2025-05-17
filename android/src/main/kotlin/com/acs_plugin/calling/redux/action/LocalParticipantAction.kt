@@ -83,4 +83,12 @@ internal sealed class LocalParticipantAction : Action {
     class BlurPreviewOffTriggered : LocalParticipantAction()
     object BlurOffSucceeded : LocalParticipantAction()
     data class BlurOffFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class NoiseSuppressionOnTriggered : LocalParticipantAction()
+    object NoiseSuppressionOnSucceeded : LocalParticipantAction()
+    data class NoiseSuppressionOnFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class NoiseSuppressionOffTriggered : LocalParticipantAction()
+    object NoiseSuppressionOffSucceeded : LocalParticipantAction()
+    data class NoiseSuppressionOffFailed(val error: CallCompositeError) : LocalParticipantAction()
 }

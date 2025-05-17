@@ -53,6 +53,11 @@ internal enum class AudioDeviceSelectionStatus {
     AUDIO_OFF_REQUESTED,
 }
 
+internal enum class NoiseSuppressionStatus {
+    ON,
+    OFF
+}
+
 internal data class CameraState(
     val operation: CameraOperationalStatus,
     val device: CameraDeviceSelectionStatus,
@@ -66,8 +71,10 @@ internal data class AudioState(
     val operation: AudioOperationalStatus,
     val device: AudioDeviceSelectionStatus,
     val bluetoothState: BluetoothState,
+    val noiseSuppression: NoiseSuppressionStatus,
     val error: CallCompositeError? = null,
     val isHeadphonePlugged: Boolean = false,
+    //TODO Add audio filters
 )
 
 internal data class BluetoothState(

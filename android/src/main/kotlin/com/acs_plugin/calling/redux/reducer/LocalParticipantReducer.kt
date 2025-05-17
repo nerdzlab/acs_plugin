@@ -12,6 +12,7 @@ import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
 import com.acs_plugin.calling.redux.state.CameraOperationalStatus
 import com.acs_plugin.calling.redux.state.CameraTransmissionStatus
 import com.acs_plugin.calling.redux.state.LocalUserState
+import com.acs_plugin.calling.redux.state.NoiseSuppressionStatus
 
 internal interface LocalParticipantStateReducer : Reducer<LocalUserState>
 
@@ -274,6 +275,28 @@ internal class LocalParticipantStateReducerImpl : LocalParticipantStateReducer {
             is LocalParticipantAction.BlurPreviewOffTriggered -> {
                 localUserState.copy(
                     cameraState = localUserState.cameraState.copy(blurStatus = BlurStatus.OFF)
+                )
+            }
+            is LocalParticipantAction.NoiseSuppressionOnTriggered -> {
+                localUserState.copy(
+                    audioState = localUserState.audioState.copy(noiseSuppression = NoiseSuppressionStatus.ON)
+                )
+            }
+
+            is LocalParticipantAction.NoiseSuppressionOffTriggered -> {
+                localUserState.copy(
+                    audioState = localUserState.audioState.copy(noiseSuppression = NoiseSuppressionStatus.OFF)
+                )
+            }
+            is LocalParticipantAction.NoiseSuppressionOffFailed -> {
+                localUserState.copy(
+                    audioState = localUserState.audioState.copy(noiseSuppression = NoiseSuppressionStatus.ON)
+                )
+            }
+
+            is LocalParticipantAction.NoiseSuppressionOnFailed -> {
+                localUserState.copy(
+                    audioState = localUserState.audioState.copy(noiseSuppression = NoiseSuppressionStatus.OFF)
                 )
             }
             else -> localUserState
