@@ -7,7 +7,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageButton
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
@@ -17,6 +17,7 @@ import com.acs_plugin.R
 import com.acs_plugin.calling.presentation.MultitaskingCallCompositeActivity
 import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.calling.utilities.launchAll
+import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.util.activity
 import kotlinx.coroutines.flow.collect
 
@@ -26,13 +27,13 @@ internal class InfoHeaderView : ConstraintLayout {
 
     private lateinit var floatingHeader: ConstraintLayout
     private lateinit var headerView: View
-    private lateinit var participantNumberText: TextView
-    private lateinit var subtitleText: TextView
+    private lateinit var participantNumberText: MaterialTextView
+    private lateinit var subtitleText: MaterialTextView
     /* <CALL_START_TIME>
-    private lateinit var callDurationText: TextView
+    private lateinit var callDurationText: MaterialTextView
     </CALL_START_TIME> */
-    private lateinit var displayParticipantsImageButton: ImageButton
-    private lateinit var backButton: ImageButton
+    private lateinit var displayParticipantsImageButton: AppCompatImageView
+    private lateinit var backButton: AppCompatImageView
     private lateinit var customButton1: ImageButton
     private lateinit var customButton2: ImageButton
     private lateinit var infoHeaderViewModel: InfoHeaderViewModel
