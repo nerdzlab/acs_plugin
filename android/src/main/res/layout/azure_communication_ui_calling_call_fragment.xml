@@ -138,8 +138,8 @@
     <LinearLayout
         android:id="@+id/azure_communication_ui_calling_control_bar_view_wrapper"
         android:layout_width="0dp"
-        android:elevation="4dp"
-        android:background="@color/azure_communication_ui_calling_color_background"
+        android:elevation="@dimen/elevation_8dp"
+        android:background="@color/white"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"

@@ -6,6 +6,7 @@
     <!-- Elevation -->
     <dimen name="elevation_0dp">0dp</dimen>
     <dimen name="elevation_4dp">4dp</dimen>
+    <dimen name="elevation_8dp">8dp</dimen>
 
     <!-- Text sizes -->
     <dimen name="text_size_48">48sp</dimen>
@@ -23,6 +24,7 @@
     <dimen name="text_1_step">1sp</dimen>
 
     <!-- Button heights -->
+    <dimen name="button_height_56dp">56dp</dimen>
     <dimen name="button_height_44dp">44dp</dimen>
     <dimen name="button_height_40dp">40dp</dimen>
     <dimen name="button_height_32dp">32dp</dimen>
@@ -61,6 +63,7 @@
     <dimen name="corner_radius_8dp">8dp</dimen>
     <dimen name="corner_radius_10dp">10dp</dimen>
     <dimen name="corner_radius_12dp">12dp</dimen>
+    <dimen name="corner_radius_14dp">14dp</dimen>
 
     <!-- Stroke -->
     <dimen name="stroke_width_1dp">1dp</dimen>
