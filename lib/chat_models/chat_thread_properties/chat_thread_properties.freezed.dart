@@ -23,6 +23,7 @@ mixin _$ChatThreadProperties {
   String get id => throw _privateConstructorUsedError;
   String get topic => throw _privateConstructorUsedError;
   String get createdOn => throw _privateConstructorUsedError;
+  @JsonKey(name: 'createdBy', readValue: readValueObject)
   CommunicationIdentifier get createdBy => throw _privateConstructorUsedError;
   String? get deletedOn => throw _privateConstructorUsedError;
 
@@ -46,6 +47,7 @@ abstract class $ChatThreadPropertiesCopyWith<$Res> {
       {String id,
       String topic,
       String createdOn,
+      @JsonKey(name: 'createdBy', readValue: readValueObject)
       CommunicationIdentifier createdBy,
       String? deletedOn});
 
@@ -121,6 +123,7 @@ abstract class _$$ChatThreadPropertiesImplCopyWith<$Res>
       {String id,
       String topic,
       String createdOn,
+      @JsonKey(name: 'createdBy', readValue: readValueObject)
       CommunicationIdentifier createdBy,
       String? deletedOn});
 
@@ -179,6 +182,7 @@ class _$ChatThreadPropertiesImpl implements _ChatThreadProperties {
       {required this.id,
       required this.topic,
       required this.createdOn,
+      @JsonKey(name: 'createdBy', readValue: readValueObject)
       required this.createdBy,
       this.deletedOn});
 
@@ -192,6 +196,7 @@ class _$ChatThreadPropertiesImpl implements _ChatThreadProperties {
   @override
   final String createdOn;
   @override
+  @JsonKey(name: 'createdBy', readValue: readValueObject)
   final CommunicationIdentifier createdBy;
   @override
   final String? deletedOn;
@@ -244,6 +249,7 @@ abstract class _ChatThreadProperties implements ChatThreadProperties {
       {required final String id,
       required final String topic,
       required final String createdOn,
+      @JsonKey(name: 'createdBy', readValue: readValueObject)
       required final CommunicationIdentifier createdBy,
       final String? deletedOn}) = _$ChatThreadPropertiesImpl;
 
@@ -257,6 +263,7 @@ abstract class _ChatThreadProperties implements ChatThreadProperties {
   @override
   String get createdOn;
   @override
+  @JsonKey(name: 'createdBy', readValue: readValueObject)
   CommunicationIdentifier get createdBy;
   @override
   String? get deletedOn;

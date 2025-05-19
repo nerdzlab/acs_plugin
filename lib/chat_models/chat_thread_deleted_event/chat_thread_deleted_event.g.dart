@@ -13,7 +13,7 @@ _$ChatThreadDeletedEventImpl _$$ChatThreadDeletedEventImplFromJson(
       version: json['version'] as String,
       deletedOn: json['deletedOn'] as String,
       deletedBy: SignalingChatParticipant.fromJson(
-          json['deletedBy'] as Map<String, dynamic>),
+          readValueObject(json, 'deletedBy') as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$ChatThreadDeletedEventImplToJson(

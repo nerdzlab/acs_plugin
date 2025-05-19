@@ -23,6 +23,7 @@ class ChatMessage with _$ChatMessage {
     String? senderDisplayName,
     String? editedOn,
     String? deletedOn,
+    @JsonKey(name: 'metadata', readValue: readValueObject)
     Map<String, dynamic>? metadata,
   }) = _ChatMessage;
 
