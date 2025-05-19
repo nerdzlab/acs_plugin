@@ -20,8 +20,8 @@ ChatMessageMetadata _$ChatMessageMetadataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ChatMessageMetadata {
-  @JsonKey(name: 'attachments', readValue: readValueObject)
-  Attachments? get attachments => throw _privateConstructorUsedError;
+  @JsonKey(name: 'attachments', readValue: readValueListObjects)
+  List<Attachments>? get attachments => throw _privateConstructorUsedError;
   @JsonKey(name: 'repliedTo', readValue: readValueObject)
   RepliedTo? get repliedTo => throw _privateConstructorUsedError;
   @JsonKey(name: 'emojes', readValue: readValueObject)
@@ -46,15 +46,14 @@ abstract class $ChatMessageMetadataCopyWith<$Res> {
       _$ChatMessageMetadataCopyWithImpl<$Res, ChatMessageMetadata>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'attachments', readValue: readValueObject)
-      Attachments? attachments,
+      {@JsonKey(name: 'attachments', readValue: readValueListObjects)
+      List<Attachments>? attachments,
       @JsonKey(name: 'repliedTo', readValue: readValueObject)
       RepliedTo? repliedTo,
       @JsonKey(name: 'emojes', readValue: readValueObject) Emojes? emojes,
       String? version,
       bool? isEdited});
 
-  $AttachmentsCopyWith<$Res>? get attachments;
   $RepliedToCopyWith<$Res>? get repliedTo;
   $EmojesCopyWith<$Res>? get emojes;
 }
@@ -84,7 +83,7 @@ class _$ChatMessageMetadataCopyWithImpl<$Res, $Val extends ChatMessageMetadata>
       attachments: freezed == attachments
           ? _value.attachments
           : attachments // ignore: cast_nullable_to_non_nullable
-              as Attachments?,
+              as List<Attachments>?,
       repliedTo: freezed == repliedTo
           ? _value.repliedTo
           : repliedTo // ignore: cast_nullable_to_non_nullable
@@ -102,20 +101,6 @@ class _$ChatMessageMetadataCopyWithImpl<$Res, $Val extends ChatMessageMetadata>
           : isEdited // ignore: cast_nullable_to_non_nullable
               as bool?,
     ) as $Val);
-  }
-
-  /// Create a copy of ChatMessageMetadata
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $AttachmentsCopyWith<$Res>? get attachments {
-    if (_value.attachments == null) {
-      return null;
-    }
-
-    return $AttachmentsCopyWith<$Res>(_value.attachments!, (value) {
-      return _then(_value.copyWith(attachments: value) as $Val);
-    });
   }
 
   /// Create a copy of ChatMessageMetadata
@@ -156,16 +141,14 @@ abstract class _$$ChatMessageMetadataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'attachments', readValue: readValueObject)
-      Attachments? attachments,
+      {@JsonKey(name: 'attachments', readValue: readValueListObjects)
+      List<Attachments>? attachments,
       @JsonKey(name: 'repliedTo', readValue: readValueObject)
       RepliedTo? repliedTo,
       @JsonKey(name: 'emojes', readValue: readValueObject) Emojes? emojes,
       String? version,
       bool? isEdited});
 
-  @override
-  $AttachmentsCopyWith<$Res>? get attachments;
   @override
   $RepliedToCopyWith<$Res>? get repliedTo;
   @override
@@ -193,9 +176,9 @@ class __$$ChatMessageMetadataImplCopyWithImpl<$Res>
   }) {
     return _then(_$ChatMessageMetadataImpl(
       attachments: freezed == attachments
-          ? _value.attachments
+          ? _value._attachments
           : attachments // ignore: cast_nullable_to_non_nullable
-              as Attachments?,
+              as List<Attachments>?,
       repliedTo: freezed == repliedTo
           ? _value.repliedTo
           : repliedTo // ignore: cast_nullable_to_non_nullable
@@ -220,19 +203,28 @@ class __$$ChatMessageMetadataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
   const _$ChatMessageMetadataImpl(
-      {@JsonKey(name: 'attachments', readValue: readValueObject)
-      this.attachments,
+      {@JsonKey(name: 'attachments', readValue: readValueListObjects)
+      final List<Attachments>? attachments,
       @JsonKey(name: 'repliedTo', readValue: readValueObject) this.repliedTo,
       @JsonKey(name: 'emojes', readValue: readValueObject) this.emojes,
       this.version,
-      this.isEdited});
+      this.isEdited})
+      : _attachments = attachments;
 
   factory _$ChatMessageMetadataImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatMessageMetadataImplFromJson(json);
 
+  final List<Attachments>? _attachments;
   @override
-  @JsonKey(name: 'attachments', readValue: readValueObject)
-  final Attachments? attachments;
+  @JsonKey(name: 'attachments', readValue: readValueListObjects)
+  List<Attachments>? get attachments {
+    final value = _attachments;
+    if (value == null) return null;
+    if (_attachments is EqualUnmodifiableListView) return _attachments;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey(name: 'repliedTo', readValue: readValueObject)
   final RepliedTo? repliedTo;
@@ -254,8 +246,8 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ChatMessageMetadataImpl &&
-            (identical(other.attachments, attachments) ||
-                other.attachments == attachments) &&
+            const DeepCollectionEquality()
+                .equals(other._attachments, _attachments) &&
             (identical(other.repliedTo, repliedTo) ||
                 other.repliedTo == repliedTo) &&
             (identical(other.emojes, emojes) || other.emojes == emojes) &&
@@ -267,7 +259,12 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, attachments, repliedTo, emojes, version, isEdited);
+      runtimeType,
+      const DeepCollectionEquality().hash(_attachments),
+      repliedTo,
+      emojes,
+      version,
+      isEdited);
 
   /// Create a copy of ChatMessageMetadata
   /// with the given fields replaced by the non-null parameter values.
@@ -288,8 +285,8 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
 
 abstract class _ChatMessageMetadata implements ChatMessageMetadata {
   const factory _ChatMessageMetadata(
-      {@JsonKey(name: 'attachments', readValue: readValueObject)
-      final Attachments? attachments,
+      {@JsonKey(name: 'attachments', readValue: readValueListObjects)
+      final List<Attachments>? attachments,
       @JsonKey(name: 'repliedTo', readValue: readValueObject)
       final RepliedTo? repliedTo,
       @JsonKey(name: 'emojes', readValue: readValueObject) final Emojes? emojes,
@@ -300,8 +297,8 @@ abstract class _ChatMessageMetadata implements ChatMessageMetadata {
       _$ChatMessageMetadataImpl.fromJson;
 
   @override
-  @JsonKey(name: 'attachments', readValue: readValueObject)
-  Attachments? get attachments;
+  @JsonKey(name: 'attachments', readValue: readValueListObjects)
+  List<Attachments>? get attachments;
   @override
   @JsonKey(name: 'repliedTo', readValue: readValueObject)
   RepliedTo? get repliedTo;
@@ -327,8 +324,8 @@ Attachments _$AttachmentsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Attachments {
+  String? get name => throw _privateConstructorUsedError;
   String? get key => throw _privateConstructorUsedError;
-  int? get count => throw _privateConstructorUsedError;
 
   /// Serializes this Attachments to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -346,7 +343,7 @@ abstract class $AttachmentsCopyWith<$Res> {
           Attachments value, $Res Function(Attachments) then) =
       _$AttachmentsCopyWithImpl<$Res, Attachments>;
   @useResult
-  $Res call({String? key, int? count});
+  $Res call({String? name, String? key});
 }
 
 /// @nodoc
@@ -364,18 +361,18 @@ class _$AttachmentsCopyWithImpl<$Res, $Val extends Attachments>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? name = freezed,
     Object? key = freezed,
-    Object? count = freezed,
   }) {
     return _then(_value.copyWith(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
       key: freezed == key
           ? _value.key
           : key // ignore: cast_nullable_to_non_nullable
               as String?,
-      count: freezed == count
-          ? _value.count
-          : count // ignore: cast_nullable_to_non_nullable
-              as int?,
     ) as $Val);
   }
 }
@@ -388,7 +385,7 @@ abstract class _$$AttachmentsImplCopyWith<$Res>
       __$$AttachmentsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? key, int? count});
+  $Res call({String? name, String? key});
 }
 
 /// @nodoc
@@ -404,18 +401,18 @@ class __$$AttachmentsImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? name = freezed,
     Object? key = freezed,
-    Object? count = freezed,
   }) {
     return _then(_$AttachmentsImpl(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
       key: freezed == key
           ? _value.key
           : key // ignore: cast_nullable_to_non_nullable
               as String?,
-      count: freezed == count
-          ? _value.count
-          : count // ignore: cast_nullable_to_non_nullable
-              as int?,
     ));
   }
 }
@@ -423,19 +420,19 @@ class __$$AttachmentsImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$AttachmentsImpl implements _Attachments {
-  const _$AttachmentsImpl({this.key, this.count});
+  const _$AttachmentsImpl({this.name, this.key});
 
   factory _$AttachmentsImpl.fromJson(Map<String, dynamic> json) =>
       _$$AttachmentsImplFromJson(json);
 
   @override
-  final String? key;
+  final String? name;
   @override
-  final int? count;
+  final String? key;
 
   @override
   String toString() {
-    return 'Attachments(key: $key, count: $count)';
+    return 'Attachments(name: $name, key: $key)';
   }
 
   @override
@@ -443,13 +440,13 @@ class _$AttachmentsImpl implements _Attachments {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AttachmentsImpl &&
-            (identical(other.key, key) || other.key == key) &&
-            (identical(other.count, count) || other.count == count));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.key, key) || other.key == key));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, key, count);
+  int get hashCode => Object.hash(runtimeType, name, key);
 
   /// Create a copy of Attachments
   /// with the given fields replaced by the non-null parameter values.
@@ -468,16 +465,16 @@ class _$AttachmentsImpl implements _Attachments {
 }
 
 abstract class _Attachments implements Attachments {
-  const factory _Attachments({final String? key, final int? count}) =
+  const factory _Attachments({final String? name, final String? key}) =
       _$AttachmentsImpl;
 
   factory _Attachments.fromJson(Map<String, dynamic> json) =
       _$AttachmentsImpl.fromJson;
 
   @override
-  String? get key;
+  String? get name;
   @override
-  int? get count;
+  String? get key;
 
   /// Create a copy of Attachments
   /// with the given fields replaced by the non-null parameter values.

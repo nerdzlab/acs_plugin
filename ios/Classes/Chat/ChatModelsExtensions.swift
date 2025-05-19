@@ -345,6 +345,18 @@ extension ChatThreadProperties {
     }
 }
 
+extension ChatMessageReadReceipt {
+    func toJson() -> [String: Any] {
+        let json: [String: Any] = [
+            "sender": sender.toJson(),
+            "chatMessageId": chatMessageId,
+            "readOn": readOn.requestString
+        ]
+        
+        return json
+    }
+}
+
 extension ChatThreadClient: @retroactive Equatable {
     public static func == (lhs: ChatThreadClient, rhs: ChatThreadClient) -> Bool {
         return lhs.threadId == rhs.threadId

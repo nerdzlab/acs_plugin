@@ -16,7 +16,8 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
     private var chatClient: ChatClient?
     
     private var chatThreadClients: Set<ChatThreadClient> = []
-    private var pagedCollections: [String: PagedCollection<ChatMessage>] = [:]
+    private var chatMessagePagedCollections: [String: PagedCollection<ChatMessage>] = [:]
+    private var readReceiptPagedCollections: [String: PagedCollection<ChatMessageReadReceipt>] = [:]
     
     init(
         logger: Logger,
@@ -62,10 +63,10 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
                 chatThreadClient.listMessages(withOptions: listChatMessagesOptions) { result, _ in
                     switch result {
                     case .success(let messagesResult):
-                        self.pagedCollections[threadId] = messagesResult
+                        self.chatMessagePagedCollections[threadId] = messagesResult
                         continuation.resume(returning: messagesResult.items ?? [])
                     case .failure(let error):
-                        self.pagedCollections.removeValue(forKey: threadId)
+                        self.chatMessagePagedCollections.removeValue(forKey: threadId)
                         continuation.resume(throwing: error)
                     }
                 }
@@ -129,7 +130,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
     
     func getPreviousMessages(for threadId: String) async throws -> [ChatMessage] {
         do {
-            guard let messagePagedCollection = self.pagedCollections[threadId] else {
+            guard let messagePagedCollection = self.chatMessagePagedCollections[threadId] else {
                 return try await self.getInitialMessages(for: threadId)
             }
             
@@ -237,6 +238,27 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         }
     }
     
+    func getListReadReceipts(threadId: String, options: ListChatReadReceiptsOptions? = nil) async throws -> [ChatMessageReadReceipt] {
+        do {
+            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
+
+            return try await withCheckedThrowingContinuation { continuation in
+                chatThreadClient.listReadReceipts(withOptions: options) { result, _ in
+                    switch result {
+                    case .success(let pagedCollection):
+                        self.readReceiptPagedCollections[threadId] = pagedCollection
+                        continuation.resume(returning: pagedCollection.items ?? [])
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        } catch {
+            logger.error("List Read Receipts failed: \(error)")
+            throw error
+        }
+    }
+    
     func sendReadReceipt(threadId: String, messageId: String) async throws {
         do {
             let chatThreadClient = try await getChatThreadClient(threadId: threadId)
@@ -281,9 +303,9 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
     
     func isChatHasMoreMessages(threadId: String) async throws -> Bool {
         do {
-            guard let messagePagedCollection = self.pagedCollections[threadId] else {
+            guard let messagePagedCollection = self.chatMessagePagedCollections[threadId] else {
                 _ = try await self.getInitialMessages(for: threadId)
-                return !(self.pagedCollections[threadId]?.isExhausted ?? false)
+                return !(self.chatMessagePagedCollections[threadId]?.isExhausted ?? false)
             }
             
             return !(messagePagedCollection.isExhausted)

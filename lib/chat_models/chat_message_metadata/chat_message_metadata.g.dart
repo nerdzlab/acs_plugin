@@ -9,10 +9,9 @@ part of 'chat_message_metadata.dart';
 _$ChatMessageMetadataImpl _$$ChatMessageMetadataImplFromJson(
         Map<String, dynamic> json) =>
     _$ChatMessageMetadataImpl(
-      attachments: readValueObject(json, 'attachments') == null
-          ? null
-          : Attachments.fromJson(
-              readValueObject(json, 'attachments') as Map<String, dynamic>),
+      attachments: (readValueListObjects(json, 'attachments') as List<dynamic>?)
+          ?.map((e) => Attachments.fromJson(e as Map<String, dynamic>))
+          .toList(),
       repliedTo: readValueObject(json, 'repliedTo') == null
           ? null
           : RepliedTo.fromJson(
@@ -37,14 +36,14 @@ Map<String, dynamic> _$$ChatMessageMetadataImplToJson(
 
 _$AttachmentsImpl _$$AttachmentsImplFromJson(Map<String, dynamic> json) =>
     _$AttachmentsImpl(
+      name: json['name'] as String?,
       key: json['key'] as String?,
-      count: (json['count'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$AttachmentsImplToJson(_$AttachmentsImpl instance) =>
     <String, dynamic>{
+      'name': instance.name,
       'key': instance.key,
-      'count': instance.count,
     };
 
 _$RepliedToImpl _$$RepliedToImplFromJson(Map<String, dynamic> json) =>

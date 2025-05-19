@@ -30,6 +30,7 @@ final class ChatHandler: MethodHandler {
             static let sendReadReceipt = "sendReadReceipt"
             static let sendTypingIndicator = "sendTypingIndicator"
             static let isChatHasMoreMessages = "isChatHasMoreMessages"
+            static let getListReadReceipts = "getListReadReceipts"
         }
         
         enum FlutterEvents {
@@ -241,6 +242,18 @@ final class ChatHandler: MethodHandler {
             
             isChatHasMoreMessages(threadId: threadId, result: result)
             return true
+            
+        case Constants.MethodChannels.getListReadReceipts:
+            guard let args = call.arguments as? [String: Any],
+                  let threadId = args["threadId"] as? String
+            else {
+                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
+                return true
+            }
+            
+            getListReadReceipts(threadId: threadId, result: result)
+            return true
+
 
         default:
             return false
@@ -469,6 +482,17 @@ final class ChatHandler: MethodHandler {
             do {
                 let messages = try await chatAdapter?.getPreviousMessages(threadId: threadId) ?? []
                 result(messages.map { $0.toJson() })
+            } catch {
+                handleChatError(error, result: result)
+            }
+        }
+    }
+    
+    private func getListReadReceipts(threadId: String, result: @escaping FlutterResult) {
+        Task {
+            do {
+                let readReceipts = try await chatAdapter?.getListReadReceipts(threadId: threadId) ?? []
+                result(readReceipts.map { $0.toJson() })
             } catch {
                 handleChatError(error, result: result)
             }
