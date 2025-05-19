@@ -41,4 +41,8 @@
         <item name="android:textSize">@dimen/text_size_16</item>
     </style>
 
+    <style name="Text.CircularStdMedium.14sp">
+        <item name="android:textSize">@dimen/text_size_14</item>
+    </style>
+
 </resources>

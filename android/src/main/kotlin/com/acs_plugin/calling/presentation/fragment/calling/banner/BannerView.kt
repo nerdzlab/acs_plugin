@@ -8,15 +8,14 @@ import android.content.Intent
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.View
-import android.view.View.OnClickListener
-import android.widget.ImageButton
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
-import kotlinx.coroutines.flow.collect
+import com.acs_plugin.extension.onSingleClickListener
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
 internal class BannerView : ConstraintLayout {
@@ -24,8 +23,8 @@ internal class BannerView : ConstraintLayout {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     private lateinit var bannerView: View
-    private lateinit var bannerText: TextView
-    private lateinit var bannerCloseButton: ImageButton
+    private lateinit var bannerText: MaterialTextView
+    private lateinit var bannerCloseButton: AppCompatImageView
     private lateinit var viewModel: BannerViewModel
 
     fun start(
@@ -156,7 +155,7 @@ internal class BannerView : ConstraintLayout {
         bannerText = findViewById(R.id.azure_communication_ui_call_banner_text)
         bannerCloseButton = findViewById(R.id.azure_communication_ui_call_banner_close)
 
-        bannerCloseButton.setOnClickListener {
+        bannerCloseButton.onSingleClickListener {
             viewModel.dismissBanner()
         }
     }
