@@ -173,7 +173,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
     );
     return (result as List)
         .cast<Map>()
-        .map((e) => Map<String, dynamic>.from(e as Map))
+        .map((e) => Map<String, dynamic>.from(e))
         .toList();
   }
 
@@ -189,7 +189,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
     );
     return (result as List)
         .cast<Map>()
-        .map((e) => Map<String, dynamic>.from(e as Map))
+        .map((e) => Map<String, dynamic>.from(e))
         .toList();
   }
 
@@ -230,6 +230,22 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         if (metadata != null) 'metadata': metadata,
       },
     );
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getListReadReceipts({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'getListReadReceipts',
+      {
+        'threadId': threadId,
+      },
+    );
+    return (result as List)
+        .cast<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
   }
 
   @override

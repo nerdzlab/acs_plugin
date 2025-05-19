@@ -327,6 +327,19 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  Future<void> _getListReadReceipts() async {
+    try {
+      final listReadReceipts = await _acsPlugin.getListReadReceipts(
+        threadId: _threadId,
+      );
+      log('Get read list receipts: ${listReadReceipts.length}');
+      _shwoSnacBar('Get read list receipts: ${listReadReceipts.length}');
+    } on PlatformException catch (error) {
+      log('Failed to get list read message: ${error.message}');
+      _shwoSnacBar('Failed to get list read message: ${error.message}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -379,6 +392,11 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'Send test message',
                   onTap: _sendTestMessage,
+                  icon: Icons.message,
+                ),
+                ButtonConfig(
+                  label: 'Get read receipts',
+                  onTap: _getListReadReceipts,
                   icon: Icons.message,
                 ),
               ]),

@@ -93,6 +93,12 @@ abstract class AcsPluginPlatform extends PlatformInterface {
         'getListOfParticipants() has not been implemented.');
   }
 
+  Future<List<Map<String, dynamic>>> getListReadReceipts({
+    required String threadId,
+  }) async {
+    throw UnimplementedError('getListReadReceipts() has not been implemented.');
+  }
+
   Future<List<Map<String, dynamic>>> getPreviousMessages({
     required String threadId,
   }) async {

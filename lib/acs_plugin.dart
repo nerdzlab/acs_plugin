@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:acs_plugin/acs_plugin_error.dart';
 import 'package:acs_plugin/chat_models/chat_message/chat_message.dart';
 import 'package:acs_plugin/chat_models/chat_message_edited_event/chat_message_edited_event.dart';
+import 'package:acs_plugin/chat_models/chat_message_read_receipt/chat_message_read_receipt.dart';
 import 'package:acs_plugin/chat_models/chat_message_received_event/chat_message_received_event.dart';
 import 'package:acs_plugin/chat_models/chat_message_type/chat_message_type.dart';
 import 'package:acs_plugin/chat_models/chat_messge_deleted_event/chat_messge_deleted_event.dart';
@@ -337,6 +338,18 @@ class AcsPlugin {
     return result
         .cast<Map>()
         .map((e) => ChatMessage.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
+  Future<List<ChatMessageReadReceipt>> getListReadReceipts({
+    required String threadId,
+  }) async {
+    final result = await AcsPluginPlatform.instance
+        .getListReadReceipts(threadId: threadId);
+    return result
+        .cast<Map>()
+        .map((e) =>
+            ChatMessageReadReceipt.fromJson(Map<String, dynamic>.from(e)))
         .toList();
   }
 

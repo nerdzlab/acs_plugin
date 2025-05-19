@@ -7,12 +7,14 @@ part 'chat_message_metadata.g.dart';
 @freezed
 class ChatMessageMetadata with _$ChatMessageMetadata {
   const factory ChatMessageMetadata({
-    @JsonKey(name: 'attachments', readValue: readValueListAndDecodeObjects)
-    List<Attachments>? attachments,
     @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
     RepliedTo? repliedTo,
-    @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject) Emojes? emojes,
+    @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
+    Emojes? emojes,
     String? version,
+    @JsonKey(
+        name: 'fileSharingMetadata', readValue: readValueListAndDecodeObjects)
+    List<Attachments>? attachments,
     bool? isEdited,
   }) = _ChatMessageMetadata;
 
@@ -23,8 +25,9 @@ class ChatMessageMetadata with _$ChatMessageMetadata {
 @freezed
 class Attachments with _$Attachments {
   const factory Attachments({
+    String? id,
     String? name,
-    String? key,
+    String? url,
   }) = _Attachments;
 
   factory Attachments.fromJson(Map<String, dynamic> json) =>

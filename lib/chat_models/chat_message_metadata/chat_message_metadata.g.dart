@@ -9,10 +9,6 @@ part of 'chat_message_metadata.dart';
 _$ChatMessageMetadataImpl _$$ChatMessageMetadataImplFromJson(
         Map<String, dynamic> json) =>
     _$ChatMessageMetadataImpl(
-      attachments:
-          (readValueListAndDecodeObjects(json, 'attachments') as List<dynamic>?)
-              ?.map((e) => Attachments.fromJson(e as Map<String, dynamic>))
-              .toList(),
       repliedTo: readValueAndDecodeObject(json, 'repliedTo') == null
           ? null
           : RepliedTo.fromJson(readValueAndDecodeObject(json, 'repliedTo')
@@ -22,29 +18,35 @@ _$ChatMessageMetadataImpl _$$ChatMessageMetadataImplFromJson(
           : Emojes.fromJson(
               readValueAndDecodeObject(json, 'emojes') as Map<String, dynamic>),
       version: json['version'] as String?,
+      attachments: (readValueListAndDecodeObjects(json, 'fileSharingMetadata')
+              as List<dynamic>?)
+          ?.map((e) => Attachments.fromJson(e as Map<String, dynamic>))
+          .toList(),
       isEdited: json['isEdited'] as bool?,
     );
 
 Map<String, dynamic> _$$ChatMessageMetadataImplToJson(
         _$ChatMessageMetadataImpl instance) =>
     <String, dynamic>{
-      'attachments': instance.attachments,
       'repliedTo': instance.repliedTo,
       'emojes': instance.emojes,
       'version': instance.version,
+      'fileSharingMetadata': instance.attachments,
       'isEdited': instance.isEdited,
     };
 
 _$AttachmentsImpl _$$AttachmentsImplFromJson(Map<String, dynamic> json) =>
     _$AttachmentsImpl(
+      id: json['id'] as String?,
       name: json['name'] as String?,
-      key: json['key'] as String?,
+      url: json['url'] as String?,
     );
 
 Map<String, dynamic> _$$AttachmentsImplToJson(_$AttachmentsImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
-      'key': instance.key,
+      'url': instance.url,
     };
 
 _$RepliedToImpl _$$RepliedToImplFromJson(Map<String, dynamic> json) =>
