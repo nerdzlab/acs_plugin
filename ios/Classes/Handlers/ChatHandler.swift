@@ -73,13 +73,12 @@ final class ChatHandler: MethodHandler {
         switch call.method {
         case Constants.MethodChannels.setupChatService:
             guard let args = call.arguments as? [String: Any],
-                  let endpoint = args["endpoint"] as? String,
-                  let threadId = args["threadId"] as? String
+                  let endpoint = args["endpoint"] as? String
             else {
-                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing 'endpoint' or 'threadId'", details: nil))
+                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing 'endpoint'", details: nil))
                 return true
             }
-            setupChatAdapter(endpoint: endpoint, threadId: threadId, result: result)
+            setupChatAdapter(endpoint: endpoint, result: result)
             return true
             
         case Constants.MethodChannels.initChatThread:
@@ -368,7 +367,7 @@ final class ChatHandler: MethodHandler {
         }
     }
     
-    private func setupChatAdapter(endpoint: String, threadId: String, result: @escaping FlutterResult) {
+    private func setupChatAdapter(endpoint: String, result: @escaping FlutterResult) {
         guard let userData = onGetUserData() else {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "User data not set", details: nil))
             return }

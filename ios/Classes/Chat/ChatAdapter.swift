@@ -49,13 +49,11 @@ public class ChatAdapter {
     private var chatSDKWrapper: ChatSDKWrapper!
     private var lifeCycleManager: ChatLifeCycleManagerProtocol?
     
-    private var threadId: String = ""
     /// Create an instance of this class with options.
     /// - Parameters:
     ///    - endpoint: The endpoint URL of The Communication Services.
     ///    - identifier: The CommunicationIdentifier that uniquely identifies an user
     ///    - credential: The credential that authenticates the user to a chat thread
-    ///    - threadId: The unique identifier of a chat thread
     ///    - displayName: The display name that would be used when sending a chat message
     ///                   If this is `nil` the display name defined when adding the user to
     ///                   chat thread from the service would be used

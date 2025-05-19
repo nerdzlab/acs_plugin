@@ -1,3 +1,4 @@
+import 'package:acs_plugin/chat_models/chat_message_metadata/chat_message_metadata.dart';
 import 'package:acs_plugin/chat_models/communication_identifier/communication_identifier.dart';
 import 'package:acs_plugin/chat_models/chat_message_type/chat_message_type.dart';
 import 'package:acs_plugin/chat_models/utilities/map_helpers.dart';
@@ -24,7 +25,7 @@ class ChatMessage with _$ChatMessage {
     String? editedOn,
     String? deletedOn,
     @JsonKey(name: 'metadata', readValue: readValueObject)
-    Map<String, dynamic>? metadata,
+    ChatMessageMetadata? metadata,
   }) = _ChatMessage;
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) =>

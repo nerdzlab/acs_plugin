@@ -33,7 +33,7 @@ mixin _$ChatMessage {
   String? get editedOn => throw _privateConstructorUsedError;
   String? get deletedOn => throw _privateConstructorUsedError;
   @JsonKey(name: 'metadata', readValue: readValueObject)
-  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+  ChatMessageMetadata? get metadata => throw _privateConstructorUsedError;
 
   /// Serializes this ChatMessage to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -65,10 +65,11 @@ abstract class $ChatMessageCopyWith<$Res> {
       String? editedOn,
       String? deletedOn,
       @JsonKey(name: 'metadata', readValue: readValueObject)
-      Map<String, dynamic>? metadata});
+      ChatMessageMetadata? metadata});
 
   $ChatMessageContentCopyWith<$Res>? get content;
   $CommunicationIdentifierCopyWith<$Res>? get sender;
+  $ChatMessageMetadataCopyWith<$Res>? get metadata;
 }
 
 /// @nodoc
@@ -142,7 +143,7 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
       metadata: freezed == metadata
           ? _value.metadata
           : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
+              as ChatMessageMetadata?,
     ) as $Val);
   }
 
@@ -173,6 +174,20 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
       return _then(_value.copyWith(sender: value) as $Val);
     });
   }
+
+  /// Create a copy of ChatMessage
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ChatMessageMetadataCopyWith<$Res>? get metadata {
+    if (_value.metadata == null) {
+      return null;
+    }
+
+    return $ChatMessageMetadataCopyWith<$Res>(_value.metadata!, (value) {
+      return _then(_value.copyWith(metadata: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -197,12 +212,14 @@ abstract class _$$ChatMessageImplCopyWith<$Res>
       String? editedOn,
       String? deletedOn,
       @JsonKey(name: 'metadata', readValue: readValueObject)
-      Map<String, dynamic>? metadata});
+      ChatMessageMetadata? metadata});
 
   @override
   $ChatMessageContentCopyWith<$Res>? get content;
   @override
   $CommunicationIdentifierCopyWith<$Res>? get sender;
+  @override
+  $ChatMessageMetadataCopyWith<$Res>? get metadata;
 }
 
 /// @nodoc
@@ -272,9 +289,9 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
           : deletedOn // ignore: cast_nullable_to_non_nullable
               as String?,
       metadata: freezed == metadata
-          ? _value._metadata
+          ? _value.metadata
           : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
+              as ChatMessageMetadata?,
     ));
   }
 }
@@ -293,9 +310,7 @@ class _$ChatMessageImpl implements _ChatMessage {
       this.senderDisplayName,
       this.editedOn,
       this.deletedOn,
-      @JsonKey(name: 'metadata', readValue: readValueObject)
-      final Map<String, dynamic>? metadata})
-      : _metadata = metadata;
+      @JsonKey(name: 'metadata', readValue: readValueObject) this.metadata});
 
   factory _$ChatMessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatMessageImplFromJson(json);
@@ -322,16 +337,9 @@ class _$ChatMessageImpl implements _ChatMessage {
   final String? editedOn;
   @override
   final String? deletedOn;
-  final Map<String, dynamic>? _metadata;
   @override
   @JsonKey(name: 'metadata', readValue: readValueObject)
-  Map<String, dynamic>? get metadata {
-    final value = _metadata;
-    if (value == null) return null;
-    if (_metadata is EqualUnmodifiableMapView) return _metadata;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(value);
-  }
+  final ChatMessageMetadata? metadata;
 
   @override
   String toString() {
@@ -358,7 +366,8 @@ class _$ChatMessageImpl implements _ChatMessage {
                 other.editedOn == editedOn) &&
             (identical(other.deletedOn, deletedOn) ||
                 other.deletedOn == deletedOn) &&
-            const DeepCollectionEquality().equals(other._metadata, _metadata));
+            (identical(other.metadata, metadata) ||
+                other.metadata == metadata));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -375,7 +384,7 @@ class _$ChatMessageImpl implements _ChatMessage {
       senderDisplayName,
       editedOn,
       deletedOn,
-      const DeepCollectionEquality().hash(_metadata));
+      metadata);
 
   /// Create a copy of ChatMessage
   /// with the given fields replaced by the non-null parameter values.
@@ -408,7 +417,7 @@ abstract class _ChatMessage implements ChatMessage {
       final String? editedOn,
       final String? deletedOn,
       @JsonKey(name: 'metadata', readValue: readValueObject)
-      final Map<String, dynamic>? metadata}) = _$ChatMessageImpl;
+      final ChatMessageMetadata? metadata}) = _$ChatMessageImpl;
 
   factory _ChatMessage.fromJson(Map<String, dynamic> json) =
       _$ChatMessageImpl.fromJson;
@@ -437,7 +446,7 @@ abstract class _ChatMessage implements ChatMessage {
   String? get deletedOn;
   @override
   @JsonKey(name: 'metadata', readValue: readValueObject)
-  Map<String, dynamic>? get metadata;
+  ChatMessageMetadata? get metadata;
 
   /// Create a copy of ChatMessage
   /// with the given fields replaced by the non-null parameter values.

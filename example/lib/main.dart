@@ -313,6 +313,20 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  Future<void> _sendTestMessage() async {
+    try {
+      final messageId = await _acsPlugin.sendMessage(
+          threadId: _threadId,
+          content: "Test message from plugin",
+          senderDisplayName: "ACS Plugin");
+      log('Chat message sent, result: $messageId');
+      _shwoSnacBar('Chat message sent, result: $messageId');
+    } on PlatformException catch (error) {
+      log('Failed to send chat message: ${error.message}');
+      _shwoSnacBar('Failed to send chat message: ${error.message}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -360,6 +374,11 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'Check more messages',
                   onTap: _isChatHasMoreMessages,
+                  icon: Icons.message,
+                ),
+                ButtonConfig(
+                  label: 'Send test message',
+                  onTap: _sendTestMessage,
                   icon: Icons.message,
                 ),
               ]),
