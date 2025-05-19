@@ -28,6 +28,7 @@
     <dimen name="button_height_44dp">44dp</dimen>
     <dimen name="button_height_40dp">40dp</dimen>
     <dimen name="button_height_32dp">32dp</dimen>
+    <dimen name="button_height_28dp">28dp</dimen>
 
     <!-- Margins -->
     <dimen name="margin_16dp">16dp</dimen>
@@ -70,6 +71,7 @@
     <dimen name="stroke_width_2dp">2dp</dimen>
 
     <!-- Icon size -->
+    <dimen name="icon_size_14dp">14dp</dimen>
     <dimen name="icon_size_24dp">24dp</dimen>
 
     <!-- Progress size -->

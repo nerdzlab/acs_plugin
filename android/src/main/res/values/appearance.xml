@@ -28,6 +28,10 @@
         <item name="android:textSize">@dimen/text_size_16</item>
     </style>
 
+    <style name="Text.CircularStdBook.14sp">
+        <item name="android:textSize">@dimen/text_size_14</item>
+    </style>
+
     <!-- Circular Std Medium-->
     <style name="Text.CircularStdMedium">
         <item name="android:fontFamily">@font/circular_std_medium</item>

@@ -7,8 +7,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.accessibility.AccessibilityManager
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.core.content.ContextCompat
@@ -21,9 +20,10 @@ import com.acs_plugin.calling.presentation.VideoViewManager
 import com.acs_plugin.calling.presentation.manager.AvatarViewManager
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
 import com.acs_plugin.calling.utilities.isAndroidTV
+import com.acs_plugin.extension.onSingleClickListener
+import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.persona.AvatarSize
 import com.microsoft.fluentui.persona.AvatarView
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class LocalParticipantView : ConstraintLayout {
@@ -37,13 +37,13 @@ internal class LocalParticipantView : ConstraintLayout {
     private lateinit var localParticipantPip: ConstraintLayout
     private lateinit var localPipWrapper: ConstraintLayout
     private lateinit var localParticipantPipCameraHolder: ConstraintLayout
-    private lateinit var switchCameraButton: ImageView
+    private lateinit var switchCameraButton: AppCompatImageView
     private lateinit var pipSwitchCameraButton: ConstraintLayout
     private lateinit var avatarHolder: ConstraintLayout
     private lateinit var avatar: AvatarView
     private lateinit var pipAvatar: AvatarView
-    private lateinit var displayNameText: TextView
-    private lateinit var micImage: ImageView
+    private lateinit var displayNameText: MaterialTextView
+    private lateinit var micImage: AppCompatImageView
     private lateinit var dragTouchListener: DragTouchListener
     private lateinit var accessibilityManager: AccessibilityManager
     private lateinit var guideline: Guideline
@@ -74,8 +74,8 @@ internal class LocalParticipantView : ConstraintLayout {
             findViewById(R.id.azure_communication_ui_call_local_display_name)
         micImage =
             findViewById(R.id.azure_communication_ui_call_local_mic_indicator)
-        switchCameraButton.setOnClickListener { viewModel.switchCamera() }
-        pipSwitchCameraButton.setOnClickListener { viewModel.switchCamera() }
+        switchCameraButton.onSingleClickListener { viewModel.switchCamera() }
+        pipSwitchCameraButton.onSingleClickListener { viewModel.switchCamera() }
         dragTouchListener = DragTouchListener()
 
         if (isAndroidTV(context)) {
@@ -117,7 +117,7 @@ internal class LocalParticipantView : ConstraintLayout {
                 it?.let {
                     avatar.name = it
                     pipAvatar.name = it
-                    displayNameText.text = it
+                    displayNameText.text = "${it} (You)"
                     avatarViewManager.callCompositeLocalOptions?.participantViewData?.let { participantViewData ->
                         participantViewData.avatarBitmap?.let { image ->
                             avatar.avatarImageBitmap = image
@@ -130,7 +130,7 @@ internal class LocalParticipantView : ConstraintLayout {
                         participantViewData.displayName?.let { name ->
                             avatar.name = name
                             pipAvatar.name = name
-                            displayNameText.text = name
+                            displayNameText.text = "${name} (You)"
                         }
                     }
                 }
