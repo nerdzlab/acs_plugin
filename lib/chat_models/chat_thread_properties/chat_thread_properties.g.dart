@@ -13,7 +13,7 @@ _$ChatThreadPropertiesImpl _$$ChatThreadPropertiesImplFromJson(
       topic: json['topic'] as String,
       createdOn: json['createdOn'] as String,
       createdBy: CommunicationIdentifier.fromJson(
-          json['createdBy'] as Map<String, dynamic>),
+          readValueObject(json, 'createdBy') as Map<String, dynamic>),
       deletedOn: json['deletedOn'] as String?,
     );
 

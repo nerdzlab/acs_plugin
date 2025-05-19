@@ -32,6 +32,7 @@ mixin _$ChatMessage {
   String? get senderDisplayName => throw _privateConstructorUsedError;
   String? get editedOn => throw _privateConstructorUsedError;
   String? get deletedOn => throw _privateConstructorUsedError;
+  @JsonKey(name: 'metadata', readValue: readValueObject)
   Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
 
   /// Serializes this ChatMessage to a JSON map.
@@ -63,6 +64,7 @@ abstract class $ChatMessageCopyWith<$Res> {
       String? senderDisplayName,
       String? editedOn,
       String? deletedOn,
+      @JsonKey(name: 'metadata', readValue: readValueObject)
       Map<String, dynamic>? metadata});
 
   $ChatMessageContentCopyWith<$Res>? get content;
@@ -194,6 +196,7 @@ abstract class _$$ChatMessageImplCopyWith<$Res>
       String? senderDisplayName,
       String? editedOn,
       String? deletedOn,
+      @JsonKey(name: 'metadata', readValue: readValueObject)
       Map<String, dynamic>? metadata});
 
   @override
@@ -290,6 +293,7 @@ class _$ChatMessageImpl implements _ChatMessage {
       this.senderDisplayName,
       this.editedOn,
       this.deletedOn,
+      @JsonKey(name: 'metadata', readValue: readValueObject)
       final Map<String, dynamic>? metadata})
       : _metadata = metadata;
 
@@ -320,6 +324,7 @@ class _$ChatMessageImpl implements _ChatMessage {
   final String? deletedOn;
   final Map<String, dynamic>? _metadata;
   @override
+  @JsonKey(name: 'metadata', readValue: readValueObject)
   Map<String, dynamic>? get metadata {
     final value = _metadata;
     if (value == null) return null;
@@ -402,6 +407,7 @@ abstract class _ChatMessage implements ChatMessage {
       final String? senderDisplayName,
       final String? editedOn,
       final String? deletedOn,
+      @JsonKey(name: 'metadata', readValue: readValueObject)
       final Map<String, dynamic>? metadata}) = _$ChatMessageImpl;
 
   factory _ChatMessage.fromJson(Map<String, dynamic> json) =
@@ -430,6 +436,7 @@ abstract class _ChatMessage implements ChatMessage {
   @override
   String? get deletedOn;
   @override
+  @JsonKey(name: 'metadata', readValue: readValueObject)
   Map<String, dynamic>? get metadata;
 
   /// Create a copy of ChatMessage

@@ -24,7 +24,7 @@ _$ChatMessageImpl _$$ChatMessageImplFromJson(Map<String, dynamic> json) =>
       senderDisplayName: json['senderDisplayName'] as String?,
       editedOn: json['editedOn'] as String?,
       deletedOn: json['deletedOn'] as String?,
-      metadata: json['metadata'] as Map<String, dynamic>?,
+      metadata: readValueObject(json, 'metadata') as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
