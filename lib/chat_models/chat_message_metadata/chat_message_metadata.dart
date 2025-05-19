@@ -7,11 +7,11 @@ part 'chat_message_metadata.g.dart';
 @freezed
 class ChatMessageMetadata with _$ChatMessageMetadata {
   const factory ChatMessageMetadata({
-    @JsonKey(name: 'attachments', readValue: readValueListObjects)
+    @JsonKey(name: 'attachments', readValue: readValueListAndDecodeObjects)
     List<Attachments>? attachments,
-    @JsonKey(name: 'repliedTo', readValue: readValueObject)
+    @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
     RepliedTo? repliedTo,
-    @JsonKey(name: 'emojes', readValue: readValueObject) Emojes? emojes,
+    @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject) Emojes? emojes,
     String? version,
     bool? isEdited,
   }) = _ChatMessageMetadata;

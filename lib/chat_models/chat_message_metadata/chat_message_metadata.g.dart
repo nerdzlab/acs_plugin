@@ -9,17 +9,18 @@ part of 'chat_message_metadata.dart';
 _$ChatMessageMetadataImpl _$$ChatMessageMetadataImplFromJson(
         Map<String, dynamic> json) =>
     _$ChatMessageMetadataImpl(
-      attachments: (readValueListObjects(json, 'attachments') as List<dynamic>?)
-          ?.map((e) => Attachments.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      repliedTo: readValueObject(json, 'repliedTo') == null
+      attachments:
+          (readValueListAndDecodeObjects(json, 'attachments') as List<dynamic>?)
+              ?.map((e) => Attachments.fromJson(e as Map<String, dynamic>))
+              .toList(),
+      repliedTo: readValueAndDecodeObject(json, 'repliedTo') == null
           ? null
-          : RepliedTo.fromJson(
-              readValueObject(json, 'repliedTo') as Map<String, dynamic>),
-      emojes: readValueObject(json, 'emojes') == null
+          : RepliedTo.fromJson(readValueAndDecodeObject(json, 'repliedTo')
+              as Map<String, dynamic>),
+      emojes: readValueAndDecodeObject(json, 'emojes') == null
           ? null
           : Emojes.fromJson(
-              readValueObject(json, 'emojes') as Map<String, dynamic>),
+              readValueAndDecodeObject(json, 'emojes') as Map<String, dynamic>),
       version: json['version'] as String?,
       isEdited: json['isEdited'] as bool?,
     );

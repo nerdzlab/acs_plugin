@@ -20,11 +20,11 @@ ChatMessageMetadata _$ChatMessageMetadataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ChatMessageMetadata {
-  @JsonKey(name: 'attachments', readValue: readValueListObjects)
+  @JsonKey(name: 'attachments', readValue: readValueListAndDecodeObjects)
   List<Attachments>? get attachments => throw _privateConstructorUsedError;
-  @JsonKey(name: 'repliedTo', readValue: readValueObject)
+  @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
   RepliedTo? get repliedTo => throw _privateConstructorUsedError;
-  @JsonKey(name: 'emojes', readValue: readValueObject)
+  @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
   Emojes? get emojes => throw _privateConstructorUsedError;
   String? get version => throw _privateConstructorUsedError;
   bool? get isEdited => throw _privateConstructorUsedError;
@@ -46,11 +46,12 @@ abstract class $ChatMessageMetadataCopyWith<$Res> {
       _$ChatMessageMetadataCopyWithImpl<$Res, ChatMessageMetadata>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'attachments', readValue: readValueListObjects)
+      {@JsonKey(name: 'attachments', readValue: readValueListAndDecodeObjects)
       List<Attachments>? attachments,
-      @JsonKey(name: 'repliedTo', readValue: readValueObject)
+      @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
       RepliedTo? repliedTo,
-      @JsonKey(name: 'emojes', readValue: readValueObject) Emojes? emojes,
+      @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
+      Emojes? emojes,
       String? version,
       bool? isEdited});
 
@@ -141,11 +142,12 @@ abstract class _$$ChatMessageMetadataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'attachments', readValue: readValueListObjects)
+      {@JsonKey(name: 'attachments', readValue: readValueListAndDecodeObjects)
       List<Attachments>? attachments,
-      @JsonKey(name: 'repliedTo', readValue: readValueObject)
+      @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
       RepliedTo? repliedTo,
-      @JsonKey(name: 'emojes', readValue: readValueObject) Emojes? emojes,
+      @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
+      Emojes? emojes,
       String? version,
       bool? isEdited});
 
@@ -203,10 +205,11 @@ class __$$ChatMessageMetadataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
   const _$ChatMessageMetadataImpl(
-      {@JsonKey(name: 'attachments', readValue: readValueListObjects)
+      {@JsonKey(name: 'attachments', readValue: readValueListAndDecodeObjects)
       final List<Attachments>? attachments,
-      @JsonKey(name: 'repliedTo', readValue: readValueObject) this.repliedTo,
-      @JsonKey(name: 'emojes', readValue: readValueObject) this.emojes,
+      @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
+      this.repliedTo,
+      @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject) this.emojes,
       this.version,
       this.isEdited})
       : _attachments = attachments;
@@ -216,7 +219,7 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
 
   final List<Attachments>? _attachments;
   @override
-  @JsonKey(name: 'attachments', readValue: readValueListObjects)
+  @JsonKey(name: 'attachments', readValue: readValueListAndDecodeObjects)
   List<Attachments>? get attachments {
     final value = _attachments;
     if (value == null) return null;
@@ -226,10 +229,10 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
   }
 
   @override
-  @JsonKey(name: 'repliedTo', readValue: readValueObject)
+  @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
   final RepliedTo? repliedTo;
   @override
-  @JsonKey(name: 'emojes', readValue: readValueObject)
+  @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
   final Emojes? emojes;
   @override
   final String? version;
@@ -285,11 +288,12 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
 
 abstract class _ChatMessageMetadata implements ChatMessageMetadata {
   const factory _ChatMessageMetadata(
-      {@JsonKey(name: 'attachments', readValue: readValueListObjects)
+      {@JsonKey(name: 'attachments', readValue: readValueListAndDecodeObjects)
       final List<Attachments>? attachments,
-      @JsonKey(name: 'repliedTo', readValue: readValueObject)
+      @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
       final RepliedTo? repliedTo,
-      @JsonKey(name: 'emojes', readValue: readValueObject) final Emojes? emojes,
+      @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
+      final Emojes? emojes,
       final String? version,
       final bool? isEdited}) = _$ChatMessageMetadataImpl;
 
@@ -297,13 +301,13 @@ abstract class _ChatMessageMetadata implements ChatMessageMetadata {
       _$ChatMessageMetadataImpl.fromJson;
 
   @override
-  @JsonKey(name: 'attachments', readValue: readValueListObjects)
+  @JsonKey(name: 'attachments', readValue: readValueListAndDecodeObjects)
   List<Attachments>? get attachments;
   @override
-  @JsonKey(name: 'repliedTo', readValue: readValueObject)
+  @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
   RepliedTo? get repliedTo;
   @override
-  @JsonKey(name: 'emojes', readValue: readValueObject)
+  @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
   Emojes? get emojes;
   @override
   String? get version;
