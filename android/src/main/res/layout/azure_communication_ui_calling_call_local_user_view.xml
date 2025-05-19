@@ -24,6 +24,23 @@
 
     <include layout="@layout/azure_communication_ui_calling_call_local_pip_video"/>
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/azure_communication_ui_call_switch_camera_button"
+        android:layout_width="@dimen/button_height_32dp"
+        android:layout_height="@dimen/button_height_32dp"
+        android:layout_margin="@dimen/margin_8dp"
+        android:background="@drawable/bg_purple_rounded_r8"
+        android:backgroundTint="@color/white"
+        android:contentDescription="@string/azure_communication_ui_calling_button_switch_camera_accessibility_label"
+        android:accessibilityTraversalAfter="@id/azure_communication_ui_call_floating_header"
+        android:padding="@dimen/padding_6dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:elevation="@dimen/elevation_4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_camera_reverse" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/azure_communication_ui_call_local_avatarHolder"
         android:layout_width="0dp"
@@ -78,22 +95,6 @@
                 app:srcCompat="@drawable/ic_microphone_off" />
 
         </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/azure_communication_ui_call_switch_camera_button"
-            android:layout_width="@dimen/button_height_32dp"
-            android:layout_height="@dimen/button_height_32dp"
-            android:layout_margin="@dimen/margin_8dp"
-            android:background="@drawable/bg_purple_rounded_r8"
-            android:backgroundTint="@color/white"
-            android:contentDescription="@string/azure_communication_ui_calling_button_switch_camera_accessibility_label"
-            android:accessibilityTraversalAfter="@id/azure_communication_ui_call_floating_header"
-            android:padding="@dimen/padding_6dp"
-            android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_camera_reverse" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

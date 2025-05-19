@@ -245,10 +245,12 @@ internal class LocalParticipantView : ConstraintLayout {
             videoStreamID,
             scalingMode
         )?.let { view ->
+            val isFullScreenMode = viewMode == LocalParticipantViewMode.FULL_SCREEN
+
             view.background = this.context.let {
                 ContextCompat.getDrawable(
                     it,
-                    R.drawable.azure_communication_ui_calling_corner_radius_rectangle_4dp
+                    if (isFullScreenMode) R.drawable.bg_rounded_r12 else R.drawable.bg_rounded_r8
                 )
             }
             videoHolder.addView(view, 0)

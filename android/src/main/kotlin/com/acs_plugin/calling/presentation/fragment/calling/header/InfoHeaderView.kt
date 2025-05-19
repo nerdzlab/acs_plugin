@@ -17,6 +17,7 @@ import com.acs_plugin.R
 import com.acs_plugin.calling.presentation.MultitaskingCallCompositeActivity
 import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.calling.utilities.launchAll
+import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.util.activity
 import kotlinx.coroutines.flow.collect
@@ -51,12 +52,12 @@ internal class InfoHeaderView : ConstraintLayout {
         </CALL_START_TIME> */
         displayParticipantsImageButton =
             findViewById(R.id.azure_communication_ui_call_bottom_drawer_button)
-        displayParticipantsImageButton.setOnClickListener {
+        displayParticipantsImageButton.onSingleClickListener {
             displayParticipantListCallback()
         }
         backButton = findViewById(R.id.azure_communication_ui_call_header_back_button)
 
-        backButton.setOnClickListener {
+        backButton.onSingleClickListener {
             if (infoHeaderViewModel.multitaskingEnabled) {
                 (context.activity as? MultitaskingCallCompositeActivity)?.hide()
             } else {
