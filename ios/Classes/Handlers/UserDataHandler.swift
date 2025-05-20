@@ -8,6 +8,7 @@
 import Flutter
 import AzureCommunicationCalling
 import AzureCommunicationCommon
+import AzureCommunicationChat
 
 final class UserDataHandler: MethodHandler {
     
@@ -20,8 +21,11 @@ final class UserDataHandler: MethodHandler {
     private enum Constants {
         enum MethodChannels {
             static let setUserData = "setUserData"
+            static let getToken = "getToken"
         }
     }
+    
+    var tokenRefresher: ((@escaping (String?, Error?) -> Void) -> Void)?
     
     private var userData: UserData? {
         didSet {
@@ -42,7 +46,7 @@ final class UserDataHandler: MethodHandler {
         return true
 #endif
     }
-
+    
     init(
         channel: FlutterMethodChannel,
         onSubscribeToCallCompositeEvents: @escaping (CallComposite) -> Void,
@@ -51,8 +55,9 @@ final class UserDataHandler: MethodHandler {
         self.channel = channel
         self.onSubscribeToCallCompositeEvents = onSubscribeToCallCompositeEvents
         self.onUserDataReceived = onUserDataReceived
+        self.setupTokenRefresh()
     }
-
+    
     func handle(call: FlutterMethodCall, result: @escaping FlutterResult) -> Bool {
         switch call.method {
         case Constants.MethodChannels.setUserData:
@@ -77,7 +82,15 @@ final class UserDataHandler: MethodHandler {
     func getCallComposite() ->  CallComposite? {
         guard let userData = userData else { return nil }
         
-        guard let credential = try? CommunicationTokenCredential(token: userData.token) else { return nil }
+        guard let tokenRefresher = self.tokenRefresher else { return nil }
+        
+        let refreshOptions = CommunicationTokenRefreshOptions(
+            initialToken: userData.token,
+            refreshProactively: true,
+            tokenRefresher: tokenRefresher
+        )
+        
+        guard let credential = try? CommunicationTokenCredential(withOptions: refreshOptions) else { return nil }
         
         let callCompositeOptions = CallCompositeOptions(
             enableMultitasking: true,
@@ -100,5 +113,19 @@ final class UserDataHandler: MethodHandler {
     
     func getUserData() -> UserData? {
         return userData
+    }
+    
+    private func setupTokenRefresh() {
+        tokenRefresher = { [weak self] tokenCompletionHandler in
+            self?.channel.invokeMethod("getToken", arguments: nil, result: { result in
+                if let token = result as? String {
+                    tokenCompletionHandler(token, nil)
+                } else {
+                    let error = NSError(domain: "TokenError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch token"])
+                    tokenCompletionHandler(nil, error)
+                }
+            }
+            )
+        }
     }
 }

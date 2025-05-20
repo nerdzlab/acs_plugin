@@ -54,20 +54,24 @@ final class ChatHandler: MethodHandler {
         }
     }
     
+    private var chatAdapter: ChatAdapter?
+
+    
     private let channel: FlutterMethodChannel
     private let onGetUserData: () -> UserDataHandler.UserData?
     private let onSendEvent: (Event) -> Void
-    
-    private var chatAdapter: ChatAdapter?
+    private let tokenRefresher: ((@escaping (String?, Error?) -> Void) -> Void)?
     
     init(
         channel: FlutterMethodChannel,
         onGetUserData: @escaping () -> UserDataHandler.UserData?,
-        onSendEvent: @escaping (Event) -> Void
+        onSendEvent: @escaping (Event) -> Void,
+        tokenRefresher: ((@escaping (String?, Error?) -> Void) -> Void)?
     ) {
         self.channel = channel
         self.onGetUserData = onGetUserData
         self.onSendEvent = onSendEvent
+        self.tokenRefresher = tokenRefresher
     }
     
     func handle(call: FlutterMethodCall, result: @escaping FlutterResult) -> Bool {
@@ -197,17 +201,6 @@ final class ChatHandler: MethodHandler {
             }
             
             getInitialMessages(threadId: threadId, result: result)
-            return true
-
-        case Constants.MethodChannels.retrieveChatThreadProperties:
-            guard let args = call.arguments as? [String: Any],
-                  let threadId = args["threadId"] as? String
-            else {
-                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
-                return true
-            }
-            
-            retrieveChatThreadProperties(threadId: threadId, result: result)
             return true
 
         case Constants.MethodChannels.getListOfParticipants:
@@ -387,7 +380,17 @@ final class ChatHandler: MethodHandler {
         
         Task {
             do {
-                let credential = try CommunicationTokenCredential(token: userData.token)
+                guard let tokenRefresher = self.tokenRefresher else {
+                    return
+                }
+                
+                let refreshOptions = CommunicationTokenRefreshOptions(
+                    initialToken: userData.token,
+                    refreshProactively: true,
+                    tokenRefresher: tokenRefresher
+                )
+                
+                let credential = try CommunicationTokenCredential(withOptions: refreshOptions)
                 
                 self.chatAdapter = ChatAdapter(
                     endpoint: endpoint,
@@ -449,17 +452,6 @@ final class ChatHandler: MethodHandler {
             do {
                 let messages = try await chatAdapter?.getInitialMessages(threadId: threadId) ?? []
                 result(messages.map { $0.toJson() })
-            } catch {
-                handleChatError(error, result: result)
-            }
-        }
-    }
-
-    private func retrieveChatThreadProperties(threadId: String, result: @escaping FlutterResult) {
-        Task {
-            do {
-                let properties = try await chatAdapter?.retrieveChatThreadProperties(threadId: threadId)
-                result(properties?.toJson())
             } catch {
                 handleChatError(error, result: result)
             }

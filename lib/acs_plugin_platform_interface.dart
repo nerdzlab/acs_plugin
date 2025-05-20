@@ -18,6 +18,8 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  Future<String> Function()? onTokenRefreshRequested;
+
   Future<void> initializeRoomCall({
     required String token,
     required String roomId,

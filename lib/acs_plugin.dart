@@ -36,6 +36,9 @@ class AcsPlugin {
   VoidCallback? onRealTimeNotificationConnected;
   VoidCallback? onRealTimeNotificationDisconnected;
 
+  /// Called when native iOS needs a new token
+  Future<String> Function()? onTokenRefreshRequested;
+
   Function(ChatMessageReceivedEvent)? onChatMessageReceived;
   Function(TypingIndicatorReceivedEvent)? onTypingIndicatorReceived;
   Function(ReadReceiptReceivedEvent)? onReadReceiptReceived;
@@ -49,6 +52,9 @@ class AcsPlugin {
   Function(ACSPluginError error)? onError;
 
   init() {
+    AcsPluginPlatform.instance.onTokenRefreshRequested =
+        onTokenRefreshRequested;
+
     _eventsSubscription = eventStream.listen(
       (dynamic data) {
         final event = switch (data) {

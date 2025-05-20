@@ -70,7 +70,7 @@ public class ChatAdapter {
     }
     
     deinit {
-        logger.debug("Composite deallocated")
+        logger.debug("ChatAdapter deallocated")
     }
     
     /// Start connection with chat client and registers for chat events
@@ -95,10 +95,6 @@ public class ChatAdapter {
     
     public func getInitialMessages(threadId: String) async throws -> [ChatMessage] {
         try await chatSDKWrapper.getInitialMessages(for: threadId)
-    }
-    
-    public func retrieveChatThreadProperties(threadId: String) async throws -> ChatThreadProperties {
-        return try await chatSDKWrapper.retrieveChatThreadProperties(for: threadId)
     }
     
     public func getListOfParticipants(threadId: String) async throws -> [ChatParticipant] {

@@ -5,6 +5,10 @@ import 'acs_plugin_platform_interface.dart';
 
 /// An implementation of [AcsPluginPlatform] that uses method channels.
 class MethodChannelAcsPlugin extends AcsPluginPlatform {
+  MethodChannelAcsPlugin() {
+    methodChannel.setMethodCallHandler(_handleNativeMethodCall);
+  }
+
   @visibleForTesting
   final methodChannel = const MethodChannel('acs_plugin');
 
@@ -300,5 +304,13 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         'threadId': threadId,
       },
     );
+  }
+
+  Future<dynamic> _handleNativeMethodCall(MethodCall call) async {
+    switch (call.method) {
+      case 'getToken':
+        final token = await onTokenRefreshRequested!();
+        return token;
+    }
   }
 }

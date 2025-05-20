@@ -46,7 +46,6 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
     func initializeChatThread(threadId: String) async throws {
         do {
             _ = try await createChatThreadClient(threadId: threadId)
-            _ = try await retrieveChatThreadProperties(for: threadId).topic
         } catch {
             throw error
         }
@@ -55,17 +54,30 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
     func getInitialMessages(for threadId: String) async throws -> [ChatMessage] {
         do {
             let listChatMessagesOptions = ListChatMessagesOptions(
-                maxPageSize: chatConfiguration.pageSize)
+                maxPageSize: chatConfiguration.pageSize
+            )
             
             let chatThreadClient = try await getChatThreadClient(threadId: threadId)
             
             return try await withCheckedThrowingContinuation { continuation in
+                var didResume = false
+
+                logger.info("Calling listMessages for threadId: \(threadId)")
+
                 chatThreadClient.listMessages(withOptions: listChatMessagesOptions) { result, _ in
+                    guard !didResume else {
+                        self.logger.warning("Continuation already resumed for getInitialMessages")
+                        return
+                    }
+                    didResume = true
+
                     switch result {
                     case .success(let messagesResult):
+                        self.logger.info("Successfully received messages for thread \(threadId), count: \(messagesResult.items?.count ?? 0)")
                         self.chatMessagePagedCollections[threadId] = messagesResult
                         continuation.resume(returning: messagesResult.items ?? [])
                     case .failure(let error):
+                        self.logger.error("Failed to list messages for thread \(threadId): \(error)")
                         self.chatMessagePagedCollections.removeValue(forKey: threadId)
                         continuation.resume(throwing: error)
                     }
@@ -76,30 +88,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-        
-    func retrieveChatThreadProperties(for threadId: String) async throws -> ChatThreadProperties {
-        do {
-            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
-            
-            return try await withCheckedThrowingContinuation { continuation in
-                chatThreadClient.getProperties { result, _ in
-                    switch result {
-                    case .success(let threadProperties):
-                        let topic = threadProperties.topic
-                        let createdBy = threadProperties.createdBy.stringValue
-                        self.logger.info("Retrieved thread topic: \(topic) and createdBy: \(createdBy)")
-                        continuation.resume(returning: threadProperties)
-                    case .failure(let error):
-                        self.logger.error("Retrieve Thread Properties failed: \(error.errorDescription ?? "")")
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
-        } catch {
-            logger.error("Retrieve Thread Properties failed: \(error)")
-            throw error
-        }
-    }
+
     
     func getListOfParticipants(for threadId: String) async throws -> [ChatParticipant] {
         do {
@@ -336,16 +325,18 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         return try await withCheckedThrowingContinuation { continuation in
             do {
                 logger.info("Creating Chat Thread Client...")
-                
-                guard let chatThreadClient = try chatClient?.createClient(forThread: threadId) else {
-                    throw NSError(
+
+                guard let chatClient = self.chatClient else {
+                    continuation.resume(throwing: NSError(
                         domain: "ChatThreadClientCreation",
-                        code: 0,
-                        userInfo: [NSLocalizedDescriptionKey: "Failed to create chat thread client"]
-                    )
+                        code: 1,
+                        userInfo: [NSLocalizedDescriptionKey: "chatClient is nil"]
+                    ))
+                    return
                 }
-                
-                chatThreadClients.insert(chatThreadClient)
+
+                let chatThreadClient = try chatClient.createClient(forThread: threadId)
+                self.chatThreadClients.insert(chatThreadClient)
                 continuation.resume(returning: chatThreadClient)
             } catch {
                 logger.error("Create Chat Thread Client failed: \(error)")

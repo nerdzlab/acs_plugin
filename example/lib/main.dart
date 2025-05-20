@@ -94,9 +94,20 @@ class _CallScreenState extends State<CallScreen> {
   initState() {
     super.initState();
     _setBroadcastExtensionData();
-    _setDeviceType();
     _subscribeToEvents();
+
     _acsPlugin.init();
+    _setDeviceType();
+  }
+
+  Future<String> _onTokenRefreshRequested() async {
+    // Simulate a delay like a network request
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    // Return a fake token
+    final token = "_generateMockToken";
+    log('Mock token provided to native side: $token');
+    return token;
   }
 
   _setDeviceType() async {
@@ -168,6 +179,9 @@ class _CallScreenState extends State<CallScreen> {
       ..onError = (ACSPluginError error) {
         log("Received error: ${error.toString()}");
       };
+    // ..onTokenRefreshRequested = () async {
+    //   return _onTokenRefreshRequested();
+    // };
   }
 
   @override
@@ -270,11 +284,11 @@ class _CallScreenState extends State<CallScreen> {
       await _acsPlugin.initChatThread(
         threadId: _threadId,
       );
-      log('Chat initialized successfully');
-      _shwoSnacBar('Chat initialized successfully');
+      log('Chat thread initialized successfully');
+      _shwoSnacBar('Chat thread initialized successfully');
     } on PlatformException catch (error) {
-      log('Failed to initialize chat: ${error.message}');
-      _shwoSnacBar('Failed to initialize chat: ${error.message}');
+      log('Failed to initialize chat thread: ${error.message}');
+      _shwoSnacBar('Failed to initialize chat thread: ${error.message}');
     }
   }
 
