@@ -84,7 +84,7 @@ internal class ToastNotificationViewModel(private val dispatch: (Action) -> Unit
 
                     ToastNotificationKind.SPEAKING_WHILE_MICROPHONE_IS_MUTED ->
                         displayToastNotification(
-                            notificationIconId = R.drawable.azure_communication_ui_calling_ic_fluent_mic_off_24_filled,
+                            notificationIconId = R.drawable.ic_microphone_off,
                             notificationMessageId = R.string.azure_communication_ui_calling_diagnostics_you_are_muted,
                             isPersistent = false,
                             kind,
@@ -92,7 +92,7 @@ internal class ToastNotificationViewModel(private val dispatch: (Action) -> Unit
 
                     ToastNotificationKind.CAMERA_START_FAILED, ToastNotificationKind.CAMERA_START_TIMED_OUT ->
                         displayToastNotification(
-                            notificationIconId = R.drawable.azure_communication_ui_calling_ic_fluent_video_off_24_regular,
+                            notificationIconId = R.drawable.ic_camera_off,
                             notificationMessageId = R.string.azure_communication_ui_calling_diagnostics_unable_to_start_camera,
                             isPersistent = false,
                             kind,
@@ -148,7 +148,7 @@ internal class ToastNotificationViewModel(private val dispatch: (Action) -> Unit
 
                     ToastNotificationKind.MUTED ->
                         displayToastNotification(
-                            notificationIconId = R.drawable.azure_communication_ui_calling_ic_fluent_mic_off_24_filled,
+                            notificationIconId = R.drawable.ic_microphone_off,
                             notificationMessageId = R.string.azure_communication_ui_calling_setup_view_button_mic_off,
                             isPersistent = false,
                             kind,
@@ -156,7 +156,7 @@ internal class ToastNotificationViewModel(private val dispatch: (Action) -> Unit
 
                     ToastNotificationKind.UNMUTED ->
                         displayToastNotification(
-                            notificationIconId = R.drawable.azure_communication_ui_calling_ic_fluent_mic_on_24_filled,
+                            notificationIconId = R.drawable.ic_microphone,
                             notificationMessageId = R.string.azure_communication_ui_calling_setup_view_button_mic_on,
                             isPersistent = false,
                             kind,

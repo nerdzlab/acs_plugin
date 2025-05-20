@@ -76,5 +76,6 @@
 
     <!-- Progress size -->
     <dimen name="progress_size_24dp">24dp</dimen>
+    <dimen name="progress_size_32dp">32dp</dimen>
 
 </resources>
