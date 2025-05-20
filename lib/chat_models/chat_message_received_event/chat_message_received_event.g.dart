@@ -24,7 +24,10 @@ _$ChatMessageReceivedEventImpl _$$ChatMessageReceivedEventImplFromJson(
       senderDisplayName: json['senderDisplayName'] as String?,
       createdOn: json['createdOn'] as String?,
       type: $enumDecode(_$ChatMessageTypeEnumMap, json['type']),
-      metadata: json['metadata'] as Map<String, dynamic>?,
+      metadata: readValueObject(json, 'metadata') == null
+          ? null
+          : ChatMessageMetadata.fromJson(
+              readValueObject(json, 'metadata') as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$ChatMessageReceivedEventImplToJson(

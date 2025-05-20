@@ -1,3 +1,4 @@
+import 'package:acs_plugin/chat_models/chat_message_metadata/chat_message_metadata.dart';
 import 'package:acs_plugin/chat_models/communication_identifier/communication_identifier.dart';
 import 'package:acs_plugin/chat_models/chat_message_type/chat_message_type.dart';
 import 'package:acs_plugin/chat_models/utilities/map_helpers.dart';
@@ -20,7 +21,8 @@ class ChatMessageReceivedEvent with _$ChatMessageReceivedEvent {
     String? senderDisplayName,
     String? createdOn,
     required ChatMessageType type,
-    Map<String, dynamic>? metadata,
+    @JsonKey(name: 'metadata', readValue: readValueObject)
+    ChatMessageMetadata? metadata,
   }) = _ChatMessageReceivedEvent;
 
   factory ChatMessageReceivedEvent.fromJson(Map<String, dynamic> json) =>
