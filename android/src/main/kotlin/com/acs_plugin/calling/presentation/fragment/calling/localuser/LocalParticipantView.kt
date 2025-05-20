@@ -7,6 +7,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.accessibility.AccessibilityManager
+import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
@@ -44,6 +45,7 @@ internal class LocalParticipantView : ConstraintLayout {
     private lateinit var pipAvatar: AvatarView
     private lateinit var displayNameText: MaterialTextView
     private lateinit var micImage: AppCompatImageView
+    private lateinit var localParticipantNameLayer: LinearLayout
     private lateinit var dragTouchListener: DragTouchListener
     private lateinit var accessibilityManager: AccessibilityManager
     private lateinit var guideline: Guideline
@@ -74,6 +76,8 @@ internal class LocalParticipantView : ConstraintLayout {
             findViewById(R.id.azure_communication_ui_call_local_display_name)
         micImage =
             findViewById(R.id.azure_communication_ui_call_local_mic_indicator)
+        localParticipantNameLayer =
+            findViewById(R.id.local_participant_layer)
         switchCameraButton.onSingleClickListener { viewModel.switchCamera() }
         pipSwitchCameraButton.onSingleClickListener { viewModel.switchCamera() }
         dragTouchListener = DragTouchListener()
@@ -220,6 +224,8 @@ internal class LocalParticipantView : ConstraintLayout {
         videoViewManager.updateLocalVideoRenderer(model.videoStreamID)
         localParticipantFullCameraHolder.removeAllViews()
         localParticipantPipCameraHolder.removeAllViews()
+
+        localParticipantNameLayer.setBackgroundResource(if (model.shouldDisplayVideo) R.drawable.bg_light_pink_rounder_r6 else 0)
 
         localParticipantPip.visibility =
             if (model.viewMode == LocalParticipantViewMode.SELFIE_PIP) View.VISIBLE else View.GONE

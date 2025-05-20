@@ -63,39 +63,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/local_participant_layer"
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/local_participant_layer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_8dp"
+        android:paddingHorizontal="@dimen/padding_8dp"
+        android:paddingVertical="@dimen/padding_4dp"
+        android:background="@drawable/bg_light_pink_rounder_r6"
+        android:backgroundTint="@color/white"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/azure_communication_ui_call_local_display_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_8dp"
-            android:paddingHorizontal="@dimen/padding_4dp"
-            android:paddingVertical="@dimen/padding_2dp"
-            android:background="@drawable/bg_light_pink_rounder_r6"
-            android:backgroundTint="@color/white"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            android:ellipsize="end"
+            android:maxLines="1"
+            style="@style/Text.CircularStdBook.14sp"
+            tools:text="User123 (You)"/>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/azure_communication_ui_call_local_display_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                style="@style/Text.CircularStdBook.14sp"
-                tools:text="User123 (You)"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/azure_communication_ui_call_local_mic_indicator"
+            android:layout_width="@dimen/icon_size_14dp"
+            android:layout_height="@dimen/icon_size_14dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/margin_4dp"
+            app:tint="@color/text_primary"
+            app:srcCompat="@drawable/ic_microphone_off" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/azure_communication_ui_call_local_mic_indicator"
-                android:layout_width="@dimen/icon_size_14dp"
-                android:layout_height="@dimen/icon_size_14dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/margin_4dp"
-                app:tint="@color/text_primary"
-                app:srcCompat="@drawable/ic_microphone_off" />
-
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </com.acs_plugin.calling.presentation.fragment.calling.localuser.LocalParticipantView>
