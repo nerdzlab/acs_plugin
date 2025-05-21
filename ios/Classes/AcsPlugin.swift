@@ -1,4 +1,5 @@
 import Flutter
+import AzureCommunicationChat
 import ReplayKit
 import UIKit
 import AzureCommunicationCalling
@@ -230,6 +231,10 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     //
     //        return configError
     //    }
+    
+    public func setPushRegistry(pushNotificationKeyStorage: PushNotificationKeyStorage, apnsToken: String) {
+        chatHandler.setPushRegistry(pushNotificationKeyStorage: pushNotificationKeyStorage, apnsToken: apnsToken)
+    }
 }
 
 extension AcsPlugin: FlutterStreamHandler {

@@ -22,8 +22,4 @@ import UIKit
             }
         }
     }
-    
-    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        <#code#>
-    }
 }

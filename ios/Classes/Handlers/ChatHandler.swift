@@ -588,4 +588,8 @@ final class ChatHandler: MethodHandler {
             }
         }
     }
+    
+    public func setPushRegistry(pushNotificationKeyStorage: PushNotificationKeyStorage, apnsToken: String) {
+        chatAdapter?.setPushRegistry(pushNotificationKeyStorage: pushNotificationKeyStorage, apnsToken: apnsToken)
+    }
 }

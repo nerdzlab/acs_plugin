@@ -392,6 +392,27 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         }
     }
     
+    func setPushRegistry(pushNotificationKeyStorage: PushNotificationKeyStorage, apnsToken: String) {
+        let semaphore = DispatchSemaphore(value: 0)
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
+            guard let chatClient = self.chatClient else { return }
+            
+            chatClient.pushNotificationKeyStorage = pushNotificationKeyStorage
+            
+            chatClient.startPushNotifications(deviceToken: apnsToken) { result in
+                switch result {
+                case .success:
+                    print("succeeded to start Push Notifications")
+                case let .failure(error):
+                    print("failed to start Push Notifications \(error.localizedDescription)")
+                }
+                semaphore.signal()
+            }
+            semaphore.wait()
+        }
+    }
+    
     private func registerEvents() {
         guard let client = self.chatClient else {
             return

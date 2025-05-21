@@ -155,6 +155,14 @@ public class ChatAdapter {
         try await chatSDKWrapper.sendTypingIndicator(threadId: threadId)
     }
     
+    public func setPushRegistry(pushNotificationKeyStorage: PushNotificationKeyStorage, apnsToken: String) {
+        chatSDKWrapper.setPushRegistry(pushNotificationKeyStorage: pushNotificationKeyStorage, apnsToken: apnsToken)
+    }
+    
+    public func isChatHasMoreMessages(threadId: String) async throws -> Bool {
+        return try await chatSDKWrapper.isChatHasMoreMessages(threadId: threadId)
+    }
+    
     private func unregisterRealTimeNotifications() async throws {
         try await chatSDKWrapper.unregisterRealTimeNotifications()
     }
@@ -165,10 +173,6 @@ public class ChatAdapter {
     
     private func cleanUpComposite() {
         self.lifeCycleManager = nil
-    }
-    
-    public func isChatHasMoreMessages(threadId: String) async throws -> Bool {
-        return try await chatSDKWrapper.isChatHasMoreMessages(threadId: threadId)
     }
     
     private func constructDependencies(
