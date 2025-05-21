@@ -26,6 +26,14 @@ enum LocalUserAction: Equatable {
 
     case microphoneOnTriggered
     case microphoneOnFailed(error: Error)
+    
+    case screenShareOnRequested
+    case screenShareOnSucceeded
+    case screenShareOnTriggeredFailed(error: Error)
+    
+    case screenShareOffRequested
+    case screenShareOffSucceeded
+    case screenShareOffTriggeredFailed(error: Error)
 
     case microphoneOffTriggered
     case microphoneOffFailed(error: Error)
@@ -69,6 +77,8 @@ enum LocalUserAction: Equatable {
     case participantRoleChanged(participantRole: ParticipantRoleEnum)
     case setCapabilities(capabilities: Set<ParticipantCapabilityType>)
     case onCapabilitiesChanged(event: CapabilitiesChangedEvent)
+    
+    case showChat
 
     static func == (lhs: LocalUserAction, rhs: LocalUserAction) -> Bool {
 
@@ -78,6 +88,8 @@ enum LocalUserAction: Equatable {
             let (.cameraPausedFailed(lErr), .cameraPausedFailed(rErr)),
             let (.microphoneOnFailed(lErr), .microphoneOnFailed(rErr)),
             let (.microphoneOffFailed(lErr), .microphoneOffFailed(rErr)),
+            let (.screenShareOnTriggeredFailed(lErr), .screenShareOnTriggeredFailed(rErr)),
+            let (.screenShareOffTriggeredFailed(lErr), .screenShareOffTriggeredFailed(rErr)),
             let (.audioDeviceChangeFailed(lErr), .audioDeviceChangeFailed(rErr)):
 
             return (lErr as NSError).code == (rErr as NSError).code
@@ -96,6 +108,9 @@ enum LocalUserAction: Equatable {
             (.gridLayoutSelected, .gridLayoutSelected),
             (.speakerLayoutSelected, .speakerLayoutSelected),
             (.muteIncomingAudioRequested, .muteIncomingAudioRequested),
+            (.screenShareOnRequested, .screenShareOnRequested),
+            (.screenShareOffRequested, .screenShareOffRequested),
+            (.screenShareOffSucceeded, .screenShareOffSucceeded),
             (.microphonePreviewOff, .microphonePreviewOff):
             return true
 

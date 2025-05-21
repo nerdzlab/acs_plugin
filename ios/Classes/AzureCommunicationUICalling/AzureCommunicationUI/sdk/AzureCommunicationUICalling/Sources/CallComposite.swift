@@ -43,6 +43,16 @@ public class CallComposite {
         public var onIncomingCallAcceptedFromCallKit: ((_ callId: String) -> Void)?
         /// Closure to execute when participant has left a call inside Call Composite
         public var onRemoteParticipantLeft: (([CommunicationIdentifier]) -> Void)?
+        /// Closure to show shat
+        public var onShowUserChat: (() -> Void)?
+        /// Closure to start screen share
+        public var onStartScreenSharing: (() -> Void)?
+        /// Closure to stop screen share
+        public var onStopScreenSharing: (() -> Void)?
+        /// Closure to start plugin
+        public var onPluginStarted: (() -> Void)?
+        /// Closure on room call ended
+        public var onUserCallEnded: (() -> Void)?
         /* <CALL_START_TIME>
         /// Closure to call start time updated.
         public var onCallStartTimeUpdated: ((Date) -> Void)?
@@ -96,11 +106,18 @@ public class CallComposite {
     private var disableInternalPushForIncomingCall = false
     private var callingSDKInitializer: CallingSDKInitializer?
     private var callConfiguration: CallConfiguration?
-    private var compositeUILaunched = false
     private var incomingCallAcceptedByCallKitCallId: String?
     private var videoViewManager: VideoViewManager?
     private var callingSDKEventsHandler: CallingSDKEventsHandler?
     private var callingSDKWrapper: CallingSDKWrapperProtocol?
+    
+    private var compositeUILaunched = false {
+        didSet {
+            if (oldValue == false && compositeUILaunched == true) {
+                events.onPluginStarted?()
+            }
+        }
+    }
     
     public var displayName: String?
     /* <CALL_START_TIME>
@@ -120,6 +137,20 @@ public class CallComposite {
     /// Get call state for the Call Composite.
     public var callState: CallState {
         return store?.state.callingState.status.toCallCompositeCallState() ?? CallState.none
+    }
+    
+    public func startScreenSharing() async {
+        try? await callingSDKWrapper?.startScreenSharingStream()
+        store?.dispatch(action: .localUserAction(.screenShareOnSucceeded))
+    }
+    
+    public func stopScreenSharing() async {
+        try? await callingSDKWrapper?.stopScreenSharingStream()
+        store?.dispatch(action: .localUserAction(.screenShareOffSucceeded))
+    }
+    
+    public func sendVideoBuffer(sampleBuffer: CMSampleBuffer) {
+        callingSDKWrapper?.captureOutput(sampleBuffer: sampleBuffer, sampleBufferType: .video, error: nil)
     }
 
     /// Create an instance of CallComposite with options.
@@ -643,6 +674,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
                 avatarManager: avatarViewManager,
                 themeOptions: themeOptions ?? ThemeColor(),
                 updatableOptionsManager: updatableOptionsManager,
+                callConfiguration: callConfiguration,
                 retrieveLogFiles: callingSdkWrapper.getLogFiles
             )
         )
@@ -677,6 +709,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
 
     private func disposeSDKWrappers() {
         self.callingSDKEventsHandler = nil
+        self.callingSDKWrapper?.dispose()
         self.callingSDKWrapper = nil
     }
 

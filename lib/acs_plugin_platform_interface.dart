@@ -41,8 +41,38 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     required String token,
     required String roomId,
     required String userId,
+    required bool isChatEnable,
+    required bool isRejoin,
   }) {
     throw UnimplementedError('initializeRoomCall() has not been implemented.');
+  }
+
+  Future<void> startOneOnOneCall({
+    required String token,
+    required String participantId,
+    required String userId,
+  }) {
+    throw UnimplementedError('startOneOnOneCall() has not been implemented.');
+  }
+
+  Future<void> setUserData({
+    required String token,
+    required String name,
+    required String userId,
+  }) {
+    throw UnimplementedError('setUserData() has not been implemented.');
+  }
+
+  Future<void> setBroadcastExtensionData({
+    required String appGroupIdentifier,
+    required String extensionBubdleId,
+  }) {
+    throw UnimplementedError(
+        'setBroadcastExtensionData() has not been implemented.');
+  }
+
+  Future<void> returnToCall() async {
+    throw UnimplementedError('returnToCall() has not been implemented.');
   }
 
   Stream<Map<String, dynamic>> get eventStream {

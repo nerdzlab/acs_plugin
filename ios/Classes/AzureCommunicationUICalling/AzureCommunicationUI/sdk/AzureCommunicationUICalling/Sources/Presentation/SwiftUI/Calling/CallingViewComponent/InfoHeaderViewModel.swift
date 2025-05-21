@@ -36,6 +36,7 @@ class InfoHeaderViewModel: ObservableObject {
     /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
 
     var isPad = false
+    let isChatEnable: Bool
 
     init(compositeViewModelFactory: CompositeViewModelFactoryProtocol,
          logger: Logger,
@@ -45,9 +46,10 @@ class InfoHeaderViewModel: ObservableObject {
          dispatchAction: @escaping ActionDispatch,
          enableMultitasking: Bool,
          enableSystemPipWhenMultitasking: Bool,
-         callScreenInfoHeaderState: CallScreenInfoHeaderState
+         callScreenInfoHeaderState: CallScreenInfoHeaderState,
+         isChatEnable: Bool,
          /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
-         ,
+
          buttonViewDataState: ButtonViewDataState,
          controlHeaderViewData: CallScreenHeaderViewData?
          /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
@@ -67,6 +69,8 @@ class InfoHeaderViewModel: ObservableObject {
         self.localizationProvider = localizationProvider
         self.enableMultitasking = enableMultitasking
         self.enableSystemPipWhenMultitasking = enableSystemPipWhenMultitasking
+        self.isChatEnable = isChatEnable
+        
         self.participantListButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .showParticipant,
             buttonType: .infoButton,
@@ -133,6 +137,8 @@ class InfoHeaderViewModel: ObservableObject {
     
     func showChatButtonTapped() {
         logger.debug("Chat button tapped")
+        dispatch(.localUserAction(.showChat))
+        dispatch(.visibilityAction(.pipModeRequested))
     }
 
     func displayParticipantsList() {

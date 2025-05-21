@@ -125,7 +125,6 @@ class ParticipantGridViewModel: ObservableObject {
     }
 
     private func updateVideoViewManager(displayedRemoteInfoModelArr: [ParticipantInfoModel]) {
-        
            let videoCacheIds: [RemoteParticipantVideoViewId] = displayedRemoteInfoModelArr.compactMap {
                let screenShareVideoStreamIdentifier = $0.screenShareVideoStreamModel?.videoStreamIdentifier
                let cameraVideoStreamIdentifier = $0.cameraVideoStreamModel?.videoStreamIdentifier

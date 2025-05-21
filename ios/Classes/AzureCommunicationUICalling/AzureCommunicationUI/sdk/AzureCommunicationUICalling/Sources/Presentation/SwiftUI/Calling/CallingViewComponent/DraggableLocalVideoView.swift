@@ -72,7 +72,7 @@ struct DraggableLocalVideoView: View {
     private func getInitialPipPosition(containerBounds: CGRect) -> CGPoint {
         return CGPoint(
             x: getContainerBounds(bounds: containerBounds).maxX,
-            y: getContainerBounds(bounds: containerBounds).maxY)
+            y: getContainerBounds(bounds: containerBounds).minY + (viewModel.isInPip ? 0 : 50))
     }
 
     private func getContainerBounds(bounds: CGRect) -> CGRect {
