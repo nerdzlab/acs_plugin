@@ -155,8 +155,8 @@ public class ChatAdapter {
         try await chatSDKWrapper.sendTypingIndicator(threadId: threadId)
     }
     
-    public func setPushRegistry(pushNotificationKeyStorage: PushNotificationKeyStorage, apnsToken: String) {
-        chatSDKWrapper.setPushRegistry(pushNotificationKeyStorage: pushNotificationKeyStorage, apnsToken: apnsToken)
+    public func setupPushNotifications(apnsToken: String, appGroupId: String) {
+        chatSDKWrapper.setupPushNotifications(apnsToken: apnsToken, appGroupId: appGroupId)
     }
     
     public func isChatHasMoreMessages(threadId: String) async throws -> Bool {

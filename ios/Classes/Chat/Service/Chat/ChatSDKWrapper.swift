@@ -21,8 +21,8 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
     
     init(
         logger: Logger,
-         chatEventsHandler: ChatSDKEventsHandling,
-         chatConfiguration: ChatConfiguration
+        chatEventsHandler: ChatSDKEventsHandling,
+        chatConfiguration: ChatConfiguration
     ) {
         self.logger = logger
         self.chatEventsHandler = chatEventsHandler
@@ -76,7 +76,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             throw error
         }
     }
-        
+    
     func retrieveChatThreadProperties(for threadId: String) async throws -> ChatThreadProperties {
         do {
             let chatThreadClient = try await getChatThreadClient(threadId: threadId)
@@ -241,7 +241,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
     func getListReadReceipts(threadId: String, options: ListChatReadReceiptsOptions? = nil) async throws -> [ChatMessageReadReceipt] {
         do {
             let chatThreadClient = try await getChatThreadClient(threadId: threadId)
-
+            
             return try await withCheckedThrowingContinuation { continuation in
                 chatThreadClient.listReadReceipts(withOptions: options) { result, _ in
                     switch result {
@@ -359,7 +359,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         if let existingClient = chatThreadClients.first(where: { $0.threadId == threadId }) {
             return existingClient
         }
-
+        
         // If not present, create and return
         return try await createChatThreadClient(threadId: threadId)
     }
@@ -392,24 +392,34 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         }
     }
     
-    func setPushRegistry(pushNotificationKeyStorage: PushNotificationKeyStorage, apnsToken: String) {
-        let semaphore = DispatchSemaphore(value: 0)
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let self = self else { return }
-            guard let chatClient = self.chatClient else { return }
-            
-            chatClient.pushNotificationKeyStorage = pushNotificationKeyStorage
-            
-            chatClient.startPushNotifications(deviceToken: apnsToken) { result in
-                switch result {
-                case .success:
-                    print("succeeded to start Push Notifications")
-                case let .failure(error):
-                    print("failed to start Push Notifications \(error.localizedDescription)")
-                }
-                semaphore.signal()
+    func setupPushNotifications(apnsToken: String, appGroupId: String) {
+        let keyTag = "PNKey"
+        
+        do{
+            guard let appGroupPushNotificationKeyStorage: PushNotificationKeyStorage = try AppGroupPushNotificationKeyStorage(appGroupId: appGroupId, keyTag: keyTag) else {
+                return
             }
-            semaphore.wait()
+            
+            let semaphore = DispatchSemaphore(value: 0)
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                guard let self = self else { return }
+                guard let chatClient = self.chatClient else { return }
+                
+                chatClient.pushNotificationKeyStorage = appGroupPushNotificationKeyStorage
+                
+                chatClient.startPushNotifications(deviceToken: apnsToken) { result in
+                    switch result {
+                    case .success:
+                        print("succeeded to start Push Notifications")
+                    case let .failure(error):
+                        print("failed to start Push Notifications \(error.localizedDescription)")
+                    }
+                    semaphore.signal()
+                }
+                semaphore.wait()
+            }
+        } catch {
+            return
         }
     }
     

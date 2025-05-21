@@ -58,6 +58,8 @@ final class ChatHandler: MethodHandler {
     private let onGetUserData: () -> UserDataHandler.UserData?
     private let onSendEvent: (Event) -> Void
     
+    private var apnsToken: String?
+    private var appGroupId: String?
     private var chatAdapter: ChatAdapter?
     
     init(
@@ -398,6 +400,7 @@ final class ChatHandler: MethodHandler {
                 
                 try await chatAdapter?.connect()
                 self.subscribeToChatEvents()
+                self.setupPushnotifications()
                 
                 result(nil)
             } catch {
@@ -589,7 +592,18 @@ final class ChatHandler: MethodHandler {
         }
     }
     
-    public func setPushRegistry(pushNotificationKeyStorage: PushNotificationKeyStorage, apnsToken: String) {
-        chatAdapter?.setPushRegistry(pushNotificationKeyStorage: pushNotificationKeyStorage, apnsToken: apnsToken)
+    private func setupPushnotifications() {
+        guard let apnsToken = apnsToken, let appGroupId = appGroupId else {
+            return
+        }
+        
+        chatAdapter?.setupPushNotifications(apnsToken: apnsToken, appGroupId: appGroupId)
+    }
+    
+    func setAPNSData(apnsToken: String, appGroupId: String) {
+        self.apnsToken = apnsToken
+        self.appGroupId = appGroupId
+        
+        setupPushnotifications()
     }
 }
