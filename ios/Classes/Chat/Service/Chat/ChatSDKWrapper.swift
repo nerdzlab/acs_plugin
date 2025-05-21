@@ -59,23 +59,30 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             
             let chatThreadClient = try await getChatThreadClient(threadId: threadId)
             
-            return try await withCheckedThrowingContinuation { continuation in
+            return try await withCheckedThrowingContinuation { [weak self, weak chatThreadClient] continuation in
+                guard let self, let chatThreadClient else {
+                    continuation.resume(throwing: NSError(domain: "", code: -1, userInfo: nil))
+                    return
+                }
+                
                 var didResume = false
-
+                
                 logger.info("Calling listMessages for threadId: \(threadId)")
-
+                
                 chatThreadClient.listMessages(withOptions: listChatMessagesOptions) { result, _ in
                     guard !didResume else {
                         self.logger.warning("Continuation already resumed for getInitialMessages")
                         return
                     }
+                    
                     didResume = true
-
+                    
                     switch result {
                     case .success(let messagesResult):
                         self.logger.info("Successfully received messages for thread \(threadId), count: \(messagesResult.items?.count ?? 0)")
                         self.chatMessagePagedCollections[threadId] = messagesResult
                         continuation.resume(returning: messagesResult.items ?? [])
+                        
                     case .failure(let error):
                         self.logger.error("Failed to list messages for thread \(threadId): \(error)")
                         self.chatMessagePagedCollections.removeValue(forKey: threadId)
@@ -84,7 +91,7 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
                 }
             }
         } catch {
-            logger.error("Failed to retrieve initial messages: \(error)")
+            logger.error("Retrieve previous messages failed: \(error)")
             throw error
         }
     }
