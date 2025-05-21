@@ -8,27 +8,26 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.View.INVISIBLE
 import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.acs_plugin.R
 import com.acs_plugin.calling.models.CallCompositeParticipantViewData
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridCellViewModel
+import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.persona.AvatarView
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class ParticipantGridCellAvatarView(
     private val avatarView: AvatarView,
     private val participantAvatarSpeakingFrameLayout: FrameLayout,
     private val participantContainer: ConstraintLayout,
-    private val displayNameAudioTextView: TextView,
-    private val micIndicatorAudioImageView: ImageView,
+    private val displayNameAudioTextView: MaterialTextView,
+    private val micIndicatorAudioImageView: AppCompatImageView,
     private val getParticipantViewDataCallback: (participantID: String) -> CallCompositeParticipantViewData?,
     private val participantViewModel: ParticipantGridCellViewModel,
-    private val onHoldTextView: TextView,
+    private val onHoldTextView: MaterialTextView,
     private val context: Context,
     lifecycleScope: LifecycleCoroutineScope,
 ) {
@@ -129,7 +128,7 @@ internal class ParticipantGridCellAvatarView(
         if (isSpeaking) {
             participantAvatarSpeakingFrameLayout.background = ContextCompat.getDrawable(
                 context,
-                R.drawable.azure_communication_ui_calling_speaking_round_indicator
+                R.drawable.bg_rounde_purple_frame_r12
             )
         } else {
             participantAvatarSpeakingFrameLayout.setBackgroundResource(0)

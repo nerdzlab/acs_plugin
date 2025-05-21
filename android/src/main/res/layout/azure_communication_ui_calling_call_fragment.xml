@@ -110,7 +110,7 @@
     <include layout="@layout/azure_communication_ui_calling_toast_notification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_8dp"
+        android:layout_marginBottom="@dimen/margin_16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/captions_bottom_anchor" />
