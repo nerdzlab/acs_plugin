@@ -71,6 +71,7 @@ internal class AppReduxState(
                 ParticipantCapabilityType.UNMUTE_MICROPHONE
             ),
             currentCapabilitiesAreDefault = true,
+            raisedHandStatus = RaisedHandStatus.LOWER
         )
 
     override var permissionState: PermissionState =

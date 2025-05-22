@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/margin_32dp"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/action_icon"
+        android:layout_width="@dimen/icon_size_26dp"
+        android:layout_height="@dimen/icon_size_26dp"
+        android:layout_marginBottom="@dimen/margin_8dp"
+        app:tint="@color/setup_control_button_color_selector"
+        tools:src="@drawable/ic_blur" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/action_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/circular_std_book"
+        android:textSize="@dimen/text_size_16"
+        android:textColor="@color/actions_text_color_selector"
+        tools:text="Turn blur on" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

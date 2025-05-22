@@ -159,8 +159,8 @@ internal class SetupControlBarView : LinearLayout {
     private fun setBlurButtonState(status: BlurStatus) {
         cameraBlurButton.apply {
             when (status) {
-                BlurStatus.ON -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_blur))
-                BlurStatus.OFF -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_blur_off))
+                BlurStatus.ON -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_blur_off))
+                BlurStatus.OFF -> setImageDrawable(AppCompatResources.getDrawable(this.context, R.drawable.ic_blur))
             }
         }
     }

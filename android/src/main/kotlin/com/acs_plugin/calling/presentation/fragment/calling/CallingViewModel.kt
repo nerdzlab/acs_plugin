@@ -67,6 +67,7 @@ internal class CallingViewModel(
     val captionsListViewModel = callingViewModelProvider.captionsListViewModel
     val captionsLanguageSelectionListViewModel = callingViewModelProvider.captionsLanguageSelectionListViewModel
     val captionsLayoutViewModel = callingViewModelProvider.captionsViewModel
+    val moreActionsListViewModel = callingViewModelProvider.moreActionsListViewModel
     val isCaptionsVisibleFlow: StateFlow<Boolean> = isCaptionsVisibleMutableFlow
     var isCaptionsMaximized: Boolean = false
 
@@ -217,10 +218,20 @@ internal class CallingViewModel(
             state.buttonState,
             state.navigationState
         )
+
         toastNotificationViewModel.init(
             coroutineScope,
         )
+
         isCaptionsMaximized = state.rttState.isMaximized
+
+        moreActionsListViewModel.init(
+            cameraState = state.localParticipantState.cameraState,
+            raisedHandStatus = state.localParticipantState.raisedHandStatus,
+            navigationState = state.navigationState,
+            displayParticipantList = { participantListViewModel.displayParticipantList() }
+        )
+
         super.init(coroutineScope)
     }
 
@@ -388,6 +399,7 @@ internal class CallingViewModel(
         }
 
         confirmLeaveOverlayViewModel.update(state.visibilityState)
+
         moreCallOptionsListViewModel.update(
             state.visibilityState,
             state.buttonState,
@@ -424,6 +436,12 @@ internal class CallingViewModel(
             deviceConfigurationState = state.deviceConfigurationState,
         )
         isCaptionsMaximized = state.rttState.isMaximized
+
+        moreActionsListViewModel.update(
+            state.localParticipantState.cameraState,
+            state.localParticipantState.raisedHandStatus,
+            state.navigationState
+        )
     }
 
     private fun getLobbyParticipantsForHeader(state: ReduxState) =
