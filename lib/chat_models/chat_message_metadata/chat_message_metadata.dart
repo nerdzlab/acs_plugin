@@ -39,6 +39,8 @@ class RepliedTo with _$RepliedTo {
   const factory RepliedTo({
     String? id,
     String? text,
+    String? senderName,
+    String? messageDate,
   }) = _RepliedTo;
 
   factory RepliedTo.fromJson(Map<String, dynamic> json) =>

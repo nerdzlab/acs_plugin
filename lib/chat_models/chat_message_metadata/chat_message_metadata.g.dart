@@ -53,12 +53,16 @@ _$RepliedToImpl _$$RepliedToImplFromJson(Map<String, dynamic> json) =>
     _$RepliedToImpl(
       id: json['id'] as String?,
       text: json['text'] as String?,
+      senderName: json['senderName'] as String?,
+      messageDate: json['messageDate'] as String?,
     );
 
 Map<String, dynamic> _$$RepliedToImplToJson(_$RepliedToImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'text': instance.text,
+      'senderName': instance.senderName,
+      'messageDate': instance.messageDate,
     };
 
 _$EmojesImpl _$$EmojesImplFromJson(Map<String, dynamic> json) => _$EmojesImpl(
