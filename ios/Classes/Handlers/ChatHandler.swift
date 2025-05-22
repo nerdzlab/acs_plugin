@@ -53,10 +53,7 @@ final class ChatHandler: MethodHandler {
             static let onParticipantsRemoved = "onParticipantsRemoved"
         }
     }
-    
-    private var chatAdapter: ChatAdapter?
-
-    
+        
     private let channel: FlutterMethodChannel
     private let onGetUserData: () -> UserDataHandler.UserData?
     private let onSendEvent: (Event) -> Void

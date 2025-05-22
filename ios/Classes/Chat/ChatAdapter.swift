@@ -109,6 +109,10 @@ public class ChatAdapter {
         try await chatSDKWrapper.getListReadReceipts(threadId: threadId)
     }
     
+    public func retrieveChatThreadProperties(threadId: String) async throws -> ChatThreadProperties {
+        try await chatSDKWrapper.retrieveChatThreadProperties(for: threadId)
+    }
+    
     public func sendMessage(
         threadId: String,
         content: String,
