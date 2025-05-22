@@ -33,7 +33,8 @@ mixin _$ChatMessageEditedEvent {
   ChatMessageType get type => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
   String? get editedOn => throw _privateConstructorUsedError;
-  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+  @JsonKey(name: 'metadata', readValue: readValueObject)
+  ChatMessageMetadata? get metadata => throw _privateConstructorUsedError;
 
   /// Serializes this ChatMessageEditedEvent to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -64,10 +65,12 @@ abstract class $ChatMessageEditedEventCopyWith<$Res> {
       ChatMessageType type,
       String message,
       String? editedOn,
-      Map<String, dynamic>? metadata});
+      @JsonKey(name: 'metadata', readValue: readValueObject)
+      ChatMessageMetadata? metadata});
 
   $CommunicationIdentifierCopyWith<$Res>? get sender;
   $CommunicationIdentifierCopyWith<$Res>? get recipient;
+  $ChatMessageMetadataCopyWith<$Res>? get metadata;
 }
 
 /// @nodoc
@@ -142,7 +145,7 @@ class _$ChatMessageEditedEventCopyWithImpl<$Res,
       metadata: freezed == metadata
           ? _value.metadata
           : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
+              as ChatMessageMetadata?,
     ) as $Val);
   }
 
@@ -173,6 +176,20 @@ class _$ChatMessageEditedEventCopyWithImpl<$Res,
       return _then(_value.copyWith(recipient: value) as $Val);
     });
   }
+
+  /// Create a copy of ChatMessageEditedEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ChatMessageMetadataCopyWith<$Res>? get metadata {
+    if (_value.metadata == null) {
+      return null;
+    }
+
+    return $ChatMessageMetadataCopyWith<$Res>(_value.metadata!, (value) {
+      return _then(_value.copyWith(metadata: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -197,12 +214,15 @@ abstract class _$$ChatMessageEditedEventImplCopyWith<$Res>
       ChatMessageType type,
       String message,
       String? editedOn,
-      Map<String, dynamic>? metadata});
+      @JsonKey(name: 'metadata', readValue: readValueObject)
+      ChatMessageMetadata? metadata});
 
   @override
   $CommunicationIdentifierCopyWith<$Res>? get sender;
   @override
   $CommunicationIdentifierCopyWith<$Res>? get recipient;
+  @override
+  $ChatMessageMetadataCopyWith<$Res>? get metadata;
 }
 
 /// @nodoc
@@ -274,9 +294,9 @@ class __$$ChatMessageEditedEventImplCopyWithImpl<$Res>
           : editedOn // ignore: cast_nullable_to_non_nullable
               as String?,
       metadata: freezed == metadata
-          ? _value._metadata
+          ? _value.metadata
           : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
+              as ChatMessageMetadata?,
     ));
   }
 }
@@ -295,8 +315,7 @@ class _$ChatMessageEditedEventImpl implements _ChatMessageEditedEvent {
       required this.type,
       required this.message,
       this.editedOn,
-      final Map<String, dynamic>? metadata})
-      : _metadata = metadata;
+      @JsonKey(name: 'metadata', readValue: readValueObject) this.metadata});
 
   factory _$ChatMessageEditedEventImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatMessageEditedEventImplFromJson(json);
@@ -323,15 +342,9 @@ class _$ChatMessageEditedEventImpl implements _ChatMessageEditedEvent {
   final String message;
   @override
   final String? editedOn;
-  final Map<String, dynamic>? _metadata;
   @override
-  Map<String, dynamic>? get metadata {
-    final value = _metadata;
-    if (value == null) return null;
-    if (_metadata is EqualUnmodifiableMapView) return _metadata;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(value);
-  }
+  @JsonKey(name: 'metadata', readValue: readValueObject)
+  final ChatMessageMetadata? metadata;
 
   @override
   String toString() {
@@ -358,24 +371,14 @@ class _$ChatMessageEditedEventImpl implements _ChatMessageEditedEvent {
             (identical(other.message, message) || other.message == message) &&
             (identical(other.editedOn, editedOn) ||
                 other.editedOn == editedOn) &&
-            const DeepCollectionEquality().equals(other._metadata, _metadata));
+            (identical(other.metadata, metadata) ||
+                other.metadata == metadata));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      threadId,
-      sender,
-      recipient,
-      id,
-      senderDisplayName,
-      createdOn,
-      version,
-      type,
-      message,
-      editedOn,
-      const DeepCollectionEquality().hash(_metadata));
+  int get hashCode => Object.hash(runtimeType, threadId, sender, recipient, id,
+      senderDisplayName, createdOn, version, type, message, editedOn, metadata);
 
   /// Create a copy of ChatMessageEditedEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -408,7 +411,8 @@ abstract class _ChatMessageEditedEvent implements ChatMessageEditedEvent {
       required final ChatMessageType type,
       required final String message,
       final String? editedOn,
-      final Map<String, dynamic>? metadata}) = _$ChatMessageEditedEventImpl;
+      @JsonKey(name: 'metadata', readValue: readValueObject)
+      final ChatMessageMetadata? metadata}) = _$ChatMessageEditedEventImpl;
 
   factory _ChatMessageEditedEvent.fromJson(Map<String, dynamic> json) =
       _$ChatMessageEditedEventImpl.fromJson;
@@ -436,7 +440,8 @@ abstract class _ChatMessageEditedEvent implements ChatMessageEditedEvent {
   @override
   String? get editedOn;
   @override
-  Map<String, dynamic>? get metadata;
+  @JsonKey(name: 'metadata', readValue: readValueObject)
+  ChatMessageMetadata? get metadata;
 
   /// Create a copy of ChatMessageEditedEvent
   /// with the given fields replaced by the non-null parameter values.
