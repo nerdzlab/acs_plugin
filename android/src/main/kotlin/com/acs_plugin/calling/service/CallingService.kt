@@ -230,6 +230,14 @@ internal class CallingService(
         return callingSdk.turnOffNoiseSuppression()
     }
 
+    fun raiseHand(): CompletableFuture<Void> {
+        return callingSdk.raiseHand()
+    }
+
+    fun lowerHand(): CompletableFuture<Void> {
+        return callingSdk.lowerHand()
+    }
+
     fun getCaptionsSupportedSpokenLanguagesSharedFlow(): SharedFlow<List<String>> {
         return callingSdk.getCaptionsSupportedSpokenLanguagesSharedFlow()
     }

@@ -21,6 +21,7 @@ import com.acs_plugin.R
 import com.acs_plugin.calling.presentation.VideoViewManager
 import com.acs_plugin.calling.presentation.manager.AvatarViewManager
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
+import com.acs_plugin.calling.redux.state.RaisedHandStatus
 import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.material.textview.MaterialTextView
@@ -50,6 +51,8 @@ internal class LocalParticipantView : ConstraintLayout {
     private lateinit var dragTouchListener: DragTouchListener
     private lateinit var accessibilityManager: AccessibilityManager
     private lateinit var guideline: Guideline
+    private lateinit var raisedHandLabel: AppCompatImageView
+    private lateinit var pipRaisedHandLabel: AppCompatImageView
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -79,6 +82,8 @@ internal class LocalParticipantView : ConstraintLayout {
             findViewById(R.id.azure_communication_ui_call_local_mic_indicator)
         localParticipantNameLayer =
             findViewById(R.id.local_participant_layer)
+        raisedHandLabel = findViewById(R.id.azure_communication_ui_call_local_raise_hand_indicator)
+        pipRaisedHandLabel = findViewById(R.id.azure_communication_ui_call_local_pip_raised_hand_indicator)
         switchCameraButton.onSingleClickListener { viewModel.switchCamera() }
         pipSwitchCameraButton.onSingleClickListener { viewModel.switchCamera() }
         dragTouchListener = DragTouchListener()
@@ -216,6 +221,13 @@ internal class LocalParticipantView : ConstraintLayout {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getUserNameLayerVisibilityFlow().collect {
                 localParticipantNameLayer.isVisible = it
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getDisplayRaisedHandFlowFlow().collect {
+                raisedHandLabel.isVisible = it
+                pipRaisedHandLabel.isVisible = it
             }
         }
     }

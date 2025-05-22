@@ -91,4 +91,12 @@ internal sealed class LocalParticipantAction : Action {
     class NoiseSuppressionOffTriggered : LocalParticipantAction()
     object NoiseSuppressionOffSucceeded : LocalParticipantAction()
     data class NoiseSuppressionOffFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class RaiseHandTriggered : LocalParticipantAction()
+    object RaiseHandSucceeded : LocalParticipantAction()
+    data class RaiseHandFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class LowerHandTriggered : LocalParticipantAction()
+    object LowerHandSucceeded : LocalParticipantAction()
+    data class LowerHandFailed(val error: CallCompositeError) : LocalParticipantAction()
 }

@@ -121,6 +121,7 @@ internal class CallingViewModel(
             state.visibilityState.status,
             avMode,
             isOverlayDisplayedOverGrid(state),
+            state.localParticipantState.raisedHandStatus
         )
 
         floatingHeaderViewModel.init(
@@ -279,6 +280,7 @@ internal class CallingViewModel(
             state.visibilityState.status,
             avMode,
             shouldDisplayLobbyOverlay(state),
+            state.localParticipantState.raisedHandStatus
         )
 
         audioDeviceListViewModel.update(
@@ -323,6 +325,7 @@ internal class CallingViewModel(
                 state.visibilityState.status,
                 avMode,
                 shouldDisplayLobbyOverlay(state),
+                state.localParticipantState.raisedHandStatus
             )
         }
 

@@ -57,6 +57,8 @@ internal class MoreActionsListViewModel(
             MoreActionType.PARTICIPANTS -> displayParticipantListCallback.invoke()
             MoreActionType.BLUR_ON -> dispatch(LocalParticipantAction.BlurPreviewOnTriggered())
             MoreActionType.BLUR_OFF -> dispatch(LocalParticipantAction.BlurPreviewOffTriggered())
+            MoreActionType.RAISE_HAND -> dispatch(LocalParticipantAction.RaiseHandTriggered())
+            MoreActionType.LOWER_HAND -> dispatch(LocalParticipantAction.LowerHandTriggered())
             else -> {}
         }
     }
