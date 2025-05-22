@@ -178,10 +178,10 @@ class _CallScreenState extends State<CallScreen> {
       }
       ..onError = (ACSPluginError error) {
         log("Received error: ${error.toString()}");
+      }
+      ..onTokenRefreshRequested = () async {
+        return _onTokenRefreshRequested();
       };
-    // ..onTokenRefreshRequested = () async {
-    //   return _onTokenRefreshRequested();
-    // };
   }
 
   @override
