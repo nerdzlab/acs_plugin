@@ -16,6 +16,7 @@ import 'package:acs_plugin/chat_models/event/event.dart';
 import 'package:acs_plugin/chat_models/event/event_type.dart';
 import 'package:acs_plugin/chat_models/participants_added_event/participants_added_event.dart';
 import 'package:acs_plugin/chat_models/participants_removed_event/participants_removed_event.dart';
+import 'package:acs_plugin/chat_models/preloaded_action/preloaded_action.dart';
 import 'package:acs_plugin/chat_models/read_receipt_received_event/read_receipt_received_event.dart';
 import 'package:acs_plugin/chat_models/typing_indicator_received_event/typing_indicator_received_event.dart';
 import 'package:flutter/foundation.dart';
@@ -417,5 +418,15 @@ class AcsPlugin {
     required String threadId,
   }) async {
     await AcsPluginPlatform.instance.sendTypingIndicator(threadId: threadId);
+  }
+
+  Future<PreloadedAction?> getPreloadedAction() async {
+    final result = await AcsPluginPlatform.instance.getPreloadedAction();
+
+    if (result == null) {
+      return null;
+    }
+
+    return PreloadedAction.fromJson(result);
   }
 }

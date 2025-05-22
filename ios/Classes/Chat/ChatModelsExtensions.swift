@@ -368,3 +368,27 @@ extension ChatThreadClient: @retroactive Hashable {
         hasher.combine(threadId)
     }
 }
+
+extension PushNotificationChatMessageReceivedEvent {
+    func toJson() -> [String: Any] {
+        var json: [String: Any] = [:]
+
+        json["messageId"] = messageId
+        json["type"] = type.requestString
+        json["threadId"] = threadId
+        json["sender"] = sender.toJson()
+        json["recipient"] = recipient.toJson()
+        json["version"] = version
+        json["message"] = message
+
+        if let senderDisplayName = senderDisplayName {
+            json["senderDisplayName"] = senderDisplayName
+        }
+
+        if let metadata = metadata {
+            json["metadata"] = metadata
+        }
+
+        return json
+    }
+}

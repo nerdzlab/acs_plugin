@@ -34,6 +34,12 @@ public struct Event {
 
 public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     
+    private enum Constants {
+        enum MethodChannels {
+            static let getPreloadedAction = "getPreloadedAction"
+        }
+    }
+    
     public static var shared: AcsPlugin = AcsPlugin()
     
     private var pushRegistry: PKPushRegistry?
@@ -45,6 +51,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     private var userDataHandler: UserDataHandler!
     private var chatHandler: ChatHandler!
     private var handlers: [MethodHandler] = []
+    private var preloadedAction: PreloadedAction?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "acs_plugin", binaryMessenger: registrar.messenger())
@@ -64,6 +71,11 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        if call.method == Constants.MethodChannels.getPreloadedAction {
+            getPreloadedAction(result: result)
+            return
+        }
+        
         for handler in handlers {
             if handler.handle(call: call, result: result) {
                 return
@@ -234,6 +246,16 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     
     public func setAPNSData(apnsToken: String, appGroupId: String) {
         chatHandler.setAPNSData(apnsToken: apnsToken, appGroupId: appGroupId)
+    }
+    
+    public func saveLaunchedChatNotification(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
+        preloadedAction = PreloadedAction(type: .chatNotification, chatPushNotificationReceivedEvent: pushNotificationReceivedEvent)
+    }
+    
+    public func getPreloadedAction(result: @escaping FlutterResult) {
+        result(preloadedAction?.toJson())
+        // Remove preloaded actin after first return
+        preloadedAction = nil
     }
 }
 
