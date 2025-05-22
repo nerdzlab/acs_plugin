@@ -295,6 +295,19 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
+  Future<Map<String, dynamic>?> getPreloadedAction() async {
+    final result = await methodChannel.invokeMethod(
+      'getPreloadedAction',
+    );
+
+    if (result == null) {
+      return null;
+    }
+
+    return Map<String, dynamic>.from(result);
+  }
+
+  @override
   Future<void> sendTypingIndicator({
     required String threadId,
   }) async {

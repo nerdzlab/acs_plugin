@@ -46,7 +46,6 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
     func initializeChatThread(threadId: String) async throws {
         do {
             _ = try await createChatThreadClient(threadId: threadId)
-            _ = try await retrieveChatThreadProperties(for: threadId).topic
         } catch {
             throw error
         }
@@ -85,12 +84,16 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
                         continuation.resume(returning: messagesResult.items ?? [])
                         
                     case .failure(let error):
+                        self.logger.error("Failed to list messages for thread \(threadId): \(error)")
                         self.chatMessagePagedCollections.removeValue(forKey: threadId)
                         continuation.resume(throwing: error)
                     }
                 }
             }
         } catch {
+<<<<<<< HEAD
+            logger.error("Retrieve previous messages failed: \(error)")
+=======
             logger.error("Failed to retrieve initial messages: \(error)")
             throw error
         }
@@ -116,9 +119,11 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             }
         } catch {
             logger.error("Retrieve Thread Properties failed: \(error)")
+>>>>>>> features/chat_flutter
             throw error
         }
     }
+
     
     func getListOfParticipants(for threadId: String) async throws -> [ChatParticipant] {
         do {

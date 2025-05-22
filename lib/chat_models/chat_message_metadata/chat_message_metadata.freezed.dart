@@ -516,6 +516,8 @@ RepliedTo _$RepliedToFromJson(Map<String, dynamic> json) {
 mixin _$RepliedTo {
   String? get id => throw _privateConstructorUsedError;
   String? get text => throw _privateConstructorUsedError;
+  String? get senderName => throw _privateConstructorUsedError;
+  String? get messageDate => throw _privateConstructorUsedError;
 
   /// Serializes this RepliedTo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -532,7 +534,8 @@ abstract class $RepliedToCopyWith<$Res> {
   factory $RepliedToCopyWith(RepliedTo value, $Res Function(RepliedTo) then) =
       _$RepliedToCopyWithImpl<$Res, RepliedTo>;
   @useResult
-  $Res call({String? id, String? text});
+  $Res call(
+      {String? id, String? text, String? senderName, String? messageDate});
 }
 
 /// @nodoc
@@ -552,6 +555,8 @@ class _$RepliedToCopyWithImpl<$Res, $Val extends RepliedTo>
   $Res call({
     Object? id = freezed,
     Object? text = freezed,
+    Object? senderName = freezed,
+    Object? messageDate = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -561,6 +566,14 @@ class _$RepliedToCopyWithImpl<$Res, $Val extends RepliedTo>
       text: freezed == text
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
+              as String?,
+      senderName: freezed == senderName
+          ? _value.senderName
+          : senderName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      messageDate: freezed == messageDate
+          ? _value.messageDate
+          : messageDate // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -574,7 +587,8 @@ abstract class _$$RepliedToImplCopyWith<$Res>
       __$$RepliedToImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? id, String? text});
+  $Res call(
+      {String? id, String? text, String? senderName, String? messageDate});
 }
 
 /// @nodoc
@@ -592,6 +606,8 @@ class __$$RepliedToImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? text = freezed,
+    Object? senderName = freezed,
+    Object? messageDate = freezed,
   }) {
     return _then(_$RepliedToImpl(
       id: freezed == id
@@ -602,6 +618,14 @@ class __$$RepliedToImplCopyWithImpl<$Res>
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
               as String?,
+      senderName: freezed == senderName
+          ? _value.senderName
+          : senderName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      messageDate: freezed == messageDate
+          ? _value.messageDate
+          : messageDate // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -609,7 +633,8 @@ class __$$RepliedToImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$RepliedToImpl implements _RepliedTo {
-  const _$RepliedToImpl({this.id, this.text});
+  const _$RepliedToImpl(
+      {this.id, this.text, this.senderName, this.messageDate});
 
   factory _$RepliedToImpl.fromJson(Map<String, dynamic> json) =>
       _$$RepliedToImplFromJson(json);
@@ -618,10 +643,14 @@ class _$RepliedToImpl implements _RepliedTo {
   final String? id;
   @override
   final String? text;
+  @override
+  final String? senderName;
+  @override
+  final String? messageDate;
 
   @override
   String toString() {
-    return 'RepliedTo(id: $id, text: $text)';
+    return 'RepliedTo(id: $id, text: $text, senderName: $senderName, messageDate: $messageDate)';
   }
 
   @override
@@ -630,12 +659,17 @@ class _$RepliedToImpl implements _RepliedTo {
         (other.runtimeType == runtimeType &&
             other is _$RepliedToImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.text, text) || other.text == text));
+            (identical(other.text, text) || other.text == text) &&
+            (identical(other.senderName, senderName) ||
+                other.senderName == senderName) &&
+            (identical(other.messageDate, messageDate) ||
+                other.messageDate == messageDate));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, text);
+  int get hashCode =>
+      Object.hash(runtimeType, id, text, senderName, messageDate);
 
   /// Create a copy of RepliedTo
   /// with the given fields replaced by the non-null parameter values.
@@ -654,8 +688,11 @@ class _$RepliedToImpl implements _RepliedTo {
 }
 
 abstract class _RepliedTo implements RepliedTo {
-  const factory _RepliedTo({final String? id, final String? text}) =
-      _$RepliedToImpl;
+  const factory _RepliedTo(
+      {final String? id,
+      final String? text,
+      final String? senderName,
+      final String? messageDate}) = _$RepliedToImpl;
 
   factory _RepliedTo.fromJson(Map<String, dynamic> json) =
       _$RepliedToImpl.fromJson;
@@ -664,6 +701,10 @@ abstract class _RepliedTo implements RepliedTo {
   String? get id;
   @override
   String? get text;
+  @override
+  String? get senderName;
+  @override
+  String? get messageDate;
 
   /// Create a copy of RepliedTo
   /// with the given fields replaced by the non-null parameter values.

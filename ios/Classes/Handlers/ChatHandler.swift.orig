@@ -60,11 +60,14 @@ final class ChatHandler: MethodHandler {
     private let channel: FlutterMethodChannel
     private let onGetUserData: () -> UserDataHandler.UserData?
     private let onSendEvent: (Event) -> Void
+<<<<<<< HEAD
     private let tokenRefresher: ((@escaping (String?, Error?) -> Void) -> Void)?
+=======
     
     private var apnsToken: String?
     private var appGroupId: String?
     private var chatAdapter: ChatAdapter?
+>>>>>>> features/chat_flutter
     
     init(
         channel: FlutterMethodChannel,
@@ -205,17 +208,6 @@ final class ChatHandler: MethodHandler {
             }
             
             getInitialMessages(threadId: threadId, result: result)
-            return true
-
-        case Constants.MethodChannels.retrieveChatThreadProperties:
-            guard let args = call.arguments as? [String: Any],
-                  let threadId = args["threadId"] as? String
-            else {
-                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
-                return true
-            }
-            
-            retrieveChatThreadProperties(threadId: threadId, result: result)
             return true
 
         case Constants.MethodChannels.getListOfParticipants:
@@ -468,17 +460,6 @@ final class ChatHandler: MethodHandler {
             do {
                 let messages = try await chatAdapter?.getInitialMessages(threadId: threadId) ?? []
                 result(messages.map { $0.toJson() })
-            } catch {
-                handleChatError(error, result: result)
-            }
-        }
-    }
-
-    private func retrieveChatThreadProperties(threadId: String, result: @escaping FlutterResult) {
-        Task {
-            do {
-                let properties = try await chatAdapter?.retrieveChatThreadProperties(threadId: threadId)
-                result(properties?.toJson())
             } catch {
                 handleChatError(error, result: result)
             }
