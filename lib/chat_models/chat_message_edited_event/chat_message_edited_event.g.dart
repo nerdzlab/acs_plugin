@@ -25,7 +25,10 @@ _$ChatMessageEditedEventImpl _$$ChatMessageEditedEventImplFromJson(
       type: $enumDecode(_$ChatMessageTypeEnumMap, json['type']),
       message: json['message'] as String,
       editedOn: json['editedOn'] as String?,
-      metadata: json['metadata'] as Map<String, dynamic>?,
+      metadata: readValueObject(json, 'metadata') == null
+          ? null
+          : ChatMessageMetadata.fromJson(
+              readValueObject(json, 'metadata') as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$ChatMessageEditedEventImplToJson(
