@@ -23,6 +23,10 @@ internal class ErrorCode : ExpandableStringEnum<ErrorCode?>() {
         val CAPTIONS_NOT_ACTIVE = fromString("captionsNotActive")
         val CALL_NOT_CONNECTED = fromString("callNotConnected")
         val CAPTIONS_START_FAILED_SPOKEN_LANGUAGE_NOT_SUPPORTED = fromString("captionsStartFailedSpokenLanguageNotSupported")
+        val ENABLE_BLUR_FAILED = fromString("ENABLE_BLUR_FAILED")
+        val DISABLE_BLUR_FAILED = fromString("DISABLE_BLUR_FAILED")
+        val ENABLE_NOISE_SUPPRESSION_FAILED = fromString("ENABLE_NOISE_SUPPRESSION_FAILED")
+        val DISABLE_NOISE_SUPPRESSION_FAILED = fromString("DISABLE_NOISE_SUPPRESSION_FAILED")
 
         private fun fromString(name: String): ErrorCode {
             return fromString(name, ErrorCode::class.java)

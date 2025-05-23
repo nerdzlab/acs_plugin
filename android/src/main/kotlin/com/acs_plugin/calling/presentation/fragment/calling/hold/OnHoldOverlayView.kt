@@ -27,7 +27,6 @@ import com.acs_plugin.calling.utilities.isAndroidTV
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.microsoft.fluentui.snackbar.Snackbar
 import com.microsoft.fluentui.R as fluentUiR
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class OnHoldOverlayView : LinearLayout {
@@ -177,12 +176,14 @@ internal class OnHoldOverlayView : LinearLayout {
         }
     }
 
+
+
     private fun View.accessibilityFocus(): View {
         post {
             performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
             sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                accessibilityTraversalAfter = R.id.azure_communication_ui_setup_audio_device_button
+                accessibilityTraversalAfter = R.id.setup_audio_button
                 accessibilityTraversalBefore = R.id.azure_communication_ui_setup_join_call_holder
             }
         }

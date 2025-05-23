@@ -28,6 +28,11 @@ public final class CallCompositeAudioSelectionMode extends ExpandableStringEnum<
     public static final CallCompositeAudioSelectionMode BLUETOOTH = fromString("bluetooth");
 
     /**
+     * Audio off.
+     */
+    public static final CallCompositeAudioSelectionMode AUDIO_OFF = fromString("audio_off");
+
+    /**
      * Creates or finds a {@link CallCompositeAudioSelectionMode} from its string representation.
      *
      * @param name a name to look for.

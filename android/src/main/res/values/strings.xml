@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="start_your_call" translatable="false">Start your call</string>
+    <string name="check_your_video_audio" translatable="false">Check your video and audio.</string>
+    <string name="user_name" translatable="false">User Name</string>
+    <string name="choose_audio" translatable="false">Choose audio</string>
+    <string name="turn_off_audio" translatable="false">Turn off the audio</string>
+    <string name="noise_suppression" translatable="false">Noise suppression</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple">#6048DE</color>
+    <color name="dark_purple">#3600B3</color>
+    <color name="light_purple">#F5F3FF</color>
+    <color name="text_primary">#393939</color>
+    <color name="text_secondary">#7B7B7B</color>
+    <color name="field_border">#C4C4C4</color>
+    <color name="light_background">#F8F9FA</color>
+    <color name="gray_background">#F5F5F5</color>
+    <color name="success">#2EEE63</color>
+    <color name="error">#DC2626</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="purple_op_60">#996048DE</color>
+</resources>

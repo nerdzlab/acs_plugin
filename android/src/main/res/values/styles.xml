@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Button styles-->
+    <style name="ACSButtonStyle" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:letterSpacing">0</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:paddingHorizontal">@dimen/padding_16dp</item>
+        <item name="cornerRadius">@dimen/corner_radius_8dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="PurpleButtonStyle" parent="ACSButtonStyle">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="fontFamily">@font/circular_std_bold</item>
+        <item name="backgroundTint">@color/setup_control_button_color_selector</item>
+    </style>
+
+</resources>

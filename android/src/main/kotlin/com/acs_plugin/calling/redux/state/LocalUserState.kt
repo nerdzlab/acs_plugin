@@ -31,6 +31,11 @@ internal enum class CameraTransmissionStatus {
     REMOTE,
 }
 
+internal enum class BlurStatus {
+    ON,
+    OFF
+}
+
 internal enum class AudioOperationalStatus {
     ON,
     OFF,
@@ -44,6 +49,13 @@ internal enum class AudioDeviceSelectionStatus {
     RECEIVER_REQUESTED,
     BLUETOOTH_SCO_SELECTED,
     BLUETOOTH_SCO_REQUESTED,
+    AUDIO_OFF_SELECTED,
+    AUDIO_OFF_REQUESTED,
+}
+
+internal enum class NoiseSuppressionStatus {
+    ON,
+    OFF
 }
 
 internal data class CameraState(
@@ -52,14 +64,17 @@ internal data class CameraState(
     val transmission: CameraTransmissionStatus,
     val camerasCount: Int = 0,
     val error: CallCompositeError? = null,
+    val blurStatus: BlurStatus
 )
 
 internal data class AudioState(
     val operation: AudioOperationalStatus,
     val device: AudioDeviceSelectionStatus,
     val bluetoothState: BluetoothState,
+    val noiseSuppression: NoiseSuppressionStatus,
     val error: CallCompositeError? = null,
     val isHeadphonePlugged: Boolean = false,
+    //TODO Add audio filters
 )
 
 internal data class BluetoothState(

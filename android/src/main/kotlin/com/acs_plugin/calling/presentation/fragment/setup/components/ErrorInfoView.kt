@@ -22,7 +22,6 @@ import com.acs_plugin.calling.models.CallCompositeEventCode
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_FADE
 import com.microsoft.fluentui.snackbar.Snackbar
 import com.microsoft.fluentui.R as fluentUiR
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class ErrorInfoView(private val rootView: View) {
@@ -108,7 +107,7 @@ internal class ErrorInfoView(private val rootView: View) {
             animationMode = ANIMATION_MODE_FADE
             setAction(rootView.context!!.getText(R.string.azure_communication_ui_calling_snack_bar_button_dismiss)) {}
             anchorView =
-                rootView.findViewById(R.id.azure_communication_ui_setup_join_call_button)
+                rootView.findViewById(R.id.setup_join_call_button)
             view.background.colorFilter = PorterDuffColorFilter(
                 ContextCompat.getColor(
                     rootView.context,
@@ -147,7 +146,7 @@ internal class ErrorInfoView(private val rootView: View) {
             performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
             sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                accessibilityTraversalAfter = R.id.azure_communication_ui_setup_audio_device_button
+                accessibilityTraversalAfter = R.id.setup_audio_button
                 accessibilityTraversalBefore = R.id.azure_communication_ui_setup_join_call_holder
             }
         }

@@ -14,6 +14,8 @@ import com.acs_plugin.calling.redux.action.NavigationAction
 import com.acs_plugin.calling.redux.state.AudioFocusStatus
 import com.acs_plugin.calling.redux.state.ReduxState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 internal class SetupViewModel(
     store: Store<ReduxState>,
@@ -28,12 +30,15 @@ internal class SetupViewModel(
     val localParticipantRendererViewModel = setupViewModelProvider.previewAreaViewModel
     val audioDeviceListViewModel = setupViewModelProvider.audioDeviceListViewModel
     val errorInfoViewModel = setupViewModelProvider.errorInfoViewModel
-    val setupGradientViewModel = setupViewModelProvider.setupGradientViewModel
     val participantAvatarViewModel = setupViewModelProvider.participantAvatarViewModel
     val joinCallButtonHolderViewModel = setupViewModelProvider.joinCallButtonHolderViewModel
 
     val displayName: String?
         get() = store.getCurrentState().localParticipantState.displayName
+
+    private var hideUserNameInputFlow = MutableStateFlow(false)
+    fun getHideUserNameInputFlow(): StateFlow<Boolean> = hideUserNameInputFlow
+
 
     fun setupCall() {
         dispatchAction(action = CallingAction.SetupCall())
@@ -72,10 +77,6 @@ internal class SetupViewModel(
             state.localParticipantState.audioState,
             state.visibilityState
         )
-        setupGradientViewModel.init(
-            state.localParticipantState.videoStreamID,
-            state.localParticipantState.cameraState.operation
-        )
         participantAvatarViewModel.init(
             state.localParticipantState.displayName,
             state.localParticipantState.videoStreamID,
@@ -86,7 +87,8 @@ internal class SetupViewModel(
             state.permissionState.cameraPermissionState,
             state.localParticipantState.cameraState.operation,
             state.localParticipantState.cameraState.camerasCount,
-            networkManager
+            networkManager,
+            onStartCallBtnClicked = { hideUserNameInputFlow.value = true }
         )
 
         super.init(coroutineScope)
@@ -117,10 +119,6 @@ internal class SetupViewModel(
         state.localParticipantState.cameraState.error?.let {
             errorInfoViewModel.updateCallCompositeError(it)
         }
-        setupGradientViewModel.update(
-            state.localParticipantState.videoStreamID,
-            state.localParticipantState.cameraState.operation
-        )
         participantAvatarViewModel.update(
             state.localParticipantState.videoStreamID,
             state.permissionState
@@ -133,4 +131,6 @@ internal class SetupViewModel(
             state.localParticipantState.cameraState.camerasCount
         )
     }
+
+    fun onUserNameChanged(name: String) {} //TODO Implement logic with user name updates
 }

@@ -39,8 +39,12 @@ internal sealed class ButtonViewDataAction : Action {
 
     class SetupScreenCameraButtonIsEnabledUpdated(val isEnabled: Boolean?) : ButtonViewDataAction()
     class SetupScreenCameraButtonIsVisibleUpdated(val isVisible: Boolean?) : ButtonViewDataAction()
+    class SetupScreenCameraSwitchButtonIsEnabledUpdated(val isEnabled: Boolean?) : ButtonViewDataAction()
+    class SetupScreenCameraSwitchButtonIsVisibleUpdated(val isVisible: Boolean?) : ButtonViewDataAction()
     class SetupScreenMicButtonIsEnabledUpdated(val isEnabled: Boolean?) : ButtonViewDataAction()
     class SetupScreenMicButtonIsVisibleUpdated(val isVisible: Boolean?) : ButtonViewDataAction()
+    class SetupScreenBlurButtonIsEnabledUpdated(val isEnabled: Boolean?) : ButtonViewDataAction()
+    class SetupScreenBlurButtonIsVisibleUpdated(val isVisible: Boolean?) : ButtonViewDataAction()
     class SetupScreenAudioDeviceButtonIsEnabledUpdated(val isEnabled: Boolean?) : ButtonViewDataAction()
     class SetupScreenAudioDeviceButtonIsVisibleUpdated(val isVisible: Boolean?) : ButtonViewDataAction()
 }

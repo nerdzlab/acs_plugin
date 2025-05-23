@@ -39,8 +39,13 @@ import com.acs_plugin.calling.redux.state.AudioState
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
 import com.acs_plugin.calling.redux.state.CameraOperationalStatus
 import com.acs_plugin.calling.redux.state.CameraState
+import com.acs_plugin.calling.redux.state.NoiseSuppressionStatus
 import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.calling.utilities.toJavaUtil
+import com.azure.android.communication.calling.BackgroundBlurEffect
+import com.azure.android.communication.calling.LocalVideoEffectsFeature
+import com.azure.android.communication.calling.NoiseSuppressionMode
+import com.azure.android.communication.calling.OutgoingAudioFilters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 /*  <CALL_START_TIME>
@@ -349,8 +354,15 @@ internal class CallingSDKWrapper(
     ): CompletableFuture<Void> {
         val startCallCompletableFuture = CompletableFuture<Void>()
         createCallAgent().thenAccept { agent: CallAgent ->
+            val isNoiseSuppressionEnabled = audioState.noiseSuppression == NoiseSuppressionStatus.ON
+
             val audioOptions = OutgoingAudioOptions()
             audioOptions.isMuted = (audioState.operation != AudioOperationalStatus.ON)
+            audioOptions.filters = OutgoingAudioFilters().apply {
+                setNoiseSuppressionMode(if (isNoiseSuppressionEnabled) NoiseSuppressionMode.HIGH else NoiseSuppressionMode.OFF)
+                setMusicModeEnabled(isNoiseSuppressionEnabled)
+                setAcousticEchoCancellationEnabled(isNoiseSuppressionEnabled)
+            }
             // it is possible to have camera state not on, (Example: waiting for local video stream)
             // if camera on is in progress, the waiting will make sure for starting call with right state
             if (camerasCountStateFlow.value != 0 && cameraState.operation != CameraOperationalStatus.OFF) {
@@ -606,6 +618,93 @@ internal class CallingSDKWrapper(
             }
         }
         return resultFuture
+    }
+
+    override fun turnOnBlur(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            val nativeStream = localVideoStreamCompletableFuture?.get()?.native as? NativeLocalVideoStream
+            val feature = nativeStream?.feature(Features.LOCAL_VIDEO_EFFECTS)
+            feature?.enableEffect(BackgroundBlurEffect())
+        } catch (e: Exception) {
+            logger?.error("Error enabling blur effect", e)
+        }
+
+        return completableFuture
+    }
+
+    override fun turnOffBlur(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            val nativeStream = localVideoStreamCompletableFuture?.get()?.native as? NativeLocalVideoStream
+            val feature = nativeStream?.feature(Features.LOCAL_VIDEO_EFFECTS)
+            feature?.disableEffect(BackgroundBlurEffect())
+        } catch (e: Exception) {
+            completableFuture.completeExceptionally(e)
+            logger?.error("Error disabling blur effect", e)
+        }
+
+        return completableFuture
+    }
+
+    override fun turnOnNoiseSuppression(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            call.liveOutgoingAudioFilters.apply {
+                setNoiseSuppressionMode(NoiseSuppressionMode.HIGH)
+                setMusicModeEnabled(true)
+                setAcousticEchoCancellationEnabled(true)
+            }
+        } catch (e: Exception) {
+            completableFuture.completeExceptionally(e)
+        }
+
+        return completableFuture
+    }
+
+    override fun turnOffNoiseSuppression(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            call.liveOutgoingAudioFilters.apply {
+                setNoiseSuppressionMode(NoiseSuppressionMode.OFF)
+                setMusicModeEnabled(false)
+                setAcousticEchoCancellationEnabled(false)
+            }
+        } catch (e: Exception) {
+            completableFuture.completeExceptionally(e)
+        }
+
+        return completableFuture
+    }
+
+    override fun muteAudio(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            call.muteIncomingAudio(context)
+        } catch (e: Exception) {
+            logger?.error("Failed to mute call", e)
+            completableFuture.completeExceptionally(e)
+        }
+
+        return completableFuture
+    }
+
+    override fun unMuteAudio(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            call.unmuteIncomingAudio(context)
+        } catch (e: Exception) {
+            logger?.error("Failed to mute call", e)
+            completableFuture.completeExceptionally(e)
+        }
+
+        return completableFuture
     }
     //endregion
 

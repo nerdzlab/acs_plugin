@@ -16,6 +16,8 @@ internal data class CustomButtonState(
 internal data class ButtonState(
     val setupScreenCameraButtonState: DefaultButtonState? = null,
     val setupScreenMicButtonState: DefaultButtonState? = null,
+    val setupScreenCameraSwitchButtonState: DefaultButtonState? = null,
+    val setupScreenBlurButtonState: DefaultButtonState? = null,
     val setupScreenAudioDeviceButtonState: DefaultButtonState? = null,
 
     val callScreenCameraButtonState: DefaultButtonState? = null,

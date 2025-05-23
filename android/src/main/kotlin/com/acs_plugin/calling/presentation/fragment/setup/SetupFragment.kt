@@ -8,6 +8,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -19,9 +22,9 @@ import com.acs_plugin.calling.presentation.fragment.setup.components.JoinCallBut
 import com.acs_plugin.calling.presentation.fragment.setup.components.PermissionWarningView
 import com.acs_plugin.calling.presentation.fragment.setup.components.PreviewAreaView
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarView
-import com.acs_plugin.calling.presentation.fragment.setup.components.SetupGradientView
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupParticipantAvatarView
 import com.acs_plugin.calling.presentation.fragment.setup.components.ToolbarView
+import kotlinx.coroutines.launch
 
 internal class SetupFragment :
     Fragment(R.layout.azure_communication_ui_calling_fragment_setup) {
@@ -34,10 +37,10 @@ internal class SetupFragment :
     private lateinit var participantAvatarView: SetupParticipantAvatarView
     private lateinit var localParticipantRendererView: PreviewAreaView
     private lateinit var audioDeviceListView: AudioDeviceListView
-    private lateinit var setupGradientView: SetupGradientView
     private lateinit var errorInfoView: ErrorInfoView
     private lateinit var setupJoinCallButtonHolderView: JoinCallButtonHolderView
     private lateinit var toolbarView: ToolbarView
+    private lateinit var userNameInput: AppCompatEditText
 
     private val videoViewManager get() = activityViewModel.container.videoViewManager
     private val avatarViewManager get() = activityViewModel.container.avatarViewManager
@@ -52,8 +55,6 @@ internal class SetupFragment :
             activityViewModel.container.logger,
             this::exitComposite
         )
-        setupGradientView = view.findViewById(R.id.azure_communication_ui_setup_gradient)
-        setupGradientView.start(viewLifecycleOwner, viewModel.setupGradientViewModel)
 
         setupJoinCallButtonHolderView =
             view.findViewById(R.id.azure_communication_ui_setup_join_call_holder)
@@ -98,6 +99,14 @@ internal class SetupFragment :
         errorInfoView = ErrorInfoView(view)
         errorInfoView.start(viewLifecycleOwner, viewModel.errorInfoViewModel)
 
+        userNameInput = view.findViewById(R.id.setup_user_name_edit_text)
+        setupUserNameInput()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getHideUserNameInputFlow().collect {
+                hideUserNameInput(it)
+            }
+        }
+
         viewModel.setupCall()
     }
 
@@ -129,5 +138,16 @@ internal class SetupFragment :
 
     private fun exitComposite() {
         viewModel.exitComposite()
+    }
+
+    private fun setupUserNameInput() {
+        userNameInput.apply {
+            setText(viewModel.displayName.orEmpty())
+            doOnTextChanged { text, _, _, _ -> viewModel.onUserNameChanged(text.toString().trim()) }
+        }
+    }
+
+    private fun hideUserNameInput(isHide: Boolean) {
+        userNameInput.isVisible = isHide.not()
     }
 }

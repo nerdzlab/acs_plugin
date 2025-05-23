@@ -75,4 +75,20 @@ internal sealed class LocalParticipantAction : Action {
     class RoleChanged(val participantRole: ParticipantRole?) : LocalParticipantAction()
 
     class SetCapabilities(val capabilities: Set<ParticipantCapabilityType>) : LocalParticipantAction()
+
+    class BlurPreviewOnTriggered : LocalParticipantAction()
+    object BlurOnSucceeded : LocalParticipantAction()
+    data class BlurOnFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class BlurPreviewOffTriggered : LocalParticipantAction()
+    object BlurOffSucceeded : LocalParticipantAction()
+    data class BlurOffFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class NoiseSuppressionOnTriggered : LocalParticipantAction()
+    object NoiseSuppressionOnSucceeded : LocalParticipantAction()
+    data class NoiseSuppressionOnFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class NoiseSuppressionOffTriggered : LocalParticipantAction()
+    object NoiseSuppressionOffSucceeded : LocalParticipantAction()
+    data class NoiseSuppressionOffFailed(val error: CallCompositeError) : LocalParticipantAction()
 }

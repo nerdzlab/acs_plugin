@@ -24,6 +24,7 @@ import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ParticipantRole
 import com.acs_plugin.calling.models.RttMessage
 import com.acs_plugin.calling.redux.state.AudioState
+import com.acs_plugin.calling.redux.state.BlurStatus
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
 import com.acs_plugin.calling.redux.state.CameraState
 import kotlinx.coroutines.flow.Flow
@@ -53,6 +54,12 @@ internal interface CallingSDK {
     fun endCall(): CompletableFuture<Void>
     fun hold(): CompletableFuture<Void>
     fun resume(): CompletableFuture<Void>
+    fun turnOnBlur(): CompletableFuture<Void>
+    fun turnOffBlur(): CompletableFuture<Void>
+    fun turnOnNoiseSuppression(): CompletableFuture<Void>
+    fun turnOffNoiseSuppression(): CompletableFuture<Void>
+    fun muteAudio(): CompletableFuture<Void>
+    fun unMuteAudio(): CompletableFuture<Void>
 
     // State.
     fun getLocalVideoStream(): CompletableFuture<LocalVideoStream>

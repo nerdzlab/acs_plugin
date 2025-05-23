@@ -109,6 +109,10 @@ internal interface CallingMiddlewareActionHandler {
         audioOperationalStatus: AudioOperationalStatus,
         store: Store<ReduxState>
     )
+    fun turnBlurOn(store: Store<ReduxState>)
+    fun turnBlurOff(store: Store<ReduxState>)
+    fun turnNoiseSuppressionOn(store: Store<ReduxState>)
+    fun turnNoiseSuppressionOff(store: Store<ReduxState>)
 }
 
 internal class CallingMiddlewareActionHandlerImpl(
@@ -528,6 +532,7 @@ internal class CallingMiddlewareActionHandlerImpl(
                     AudioDeviceSelectionStatus.SPEAKER_SELECTED -> CallCompositeAudioSelectionMode.SPEAKER
                     AudioDeviceSelectionStatus.RECEIVER_SELECTED -> CallCompositeAudioSelectionMode.RECEIVER
                     AudioDeviceSelectionStatus.BLUETOOTH_SCO_SELECTED -> CallCompositeAudioSelectionMode.BLUETOOTH
+                    AudioDeviceSelectionStatus.AUDIO_OFF_SELECTED -> CallCompositeAudioSelectionMode.AUDIO_OFF
                     else -> return
                 }
                 val event = buildCallCompositeAudioSelectionChangedEvent(audioSelectionType)
@@ -966,6 +971,62 @@ internal class CallingMiddlewareActionHandlerImpl(
         if (audioOperationalStatus == AudioOperationalStatus.OFF) {
             store.dispatch(ToastNotificationAction.DismissNotification(ToastNotificationKind.UNMUTED))
             store.dispatch(ToastNotificationAction.ShowNotification(ToastNotificationKind.MUTED))
+        }
+    }
+
+    override fun turnBlurOn(store: Store<ReduxState>) {
+        callingService.turnBlurOn().whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.BlurOnFailed(
+                        CallCompositeError(ErrorCode.ENABLE_BLUR_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.BlurOnSucceeded)
+            }
+        }
+    }
+
+    override fun turnBlurOff(store: Store<ReduxState>) {
+        callingService.turnBlurOff().whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.BlurOffFailed(
+                        CallCompositeError(ErrorCode.DISABLE_BLUR_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.BlurOffSucceeded)
+            }
+        }
+    }
+
+    override fun turnNoiseSuppressionOn(store: Store<ReduxState>) {
+        callingService.turnOnNoiseSuppression().whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.NoiseSuppressionOnFailed(
+                        CallCompositeError(ErrorCode.ENABLE_NOISE_SUPPRESSION_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.NoiseSuppressionOnSucceeded)
+            }
+        }
+    }
+
+    override fun turnNoiseSuppressionOff(store: Store<ReduxState>) {
+        callingService.turnOffNoiseSuppression().whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.NoiseSuppressionOffFailed(
+                        CallCompositeError(ErrorCode.DISABLE_NOISE_SUPPRESSION_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.NoiseSuppressionOffSucceeded)
+            }
         }
     }
 
