@@ -115,8 +115,17 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
             let listParticipantsOptions = ListChatParticipantsOptions(maxPageSize: participantsPageSize)
             let chatThreadClient = try await getChatThreadClient(threadId: threadId)
             
-            let pagedCollectionResult = try await chatThreadClient.listParticipants(
-                withOptions: listParticipantsOptions)
+            let pagedCollectionResult: PagedCollection<ChatParticipant> = try await safeAsync { completion in
+                chatThreadClient.listParticipants(withOptions: listParticipantsOptions) { result, _ in
+                    switch result {
+                    case .success(let pagedCollection):
+                        completion(.success(pagedCollection))
+                    case .failure(let error):
+                        self.logger.error("List Participants failed: \(error.errorDescription ?? "")")
+                        completion(.failure(error))
+                    }
+                }
+            }
             
             guard let items = pagedCollectionResult.items else {
                 return []
@@ -392,18 +401,26 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         client.stopRealTimeNotifications()
     }
     
-    func setupPushNotifications(apnsToken: String, appGroupId: String) {
+    func setupPushNotifications(apnsToken: String, appGroupId: String, completion: @escaping () -> Void) {
         let keyTag = "PNKey"
         
         do{
             guard let appGroupPushNotificationKeyStorage: PushNotificationKeyStorage = try AppGroupPushNotificationKeyStorage(appGroupId: appGroupId, keyTag: keyTag) else {
+                completion()
                 return
             }
             
             let semaphore = DispatchSemaphore(value: 0)
             DispatchQueue.global(qos: .background).async { [weak self] in
-                guard let self = self else { return }
-                guard let chatClient = self.chatClient else { return }
+                guard let self = self else {
+                    completion()
+                    return
+                }
+                
+                guard let chatClient = self.chatClient else {
+                    completion()
+                    return
+                }
                 
                 chatClient.pushNotificationKeyStorage = appGroupPushNotificationKeyStorage
                 
@@ -414,11 +431,14 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
                     case let .failure(error):
                         print("failed to start Push Notifications \(error.localizedDescription)")
                     }
+                    
+                    completion()
                     semaphore.signal()
                 }
                 semaphore.wait()
             }
         } catch {
+            completion()
             return
         }
     }

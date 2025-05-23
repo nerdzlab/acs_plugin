@@ -9,6 +9,7 @@ import FluentUI
 import AVKit
 import Combine
 import PushKit
+import AzureCore
 
 class GlobalCompositeManager {
     static var callComposite: CallComposite?
@@ -17,12 +18,12 @@ class GlobalCompositeManager {
 public struct Event {
     let name: String
     let payload: Any?
-
+    
     init(name: String, payload: Any? = nil) {
         self.name = name
         self.payload = payload
     }
-
+    
     func toMap() -> [String: Any] {
         var map: [String: Any] = ["event": name]
         if let payload = payload {
@@ -49,8 +50,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     private var callHandler: CallHandler!
     private var broadcastExtensionHandler: BroadcastExtensionHandler!
     private var userDataHandler: UserDataHandler!
-    private var chatHandler: ChatHandler!
-    private var handlers: [MethodHandler] = []
+    private var chatHandler: ChatHandler?
+    private var handlers: [MethodHandler?] = []
     private var preloadedAction: PreloadedAction?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -77,7 +78,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         }
         
         for handler in handlers {
-            if handler.handle(call: call, result: result) {
+            if ((handler?.handle(call: call, result: result)) != nil) {
                 return
             }
         }
@@ -245,12 +246,17 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     //        return configError
     //    }
     
-    public func setAPNSData(apnsToken: String, appGroupId: String) {
-        chatHandler.setAPNSData(apnsToken: apnsToken, appGroupId: appGroupId)
-    }
-    
     public func saveLaunchedChatNotification(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
         preloadedAction = PreloadedAction(type: .chatNotification, chatPushNotificationReceivedEvent: pushNotificationReceivedEvent)
+    }
+    
+    public func setAPNSData(apnsToken: String, appGroupId: String, completion: @escaping () -> Void) {
+        //If app run from terminated state, chat handler does not create, as flutter part does not triggers
+        if chatHandler != nil {
+            chatHandler?.setAPNSData(apnsToken: apnsToken, appGroupId: appGroupId, completion: completion)
+        } else {
+            BackgroundChatManager.shared.renewPushSubscription(appGroupId: appGroupId, apnsToken: apnsToken, completion: completion)
+        }
     }
     
     public func getPreloadedAction(result: @escaping FlutterResult) {

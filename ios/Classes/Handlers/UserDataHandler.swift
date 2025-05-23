@@ -12,7 +12,7 @@ import AzureCommunicationChat
 
 final class UserDataHandler: MethodHandler {
     
-    struct UserData {
+    struct UserData: Codable {
         let token: String
         let name: String
         let userId: String
@@ -30,6 +30,8 @@ final class UserDataHandler: MethodHandler {
     private var userData: UserData? {
         didSet {
             guard let userData else { return }
+            
+            UserDefaults.standard.saveUserData(userData)
             
             onUserDataReceived(userData)
         }

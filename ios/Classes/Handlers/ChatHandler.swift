@@ -63,6 +63,15 @@ final class ChatHandler: MethodHandler {
     private var appGroupId: String?
     private var chatAdapter: ChatAdapter?
     
+    private var chatEndpoint: String? {
+        get {
+            return UserDefaults.standard.getChatEndpoint()
+        }
+        set {
+            UserDefaults.standard.setChatEndpoint(newValue)
+        }
+    }
+    
     init(
         channel: FlutterMethodChannel,
         onGetUserData: @escaping () -> UserDataHandler.UserData?,
@@ -84,6 +93,8 @@ final class ChatHandler: MethodHandler {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Missing 'endpoint'", details: nil))
                 return true
             }
+            
+            chatEndpoint = endpoint
             setupChatAdapter(endpoint: endpoint, result: result)
             return true
             
@@ -413,7 +424,7 @@ final class ChatHandler: MethodHandler {
                 
                 try await chatAdapter?.connect()
                 self.subscribeToChatEvents()
-                self.setupPushnotifications()
+                self.setupPushnotifications { }
                 
                 result(nil)
             } catch {
@@ -605,18 +616,19 @@ final class ChatHandler: MethodHandler {
         }
     }
     
-    private func setupPushnotifications() {
+    private func setupPushnotifications(completion: @escaping () -> Void) {
         guard let apnsToken = apnsToken, let appGroupId = appGroupId else {
+            completion()
             return
         }
         
-        chatAdapter?.setupPushNotifications(apnsToken: apnsToken, appGroupId: appGroupId)
+        chatAdapter?.setupPushNotifications(apnsToken: apnsToken, appGroupId: appGroupId, completion: completion)
     }
     
-    func setAPNSData(apnsToken: String, appGroupId: String) {
+    func setAPNSData(apnsToken: String, appGroupId: String, completion: @escaping () -> Void) {
         self.apnsToken = apnsToken
         self.appGroupId = appGroupId
         
-        setupPushnotifications()
+        setupPushnotifications(completion: completion)
     }
 }
