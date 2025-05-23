@@ -6,15 +6,14 @@ package com.acs_plugin.calling.presentation.fragment.calling.notification
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
-import kotlinx.coroutines.flow.collect
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
 internal class ToastNotificationView : ConstraintLayout {
@@ -44,8 +43,8 @@ internal class ToastNotificationView : ConstraintLayout {
                 for (item in it) {
                     val itemView = inflater.inflate(R.layout.azure_communication_ui_calling_toast_notification_item, notificationContainer, false)
 
-                    val icon = itemView.findViewById<ImageView>(R.id.azure_communication_ui_calling_toast_notification_icon)
-                    val text = itemView.findViewById<TextView>(R.id.azure_communication_ui_calling_toast_notification_message)
+                    val icon = itemView.findViewById<AppCompatImageView>(R.id.azure_communication_ui_calling_toast_notification_icon)
+                    val text = itemView.findViewById<MaterialTextView>(R.id.azure_communication_ui_calling_toast_notification_message)
 
                     icon.setImageDrawable(ContextCompat.getDrawable(context, item.notificationIconId))
                     text.text = context.getString(item.notificationMessageId)

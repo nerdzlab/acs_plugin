@@ -7,15 +7,14 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
-import kotlinx.coroutines.flow.collect
+import com.acs_plugin.extension.onSingleClickListener
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
 internal class UpperMessageBarNotificationView : ConstraintLayout {
@@ -24,9 +23,9 @@ internal class UpperMessageBarNotificationView : ConstraintLayout {
 
     private lateinit var upperMessageBarNotificationLayout: ConstraintLayout
     private lateinit var upperMessageBarNotificationView: View
-    private lateinit var upperMessageBarNotificationIconImageView: ImageView
-    private lateinit var upperMessageBarNotificationMessage: TextView
-    private lateinit var dismissImageButton: ImageButton
+    private lateinit var upperMessageBarNotificationIconImageView: AppCompatImageView
+    private lateinit var upperMessageBarNotificationMessage: MaterialTextView
+    private lateinit var dismissImageButton: AppCompatImageView
     private lateinit var upperMessageBarNotificationViewModel: UpperMessageBarNotificationViewModel
 
     override fun onFinishInflate() {
@@ -39,7 +38,7 @@ internal class UpperMessageBarNotificationView : ConstraintLayout {
             findViewById(R.id.azure_communication_ui_calling_upper_message_bar_notification_icon)
         dismissImageButton =
             findViewById(R.id.azure_communication_ui_calling_upper_message_bar_notification_dismiss_button)
-        dismissImageButton.setOnClickListener {
+        dismissImageButton.onSingleClickListener {
             upperMessageBarNotificationViewModel.dismissNotificationByUser()
         }
     }
@@ -51,7 +50,7 @@ internal class UpperMessageBarNotificationView : ConstraintLayout {
         this.upperMessageBarNotificationViewModel = upperMessageBarNotificationViewModel
         setupAccessibility()
 
-        upperMessageBarNotificationLayout.visibility = View.VISIBLE
+        upperMessageBarNotificationLayout.visibility = VISIBLE
         viewLifecycleOwner.lifecycleScope.launch {
             upperMessageBarNotificationViewModel.getUpperMessageBarNotificationModelFlow().collect {
                 if (!it.isEmpty()) {
@@ -67,7 +66,7 @@ internal class UpperMessageBarNotificationView : ConstraintLayout {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            upperMessageBarNotificationViewModel.getDismissUpperMessageBarNotificationFlow()?.collect() {
+            upperMessageBarNotificationViewModel.getDismissUpperMessageBarNotificationFlow().collect {
                 if (it) {
                     val viewGroup = upperMessageBarNotificationLayout.parent as ViewGroup
                     viewGroup.removeView(upperMessageBarNotificationLayout)

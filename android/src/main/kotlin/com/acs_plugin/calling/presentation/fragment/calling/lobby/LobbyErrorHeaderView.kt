@@ -6,8 +6,7 @@ package com.acs_plugin.calling.presentation.fragment.calling.lobby
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.ImageButton
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.LifecycleOwner
@@ -15,7 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
 import com.acs_plugin.calling.models.CallCompositeLobbyErrorCode
 import com.acs_plugin.calling.utilities.isAndroidTV
-import kotlinx.coroutines.flow.collect
+import com.acs_plugin.extension.onSingleClickListener
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
 internal class LobbyErrorHeaderView : ConstraintLayout {
@@ -24,9 +24,9 @@ internal class LobbyErrorHeaderView : ConstraintLayout {
 
     private lateinit var lobbyErrorHeaderView: LobbyErrorHeaderView
     private lateinit var headerLayout: ConstraintLayout
-    private lateinit var closeButton: ImageButton
+    private lateinit var closeButton: AppCompatImageView
     private lateinit var lobbyErrorHeaderViewModel: LobbyErrorHeaderViewModel
-    private lateinit var errorTextView: TextView
+    private lateinit var errorTextView: MaterialTextView
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -34,7 +34,7 @@ internal class LobbyErrorHeaderView : ConstraintLayout {
         headerLayout = findViewById(R.id.azure_communication_ui_calling_lobby_error_header)
         closeButton = findViewById(R.id.azure_communication_ui_calling_lobby_error_close_button)
         errorTextView = findViewById(R.id.azure_communication_ui_lobby_header_error_text)
-        closeButton.setOnClickListener {
+        closeButton.onSingleClickListener {
             closeLobbyHeaderView()
         }
     }

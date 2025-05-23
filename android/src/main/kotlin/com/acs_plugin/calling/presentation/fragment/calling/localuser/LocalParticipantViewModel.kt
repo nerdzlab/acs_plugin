@@ -32,6 +32,7 @@ internal class LocalParticipantViewModel(
     private lateinit var isOverlayDisplayedFlow: MutableStateFlow<Boolean>
     private lateinit var numberOfRemoteParticipantsFlow: MutableStateFlow<Int>
     private lateinit var isVisibleFlow: MutableStateFlow<Boolean>
+    private lateinit var userNameLayerVisibilityFlow: MutableStateFlow<Boolean>
 
     fun getVideoStatusFlow(): StateFlow<VideoModel> = videoStatusFlow
     fun getDisplayFullScreenAvatarFlow(): StateFlow<Boolean> = displayFullScreenAvatarFlow
@@ -46,6 +47,7 @@ internal class LocalParticipantViewModel(
     fun getNumberOfRemoteParticipantsFlow(): StateFlow<Int> = numberOfRemoteParticipantsFlow
 
     fun getIsVisibleFlow(): StateFlow<Boolean> = isVisibleFlow
+    fun getUserNameLayerVisibilityFlow(): StateFlow<Boolean> = userNameLayerVisibilityFlow
 
     fun update(
         displayName: String?,
@@ -86,6 +88,7 @@ internal class LocalParticipantViewModel(
 
         isVisibleFlow.value = isVisible(displayVideo, pipStatus, displayFullScreenAvatar, avMode)
         isOverlayDisplayedFlow.value = isOverlayDisplayedOverGrid
+        userNameLayerVisibilityFlow.value = viewMode == LocalParticipantViewMode.FULL_SCREEN
     }
 
     private fun isVisible(displayVideo: Boolean, pipStatus: VisibilityStatus, displayFullScreenAvatar: Boolean, avMode: CallCompositeAudioVideoMode): Boolean {
@@ -142,6 +145,7 @@ internal class LocalParticipantViewModel(
         isOverlayDisplayedFlow = MutableStateFlow(isOverlayDisplayedOverGrid)
         numberOfRemoteParticipantsFlow = MutableStateFlow(numberOfRemoteParticipants)
         isVisibleFlow = MutableStateFlow(isVisible(displayVideo, pipStatus, displayFullScreenAvatar, avMode))
+        userNameLayerVisibilityFlow = MutableStateFlow(viewMode == LocalParticipantViewMode.FULL_SCREEN)
     }
 
     fun switchCamera() = dispatch(LocalParticipantAction.CameraSwitchTriggered())

@@ -6,31 +6,29 @@ package com.acs_plugin.calling.presentation.fragment.calling.lobby
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
-import kotlinx.coroutines.flow.collect
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
 internal class WaitingLobbyOverlayView : LinearLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    private lateinit var waitingIcon: ImageView
-    private lateinit var overlayTitle: TextView
-    private lateinit var overlayInfo: TextView
+    private lateinit var waitingIcon: AppCompatImageView
+    private lateinit var overlayTitle: MaterialTextView
+    private lateinit var overlayInfo: MaterialTextView
     private lateinit var viewModel: WaitingLobbyOverlayViewModel
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        waitingIcon =
-            findViewById(R.id.azure_communication_ui_call_call_lobby_overlay_wait_for_host_image)
+        waitingIcon = findViewById(R.id.azure_communication_ui_call_call_lobby_overlay_wait_for_host_image)
         overlayTitle = findViewById(R.id.azure_communication_ui_call_lobby_overlay_title)
         overlayInfo = findViewById(R.id.azure_communication_ui_call_lobby_overlay_info)
     }

@@ -6,13 +6,13 @@ package com.acs_plugin.calling.presentation.fragment.calling.lobby
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.ImageButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
-import com.microsoft.fluentui.widget.Button
-import kotlinx.coroutines.flow.collect
+import com.acs_plugin.extension.onSingleClickListener
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
 internal class LobbyHeaderView : ConstraintLayout {
@@ -21,21 +21,21 @@ internal class LobbyHeaderView : ConstraintLayout {
 
     private lateinit var lobbyHeaderView: LobbyHeaderView
     private lateinit var headerLayout: ConstraintLayout
-    private lateinit var closeButton: ImageButton
+    private lateinit var closeButton: AppCompatImageView
     private lateinit var lobbyHeaderViewModel: LobbyHeaderViewModel
     private lateinit var displayParticipantListCallback: () -> Unit
-    private lateinit var participantListButton: Button
+    private lateinit var participantListButton: MaterialTextView
 
     override fun onFinishInflate() {
         super.onFinishInflate()
         lobbyHeaderView = this
         headerLayout = findViewById(R.id.azure_communication_ui_calling_lobby_header)
         closeButton = findViewById(R.id.azure_communication_ui_calling_lobby_close_button)
-        closeButton.setOnClickListener {
+        closeButton.onSingleClickListener {
             closeLobbyHeaderView()
         }
         participantListButton = findViewById(R.id.azure_communication_ui_calling_lobby_open_list_button)
-        participantListButton.setOnClickListener {
+        participantListButton.onSingleClickListener {
             displayParticipantListCallback()
         }
     }

@@ -20,8 +20,9 @@ import com.acs_plugin.calling.utilities.BottomCellAdapter
 import com.acs_plugin.calling.utilities.BottomCellItem
 import com.acs_plugin.calling.utilities.BottomCellItemType
 import com.acs_plugin.calling.utilities.implementation.CompositeDrawerDialog
+import com.acs_plugin.extension.onSingleClickListener
+import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.drawer.DrawerDialog
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class ParticipantListView(
@@ -30,6 +31,8 @@ internal class ParticipantListView(
     private val avatarViewManager: AvatarViewManager,
 ) : RelativeLayout(context) {
     private var participantTable: RecyclerView
+    private var participantTitle: MaterialTextView
+    private var shareMeetingLink: MaterialTextView
 
     private lateinit var participantListDrawer: CompositeDrawerDialog
     private lateinit var bottomCellAdapter: BottomCellAdapter
@@ -38,9 +41,13 @@ internal class ParticipantListView(
     private lateinit var admitDeclineAlertDialog: AlertDialog
 
     init {
-        inflate(context, R.layout.azure_communication_ui_calling_listview, this)
-        participantTable = findViewById(R.id.bottom_drawer_table)
-        this.setBackgroundResource(R.color.azure_communication_ui_calling_color_bottom_drawer_background)
+        inflate(context, R.layout.participants_list_view, this)
+        participantTable = findViewById(R.id.participant_recycler_view)
+        participantTitle = findViewById(R.id.participant_list_title)
+        shareMeetingLink = findViewById(R.id.share_meeting_link_title)
+        shareMeetingLink.onSingleClickListener {
+            //TODO implement share meeting link functionality
+        }
     }
 
     fun start(viewLifecycleOwner: LifecycleOwner) {
@@ -113,7 +120,6 @@ internal class ParticipantListView(
         participantListDrawer.setContentView(this)
         bottomCellAdapter = BottomCellAdapter()
         participantTable.adapter = bottomCellAdapter
-        updateTableHeight(0)
         participantTable.layoutManager = LinearLayoutManager(context)
     }
 
@@ -122,7 +128,6 @@ internal class ParticipantListView(
     ) {
         if (this::bottomCellAdapter.isInitialized) {
             val bottomCellItems = generateBottomCellItems(participantListContent)
-            updateTableHeight(bottomCellItems.size)
             with(bottomCellAdapter) {
                 setBottomCellItems(bottomCellItems)
                 notifyDataSetChanged()
@@ -130,27 +135,15 @@ internal class ParticipantListView(
         }
     }
 
-    private fun updateTableHeight(listSize: Int) {
-
-        // title for in call participants
-        var titles = 1
-
-        // title for in lobby participants
-        if (viewModel.participantListContentStateFlow.value.remoteParticipantList.any { it.status == ParticipantStatus.IN_LOBBY }) {
-            titles += 1
-        }
-
-        // set the height of the list to be half of the screen height or 50dp per item, whichever is smaller
-        participantTable.layoutParams.height =
-            (((listSize - titles) * 50 * context.resources.displayMetrics.density + titles * 30 * context.resources.displayMetrics.density).toInt()).coerceAtMost(
-                context.resources.displayMetrics.heightPixels / 2
-            )
-    }
-
     private fun generateBottomCellItems(
         participantListContent: ParticipantListContent,
     ): MutableList<BottomCellItem> {
-        val totalActiveParticipantCount = participantListContent.totalActiveParticipantCount
+        participantTitle.text = context.getString(
+            R.string.participant_list,
+            participantListContent.totalActiveParticipantCount + 1 // add one for local participant
+        )
+
+
         val bottomCellItemsInCallParticipants = mutableListOf<BottomCellItem>()
         val bottomCellItemsInLobbyParticipants = mutableListOf<BottomCellItem>()
         // since we can not get resources from model class, we create the local participant list cell
@@ -205,20 +198,6 @@ internal class ParticipantListView(
             }
         }
         bottomCellItemsInCallParticipants.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title!! })
-
-        val inCallNPeople = context.getString(
-            R.string.azure_communication_ui_calling_participant_list_in_call_n_people,
-            totalActiveParticipantCount + 1 // add one for local participant
-        )
-        bottomCellItemsInCallParticipants.add(
-            0,
-            BottomCellItem(
-                title = inCallNPeople,
-                contentDescription = inCallNPeople,
-                isOnHold = false,
-                itemType = BottomCellItemType.BottomMenuTitle,
-            )
-        )
 
         val plusMoreParticipants = participantListContent.totalActiveParticipantCount -
             participantListContent.remoteParticipantList.count()
@@ -284,8 +263,8 @@ internal class ParticipantListView(
     ): BottomCellItem {
         val micIcon = ContextCompat.getDrawable(
             context,
-            if (isMuted == true) R.drawable.azure_communication_ui_calling_ic_fluent_mic_off_24_filled_composite_button_filled_grey
-            else R.drawable.azure_communication_ui_calling_ic_fluent_mic_on_24_filled_composite_button_filled_grey
+            if (isMuted == true) R.drawable.ic_microphone_off
+            else R.drawable.ic_microphone
         )
 
         val micAccessibilityAnnouncement = context.getString(
@@ -305,7 +284,7 @@ internal class ParticipantListView(
             title = displayName,
             contentDescription = contentDescription,
             accessoryImage = if (status != ParticipantStatus.IN_LOBBY) micIcon else null,
-            accessoryColor = if (status != ParticipantStatus.IN_LOBBY) R.color.azure_communication_ui_calling_color_participant_list_mute_mic else null,
+            accessoryColor = if (status != ParticipantStatus.IN_LOBBY) R.color.purple else null,
             accessoryImageDescription = micAccessibilityAnnouncement,
             isChecked = isMuted,
             participantViewData = participantViewData,

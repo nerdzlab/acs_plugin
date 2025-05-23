@@ -5,12 +5,10 @@ package com.acs_plugin.calling.presentation.fragment.calling.notification
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.widget.LinearLayout
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class UpperMessageBarNotificationLayoutView : LinearLayout {
@@ -31,10 +29,10 @@ internal class UpperMessageBarNotificationLayoutView : LinearLayout {
         upperMessageBarNotificationLayoutViewModel: UpperMessageBarNotificationLayoutViewModel,
     ) {
         this.upperMessageBarNotificationLayoutViewModel = upperMessageBarNotificationLayoutViewModel
-        upperMessageBarNotificationLayout.visibility = View.VISIBLE
+        upperMessageBarNotificationLayout.visibility = VISIBLE
 
         viewLifecycleOwner.lifecycleScope.launch {
-            upperMessageBarNotificationLayoutViewModel.getNewUpperMessageBarNotificationFlow()?.collect() {
+            upperMessageBarNotificationLayoutViewModel.getNewUpperMessageBarNotificationFlow().collect {
                 if (!it.upperMessageBarNotificationModel.isEmpty()) {
                     val upperMessageBarNotificationView: UpperMessageBarNotificationView = inflate(
                         context,
@@ -46,7 +44,7 @@ internal class UpperMessageBarNotificationLayoutView : LinearLayout {
                         it,
                     )
 
-                    val layoutParams = LinearLayout.LayoutParams(upperMessageBarNotificationLayout.layoutParams)
+                    val layoutParams = LayoutParams(upperMessageBarNotificationLayout.layoutParams)
                     layoutParams.bottomMargin = (8 * context.resources.displayMetrics.density).toInt()
                     upperMessageBarNotificationLayout.addView(upperMessageBarNotificationView, layoutParams)
                 }

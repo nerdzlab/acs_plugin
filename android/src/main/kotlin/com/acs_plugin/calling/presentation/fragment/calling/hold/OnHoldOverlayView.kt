@@ -7,15 +7,15 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import android.widget.ImageView
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
@@ -24,7 +24,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
 import com.acs_plugin.calling.utilities.isAndroidTV
+import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.snackbar.Snackbar
 import com.microsoft.fluentui.R as fluentUiR
 import kotlinx.coroutines.launch
@@ -33,9 +35,9 @@ internal class OnHoldOverlayView : LinearLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    private lateinit var waitingIcon: ImageView
-    private lateinit var overlayTitle: TextView
-    private lateinit var resumeButton: AppCompatButton
+    private lateinit var waitingIcon: AppCompatImageView
+    private lateinit var overlayTitle: MaterialTextView
+    private lateinit var resumeButton: FrameLayout
     private lateinit var viewModel: OnHoldOverlayViewModel
 
     private lateinit var snackBar: Snackbar
@@ -47,10 +49,6 @@ internal class OnHoldOverlayView : LinearLayout {
             findViewById(R.id.azure_communication_ui_call_hold_overlay_wait_for_host_image)
         overlayTitle = findViewById(R.id.azure_communication_ui_call_hold_overlay_title)
         resumeButton = findViewById(R.id.azure_communication_ui_call_hold_resume_button)
-        resumeButton.background = ContextCompat.getDrawable(
-            context,
-            R.drawable.azure_communication_ui_calling_corner_radius_rectangle_4dp_primary_background
-        )
     }
 
     fun start(
@@ -171,7 +169,7 @@ internal class OnHoldOverlayView : LinearLayout {
 
         overlayTitle.text =
             context.getString(R.string.azure_communication_ui_calling_hold_view_text)
-        resumeButton.setOnClickListener {
+        resumeButton.onSingleClickListener {
             viewModel.resumeCall()
         }
     }
@@ -182,10 +180,6 @@ internal class OnHoldOverlayView : LinearLayout {
         post {
             performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
             sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                accessibilityTraversalAfter = R.id.setup_audio_button
-                accessibilityTraversalBefore = R.id.azure_communication_ui_setup_join_call_holder
-            }
         }
         return this
     }

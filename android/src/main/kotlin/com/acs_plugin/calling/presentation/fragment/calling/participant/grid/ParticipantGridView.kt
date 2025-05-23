@@ -20,7 +20,6 @@ import com.acs_plugin.calling.models.CallCompositeParticipantViewData
 import com.acs_plugin.calling.presentation.VideoViewManager
 import com.acs_plugin.calling.presentation.manager.AvatarViewManager
 import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class ParticipantGridView : GridLayout {

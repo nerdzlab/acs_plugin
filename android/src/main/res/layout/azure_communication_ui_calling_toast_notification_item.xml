@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clipChildren="false"
-    android:layout_marginVertical="4dp"
-    android:padding="8dp"
+    android:layout_marginVertical="@dimen/margin_4dp"
+    android:padding="@dimen/padding_8dp"
     android:alpha="0.8"
-    android:background="@drawable/azure_communication_ui_calling_corner_radius_rectangle_6dp_floating_header"
+    android:background="@drawable/bg_light_pink_rounded_r12"
+    android:backgroundTint="@color/white"
     android:importantForAccessibility="yes"
     android:focusable="true"
     android:orientation="horizontal"
-    android:gravity="center"
-    >
-    <ImageView
+    android:gravity="center">
+
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/azure_communication_ui_calling_toast_notification_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:backgroundTint="@color/azure_communication_ui_calling_color_button_background_transparent"
-        android:src="@drawable/azure_communication_ui_calling_ic_fluent_mic_off_24_filled_composite_button_filled_grey"
-        android:importantForAccessibility="no"
-        />
-    <TextView
+        app:srcCompat="@drawable/ic_microphone_off"
+        app:tint="@color/purple"
+        android:importantForAccessibility="no" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/azure_communication_ui_calling_toast_notification_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/azure_communication_ui_calling_color_call_diagnostic_notification_text"
-        />
+        android:layout_marginStart="@dimen/margin_4dp"
+        style="@style/Text.CircularStdMedium.14sp"
+        tools:text="Microphone Off" />
 
 </LinearLayout>

@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
-import android.widget.ImageButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
@@ -21,18 +21,18 @@ import com.acs_plugin.calling.redux.state.AudioOperationalStatus
 import com.acs_plugin.calling.redux.state.CameraOperationalStatus
 import com.acs_plugin.calling.utilities.isTablet
 import com.acs_plugin.calling.utilities.launchAll
-import kotlinx.coroutines.flow.collect
+import com.acs_plugin.extension.onSingleClickListener
 
 internal class ControlBarView : ConstraintLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     private lateinit var viewModel: ControlBarViewModel
-    private lateinit var endCallButton: ImageButton
-    private lateinit var cameraToggle: ImageButton
-    private lateinit var micToggle: ImageButton
-    private lateinit var audioDeviceButton: ImageButton
-    private lateinit var moreButton: ImageButton
+    private lateinit var endCallButton: AppCompatImageView
+    private lateinit var cameraToggle: AppCompatImageView
+    private lateinit var micToggle: AppCompatImageView
+    private lateinit var audioDeviceButton: AppCompatImageView
+    private lateinit var moreButton: AppCompatImageView
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -71,21 +71,7 @@ internal class ControlBarView : ConstraintLayout {
             },
             {
                 viewModel.cameraStatus.collect {
-                    when (it) {
-                        CameraOperationalStatus.ON -> {
-                            cameraToggle.isSelected = true
-                            cameraToggle.contentDescription =
-                                context.getString(R.string.azure_communication_ui_calling_setup_view_button_video_on)
-                        }
-
-                        CameraOperationalStatus.OFF -> {
-                            cameraToggle.isSelected = false
-                            cameraToggle.contentDescription =
-                                context.getString(R.string.azure_communication_ui_calling_setup_view_button_video_off)
-                        }
-
-                        else -> {}
-                    }
+                    updateCamera(it)
                 }
             },
             {
@@ -204,16 +190,38 @@ internal class ControlBarView : ConstraintLayout {
         audioDeviceButton.contentDescription = context.getString(R.string.azure_communication_ui_calling_view_button_device_options_accessibility_label)
     }
 
+    private fun updateCamera(cameraOperationalStatus: CameraOperationalStatus) {
+        when (cameraOperationalStatus) {
+            CameraOperationalStatus.ON -> {
+                cameraToggle.isSelected = true
+                cameraToggle.setImageResource(R.drawable.ic_camera)
+                cameraToggle.contentDescription =
+                    context.getString(R.string.azure_communication_ui_calling_setup_view_button_video_on)
+            }
+
+            CameraOperationalStatus.OFF -> {
+                cameraToggle.isSelected = false
+                cameraToggle.setImageResource(R.drawable.ic_camera_off)
+                cameraToggle.contentDescription =
+                    context.getString(R.string.azure_communication_ui_calling_setup_view_button_video_off)
+            }
+
+            else -> {}
+        }
+    }
+
     private fun updateMic(audioOperationalStatus: AudioOperationalStatus) {
         when (audioOperationalStatus) {
             AudioOperationalStatus.ON -> {
                 // show un-mute icon
                 micToggle.isSelected = true
+                micToggle.setImageResource(R.drawable.ic_microphone)
                 micToggle.contentDescription = context.getString(R.string.azure_communication_ui_calling_setup_view_button_mic_on)
             }
             AudioOperationalStatus.OFF -> {
                 // show mute icon
                 micToggle.isSelected = false
+                micToggle.setImageResource(R.drawable.ic_microphone_off)
                 micToggle.contentDescription = context.getString(R.string.azure_communication_ui_calling_setup_view_button_mic_off)
             }
             else -> {}
@@ -224,18 +232,22 @@ internal class ControlBarView : ConstraintLayout {
         when (audioDeviceSelectionStatus) {
             AudioDeviceSelectionStatus.SPEAKER_SELECTED -> {
                 audioDeviceButton.setImageResource(
-                    R.drawable.azure_communication_ui_calling_speaker_speakerphone_selector
+                    R.drawable.ic_speaker
                 )
             }
             AudioDeviceSelectionStatus.RECEIVER_SELECTED -> {
                 audioDeviceButton.setImageResource(
-                    R.drawable.azure_communication_ui_calling_speaker_receiver_selector
+                    R.drawable.ic_speaker
                 )
             }
             AudioDeviceSelectionStatus.BLUETOOTH_SCO_SELECTED -> {
                 audioDeviceButton.setImageResource(
-                    // Needs an icon
-                    R.drawable.azure_communication_ui_calling_speaker_bluetooth_selector
+                    R.drawable.ic_speaker_bluetooth
+                )
+            }
+            AudioDeviceSelectionStatus.AUDIO_OFF_SELECTED -> {
+                audioDeviceButton.setImageResource(
+                    R.drawable.ic_speaker_off
                 )
             }
             else -> {}
@@ -243,10 +255,10 @@ internal class ControlBarView : ConstraintLayout {
     }
 
     private fun subscribeClickListener() {
-        endCallButton.setOnClickListener {
+        endCallButton.onSingleClickListener {
             viewModel.requestCallEnd()
         }
-        micToggle.setOnClickListener {
+        micToggle.onSingleClickListener {
             viewModel.micButtonClicked(context)
             if (micToggle.isSelected) {
                 viewModel.turnMicOff()
@@ -255,7 +267,7 @@ internal class ControlBarView : ConstraintLayout {
             }
             postDelayed({ micToggle.requestFocus() }, 33)
         }
-        cameraToggle.setOnClickListener {
+        cameraToggle.onSingleClickListener {
             viewModel.cameraButtonClicked(context)
             if (cameraToggle.isSelected) {
                 viewModel.turnCameraOff()
@@ -264,11 +276,11 @@ internal class ControlBarView : ConstraintLayout {
             }
             postDelayed({ cameraToggle.requestFocus() }, 33)
         }
-        audioDeviceButton.setOnClickListener {
+        audioDeviceButton.onSingleClickListener {
             viewModel.onAudioDeviceClick(context)
             viewModel.openAudioDeviceSelectionMenu()
         }
-        moreButton.setOnClickListener {
+        moreButton.onSingleClickListener {
             viewModel.openMoreMenu()
         }
     }
