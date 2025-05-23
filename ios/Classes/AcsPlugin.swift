@@ -1,155 +1,206 @@
 import Flutter
+import ReplayKit
 import UIKit
 import AzureCommunicationCalling
-
-import UIKit
+import AzureCommunicationCommon
 import SwiftUI
 import FluentUI
 import AVKit
 import Combine
+import PushKit
 
 class GlobalCompositeManager {
     static var callComposite: CallComposite?
 }
 
-public class AcsPlugin: NSObject, FlutterPlugin {
-    
-    private var callService: CallService {
-        return CallService.getOrCreateInstance()
-    }
-    
-    
-    private var eventChannel: FlutterEventChannel?
-    private var eventSink: FlutterEventSink?
+public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     
     public static var shared: AcsPlugin = AcsPlugin()
     
-    public var previewView: RendererView? {
-        return callService.previewView
-    }
+    private var pushRegistry: PKPushRegistry?
+    private var voipToken: Data?
+    private var eventChannel: FlutterEventChannel?
+    private var eventSink: FlutterEventSink?
+    private var callHandler: CallHandler!
+    private var broadcastExtensionHandler: BroadcastExtensionHandler!
+    private var userDataHandler: UserDataHandler!
+    private var handlers: [MethodHandler] = []
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "acs_plugin", binaryMessenger: registrar.messenger())
         let instance = AcsPlugin.shared
         registrar.addMethodCallDelegate(instance, channel: channel)
         
-        registerCustomFont(withName: "CircularStd-Bold")
-        registerCustomFont(withName: "CircularStd-Book")
-        registerCustomFont(withName: "CircularStd-Medium")
+        Utility.registerAllCustomFonts()
         
         // Add event channel setup
         let eventChannel = FlutterEventChannel(name: "acs_plugin_events", binaryMessenger: registrar.messenger())
         eventChannel.setStreamHandler(instance)
         instance.eventChannel = eventChannel
         
-        let factory = AcsVideoViewFactory(messenger: registrar.messenger())
-        registrar.register(factory, withId: "acs_video_view")
+        instance.setupHandlers(channel: channel)
+        
+        shared.setupPushKit()
     }
-    
-    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        switch call.method {
-        case "getPlatformVersion":
-            result("iOS " + UIDevice.current.systemVersion)
-            
-        case "requestMicrophonePermissions":
-            requestMicrophonePermissions(result: result)
-            
-        case "requestCameraPermissions":
-            requestCameraPermissions(result: result)
-            
-        case "initializeRoomCall":
-            if let arguments = call.arguments as? [String: Any], let token = arguments["token"] as? String, let roomId = arguments["roomId"] as? String, let userId = arguments["userId"] as? String {
-                initializeRoomCall(token: token, roomId: roomId, userId: userId, result: result)
-            } else {
-                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
-            }
-            
-        default:
-            result(FlutterMethodNotImplemented)
-        }
-    }
-    
-    private func requestMicrophonePermissions(result: @escaping FlutterResult) {
-        callService.requestMicrophonePermissions(result: result)
-    }
-    
-    private func requestCameraPermissions(result: @escaping FlutterResult) {
-        callService.requestCameraPermissions(result: result)
-    }
-    
-    private func initializeRoomCall(token: String, roomId: String, userId: String, result: @escaping FlutterResult) {
-        guard let credential = try? CommunicationTokenCredential(token: token) else { return  }
-        
-        let callCompositeOptions = CallCompositeOptions(
-            enableMultitasking: true,
-            enableSystemPictureInPictureWhenMultitasking: true,
-            displayName: "Yra",
-            userId: CommunicationUserIdentifier(userId)
-        )
-        
-        let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
-        
-        
-        
-        let customButton = CustomButtonViewData(id: UUID().uuidString,
-                                                image: UIImage(),
-                                                title: "Hide composite") {_ in
-            // hide call composite and display Troubleshooting tips
-            callComposite.isHidden = true
-            // ...
-        }
-        
-        let cameraButton = ButtonViewData(visible: true)
-        let micButton = ButtonViewData(enabled: true)
-        
-        let callScreenControlBarOptions = CallScreenControlBarOptions(
-            cameraButton: cameraButton,
-            microphoneButton: micButton,
-            customButtons: [customButton]
-        )
-        
-        let callScreenOptions = CallScreenOptions(controlBarOptions: callScreenControlBarOptions)
-        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true, callScreenOptions: callScreenOptions)
-        
-        GlobalCompositeManager.callComposite = callComposite
 
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        for handler in handlers {
+            if handler.handle(call: call, result: result) {
+                return
+            }
+        }
         
-                callComposite.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
-//        callComposite.launch(locator: .teamsMeeting(teamsLink: "https://teams.microsoft.com/l/meetup-join/19:meeting_NWM5YjYyYWUtNWNjYy00YjRhLWIwYWItYjg3YzkxOTMyZmEw@thread.v2/0?context=%7B%22Tid%22:%2241d68bdf-c355-4709-9c3f-40e323196d74%22,%22Oid%22:%2285555719-0dd7-410b-8f00-fa039800f874%22%7D"), localOptions: localOptions)
-        
-//                callComposite.launch(locator: .teamsMeeting(teamsLink: "https://teams.microsoft.com/l/meetup-join/19%3ameeting_YWE4NzBkZTEtOGYzZC00ZWYyLWIzMTItYTc0ODgwODQ1ODk3%40thread.v2/0?context=%7b%22Tid%22%3a%22e16f27b3-237b-4547-9aa2-7f2dc7fc9aaf%22%2c%22Oid%22%3a%22843c6f37-5ffc-48e0-9d01-e8e5126b4f6f%22%7d"), localOptions: localOptions)
-        
-        
+        result(FlutterMethodNotImplemented)
     }
     
-    private static func registerCustomFont(withName name: String, fileExtension: String = "ttf") {
-        // Use the correct bundle (Flutter plugin bundle)
-        
-        let bundle = Bundle(for: Self.self) // Use the current class for plugin context
-        
-        guard let fontPath = bundle.path(forResource: name, ofType: "ttf"),
-              let data = try? Data(contentsOf: URL(fileURLWithPath: fontPath)),
-              let provider = CGDataProvider(data: data as CFData),
-              let font = CGFont(provider) else {
-            print("❌ Could not load font '\(name)' from bundle.")
-            return
-        }
-        
-        var error: Unmanaged<CFError>?
-        let success = CTFontManagerRegisterGraphicsFont(font, &error)
-        
-        if !success {
-            if let cfError = error?.takeUnretainedValue() {
-                print("❌ Failed to register font '\(name)': \(cfError.localizedDescription)")
-            } else {
-                print("❌ Failed to register font '\(name)': Unknown error.")
+    private func setupHandlers(channel: FlutterMethodChannel) {
+        callHandler = CallHandler(
+            channel: channel,
+            onGetllComposite: { [weak self] in
+                self?.userDataHandler.getCallComposite()
+            },
+            onSendEvent: { [weak self] event in
+                self?.sendEvent(event)
             }
-            return
-        }
+        )
         
-        print("✅ Successfully registered font '\(name)'")
-        return
+        broadcastExtensionHandler = BroadcastExtensionHandler(
+            channel: channel,
+            onGetllComposite: { [weak self] in
+                self?.userDataHandler.getCallComposite()
+            },
+            onSendEvent: { [weak self] event in
+                self?.sendEvent(event)
+            }
+        )
+        
+        userDataHandler = UserDataHandler(
+            channel: channel,
+            onSubscribeToCallCompositeEvents: { [weak self] callComposite in
+                self?.callHandler.subscribeToEvents(callComposite: callComposite)
+                self?.broadcastExtensionHandler.subscribeToEvents(callComposite: callComposite)
+            },
+            onUserDataReceived: { [weak self] userData in
+                self?.userDataHandler?.getCallComposite()?.registerPushNotifications(deviceRegistrationToken: self?.voipToken ?? Data()) { result in
+                    switch result {
+                    case .success:
+                        print("Successfully registered for VoIP push notifications.")
+                    case .failure(let error):
+                        print("Failed to register for VoIP push notifications: \(error)")
+                    }
+                }
+            }
+        )
+        
+        handlers = [callHandler, userDataHandler, broadcastExtensionHandler]
     }
+    
+    private func setupPushKit() {
+        let registry = PKPushRegistry(queue: .main)
+        registry.delegate = self
+        registry.desiredPushTypes = [.voIP]
+        self.pushRegistry = registry
+    }
+    
+    public func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+        if type == .voIP {
+            self.voipToken = pushCredentials.token
+            let tokenString = pushCredentials.token.map { String(format: "%02x", $0) }.joined()
+            print("Received VoIP token: \(tokenString)")
+        }
+    }
+    
+    public func pushRegistry(_ registry: PKPushRegistry,
+                             didReceiveIncomingPushWith payload: PKPushPayload,
+                             for type: PKPushType,
+                             completion: @escaping () -> Void) {
+        print("pushRegistry payload: \(payload.dictionaryPayload)")
+        //        os_log("pushRegistry payload: \(payload.dictionaryPayload)")
+        //        if isAppInForeground() {
+        //            os_log("calling demo app: app is in foreground")
+        //            if let entryViewController = findEntryViewController() {
+        //                os_log("calling demo app: onPushNotificationReceived")
+        //                entryViewController.onPushNotificationReceived(dictionaryPayload: payload.dictionaryPayload)
+        //            }
+        //        } else {
+        //            os_log("calling demo app: app is not in foreground")
+        //            let pushInfo = PushNotification(data: payload.dictionaryPayload)
+        //            let providerConfig = CXProviderConfiguration()
+        //            providerConfig.supportsVideo = true
+        //            providerConfig.maximumCallGroups = 1
+        //            providerConfig.maximumCallsPerCallGroup = 1
+        //            providerConfig.includesCallsInRecents = true
+        //            providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
+        //            let callKitOptions = CallKitOptions(providerConfig: providerConfig,
+        //                                                isCallHoldSupported: true,
+        //                                                provideRemoteInfo: incomingCallRemoteInfo,
+        //                                                configureAudioSession: configureAudioSession)
+        //            CallComposite.reportIncomingCall(pushNotification: pushInfo,
+        //                                             callKitOptions: callKitOptions) { result in
+        //                if case .success = result {
+        //                    DispatchQueue.global().async {
+        //                        if let entryViewController = self.findEntryViewController() {
+        //                            os_log("calling demo app: onPushNotificationReceivedBackgroundMode")
+        //                            entryViewController.onPushNotificationReceivedBackgroundMode(
+        //                                dictionaryPayload: payload.dictionaryPayload)
+        //                        }
+        //                    }
+        //                } else {
+        //                    os_log("calling demo app: failed on reportIncomingCall")
+        //                }
+        //            }
+        //        }
+    }
+    
+    //    private func getCallKitOptions() -> CallKitOptions {
+    //        let cxHandle = CXHandle(type: .generic, value: "Outgoing call")
+    //        let providerConfig = CXProviderConfiguration()
+    //        providerConfig.supportsVideo = true
+    //        providerConfig.maximumCallGroups = 1
+    //        providerConfig.maximumCallsPerCallGroup = 1
+    //        providerConfig.includesCallsInRecents = true
+    //        providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
+    //        let isCallHoldSupported = true
+    //        let callKitOptions = CallKitOptions(providerConfig: providerConfig,
+    //                                           isCallHoldSupported: isCallHoldSupported,
+    //                                           provideRemoteInfo: incomingCallRemoteInfo,
+    //                                           configureAudioSession: configureAudioSession)
+    //        return callKitOptions
+    //    }
+    //
+    //    public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
+    //        let cxHandle = CXHandle(type: .generic, value: "Incoming call")
+    //        var remoteInfoDisplayName = "Test display name"
+    //        if remoteInfoDisplayName.isEmpty {
+    //            remoteInfoDisplayName = info.displayName
+    //        }
+    //        let callKitRemoteInfo = CallKitRemoteInfo(displayName: remoteInfoDisplayName,
+    //                                                               handle: cxHandle)
+    //        return callKitRemoteInfo
+    //    }
+    //
+    //    public func configureAudioSession() -> Error? {
+    //        let audioSession = AVAudioSession.sharedInstance()
+    //        var configError: Error?
+    //
+    //        // Check the current audio output route
+    //        let currentRoute = audioSession.currentRoute
+    //        let isUsingSpeaker = currentRoute.outputs.contains { $0.portType == .builtInSpeaker }
+    //        let isUsingReceiver = currentRoute.outputs.contains { $0.portType == .builtInReceiver }
+    //
+    //        // Only configure the session if necessary (e.g., when not on speaker/receiver)
+    //        if !isUsingSpeaker && !isUsingReceiver {
+    //            do {
+    //                // Keeping default .playAndRecord without forcing speaker
+    //                try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
+    //                try audioSession.setActive(true)
+    //            } catch {
+    //                configError = error
+    //            }
+    //        }
+    //
+    //        return configError
+    //    }
 }
 
 extension AcsPlugin: FlutterStreamHandler {
@@ -167,5 +218,14 @@ extension AcsPlugin: FlutterStreamHandler {
         if let eventSink = eventSink {
             eventSink(error)
         }
+    }
+    
+    public func sendEvent(_ event: String) {
+        guard let eventSink = eventSink else { return }
+        
+        let eventData: [String: Any?] = [
+            "event": event,
+        ]
+        eventSink(eventData)
     }
 }

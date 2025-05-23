@@ -55,6 +55,12 @@ public struct CallCompositeErrorCode {
     
     /// Error when local user lower hand.
     public static let lowerHand: String = "lowerHand"
+    
+    /// Error when local user start screen share.
+    public static let startScreenShareFailure: String = "startScreenShareFailure"
+    
+    /// Error when local user stop screen share.
+    public static let stopScreenShareFailure: String = "stopScreenShareFailure"
 }
 
 /// The error thrown after Call Composite launching.

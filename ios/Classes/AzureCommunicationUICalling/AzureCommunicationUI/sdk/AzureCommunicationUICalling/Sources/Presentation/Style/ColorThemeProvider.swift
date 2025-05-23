@@ -50,7 +50,7 @@ class ColorThemeProvider {
     let surface: UIColor = Colors.surfaceQuaternary
     
     init(themeOptions: ThemeOptions?) {
-        self.colorSchemeOverride = themeOptions?.colorSchemeOverride ?? .unspecified
+        self.colorSchemeOverride = themeOptions?.colorSchemeOverride ?? .light
 
         self.primaryColor = themeOptions?.primaryColor ?? Colors.Palette.communicationBlue.color
         self.primaryColorTint10 = themeOptions?.primaryColorTint10 ?? Colors.Palette.communicationBlueTint10.color

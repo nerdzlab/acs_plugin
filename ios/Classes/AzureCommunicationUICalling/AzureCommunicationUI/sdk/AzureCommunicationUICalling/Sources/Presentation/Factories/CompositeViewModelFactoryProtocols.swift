@@ -69,9 +69,9 @@ protocol CompositeViewModelFactoryProtocol {
                                  buttonViewDataState: ButtonViewDataState) -> ControlBarViewModel
     func makeInfoHeaderViewModel(dispatchAction: @escaping ActionDispatch,
                                  localUserState: LocalUserState,
-                                 callScreenInfoHeaderState: CallScreenInfoHeaderState
+                                 callScreenInfoHeaderState: CallScreenInfoHeaderState,
+                                 isChatEnable: Bool,
                                  /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
-                                 ,
                                  buttonViewDataState: ButtonViewDataState,
                                  controlHeaderViewData: CallScreenHeaderViewData?
                                  /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
@@ -109,8 +109,8 @@ protocol CompositeViewModelFactoryProtocol {
                                      onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
                                      onLayoutOptions: @escaping () -> Void,
                                      onReaction: @escaping (ReactionType) -> Void,
+                                     isRemoteParticipantsPresent: Bool,
                                      isDisplayed: Bool) -> MeetingOptionsViewModel
-    
     
     func makeLayoutOptionsViewModel(
         localUserState: LocalUserState,
@@ -181,6 +181,7 @@ protocol CompositeViewModelFactoryProtocol {
                                        isDisabled: Bool,
                                        paddings: AppCompositeButton.Paddings?,
                                        action: @escaping (() -> Void)) -> AppPrimaryButtonViewModel
+    func userTriggerEndCall()
 }
 
 extension CompositeViewModelFactoryProtocol {

@@ -339,6 +339,7 @@ public struct LocalUserState {
     let updatedDisplayName: String?
     let userId: String?
     let localVideoStreamIdentifier: String?
+    let screenShareOutgoingPixelBuffer: CVPixelBuffer?
     let participantRole: ParticipantRoleEnum?
     let capabilities: Set<ParticipantCapabilityType>
     let currentCapabilitiesAreDefault: Bool
@@ -352,6 +353,7 @@ public struct LocalUserState {
          updatedDisplayName: String? = nil,
          userId: String? = nil,
          localVideoStreamIdentifier: String? = nil,
+         screenShareOutgoingPixelBuffer: CVPixelBuffer? = nil,
          participantRole: ParticipantRoleEnum? = nil,
          capabilities: Set<ParticipantCapabilityType> = [.unmuteMicrophone, .turnVideoOn],
          currentCapabilitiesAreDefault: Bool = true,
@@ -370,6 +372,7 @@ public struct LocalUserState {
         self.updatedDisplayName = updatedDisplayName
         self.userId = userId
         self.localVideoStreamIdentifier = localVideoStreamIdentifier
+        self.screenShareOutgoingPixelBuffer = screenShareOutgoingPixelBuffer
         self.participantRole = participantRole
         self.capabilities = capabilities
         self.currentCapabilitiesAreDefault = currentCapabilitiesAreDefault

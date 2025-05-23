@@ -74,7 +74,7 @@ public final class CallCompositeSetupScreenOptions {
      * @param enabled true if the blur button should be enabled.
      * @return This CallCompositeSetupScreenOptions instance.
      */
-    public CallCompositeSetupScreenOptions setBlurButtonEnabled(final Boolean enabled) {
+    public CallCompositeSetupScreenOptions setBlurButtonAvailability(final Boolean enabled) {
         this.blurButtonEnabled = enabled;
         return this;
     }
@@ -92,7 +92,7 @@ public final class CallCompositeSetupScreenOptions {
      * @param enabled true if the camera switch button should be enabled.
      * @return This CallCompositeSetupScreenOptions instance.
      */
-    public CallCompositeSetupScreenOptions setCameraSwitchButtonEnabled(final Boolean enabled) {
+    public CallCompositeSetupScreenOptions setCameraSwitchButtonAvailability(final Boolean enabled) {
         this.cameraSwitchButtonEnabled = enabled;
         return this;
     }

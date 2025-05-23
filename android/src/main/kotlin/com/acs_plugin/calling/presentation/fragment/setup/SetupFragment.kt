@@ -6,11 +6,10 @@ package com.acs_plugin.calling.presentation.fragment.setup
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -25,7 +24,6 @@ import com.acs_plugin.calling.presentation.fragment.setup.components.PreviewArea
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarView
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupParticipantAvatarView
 import com.acs_plugin.calling.presentation.fragment.setup.components.ToolbarView
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class SetupFragment :
@@ -150,6 +148,6 @@ internal class SetupFragment :
     }
 
     private fun hideUserNameInput(isHide: Boolean) {
-        userNameInput.visibility = if (isHide) GONE else VISIBLE
+        userNameInput.isVisible = isHide.not()
     }
 }

@@ -6,6 +6,7 @@ import AzureCommunicationCommon
 import Combine
 import Foundation
 import AzureCommunicationCalling
+import ReplayKit
 
 enum CameraDevice {
     case front
@@ -71,6 +72,10 @@ protocol CallingSDKWrapperProtocol {
     func endCall() async throws
     func startCallLocalVideoStream() async throws -> String
     func stopLocalVideoStream() async throws
+    func requestScreenSharingStream()
+    func startScreenSharingStream() async throws
+    func stopScreenSharingStream() async throws
+    func requestStopScreenSharingStream()
     func switchCamera() async throws -> CameraDevice
     func muteLocalMic() async throws
     func unmuteLocalMic() async throws
@@ -101,6 +106,8 @@ protocol CallingSDKWrapperProtocol {
     func unMuteCall() async throws
     func enableNoiseSuppression()
     func disableNoiseSuppression()
+    func showChat()
+    func captureOutput(sampleBuffer: CMSampleBuffer, sampleBufferType: RPSampleBufferType, error: Error?)
 }
 
 protocol CallingSDKEventsHandling {

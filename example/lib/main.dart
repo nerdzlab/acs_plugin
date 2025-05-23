@@ -35,7 +35,6 @@ class CallScreen extends StatefulWidget {
 }
 
 class _CallScreenState extends State<CallScreen> {
-  String _platformVersion = 'Unknown';
   final _acsPlugin = AcsPlugin();
   bool isRealDevice = false;
 
@@ -44,27 +43,37 @@ class _CallScreenState extends State<CallScreen> {
   // Configuration constants - move to a config file in a real app
   String get _acsToken {
     if (isRealDevice) {
-      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNy05MTY2LWU0ZWEtOTE4ZS1hZjNhMGQwMDI2N2IiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDc4MDkwNTEiLCJleHAiOjE3NDc4OTU0NTEsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDc4MDkwNTF9.r28Zs3bcAKD3upr-KGCvDwclgjLDE1dxsjCaKTtdZnRKvRz1oQeH-bF5KxNO33qIEa2XFM4S2j4-NNtbjcqlYnSvAxOjtKCvlWU0dqy7Dn17asPtsBdcQsHggz3rXzM8S6lWNEsErvd1vnhHQjVnxxf8_3Py-ZnrnCL3wRfdZixhQQKBTWPF5WHWqbsgruoOQwiizAHrOaKU42xdQeyC1HlUlOT2Pdjlo5v2y8W8crGZ8Ubk72XYUisGv_lHr233FWDhpEz3m7jpVw6k2fSvjLMHpm7_aKtPMe8cu8qzQL9f6VygG3I2NSOe14-XMLt1FWVbdapqIV26KPHBGa27pg";
+      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNy0zZmM4LTUxMGEtOTE4ZS1hZjNhMGQwMGFmMmUiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDcwNjUzMTQiLCJleHAiOjE3NDcxNTE3MTQsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiODY3YTVkYzAtYmNkZi00ZGM3LTg2MGYtM2ZjMzNkMmEzZmVlIiwicmVzb3VyY2VMb2NhdGlvbiI6Im5vcndheSIsImlhdCI6MTc0NzA2NTMxNH0.tdcm9qyWkz0Fq8zbWuEM6XQnX0pL-PF51B_pJBeJpy_A5KTDmO6yHOgCIJnyzun7svA9urs4_xYZH_Yam1zy1PnspzkOQclG34ENWO-y-RCZEcFRt7NM9VtrKkuMatvecFuKcvYF5WLeDlKCzHC_fdTMUOJHnxoDK1GPELx0bkklN3heRQwACk5R_WoR9DQrI5pOoP7kZs2ZENEnN-KA1ucUfaockjKNCzUDikjw6Fuw4cKRdPeHEcHLq4XGkiQbr6V6b8VSO3lTZcFeVcZxi-cyrGCox3JanvTf7vPeKBx0hxSz1Lnu9dRgm2dsduqQ7iJ51M1HTdKH-uiAvqrjNw";
     } else {
-      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNy05MTgyLTQ5NTItMzRmYS1hZDNhMGQwMDQ5YjkiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDc4MTA2MTciLCJleHAiOjE3NDc4OTcwMTcsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDc4MTA2MTd9.fmbTslxfCDk_BSUvDptjRQLGNF_paWACq7Ho5WuvoQpLFxf5GWK4Vd2SQhQIMCrv3p5Z9K3i0Nl_8A1u-Fz5oZQdEMj5_tx9Bj5HKumc488BvfImVQa5TRqPZXUWymioif-mP_7ePRbgAXoO26LfFQwpafRiS5a0SR6sDNCgSXEa4AG3ptmHgmj8Tl0IrAGNZ0vn7ZKR71SevdEs0QkqxpVEpn601zyOU8H4eTanGqeYj5tqZaGzpsCKtzevuvDEPdHEAdhhbpK5OOWiKFcpPHMauPfGrnRCeAuF_Q4Wtf7ZJa9C6Nn6BuZZBb5E21Vmd_LE4gbs88aFQID0bqHTJQ";
+      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNi05MWFmLWU3YWEtM2Y4Mi1hZjNhMGQwMGIzZDIiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDcwMjkzMDUiLCJleHAiOjE3NDcxMTU3MDUsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJ2b2lwIiwicmVzb3VyY2VJZCI6Ijg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZSIsInJlc291cmNlTG9jYXRpb24iOiJub3J3YXkiLCJpYXQiOjE3NDcwMjkzMDV9.v1f0KXqWWjH--SUdvRSEWyPE4AMoNqRPsS6MTpkesEsbV7V852zz0zdpW_tHljXxkCVVs5B4kuqD0p6X5j2RKswYEFoNqpX3oSr7GYi0TJPNboxAh4Diz45IB4pdlYTJTDRfTwJczLwRKhDLoGnhNSklsijMhGe53CBAPgTCwN4mX-CYupchxuhPBpgCeS--TIQMx2PPmBTN7b8P3FgECuDVx35MCqxBb0YRVCNXhAsEFTsD1Z0iGRJU8lrflz6Pf3TzBppqawssfMnqK76LIpaU9lfke9tEsTErrQAqqQkKniVoeu5uE6x_dbtksuU8ey-n4Zsk1Sj6fSlqeLB6Ag";
     }
   }
 
-  static const String _roomId = "99526054459023769";
+  static const String _roomId = "99594083154089769";
+  static const _appGroupIdentifier = "group.acsPluginExample";
+  static const _extensionBubdleId =
+      "com.example.acsPluginExample.ScreenBroadcast";
 
   String get _userId {
     if (isRealDevice) {
-      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000027-9166-e4ea-918e-af3a0d00267b";
+      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000027-3fc8-510a-918e-af3a0d00af2e";
     } else {
-      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000027-9182-4952-34fa-ad3a0d0049b9";
+      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000026-91af-e7aa-3f82-af3a0d00b3d2";
+    }
+  }
+
+  String get _otherUserId {
+    if (isRealDevice) {
+      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000026-91af-e7aa-3f82-af3a0d00b3d2";
+    } else {
+      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000026-71d2-b1be-a7ac-473a0d0006c2";
     }
   }
 
   @override
   initState() {
     super.initState();
-    _getPlatformVersion();
-
+    _setBroadcastExtensionData();
     _setDeviceType();
 
     // Subscribe to event stream
@@ -77,6 +86,7 @@ class _CallScreenState extends State<CallScreen> {
 
   _setDeviceType() async {
     isRealDevice = await SafeDevice.isRealDevice;
+    _setUserData();
   }
 
 // Handle incoming events
@@ -84,6 +94,18 @@ class _CallScreenState extends State<CallScreen> {
     final String eventName = event['event'];
 
     switch (eventName) {
+      case 'onShowChat':
+        _shwoSnacBar("Show chat");
+
+      case 'onCallUIClosed':
+        _shwoSnacBar("Call ui closed");
+
+      case 'onPluginStarted':
+        _shwoSnacBar("Plugin started");
+
+      case 'onUserCallEnded':
+        _shwoSnacBar("User ended call");
+
       default:
         log('Unhandled event type: $eventName');
         break;
@@ -128,26 +150,6 @@ class _CallScreenState extends State<CallScreen> {
     );
   }
 
-  // Helper methods for platform interactions
-  Future<void> _getPlatformVersion() async {
-    try {
-      final platformVersion =
-          await _acsPlugin.getPlatformVersion() ?? 'Unknown platform version';
-      if (mounted) {
-        setState(() {
-          _platformVersion = platformVersion;
-        });
-      }
-    } on PlatformException catch (e) {
-      log('Failed to get platform version: ${e.message}');
-      if (mounted) {
-        setState(() {
-          _platformVersion = 'Failed to get platform version';
-        });
-      }
-    }
-  }
-
   // Permission methods
   Future<void> _requestMicrophonePermissions() async {
     try {
@@ -174,12 +176,65 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> initializeRoomCall() async {
     try {
       await _acsPlugin.initializeRoomCall(
-          token: _acsToken, roomId: _roomId, userId: _userId);
+        token: _acsToken,
+        roomId: _roomId,
+        userId: _userId,
+        isChatEnable: true,
+        isRejoin: false,
+      );
       log('Room call initialized successfully');
       _shwoSnacBar('Room call initialized successfully');
     } on PlatformException catch (error) {
       log('Failed to initialize room call: ${error.message}');
       _shwoSnacBar('Failed to initialize room call: ${error.message}');
+    }
+  }
+
+  // One on one call methods
+  Future<void> _startOneOnOneCall() async {
+    try {
+      await _acsPlugin.startOneOnOneCall(
+        token: _acsToken,
+        participantId: _otherUserId,
+        userId: _userId,
+      );
+      log('One on one call initialized successfully');
+      _shwoSnacBar('One on one call initialized successfully');
+    } on PlatformException catch (error) {
+      log('Failed to initialize one on one call: ${error.message}');
+      _shwoSnacBar('Failed to initialize one on one call: ${error.message}');
+    }
+  }
+
+  // Set user data
+  Future<void> _setUserData() async {
+    try {
+      await _acsPlugin.setUserData(
+        token: _acsToken,
+        name: "Yra",
+        userId: _userId,
+      );
+      log('Set user data successfully');
+      _shwoSnacBar('Set user data successfully');
+    } on PlatformException catch (error) {
+      log('Failed to set user data: ${error.message}');
+      _shwoSnacBar('Failed to set user data: ${error.message}');
+    }
+  }
+
+  // Set broadcast extension data
+  // Only for iOS
+  Future<void> _setBroadcastExtensionData() async {
+    try {
+      await _acsPlugin.setBroadcastExtensionData(
+        appGroupIdentifier: _appGroupIdentifier,
+        extensionBubdleId: _extensionBubdleId,
+      );
+      log('Set broadcast extension data successfully');
+      _shwoSnacBar('Set broadcast data successfully');
+    } on PlatformException catch (error) {
+      log('Failed to set broadcast data: ${error.message}');
+      _shwoSnacBar('Failed to set broadcast data: ${error.message}');
     }
   }
 
@@ -195,11 +250,6 @@ class _CallScreenState extends State<CallScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                'Running on: $_platformVersion',
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
               // Setup Section
               _buildSectionHeader('Setup'),
               _buildButtonGrid([
@@ -217,6 +267,13 @@ class _CallScreenState extends State<CallScreen> {
                   label: 'Init room call',
                   onTap: initializeRoomCall,
                   icon: Icons.cloud,
+                ),
+              ]),
+              _buildButtonGrid([
+                ButtonConfig(
+                  label: 'One on One call',
+                  onTap: _startOneOnOneCall,
+                  icon: Icons.mic,
                 ),
               ]),
             ],

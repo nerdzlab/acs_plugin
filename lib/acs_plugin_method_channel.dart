@@ -56,6 +56,8 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
     required String token,
     required String roomId,
     required String userId,
+    required bool isChatEnable,
+    required bool isRejoin,
   }) async {
     await methodChannel.invokeMethod(
       'initializeRoomCall',
@@ -63,7 +65,62 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         'token': token,
         'roomId': roomId,
         'userId': userId,
+        'isChatEnable': isChatEnable,
+        'isRejoin': isRejoin,
       },
+    );
+  }
+
+  @override
+  Future<void> startOneOnOneCall({
+    required String token,
+    required String participantId,
+    required String userId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'startOneOnOneCall',
+      {
+        'token': token,
+        'participantId': participantId,
+        'userId': userId,
+      },
+    );
+  }
+
+  @override
+  Future<void> setUserData({
+    required String token,
+    required String name,
+    required String userId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'setUserData',
+      {
+        'token': token,
+        'name': name,
+        'userId': userId,
+      },
+    );
+  }
+
+  @override
+  Future<void> setBroadcastExtensionData({
+    required String appGroupIdentifier,
+    required String extensionBubdleId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'setBroadcastExtensionData',
+      {
+        'appGroupIdentifier': appGroupIdentifier,
+        'extensionBubdleId': extensionBubdleId,
+      },
+    );
+  }
+
+  @override
+  Future<void> returnToCall() async {
+    await methodChannel.invokeMethod(
+      'returnToCall',
     );
   }
 }

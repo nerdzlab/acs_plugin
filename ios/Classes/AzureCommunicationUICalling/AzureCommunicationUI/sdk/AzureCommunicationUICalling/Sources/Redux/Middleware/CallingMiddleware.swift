@@ -117,6 +117,12 @@ private func handleLocalUserAction(_ action: LocalUserAction,
         actionHandler.noiseSuppressionCallOn(state: getState(), dispatch: dispatch)
     case .noiseSuppressionCallOff:
         actionHandler.noiseSuppressionCallOff(state: getState(), dispatch: dispatch)
+    case .screenShareOnRequested:
+        actionHandler.requestScreenSharingStream(state: getState(), dispatch: dispatch)
+    case .screenShareOffRequested:
+        actionHandler.requestStopScreenSharingStream(state: getState(), dispatch: dispatch)
+    case .showChat:
+        actionHandler.showChat()
         
     case .cameraOnSucceeded,
             .cameraOnFailed,
@@ -143,7 +149,11 @@ private func handleLocalUserAction(_ action: LocalUserAction,
             .raiseHandSucceeded,
             .lowerHandSucceeded,
             .backgroundEffectSetFailed,
+            .screenShareOnTriggeredFailed,
+            .screenShareOffTriggeredFailed,
             .resetLocalUserReaction,
+            .screenShareOnSucceeded,
+            .screenShareOffSucceeded,
             .participantRoleChanged:
         break
     }
