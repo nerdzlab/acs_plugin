@@ -35,21 +35,21 @@ extension UserDefaults {
 
     // MARK: - Chat Endpoint
 
-    func setChatEndpoint(_ endpoint: String?) {
+    public func setChatEndpoint(_ endpoint: String?) {
         set(endpoint, forKey: Keys.chatEndpoint)
     }
 
-    func getChatEndpoint() -> String? {
+    public func getChatEndpoint() -> String? {
         string(forKey: Keys.chatEndpoint)
     }
 
     // MARK: - APNS Token
 
-    func setAPNSToken(_ token: String?) {
+    public func setAPNSToken(_ token: String?) {
         set(token, forKey: Keys.apnsToken)
     }
 
-    func getAPNSToken() -> String? {
+    public func getAPNSToken() -> String? {
         string(forKey: Keys.apnsToken)
     }
 }
