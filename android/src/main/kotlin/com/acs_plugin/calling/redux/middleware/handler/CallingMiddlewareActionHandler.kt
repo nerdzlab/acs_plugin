@@ -338,6 +338,7 @@ internal class CallingMiddlewareActionHandlerImpl(
         subscribeCallIdUpdate(store)
         subscribeCamerasCountUpdate(store)
         subscribeDominantSpeakersUpdate(store)
+        subscribeRaisedHandsParticipantUpdate(store)
         subscribeOnLocalParticipantRoleChanged(store)
         subscribeOnTotalRemoteParticipantCountChanged(store)
         subscribeOnCapabilitiesChanged(store)
@@ -778,6 +779,18 @@ internal class CallingMiddlewareActionHandlerImpl(
             callingService.getDominantSpeakersSharedFlow().collect {
                 if (isActive) {
                     store.dispatch(ParticipantAction.DominantSpeakersUpdated(it))
+                }
+            }
+        }
+    }
+
+    private fun subscribeRaisedHandsParticipantUpdate(
+        store: Store<ReduxState>,
+    ) {
+        coroutineScope.launch {
+            callingService.getRaisedHandParticipantsInfoSharedFlow().collect {
+                if (isActive) {
+                    store.dispatch(ParticipantAction.RaisedHandsUpdated(it))
                 }
             }
         }

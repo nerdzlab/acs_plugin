@@ -23,6 +23,7 @@ import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.scr
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.screenshare.ScreenShareZoomFrameLayout
 import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
 import com.google.android.material.textview.MaterialTextView
+import com.microsoft.fluentui.util.isVisible
 import kotlinx.coroutines.launch
 
 internal class ParticipantGridCellVideoView(
@@ -33,6 +34,7 @@ internal class ParticipantGridCellVideoView(
     private val displayNameAndMicIndicatorViewContainer: View,
     private val displayNameOnVideoTextView: MaterialTextView,
     private val micIndicatorOnVideoImageView: AppCompatImageView,
+    private val raiseHandIndicatorVideoImageView: AppCompatImageView,
     private val participantViewModel: ParticipantGridCellViewModel,
     private val getVideoStreamCallback: (String, String) -> View?,
     private val showFloatingHeaderCallBack: () -> Unit,
@@ -84,6 +86,11 @@ internal class ParticipantGridCellVideoView(
                 } else {
                     videoContainer.visibility = INVISIBLE
                 }
+            }
+        }
+        lifecycleScope.launch {
+            participantViewModel.getIsRaisedHandStateFlow().collect {
+                raiseHandIndicatorVideoImageView.isVisible = it
             }
         }
     }

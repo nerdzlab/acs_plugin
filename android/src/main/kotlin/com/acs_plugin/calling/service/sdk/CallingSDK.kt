@@ -72,6 +72,7 @@ internal interface CallingSDK {
     fun getCallingStateWrapperSharedFlow(): SharedFlow<CallingStateWrapper>
     fun getCallIdStateFlow(): StateFlow<String?>
     fun getRemoteParticipantInfoModelSharedFlow(): Flow<Map<String, ParticipantInfoModel>>
+    fun getRaisedHandParticipantsInfoSharedFlow(): SharedFlow<List<String>>
     /*  <CALL_START_TIME>
     fun getCallStartTimeSharedFlow(): SharedFlow<Date>
     </CALL_START_TIME> */
@@ -90,7 +91,6 @@ internal interface CallingSDK {
     fun getNetworkCallDiagnosticSharedFlow(): SharedFlow<NetworkCallDiagnosticModel>
     fun getMediaCallDiagnosticSharedFlow(): SharedFlow<MediaCallDiagnosticModel>
     fun getLogFiles(): List<File>
-
     //endregion
 
     fun getRttSharedFlow(): SharedFlow<RttMessage>

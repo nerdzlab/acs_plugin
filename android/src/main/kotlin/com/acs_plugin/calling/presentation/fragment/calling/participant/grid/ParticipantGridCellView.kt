@@ -69,6 +69,9 @@ internal class ParticipantGridCellView(
         val micIndicatorAudioImageView: AppCompatImageView =
             findViewById(R.id.azure_communication_ui_participant_audio_view_mic_indicator)
 
+        val raiseHandIndicatorAudioImageView: AppCompatImageView =
+            findViewById(R.id.azure_communication_ui_participant_audio_raise_hand_indicator)
+
         val onHoldTextView: MaterialTextView =
             findViewById(R.id.azure_communication_ui_calling_participant_audio_view_on_hold)
 
@@ -78,6 +81,7 @@ internal class ParticipantGridCellView(
             participantAvatarContainer,
             displayNameAudioTextView,
             micIndicatorAudioImageView,
+            raiseHandIndicatorAudioImageView,
             getParticipantViewDataCallback,
             participantViewModel,
             onHoldTextView,
@@ -102,6 +106,9 @@ internal class ParticipantGridCellView(
         val micIndicatorOnVideoImageView: AppCompatImageView =
             findViewById(R.id.azure_communication_ui_participant_view_on_video_mic_indicator)
 
+        val raiseHandIndicatorVideoImageView: AppCompatImageView =
+            findViewById(R.id.azure_communication_ui_participant_view_on_video_raise_hand_indicator)
+
         videoView = ParticipantGridCellVideoView(
             context,
             lifecycleScope,
@@ -110,6 +117,7 @@ internal class ParticipantGridCellView(
             displayNameAndMicIndicatorViewContainer,
             displayNameOnVideoTextView,
             micIndicatorOnVideoImageView,
+            raiseHandIndicatorVideoImageView,
             participantViewModel,
             getVideoStreamCallback,
             showFloatingHeaderCallBack,

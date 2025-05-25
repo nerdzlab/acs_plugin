@@ -54,6 +54,7 @@ import com.azure.android.communication.calling.TeamsMeetingLinkLocator
 import com.azure.android.communication.calling.VideoDevicesUpdatedListener
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import java.util.Collections
@@ -162,6 +163,9 @@ internal class CallingSDKWrapper(
 
     override fun getRemoteParticipantInfoModelSharedFlow(): Flow<Map<String, ParticipantInfoModel>> =
         callingSDKEventHandler.getRemoteParticipantInfoModelFlow()
+
+    override fun getRaisedHandParticipantsInfoSharedFlow(): SharedFlow<List<String>> =
+        callingSDKEventHandler.getRaisedHandParticipantsInfoFlow()
 
     override fun hold(): CompletableFuture<Void> {
         val completableFuture = CompletableFuture<Void>()
