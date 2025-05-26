@@ -89,7 +89,7 @@ internal class ParticipantGridCellAvatarView(
 
         lifecycleScope.launch {
             participantViewModel.getIsRaisedHandStateFlow().collect {
-                raiseHandIndicatorAudioImageView.isVisible = it
+                setRaisedHandIndicator(it)
             }
         }
     }
@@ -136,7 +136,19 @@ internal class ParticipantGridCellAvatarView(
         if (isSpeaking) {
             participantAvatarSpeakingFrameLayout.background = ContextCompat.getDrawable(
                 context,
-                R.drawable.bg_rounde_purple_frame_r12
+                R.drawable.bg_rounded_purple_frame_r12
+            )
+        } else {
+            participantAvatarSpeakingFrameLayout.setBackgroundResource(0)
+        }
+    }
+
+    private fun setRaisedHandIndicator(isRaisedHand: Boolean) {
+        raiseHandIndicatorAudioImageView.isVisible = isRaisedHand
+        if (isRaisedHand) {
+            participantAvatarSpeakingFrameLayout.background = ContextCompat.getDrawable(
+                context,
+                R.drawable.bg_rounded_orange_frame_r12
             )
         } else {
             participantAvatarSpeakingFrameLayout.setBackgroundResource(0)

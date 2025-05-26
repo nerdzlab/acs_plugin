@@ -20,7 +20,7 @@
             android:id="@+id/azure_communication_ui_participant_video_view_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_rounde_purple_frame_r12" />
+            android:background="@drawable/bg_rounded_purple_frame_r12" />
 
         <LinearLayout
             android:id="@+id/azure_communication_ui_participant_view_on_video_information_container"

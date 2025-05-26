@@ -90,7 +90,7 @@ internal class ParticipantGridCellVideoView(
         }
         lifecycleScope.launch {
             participantViewModel.getIsRaisedHandStateFlow().collect {
-                raiseHandIndicatorVideoImageView.isVisible = it
+                setRaisedHandIndicator(it)
             }
         }
     }
@@ -170,7 +170,7 @@ internal class ParticipantGridCellVideoView(
             )
             participantVideoContainerSpeakingFrameLayout.background = ContextCompat.getDrawable(
                 context,
-                R.drawable.bg_rounde_purple_frame_r12
+                R.drawable.bg_rounded_purple_frame_r12
             )
             return
         }
@@ -185,7 +185,7 @@ internal class ParticipantGridCellVideoView(
         )
         participantVideoContainerSpeakingFrameLayout.background = ContextCompat.getDrawable(
             context,
-            R.drawable.bg_rounde_purple_frame_r12
+            R.drawable.bg_rounded_purple_frame_r12
         )
         videoContainer.addView(rendererView, 0)
     }
@@ -217,6 +217,18 @@ internal class ParticipantGridCellVideoView(
             displayNameAndMicIndicatorViewContainer.visibility = GONE
         } else {
             displayNameAndMicIndicatorViewContainer.visibility = VISIBLE
+        }
+    }
+
+    private fun setRaisedHandIndicator(isRaisedHand: Boolean) {
+        raiseHandIndicatorVideoImageView.isVisible = isRaisedHand
+        if (isRaisedHand) {
+            participantVideoContainerSpeakingFrameLayout.background = ContextCompat.getDrawable(
+                context,
+                R.drawable.bg_rounded_orange_frame_r12
+            )
+        } else {
+            participantVideoContainerSpeakingFrameLayout.setBackgroundResource(0)
         }
     }
 
