@@ -19,9 +19,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   Future<String> Function()? onTokenRefreshRequested;
 
   Future<void> initializeRoomCall({
-    required String token,
     required String roomId,
-    required String userId,
     required bool isChatEnable,
     required bool isRejoin,
   }) {
@@ -34,6 +32,15 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     required String userId,
   }) {
     throw UnimplementedError('startOneOnOneCall() has not been implemented.');
+  }
+
+  Future<void> startTeamsMeetingCall({
+    required String meetingLink,
+    required bool isChatEnable,
+    required bool isRejoin,
+  }) {
+    throw UnimplementedError(
+        'startTeamsMeetingCall() has not been implemented.');
   }
 
   Future<void> setUserData({

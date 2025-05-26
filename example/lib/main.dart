@@ -74,6 +74,7 @@ class _CallScreenState extends State<CallScreen> {
 
   static const String _endpoint = Constants.enpoint;
   static const String _threadId = Constants.threadId;
+  static const String _teemsMeetingLink = Constants.teemsMeetingLink;
 
   String get _userId {
     if (isRealDevice) {
@@ -208,9 +209,7 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> initializeRoomCall() async {
     try {
       await _acsPlugin.initializeRoomCall(
-        token: _acsToken,
         roomId: _roomId,
-        userId: _userId,
         isChatEnable: true,
         isRejoin: false,
       );
@@ -219,6 +218,22 @@ class _CallScreenState extends State<CallScreen> {
     } on PlatformException catch (error) {
       log('Failed to initialize room call: ${error.message}');
       _shwoSnacBar('Failed to initialize room call: ${error.message}');
+    }
+  }
+
+  // Call management methods
+  Future<void> _startTeamsMeetingCall() async {
+    try {
+      await _acsPlugin.startTeamsMeetingCall(
+        meetingLink: _teemsMeetingLink,
+        isChatEnable: true,
+        isRejoin: false,
+      );
+      log('Meeting call initialized successfully');
+      _shwoSnacBar('Meeting call initialized successfully');
+    } on PlatformException catch (error) {
+      log('Failed to initialize meeting call: ${error.message}');
+      _shwoSnacBar('Failed to initialize meeting call: ${error.message}');
     }
   }
 
@@ -382,6 +397,11 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'One on One call',
                   onTap: _startOneOnOneCall,
+                  icon: Icons.mic,
+                ),
+                ButtonConfig(
+                  label: 'Teems meeting call',
+                  onTap: _startTeamsMeetingCall,
                   icon: Icons.mic,
                 ),
               ]),

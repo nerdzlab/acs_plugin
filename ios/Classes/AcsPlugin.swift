@@ -78,7 +78,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         }
         
         for handler in handlers {
-            if ((handler?.handle(call: call, result: result)) != nil) {
+            if ((handler?.handle(call: call, result: result)) == true) {
                 return
             }
         }

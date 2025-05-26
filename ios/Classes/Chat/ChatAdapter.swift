@@ -47,7 +47,6 @@ public class ChatAdapter {
     
     private var chatConfiguration: ChatConfiguration
     private var chatSDKWrapper: ChatSDKWrapper!
-    private var lifeCycleManager: ChatLifeCycleManagerProtocol?
     
     /// Create an instance of this class with options.
     /// - Parameters:
@@ -89,8 +88,8 @@ public class ChatAdapter {
     }
     
     /// Unsubscribe all the chat client events from Azure Communication Service
-    public func disconnect() async throws {
-        try await unregisterRealTimeNotifications()
+    public func disconnect() {
+        unregisterRealTimeNotifications()
     }
     
     public func getInitialMessages(threadId: String) async throws -> [ChatMessage] {
@@ -163,16 +162,12 @@ public class ChatAdapter {
         return try await chatSDKWrapper.isChatHasMoreMessages(threadId: threadId)
     }
     
-    private func unregisterRealTimeNotifications() async throws {
-        try await chatSDKWrapper.unregisterRealTimeNotifications()
+    private func unregisterRealTimeNotifications() {
+       chatSDKWrapper.unregisterRealTimeNotifications()
     }
     
     private func initializeChat() async throws {
         try await chatSDKWrapper.initializeChat()
-    }
-    
-    private func cleanUpComposite() {
-        self.lifeCycleManager = nil
     }
     
     private func constructDependencies(
@@ -188,10 +183,6 @@ public class ChatAdapter {
             logger: logger,
             chatEventsHandler: eventHandler,
             chatConfiguration: chatConfiguration
-        )
-        
-        lifeCycleManager = ChatUIKitAppLifeCycleManager(
-            logger: logger
         )
     }
 }

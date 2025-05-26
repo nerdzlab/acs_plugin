@@ -80,16 +80,25 @@ class AcsPlugin {
 
   // Initialize the room call
   Future<void> initializeRoomCall({
-    required String token,
     required String roomId,
-    required String userId,
     required bool isChatEnable,
     required bool isRejoin,
   }) async {
     await AcsPluginPlatform.instance.initializeRoomCall(
-      token: token,
       roomId: roomId,
-      userId: userId,
+      isChatEnable: isChatEnable,
+      isRejoin: isRejoin,
+    );
+  }
+
+  // Start teams meeting call
+  Future<void> startTeamsMeetingCall({
+    required String meetingLink,
+    required bool isChatEnable,
+    required bool isRejoin,
+  }) async {
+    await AcsPluginPlatform.instance.startTeamsMeetingCall(
+      meetingLink: meetingLink,
       isChatEnable: isChatEnable,
       isRejoin: isRejoin,
     );

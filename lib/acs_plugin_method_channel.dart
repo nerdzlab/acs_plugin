@@ -36,18 +36,30 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> initializeRoomCall({
-    required String token,
     required String roomId,
-    required String userId,
     required bool isChatEnable,
     required bool isRejoin,
   }) async {
     await methodChannel.invokeMethod(
       'initializeRoomCall',
       {
-        'token': token,
         'roomId': roomId,
-        'userId': userId,
+        'isChatEnable': isChatEnable,
+        'isRejoin': isRejoin,
+      },
+    );
+  }
+
+  @override
+  Future<void> startTeamsMeetingCall({
+    required String meetingLink,
+    required bool isChatEnable,
+    required bool isRejoin,
+  }) async {
+    await methodChannel.invokeMethod(
+      'startTeamsMeetingCall',
+      {
+        'meetingLink': meetingLink,
         'isChatEnable': isChatEnable,
         'isRejoin': isRejoin,
       },
