@@ -96,6 +96,10 @@ public class ChatAdapter {
         try await chatSDKWrapper.getInitialMessages(for: threadId)
     }
     
+    public func getLastMessage(threadId: String) async throws -> ChatMessage? {
+        try await chatSDKWrapper.getLastMessage(for: threadId)
+    }
+    
     public func getListOfParticipants(threadId: String) async throws -> [ChatParticipant] {
         try await chatSDKWrapper.getListOfParticipants(for: threadId)
     }

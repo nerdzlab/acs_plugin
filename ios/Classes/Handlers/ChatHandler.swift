@@ -24,6 +24,7 @@ final class ChatHandler: MethodHandler {
             static let retrieveChatThreadProperties = "retrieveChatThreadProperties"
             static let getListOfParticipants = "getListOfParticipants"
             static let getPreviousMessages = "getPreviousMessages"
+            static let getLastMessage = "getLastMessage"
             static let sendMessage = "sendMessage"
             static let editMessage = "editMessage"
             static let deleteMessage = "deleteMessage"
@@ -271,7 +272,17 @@ final class ChatHandler: MethodHandler {
             getListReadReceipts(threadId: threadId, result: result)
             return true
 
-
+        case Constants.MethodChannels.getLastMessage:
+            guard let args = call.arguments as? [String: Any],
+                  let threadId = args["threadId"] as? String
+            else {
+                result(FlutterError(code: "MISSING_ARGUMENTS", message: "Missing 'threadId'", details: nil))
+                return true
+            }
+            
+            getLastMessage(threadId: threadId, result: result)
+            return true
+            
         default:
             return false
         }
@@ -478,14 +489,8 @@ final class ChatHandler: MethodHandler {
     }
     
     private func disconnectChatService(result: @escaping FlutterResult) {
-        Task {
-            do {
-                try await chatAdapter?.disconnect()
-                result(nil)
-            } catch {
-                handleChatError(error, result: result)
-            }
-        }
+       chatAdapter?.disconnect()
+        result(nil)
     }
     
     private func getInitialMessages(threadId: String, result: @escaping FlutterResult) {
@@ -537,6 +542,17 @@ final class ChatHandler: MethodHandler {
             do {
                 let readReceipts = try await chatAdapter?.getListReadReceipts(threadId: threadId) ?? []
                 result(readReceipts.map { $0.toJson() })
+            } catch {
+                handleChatError(error, result: result)
+            }
+        }
+    }
+    
+    private func getLastMessage(threadId: String, result: @escaping FlutterResult) {
+        Task {
+            do {
+                let lastMessage = try await chatAdapter?.getLastMessage(threadId: threadId)
+                result(lastMessage?.toJson())
             } catch {
                 handleChatError(error, result: result)
             }

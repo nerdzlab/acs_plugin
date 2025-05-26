@@ -162,6 +162,12 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     throw UnimplementedError('getPreloadedAction() has not been implemented.');
   }
 
+  Future<Map<String, dynamic>?> getLastMessage({
+    required String threadId,
+  }) async {
+    throw UnimplementedError('getLastMessage() has not been implemented.');
+  }
+
   // Event stream for chat events etc.
   Stream<Map<String, dynamic>> get eventStream {
     throw UnimplementedError('eventStream has not been implemented.');

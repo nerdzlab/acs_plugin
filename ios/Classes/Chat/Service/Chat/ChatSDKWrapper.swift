@@ -8,7 +8,7 @@ import AzureCommunicationChat
 import Foundation
 
 // swiftlint:disable type_body_length
-class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
+class ChatSDKWrapper: NSObject {
     let chatEventsHandler: ChatSDKEventsHandling
     
     private let logger: Logger
@@ -82,6 +82,33 @@ class ChatSDKWrapper: NSObject, ChatSDKWrapperProtocol {
         }
     }
     
+    func getLastMessage(for threadId: String) async throws -> ChatMessage? {
+        do {
+            let listChatMessagesOptions = ListChatMessagesOptions(
+                maxPageSize: 1
+            )
+            
+            let chatThreadClient = try await getChatThreadClient(threadId: threadId)
+            
+            return try await safeAsync { completion in
+                self.logger.info("Calling getLastMessage for threadId: \(threadId)")
+                
+                chatThreadClient.listMessages(withOptions: listChatMessagesOptions) { result, _ in
+                    switch result {
+                    case .success(let messagesResult):
+                        self.logger.info("Successfully received last message for thread \(threadId), count: \(messagesResult.items?.count ?? 0)")
+                        completion(.success(messagesResult.items?.first))
+                        
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                }
+            }
+        } catch {
+            logger.error("Failed to retrieve last message: \(error)")
+            throw error
+        }
+    }
     
     func retrieveChatThreadProperties(for threadId: String) async throws -> ChatThreadProperties {
         do {

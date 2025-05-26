@@ -455,4 +455,17 @@ class AcsPlugin {
 
     return PreloadedAction.fromJson(result);
   }
+
+  Future<ChatMessage?> getLastMessage({
+    required String threadId,
+  }) async {
+    final result =
+        await AcsPluginPlatform.instance.getLastMessage(threadId: threadId);
+
+    if (result == null) {
+      return null;
+    }
+
+    return ChatMessage.fromJson(result);
+  }
 }

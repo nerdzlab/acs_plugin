@@ -323,6 +323,17 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  Future<void> _getLastMessage() async {
+    try {
+      final message = await _acsPlugin.getLastMessage(threadId: _threadId);
+      log('Last message successfully fetched');
+      _shwoSnacBar('Last message successfully fetched');
+    } on PlatformException catch (error) {
+      log('Failed to get last chat messages: ${error.toString()}');
+      _shwoSnacBar('Failed to get last chat messages: ${error.message}');
+    }
+  }
+
   Future<void> _disconnectChatService() async {
     try {
       await _acsPlugin.disconnectChatService();
@@ -436,6 +447,13 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'Get read receipts',
                   onTap: _getListReadReceipts,
+                  icon: Icons.message,
+                ),
+              ]),
+              _buildButtonGrid([
+                ButtonConfig(
+                  label: 'Get last message messages',
+                  onTap: _getLastMessage,
                   icon: Icons.message,
                 ),
               ]),
