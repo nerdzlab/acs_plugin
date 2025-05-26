@@ -9,6 +9,7 @@ import 'package:acs_plugin/chat_models/chat_thread_deleted_event/chat_thread_del
 import 'package:acs_plugin/chat_models/chat_thread_properties_updated_event/chat_thread_properties_updated_event.dart';
 import 'package:acs_plugin/chat_models/participants_added_event/participants_added_event.dart';
 import 'package:acs_plugin/chat_models/participants_removed_event/participants_removed_event.dart';
+import 'package:acs_plugin/chat_models/push_notification_chat_message_received_event/push_notification_chat_message_received_event.dart';
 import 'package:acs_plugin/chat_models/read_receipt_received_event/read_receipt_received_event.dart';
 import 'package:acs_plugin/chat_models/typing_indicator_received_event/typing_indicator_received_event.dart';
 import 'package:acs_plugin_example/constants.dart';
@@ -181,6 +182,10 @@ class _CallScreenState extends State<CallScreen> {
       }
       ..onTokenRefreshRequested = () async {
         return _onTokenRefreshRequested();
+      }
+      ..onChatPushNotificationOpened =
+          (PushNotificationChatMessageReceivedEvent event) {
+        log("Chat push opened: ${event.toString()}");
       };
   }
 

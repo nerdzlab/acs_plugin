@@ -22,5 +22,6 @@ enum EventType {
   onChatThreadDeleted,
   onParticipantsAdded,
   onParticipantsRemoved,
+  onChatPushNotificationOpened,
   unknown,
 }

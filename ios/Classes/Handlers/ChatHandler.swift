@@ -51,6 +51,7 @@ final class ChatHandler: MethodHandler {
             static let onChatThreadDeleted = "onChatThreadDeleted"
             static let onParticipantsAdded = "onParticipantsAdded"
             static let onParticipantsRemoved = "onParticipantsRemoved"
+            static let onChatPushNotificationOpened = "onChatPushNotificationOpened"
         }
     }
         
@@ -274,6 +275,22 @@ final class ChatHandler: MethodHandler {
         default:
             return false
         }
+    }
+    
+    func setAPNSData(apnsToken: String, appGroupId: String, completion: @escaping () -> Void) {
+        self.apnsToken = apnsToken
+        self.appGroupId = appGroupId
+        
+        setupPushnotifications(completion: completion)
+    }
+    
+    func chatPushNotificationOpened(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
+        onSendEvent(
+            Event(
+                name: Constants.FlutterEvents.onChatPushNotificationOpened,
+                payload: pushNotificationReceivedEvent.toJson()
+            )
+        )
     }
     
     private func subscribeToChatEvents() {
@@ -623,12 +640,5 @@ final class ChatHandler: MethodHandler {
         }
         
         chatAdapter?.setupPushNotifications(apnsToken: apnsToken, appGroupId: appGroupId, completion: completion)
-    }
-    
-    func setAPNSData(apnsToken: String, appGroupId: String, completion: @escaping () -> Void) {
-        self.apnsToken = apnsToken
-        self.appGroupId = appGroupId
-        
-        setupPushnotifications(completion: completion)
     }
 }

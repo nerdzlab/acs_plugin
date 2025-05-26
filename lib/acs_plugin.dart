@@ -17,6 +17,7 @@ import 'package:acs_plugin/chat_models/event/event_type.dart';
 import 'package:acs_plugin/chat_models/participants_added_event/participants_added_event.dart';
 import 'package:acs_plugin/chat_models/participants_removed_event/participants_removed_event.dart';
 import 'package:acs_plugin/chat_models/preloaded_action/preloaded_action.dart';
+import 'package:acs_plugin/chat_models/push_notification_chat_message_received_event/push_notification_chat_message_received_event.dart';
 import 'package:acs_plugin/chat_models/read_receipt_received_event/read_receipt_received_event.dart';
 import 'package:acs_plugin/chat_models/typing_indicator_received_event/typing_indicator_received_event.dart';
 import 'package:flutter/foundation.dart';
@@ -50,6 +51,8 @@ class AcsPlugin {
   Function(ChatThreadDeletedEvent)? onChatThreadDeleted;
   Function(ParticipantsAddedEvent)? onParticipantsAdded;
   Function(ParticipantsRemovedEvent)? onParticipantsRemoved;
+  Function(PushNotificationChatMessageReceivedEvent)?
+      onChatPushNotificationOpened;
   Function(ACSPluginError error)? onError;
 
   init() {
@@ -279,6 +282,14 @@ class AcsPlugin {
           final model = ParticipantsRemovedEvent.fromJson(
               Map<String, dynamic>.from(event.payload));
           onParticipantsRemoved?.call(model);
+        }
+        break;
+      case EventType.onChatPushNotificationOpened:
+        log("Chat push notification opened: ${event.payload}");
+        if (event.payload != null) {
+          final model = PushNotificationChatMessageReceivedEvent.fromJson(
+              Map<String, dynamic>.from(event.payload));
+          onChatPushNotificationOpened?.call(model);
         }
         break;
       case EventType.unknown:

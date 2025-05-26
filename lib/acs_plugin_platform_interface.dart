@@ -1,5 +1,3 @@
-import 'package:acs_plugin/chat_models/chat_message/chat_message.dart';
-import 'package:acs_plugin/chat_models/chat_message_metadata/chat_message_metadata.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'acs_plugin_method_channel.dart';

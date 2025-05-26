@@ -250,6 +250,10 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         preloadedAction = PreloadedAction(type: .chatNotification, chatPushNotificationReceivedEvent: pushNotificationReceivedEvent)
     }
     
+    public func chatPushOpened(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
+        chatHandler?.chatPushNotificationOpened(pushNotificationReceivedEvent: pushNotificationReceivedEvent)
+    }
+    
     public func setAPNSData(apnsToken: String, appGroupId: String, completion: @escaping () -> Void) {
         //If app run from terminated state, chat handler does not create, as flutter part does not triggers
         if chatHandler != nil {
