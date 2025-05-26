@@ -29,6 +29,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
     @Published private(set) var shareScreenViewModel: IconWithLabelButtonViewModel<ShareScreenButtonState>!
     @Published private(set) var layoutOptionsButtonViewModel: IconWithLabelButtonViewModel<LayoutOptionsButtonState>!
     
+    let isReactionEnable: Bool
     var isDisplayed: Bool
     
     init(
@@ -44,7 +45,9 @@ internal class MeetingOptionsViewModel: ObservableObject {
         onLayoutOptions: @escaping () -> Void,
         onReaction: @escaping (ReactionType) -> Void,
         isDisplayed: Bool,
-        isRemoteParticipantsPresent: Bool
+        isRemoteParticipantsPresent: Bool,
+        isReactionEnable: Bool,
+        isRaiseHandAvailable: Bool
     ) {
         self.localizationProvider = localizationProvider
         self.isDisplayed = false
@@ -58,11 +61,13 @@ internal class MeetingOptionsViewModel: ObservableObject {
         self.onLayoutOptions = onLayoutOptions
         self.onReaction = onReaction
         self.isRemoteParticipantsPresent = isRemoteParticipantsPresent
+        self.isReactionEnable = isReactionEnable
         
         raiseHandButtonViewModel = IconWithLabelButtonViewModel(
             selectedButtonState: localUserState.raiseHandState.operation == .handIsLower ? RaiseHandButtonState.raiseHand : RaiseHandButtonState.lowerHand,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
+            isDisabled: !isRaiseHandAvailable,
             isVisible: true,
             action: { [weak self] in
                 if localUserState.raiseHandState.operation == .handIsLower {
@@ -131,7 +136,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             })
     }
     
-    func update(localUserState: LocalUserState, isDisplayed: Bool, isRemoteParticipantsPresent: Bool) {
+    func update(localUserState: LocalUserState, isDisplayed: Bool, isRemoteParticipantsPresent: Bool, isRaiseHandAvailable: Bool) {
         self.isDisplayed = isDisplayed
         
         let previousState = raiseHandButtonViewModel.selectedButtonState
@@ -149,6 +154,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: selectedState,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
+            isDisabled: !isRaiseHandAvailable,
             isVisible: true,
             action: { [weak self] in
                 if operation == .handIsLower {

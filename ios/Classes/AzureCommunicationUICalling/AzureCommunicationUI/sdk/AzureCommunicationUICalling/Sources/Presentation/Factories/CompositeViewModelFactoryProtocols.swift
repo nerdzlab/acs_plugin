@@ -110,7 +110,9 @@ protocol CompositeViewModelFactoryProtocol {
                                      onLayoutOptions: @escaping () -> Void,
                                      onReaction: @escaping (ReactionType) -> Void,
                                      isRemoteParticipantsPresent: Bool,
-                                     isDisplayed: Bool) -> MeetingOptionsViewModel
+                                     isDisplayed: Bool,
+                                     isReactionEnable: Bool,
+                                     isRaiseHandAvailable: Bool) -> MeetingOptionsViewModel
     
     func makeLayoutOptionsViewModel(
         localUserState: LocalUserState,
