@@ -17,6 +17,16 @@
         android:background="@drawable/bg_light_pink_rounded_r12">
 
         <FrameLayout
+            android:id="@+id/azure_communication_ui_participant_video_raised_hand_frame"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_rounded_orange_frame_r12"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <FrameLayout
             android:id="@+id/azure_communication_ui_participant_video_view_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

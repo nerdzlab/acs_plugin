@@ -27,6 +27,7 @@ internal class ParticipantGridCellAvatarView(
     private val displayNameAudioTextView: MaterialTextView,
     private val micIndicatorAudioImageView: AppCompatImageView,
     private val raiseHandIndicatorAudioImageView: AppCompatImageView,
+    private val participantRaiseHandFrameIndicator: FrameLayout,
     private val getParticipantViewDataCallback: (participantID: String) -> CallCompositeParticipantViewData?,
     private val participantViewModel: ParticipantGridCellViewModel,
     private val onHoldTextView: MaterialTextView,
@@ -145,14 +146,7 @@ internal class ParticipantGridCellAvatarView(
 
     private fun setRaisedHandIndicator(isRaisedHand: Boolean) {
         raiseHandIndicatorAudioImageView.isVisible = isRaisedHand
-        if (isRaisedHand) {
-            participantAvatarSpeakingFrameLayout.background = ContextCompat.getDrawable(
-                context,
-                R.drawable.bg_rounded_orange_frame_r12
-            )
-        } else {
-            participantAvatarSpeakingFrameLayout.setBackgroundResource(0)
-        }
+        participantRaiseHandFrameIndicator.isVisible = isRaisedHand
     }
 
     private fun setDisplayName(displayName: String) {

@@ -7,9 +7,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -72,6 +70,9 @@ internal class ParticipantGridCellView(
         val raiseHandIndicatorAudioImageView: AppCompatImageView =
             findViewById(R.id.azure_communication_ui_participant_audio_raise_hand_indicator)
 
+        val participantRaiseHandFrameIndicator: FrameLayout =
+            findViewById(R.id.azure_communication_ui_participant_view_avatar_raised_hand_frame)
+
         val onHoldTextView: MaterialTextView =
             findViewById(R.id.azure_communication_ui_calling_participant_audio_view_on_hold)
 
@@ -82,6 +83,7 @@ internal class ParticipantGridCellView(
             displayNameAudioTextView,
             micIndicatorAudioImageView,
             raiseHandIndicatorAudioImageView,
+            participantRaiseHandFrameIndicator,
             getParticipantViewDataCallback,
             participantViewModel,
             onHoldTextView,
@@ -109,6 +111,9 @@ internal class ParticipantGridCellView(
         val raiseHandIndicatorVideoImageView: AppCompatImageView =
             findViewById(R.id.azure_communication_ui_participant_view_on_video_raise_hand_indicator)
 
+        val participantVideoRaiseHandFrameIndicator: FrameLayout =
+            findViewById(R.id.azure_communication_ui_participant_video_raised_hand_frame)
+
         videoView = ParticipantGridCellVideoView(
             context,
             lifecycleScope,
@@ -118,6 +123,7 @@ internal class ParticipantGridCellView(
             displayNameOnVideoTextView,
             micIndicatorOnVideoImageView,
             raiseHandIndicatorVideoImageView,
+            participantVideoRaiseHandFrameIndicator,
             participantViewModel,
             getVideoStreamCallback,
             showFloatingHeaderCallBack,
