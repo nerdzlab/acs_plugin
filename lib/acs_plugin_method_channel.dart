@@ -5,7 +5,10 @@ import 'acs_plugin_platform_interface.dart';
 
 /// An implementation of [AcsPluginPlatform] that uses method channels.
 class MethodChannelAcsPlugin extends AcsPluginPlatform {
-  /// The method channel used to interact with the native platform.
+  MethodChannelAcsPlugin() {
+    methodChannel.setMethodCallHandler(_handleNativeMethodCall);
+  }
+
   @visibleForTesting
   final methodChannel = const MethodChannel('acs_plugin');
 
@@ -20,14 +23,11 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         .receiveBroadcastStream()
         .map((dynamic event) {
           if (event is Map) {
-            // Convert the event to Map<String, dynamic>
             return Map<String, dynamic>.from(event);
           }
-          return {}; // Return an empty map if it's not of type Map
+          return {};
         })
-        .cast<
-            Map<String,
-                dynamic>>() // Cast the stream to Stream<Map<String, dynamic>>
+        .cast<Map<String, dynamic>>()
         .handleError((error, stackTrace) {
           throw error;
         });
@@ -35,36 +35,31 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
-  }
-
-  @override
-  Future<bool> requestMicrophonePermissions() async {
-    return await methodChannel.invokeMethod('requestMicrophonePermissions');
-  }
-
-  @override
-  Future<bool> requestCameraPermissions() async {
-    return await methodChannel.invokeMethod('requestCameraPermissions');
-  }
-
-  @override
   Future<void> initializeRoomCall({
-    required String token,
     required String roomId,
-    required String userId,
     required bool isChatEnable,
     required bool isRejoin,
   }) async {
     await methodChannel.invokeMethod(
       'initializeRoomCall',
       {
-        'token': token,
         'roomId': roomId,
-        'userId': userId,
+        'isChatEnable': isChatEnable,
+        'isRejoin': isRejoin,
+      },
+    );
+  }
+
+  @override
+  Future<void> startTeamsMeetingCall({
+    required String meetingLink,
+    required bool isChatEnable,
+    required bool isRejoin,
+  }) async {
+    await methodChannel.invokeMethod(
+      'startTeamsMeetingCall',
+      {
+        'meetingLink': meetingLink,
         'isChatEnable': isChatEnable,
         'isRejoin': isRejoin,
       },
@@ -119,8 +114,246 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> returnToCall() async {
+    await methodChannel.invokeMethod('returnToCall');
+  }
+
+  @override
+  Future<void> setupChatService({
+    required String endpoint,
+  }) async {
     await methodChannel.invokeMethod(
-      'returnToCall',
+      'setupChatService',
+      {
+        'endpoint': endpoint,
+      },
     );
+  }
+
+  @override
+  Future<void> initChatThread({
+    required String threadId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'initChatThread',
+      {
+        'threadId': threadId,
+      },
+    );
+  }
+
+  @override
+  Future<void> disconnectChatService() async {
+    await methodChannel.invokeMethod('disconnectChatService');
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getInitialMessages({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'getInitialMessages',
+      {
+        'threadId': threadId,
+      },
+    );
+
+    if (result == null) return [];
+
+    // Cast each item in the result to Map<String, dynamic>
+    final List<dynamic> rawList = result as List<dynamic>;
+    return rawList.map((item) => Map<String, dynamic>.from(item)).toList();
+  }
+
+  @override
+  Future<Map<String, dynamic>> retrieveChatThreadProperties({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'retrieveChatThreadProperties',
+      {
+        'threadId': threadId,
+      },
+    );
+    return Map<String, dynamic>.from(result);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getListOfParticipants({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'getListOfParticipants',
+      {
+        'threadId': threadId,
+      },
+    );
+    return (result as List)
+        .cast<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getPreviousMessages({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'getPreviousMessages',
+      {
+        'threadId': threadId,
+      },
+    );
+    return (result as List)
+        .cast<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
+  @override
+  Future<String?> sendMessage({
+    required String threadId,
+    required String content,
+    required String senderDisplayName,
+    String? type,
+    Map<String, String>? metadata,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'sendMessage',
+      {
+        'content': content,
+        'senderDisplayName': senderDisplayName,
+        'threadId': threadId,
+        if (type != null) 'type': type,
+        if (metadata != null) 'metadata': metadata,
+      },
+    );
+    return result as String?;
+  }
+
+  @override
+  Future<void> editMessage({
+    required String threadId,
+    required String messageId,
+    required String content,
+    Map<String, String>? metadata,
+  }) async {
+    await methodChannel.invokeMethod(
+      'editMessage',
+      {
+        'messageId': messageId,
+        'content': content,
+        'threadId': threadId,
+        if (metadata != null) 'metadata': metadata,
+      },
+    );
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getListReadReceipts({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'getListReadReceipts',
+      {
+        'threadId': threadId,
+      },
+    );
+    return (result as List)
+        .cast<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
+  @override
+  Future<void> deleteMessage({
+    required String threadId,
+    required String messageId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'deleteMessage',
+      {
+        'messageId': messageId,
+        'threadId': threadId,
+      },
+    );
+  }
+
+  @override
+  Future<void> sendReadReceipt({
+    required String threadId,
+    required String messageId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'sendReadReceipt',
+      {
+        'messageId': messageId,
+        'threadId': threadId,
+      },
+    );
+  }
+
+  @override
+  Future<bool> isChatHasMoreMessages({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'isChatHasMoreMessages',
+      {
+        'threadId': threadId,
+      },
+    );
+
+    return result as bool;
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getPreloadedAction() async {
+    final result = await methodChannel.invokeMethod(
+      'getPreloadedAction',
+    );
+
+    if (result == null) {
+      return null;
+    }
+
+    return Map<String, dynamic>.from(result);
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getLastMessage({
+    required String threadId,
+  }) async {
+    final result = await methodChannel.invokeMethod(
+      'getLastMessage',
+      {
+        'threadId': threadId,
+      },
+    );
+
+    if (result == null) {
+      return null;
+    }
+
+    return Map<String, dynamic>.from(result);
+  }
+
+  @override
+  Future<void> sendTypingIndicator({
+    required String threadId,
+  }) async {
+    await methodChannel.invokeMethod(
+      'sendTypingIndicator',
+      {
+        'threadId': threadId,
+      },
+    );
+  }
+
+  Future<dynamic> _handleNativeMethodCall(MethodCall call) async {
+    switch (call.method) {
+      case 'getToken':
+        final token = await onTokenRefreshRequested!();
+        return token;
+    }
   }
 }

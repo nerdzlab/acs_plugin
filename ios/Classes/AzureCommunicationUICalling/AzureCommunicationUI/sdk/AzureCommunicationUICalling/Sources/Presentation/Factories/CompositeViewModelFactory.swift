@@ -222,7 +222,10 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                      onLayoutOptions: @escaping () -> Void,
                                      onReaction: @escaping (ReactionType) -> Void,
                                      isRemoteParticipantsPresent: Bool,
-                                     isDisplayed: Bool) -> MeetingOptionsViewModel {
+                                     isDisplayed: Bool,
+                                     isReactionEnable: Bool,
+                                     isRaiseHandAvailable: Bool
+    ) -> MeetingOptionsViewModel {
         MeetingOptionsViewModel(
             localUserState: localUserState,
             localizationProvider: localizationProvider,
@@ -236,7 +239,9 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
             onLayoutOptions: onLayoutOptions,
             onReaction: onReaction,
             isDisplayed: isDisplayed,
-            isRemoteParticipantsPresent: isRemoteParticipantsPresent
+            isRemoteParticipantsPresent: isRemoteParticipantsPresent,
+            isReactionEnable: isReactionEnable,
+            isRaiseHandAvailable: isRaiseHandAvailable
         )
     }
     

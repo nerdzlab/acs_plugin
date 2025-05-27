@@ -1,4 +1,5 @@
 import Flutter
+import AzureCommunicationChat
 import ReplayKit
 import UIKit
 import AzureCommunicationCalling
@@ -8,12 +9,37 @@ import FluentUI
 import AVKit
 import Combine
 import PushKit
+import AzureCore
 
 class GlobalCompositeManager {
     static var callComposite: CallComposite?
 }
 
+public struct Event {
+    let name: String
+    let payload: Any?
+    
+    init(name: String, payload: Any? = nil) {
+        self.name = name
+        self.payload = payload
+    }
+    
+    func toMap() -> [String: Any] {
+        var map: [String: Any] = ["event": name]
+        if let payload = payload {
+            map["payload"] = payload
+        }
+        return map
+    }
+}
+
 public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
+    
+    private enum Constants {
+        enum MethodChannels {
+            static let getPreloadedAction = "getPreloadedAction"
+        }
+    }
     
     public static var shared: AcsPlugin = AcsPlugin()
     
@@ -24,7 +50,9 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     private var callHandler: CallHandler!
     private var broadcastExtensionHandler: BroadcastExtensionHandler!
     private var userDataHandler: UserDataHandler!
-    private var handlers: [MethodHandler] = []
+    private var chatHandler: ChatHandler?
+    private var handlers: [MethodHandler?] = []
+    private var preloadedAction: PreloadedAction?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "acs_plugin", binaryMessenger: registrar.messenger())
@@ -42,10 +70,15 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         
         shared.setupPushKit()
     }
-
+    
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        if call.method == Constants.MethodChannels.getPreloadedAction {
+            getPreloadedAction(result: result)
+            return
+        }
+        
         for handler in handlers {
-            if handler.handle(call: call, result: result) {
+            if ((handler?.handle(call: call, result: result)) == true) {
                 return
             }
         }
@@ -92,7 +125,18 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             }
         )
         
-        handlers = [callHandler, userDataHandler, broadcastExtensionHandler]
+        chatHandler = ChatHandler(
+            channel: channel,
+            onGetUserData: { [weak self] in
+                self?.userDataHandler.getUserData()
+            },
+            onSendEvent: { [weak self] event in
+                self?.sendEvent(event)
+            },
+            tokenRefresher: userDataHandler.tokenRefresher
+        )
+        
+        handlers = [callHandler, userDataHandler, broadcastExtensionHandler, chatHandler]
     }
     
     private func setupPushKit() {
@@ -201,6 +245,29 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     //
     //        return configError
     //    }
+    
+    public func saveLaunchedChatNotification(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
+        preloadedAction = PreloadedAction(type: .chatNotification, chatPushNotificationReceivedEvent: pushNotificationReceivedEvent)
+    }
+    
+    public func chatPushOpened(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
+        chatHandler?.chatPushNotificationOpened(pushNotificationReceivedEvent: pushNotificationReceivedEvent)
+    }
+    
+    public func setAPNSData(apnsToken: String, appGroupId: String, completion: @escaping () -> Void) {
+        //If app run from terminated state, chat handler does not create, as flutter part does not triggers
+        if chatHandler != nil {
+            chatHandler?.setAPNSData(apnsToken: apnsToken, appGroupId: appGroupId, completion: completion)
+        } else {
+            BackgroundChatManager.shared.renewPushSubscription(appGroupId: appGroupId, apnsToken: apnsToken, completion: completion)
+        }
+    }
+    
+    public func getPreloadedAction(result: @escaping FlutterResult) {
+        result(preloadedAction?.toJson())
+        // Remove preloaded actin after first return
+        preloadedAction = nil
+    }
 }
 
 extension AcsPlugin: FlutterStreamHandler {
@@ -220,12 +287,10 @@ extension AcsPlugin: FlutterStreamHandler {
         }
     }
     
-    public func sendEvent(_ event: String) {
-        guard let eventSink = eventSink else { return }
-        
-        let eventData: [String: Any?] = [
-            "event": event,
-        ]
-        eventSink(eventData)
+    public func sendEvent(_ event: Event) {
+        DispatchQueue.main.async {
+            guard let eventSink = self.eventSink else { return }
+            eventSink(event.toMap())
+        }
     }
 }

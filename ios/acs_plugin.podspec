@@ -17,7 +17,7 @@ A new Flutter plugin project.
   
   s.dependency 'Flutter'  
   s.dependency 'AzureCommunicationCalling', '2.14.1'
-  s.dependency 'AzureCommunicationChat', '1.3.3'
+  s.dependency 'AzureCommunicationChat', '1.3.7'
   s.dependency 'MicrosoftFluentUI/Avatar_ios', '0.10.0'
   s.dependency 'MicrosoftFluentUI/BottomSheet_ios', '0.10.0'
   s.dependency 'MicrosoftFluentUI/Button_ios', '0.10.0'

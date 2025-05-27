@@ -216,7 +216,9 @@ internal class CallingViewModel: ObservableObject {
             },
             isRemoteParticipantsPresent: (isCallConnected || isOutgoingCall || isRemoteHold) &&
             CallingViewModel.hasRemoteParticipants(store.state.remoteParticipantsState.participantInfoList),
-            isDisplayed: store.state.navigationState.meetignOptionsVisible
+            isDisplayed: store.state.navigationState.meetignOptionsVisible,
+            isReactionEnable: callType == .roomsCall,
+            isRaiseHandAvailable: callingStatus == .connected
         )
 
         controlBarViewModel = compositeViewModelFactory
@@ -325,7 +327,8 @@ internal class CallingViewModel: ObservableObject {
         meetingOptionsViewModel.update(
             localUserState: state.localUserState,
             isDisplayed: state.navigationState.meetignOptionsVisible,
-            isRemoteParticipantsPresent: isParticipantGridDisplayed
+            isRemoteParticipantsPresent: isParticipantGridDisplayed,
+            isRaiseHandAvailable: state.callingState.status == .connected
         )
         
         if (!isParticipantGridDisplayed && state.localUserState.shareScreenState.operation == .screenIsSharing) {

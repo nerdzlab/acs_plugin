@@ -6,15 +6,13 @@
 //
 
 import Flutter
-import ReplayKit
-import UIKit
 import AzureCommunicationCalling
 import AzureCommunicationCommon
-import PushKit
+import AzureCommunicationChat
 
-class UserDataHandler: MethodHandler {
+final class UserDataHandler: MethodHandler {
     
-    struct UserData {
+    struct UserData: Codable {
         let token: String
         let name: String
         let userId: String
@@ -23,12 +21,17 @@ class UserDataHandler: MethodHandler {
     private enum Constants {
         enum MethodChannels {
             static let setUserData = "setUserData"
+            static let getToken = "getToken"
         }
     }
+    
+    var tokenRefresher: ((@escaping (String?, Error?) -> Void) -> Void)?
     
     private var userData: UserData? {
         didSet {
             guard let userData else { return }
+            
+            UserDefaults.standard.saveUserData(userData)
             
             onUserDataReceived(userData)
         }
@@ -45,7 +48,7 @@ class UserDataHandler: MethodHandler {
         return true
 #endif
     }
-
+    
     init(
         channel: FlutterMethodChannel,
         onSubscribeToCallCompositeEvents: @escaping (CallComposite) -> Void,
@@ -54,8 +57,9 @@ class UserDataHandler: MethodHandler {
         self.channel = channel
         self.onSubscribeToCallCompositeEvents = onSubscribeToCallCompositeEvents
         self.onUserDataReceived = onUserDataReceived
+        self.setupTokenRefresh()
     }
-
+    
     func handle(call: FlutterMethodCall, result: @escaping FlutterResult) -> Bool {
         switch call.method {
         case Constants.MethodChannels.setUserData:
@@ -80,7 +84,15 @@ class UserDataHandler: MethodHandler {
     func getCallComposite() ->  CallComposite? {
         guard let userData = userData else { return nil }
         
-        guard let credential = try? CommunicationTokenCredential(token: userData.token) else { return nil }
+        guard let tokenRefresher = self.tokenRefresher else { return nil }
+        
+        let refreshOptions = CommunicationTokenRefreshOptions(
+            initialToken: userData.token,
+            refreshProactively: true,
+            tokenRefresher: tokenRefresher
+        )
+        
+        guard let credential = try? CommunicationTokenCredential(withOptions: refreshOptions) else { return nil }
         
         let callCompositeOptions = CallCompositeOptions(
             enableMultitasking: true,
@@ -99,5 +111,23 @@ class UserDataHandler: MethodHandler {
         GlobalCompositeManager.callComposite = callComposite
         
         return callComposite
+    }
+    
+    func getUserData() -> UserData? {
+        return userData
+    }
+    
+    private func setupTokenRefresh() {
+        tokenRefresher = { [weak self] tokenCompletionHandler in
+            self?.channel.invokeMethod("getToken", arguments: nil, result: { result in
+                if let token = result as? String {
+                    tokenCompletionHandler(token, nil)
+                } else {
+                    let error = NSError(domain: "TokenError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch token"])
+                    tokenCompletionHandler(nil, error)
+                }
+            }
+            )
+        }
     }
 }
