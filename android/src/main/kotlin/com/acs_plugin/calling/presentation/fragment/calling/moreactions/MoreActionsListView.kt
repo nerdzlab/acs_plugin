@@ -8,7 +8,9 @@ import android.widget.LinearLayout
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.calling.utilities.implementation.CompositeDrawerDialog
+import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.drawer.DrawerDialog
@@ -21,11 +23,11 @@ internal class MoreActionsListView @JvmOverloads constructor(
 
     private lateinit var viewModel: MoreActionsListViewModel
 
-    private var emojiThumbsUp: MaterialTextView
+    private var emojiLike: MaterialTextView
     private var emojiHeart: MaterialTextView
-    private var emojiClap: MaterialTextView
-    private var emojiSmile: MaterialTextView
-    private var emojiWonder: MaterialTextView
+    private var emojiApplause: MaterialTextView
+    private var emojiLaugh: MaterialTextView
+    private var emojiSurprised: MaterialTextView
     private var actionsFlexboxLayer: FlexboxLayout
 
     private lateinit var menuDrawer: DrawerDialog
@@ -34,11 +36,20 @@ internal class MoreActionsListView @JvmOverloads constructor(
         orientation = VERTICAL
         LayoutInflater.from(context).inflate(R.layout.more_actions_list_view, this, true)
 
-        emojiThumbsUp = findViewById<MaterialTextView>(R.id.emoji_thumbsUp)
+        emojiLike = findViewById<MaterialTextView>(R.id.emoji_like)
+        emojiLike.onSingleClickListener { sendReaction(ReactionType.LIKE) }
+
         emojiHeart = findViewById<MaterialTextView>(R.id.emoji_heart)
-        emojiClap = findViewById<MaterialTextView>(R.id.emoji_clap)
-        emojiSmile = findViewById<MaterialTextView>(R.id.emoji_smile)
-        emojiWonder = findViewById<MaterialTextView>(R.id.emoji_wonder)
+        emojiHeart.onSingleClickListener { sendReaction(ReactionType.HEART) }
+
+        emojiApplause = findViewById<MaterialTextView>(R.id.emoji_applause)
+        emojiApplause.onSingleClickListener { sendReaction(ReactionType.APPLAUSE) }
+
+        emojiLaugh = findViewById<MaterialTextView>(R.id.emoji_laugh)
+        emojiLaugh.onSingleClickListener { sendReaction(ReactionType.LAUGH) }
+
+        emojiSurprised = findViewById<MaterialTextView>(R.id.emoji_surprised)
+        emojiSurprised.onSingleClickListener { sendReaction(ReactionType.SURPRISED) }
 
         actionsFlexboxLayer = findViewById<FlexboxLayout>(R.id.action_flexbox_layout)
     }
@@ -96,6 +107,11 @@ internal class MoreActionsListView @JvmOverloads constructor(
         menuDrawer.setOnDismissListener {
             viewModel.close()
         }
+    }
+
+    private fun sendReaction(reactionType: ReactionType) {
+        menuDrawer.dismissDialog()
+        viewModel.onSendReaction(reactionType)
     }
 
 }

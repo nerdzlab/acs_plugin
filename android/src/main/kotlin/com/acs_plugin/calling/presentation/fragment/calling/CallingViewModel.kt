@@ -280,7 +280,8 @@ internal class CallingViewModel(
             state.visibilityState.status,
             avMode,
             shouldDisplayLobbyOverlay(state),
-            state.localParticipantState.raisedHandStatus
+            state.localParticipantState.raisedHandStatus,
+            state.localParticipantState.reactionType
         )
 
         audioDeviceListViewModel.update(
@@ -327,7 +328,8 @@ internal class CallingViewModel(
                 state.visibilityState.status,
                 avMode,
                 shouldDisplayLobbyOverlay(state),
-                state.localParticipantState.raisedHandStatus
+                state.localParticipantState.raisedHandStatus,
+                state.localParticipantState.reactionType
             )
         }
 

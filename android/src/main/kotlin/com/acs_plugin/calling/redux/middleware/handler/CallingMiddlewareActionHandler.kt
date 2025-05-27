@@ -28,6 +28,7 @@ import com.acs_plugin.calling.models.NetworkQualityCallDiagnosticModel
 import com.acs_plugin.calling.models.ParticipantCapabilityType
 import com.acs_plugin.calling.models.buildCallCompositeAudioSelectionChangedEvent
 import com.acs_plugin.calling.models.into
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.calling.presentation.manager.CapabilitiesManager
 import com.acs_plugin.calling.redux.Store
 import com.acs_plugin.calling.redux.action.AudioSessionAction
@@ -114,6 +115,7 @@ internal interface CallingMiddlewareActionHandler {
     fun turnNoiseSuppressionOff(store: Store<ReduxState>)
     fun raiseHand(store: Store<ReduxState>)
     fun lowerHand(store: Store<ReduxState>)
+    fun sendReaction(reaction: ReactionType, store: Store<ReduxState>)
 }
 
 internal class CallingMiddlewareActionHandlerImpl(
@@ -1068,6 +1070,20 @@ internal class CallingMiddlewareActionHandlerImpl(
                 )
             } else {
                 store.dispatch(LocalParticipantAction.LowerHandSucceeded)
+            }
+        }
+    }
+
+    override fun sendReaction(reaction: ReactionType, store: Store<ReduxState>) {
+        callingService.sendReaction(reaction).whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.SendReactionFailed(
+                        CallCompositeError(ErrorCode.LOWER_HAND_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.SendReactionSucceeded)
             }
         }
     }

@@ -19,9 +19,9 @@ import androidx.lifecycle.lifecycleScope
 import com.azure.android.communication.calling.ScalingMode
 import com.acs_plugin.R
 import com.acs_plugin.calling.presentation.VideoViewManager
+import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
 import com.acs_plugin.calling.presentation.manager.AvatarViewManager
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
-import com.acs_plugin.calling.redux.state.RaisedHandStatus
 import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.material.textview.MaterialTextView
@@ -53,6 +53,8 @@ internal class LocalParticipantView : ConstraintLayout {
     private lateinit var guideline: Guideline
     private lateinit var raisedHandLabel: AppCompatImageView
     private lateinit var pipRaisedHandLabel: AppCompatImageView
+    private lateinit var reactionOverlay: ReactionOverlayView
+    private lateinit var pipReactionOverlay: ReactionOverlayView
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -70,7 +72,6 @@ internal class LocalParticipantView : ConstraintLayout {
             findViewById(R.id.azure_communication_ui_call_local_pip_switch_camera_button)
         avatarHolder =
             findViewById(R.id.azure_communication_ui_call_local_avatarHolder)
-
         avatar =
             findViewById(R.id.azure_communication_ui_call_local_avatar)
         pipAvatar =
@@ -84,8 +85,12 @@ internal class LocalParticipantView : ConstraintLayout {
             findViewById(R.id.local_participant_layer)
         raisedHandLabel = findViewById(R.id.azure_communication_ui_call_local_raise_hand_indicator)
         pipRaisedHandLabel = findViewById(R.id.azure_communication_ui_call_local_pip_raised_hand_indicator)
+        reactionOverlay = findViewById(R.id.local_participant_reaction_overlay)
+        pipReactionOverlay = findViewById(R.id.local_participant_pip_reaction_overlay)
+
         switchCameraButton.onSingleClickListener { viewModel.switchCamera() }
         pipSwitchCameraButton.onSingleClickListener { viewModel.switchCamera() }
+
         dragTouchListener = DragTouchListener()
 
         if (isAndroidTV(context)) {
@@ -228,6 +233,13 @@ internal class LocalParticipantView : ConstraintLayout {
             viewModel.getDisplayRaisedHandFlowFlow().collect {
                 raisedHandLabel.isVisible = it
                 pipRaisedHandLabel.isVisible = it
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getReactionFlow().collect {
+                reactionOverlay.show(it)
+                pipReactionOverlay.show(it)
             }
         }
     }

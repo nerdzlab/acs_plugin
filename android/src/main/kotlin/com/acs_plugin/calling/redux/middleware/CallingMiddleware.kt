@@ -92,6 +92,9 @@ internal class CallingMiddlewareImpl(
                 is LocalParticipantAction.LowerHandTriggered -> {
                     callingMiddlewareActionHandler.lowerHand(store)
                 }
+                is LocalParticipantAction.SendReactionTriggered -> {
+                    callingMiddlewareActionHandler.lowerHand(store)
+                }
                 is CallingAction.HoldRequested -> {
                     callingMiddlewareActionHandler.hold(store)
                 }

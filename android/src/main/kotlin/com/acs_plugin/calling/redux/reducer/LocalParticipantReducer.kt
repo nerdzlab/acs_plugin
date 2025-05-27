@@ -322,6 +322,17 @@ internal class LocalParticipantStateReducerImpl : LocalParticipantStateReducer {
                     raisedHandStatus = RaisedHandStatus.RAISED
                 )
             }
+
+            is LocalParticipantAction.SendReactionTriggered -> {
+                localUserState.copy(
+                    reactionType = action.reactionType
+                )
+            }
+            is LocalParticipantAction.SendReactionFailed -> {
+                localUserState.copy(
+                    reactionType = null
+                )
+            }
             else -> localUserState
         }
     }

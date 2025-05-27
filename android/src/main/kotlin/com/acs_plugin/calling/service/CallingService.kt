@@ -16,6 +16,7 @@ import com.acs_plugin.calling.models.ParticipantCapabilityType
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ParticipantRole
 import com.acs_plugin.calling.models.RttMessage
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.calling.redux.state.AudioState
 import com.acs_plugin.calling.redux.state.CallingStatus
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
@@ -28,7 +29,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.File
 /*  <CALL_START_TIME>
@@ -247,6 +247,10 @@ internal class CallingService(
 
     fun lowerHand(): CompletableFuture<Void> {
         return callingSdk.lowerHand()
+    }
+
+    fun sendReaction(reactionType: ReactionType): CompletableFuture<Void> {
+        return callingSdk.sendReaction(reactionType)
     }
 
     fun getCaptionsSupportedSpokenLanguagesSharedFlow(): SharedFlow<List<String>> {

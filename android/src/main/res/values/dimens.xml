@@ -10,6 +10,7 @@
 
     <!-- Text sizes -->
     <dimen name="text_size_48">48sp</dimen>
+    <dimen name="text_size_40">40sp</dimen>
     <dimen name="text_size_24">24sp</dimen>
     <dimen name="text_size_20">20sp</dimen>
     <dimen name="text_size_32">32sp</dimen>
@@ -18,7 +19,6 @@
     <dimen name="text_size_12">12sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
     <dimen name="text_size_10">10sp</dimen>
-    <dimen name="text_size_40">40sp</dimen>
     <dimen name="text_size_6">6sp</dimen>
 
     <dimen name="text_1_step">1sp</dimen>

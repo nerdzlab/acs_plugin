@@ -15,58 +15,63 @@
         android:padding="@dimen/padding_12dp"
         android:orientation="horizontal"
         android:gravity="center"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <!-- Example Emoji -->
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/emoji_thumbsUp"
+            android:id="@+id/emoji_like"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="👍"
-            android:textSize="24sp"
-            android:layout_margin="@dimen/margin_4dp" />
+            android:text="@string/emoji_like"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/text_primary" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/emoji_heart"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
             android:gravity="center"
             android:layout_weight="1"
-            android:text="❤️"
-            android:textSize="24sp"
-            android:layout_margin="@dimen/margin_4dp" />
+            android:text="@string/emoji_heart"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/text_primary" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/emoji_clap"
+            android:id="@+id/emoji_applause"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="👏"
-            android:textSize="24sp"
-            android:layout_margin="@dimen/margin_4dp" />
+            android:text="@string/emoji_applause"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/text_primary" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/emoji_smile"
+            android:id="@+id/emoji_laugh"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="😄"
-            android:textSize="24sp"
-            android:layout_margin="@dimen/margin_4dp" />
+            android:text="@string/emoji_laugh"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/text_primary" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/emoji_wonder"
+            android:id="@+id/emoji_surprised"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="😮"
-            android:textSize="24sp"
-            android:layout_margin="@dimen/margin_4dp" />
+            android:text="@string/emoji_surprised"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/text_primary" />
 
     </LinearLayout>
 
