@@ -64,6 +64,10 @@ class _CallScreenState extends State<CallScreen> {
     return Constants.chatUserToken;
   }
 
+  String get _whiteBoardId {
+    return Constants.whiteBoardId;
+  }
+
   String get _chatUserId {
     return Constants.chatUserId;
   }
@@ -210,6 +214,7 @@ class _CallScreenState extends State<CallScreen> {
     try {
       await _acsPlugin.initializeRoomCall(
         roomId: _roomId,
+        whiteBoardId: _whiteBoardId,
         isChatEnable: true,
         isRejoin: false,
       );
@@ -226,6 +231,7 @@ class _CallScreenState extends State<CallScreen> {
     try {
       await _acsPlugin.startTeamsMeetingCall(
         meetingLink: _teemsMeetingLink,
+        whiteBoardId: _whiteBoardId,
         isChatEnable: true,
         isRejoin: false,
       );
@@ -244,6 +250,7 @@ class _CallScreenState extends State<CallScreen> {
         token: _acsToken,
         participantId: _otherUserId,
         userId: _userId,
+        whiteBoardId: _whiteBoardId,
       );
       log('One on one call initialized successfully');
       _shwoSnacBar('One on one call initialized successfully');

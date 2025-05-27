@@ -20,6 +20,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
 
   Future<void> initializeRoomCall({
     required String roomId,
+    required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
   }) {
@@ -28,6 +29,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
 
   Future<void> startOneOnOneCall({
     required String token,
+    required String whiteBoardId,
     required String participantId,
     required String userId,
   }) {
@@ -36,6 +38,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
 
   Future<void> startTeamsMeetingCall({
     required String meetingLink,
+    required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
   }) {

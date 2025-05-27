@@ -57,10 +57,11 @@ final class CallHandler: MethodHandler {
         case Constants.MethodChannels.initializeRoomCall:
             if let arguments = call.arguments as? [String: Any],
                let roomId = arguments["roomId"] as? String,
+               let whiteBoardId = arguments["whiteBoardId"] as? String,
                let isChatEnable = arguments["isChatEnable"] as? Bool,
                let isRejoin = arguments["isRejoin"] as? Bool
             {
-                initializeRoomCall(roomId: roomId, isChatEnable: isChatEnable, isRejoin: isRejoin, result: result)
+                initializeRoomCall(roomId: roomId, whiteBoardId: whiteBoardId, isChatEnable: isChatEnable, isRejoin: isRejoin, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
@@ -70,10 +71,11 @@ final class CallHandler: MethodHandler {
         case Constants.MethodChannels.startOneOnOneCall:
             if let arguments = call.arguments as? [String: Any],
                let token = arguments["token"] as? String,
+               let whiteBoardId = arguments["whiteBoardId"] as? String,
                let participantId = arguments["participantId"] as? String,
                let userId = arguments["userId"] as? String
             {
-                startOneOnOneCall(token: token, participantId: participantId, userId: userId, result: result)
+                startOneOnOneCall(token: token, participantId: participantId, whiteBoardId: whiteBoardId, userId: userId, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, participantId and userId are required", details: nil))
             }
@@ -83,10 +85,11 @@ final class CallHandler: MethodHandler {
         case Constants.MethodChannels.startTeamsMeetingCall:
             if let arguments = call.arguments as? [String: Any],
                let meetingLink = arguments["meetingLink"] as? String,
+               let whiteBoardId = arguments["whiteBoardId"] as? String,
                let isChatEnable = arguments["isChatEnable"] as? Bool,
                let isRejoin = arguments["isRejoin"] as? Bool
             {
-                startTeamsMeetingCall(meetingLink: meetingLink, isChatEnable: isChatEnable, isRejoin: isRejoin, result: result)
+                startTeamsMeetingCall(meetingLink: meetingLink, whiteBoardId: whiteBoardId, isChatEnable: isChatEnable, isRejoin: isRejoin, result: result)
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
@@ -100,22 +103,24 @@ final class CallHandler: MethodHandler {
 
     private func initializeRoomCall(
         roomId: String,
+        whiteBoardId: String,
         isChatEnable: Bool,
         isRejoin: Bool,
         result: @escaping FlutterResult
     ) {
-        let localOptions = LocalOptions(cameraOn: true, isChatEnable: isChatEnable, microphoneOn: true, skipSetupScreen: isRejoin)
+        let localOptions = LocalOptions(cameraOn: true, isChatEnable: isChatEnable, microphoneOn: true, skipSetupScreen: isRejoin, whiteBoardId: whiteBoardId)
         
         onGetllComposite()?.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
     }
     
     private func startTeamsMeetingCall(
         meetingLink: String,
+        whiteBoardId: String,
         isChatEnable: Bool,
         isRejoin: Bool,
         result: @escaping FlutterResult
     ) {
-        let localOptions = LocalOptions(cameraOn: true, isChatEnable: isChatEnable, microphoneOn: true, skipSetupScreen: isRejoin)
+        let localOptions = LocalOptions(cameraOn: true, isChatEnable: isChatEnable, microphoneOn: true, skipSetupScreen: isRejoin, whiteBoardId: whiteBoardId)
         
         onGetllComposite()?.launch(locator: .teamsMeeting(teamsLink: meetingLink), localOptions: localOptions)
     }
@@ -123,10 +128,11 @@ final class CallHandler: MethodHandler {
     private func startOneOnOneCall(
         token: String,
         participantId: String,
+        whiteBoardId: String,
         userId: String,
         result: @escaping FlutterResult
     ) {
-        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
+        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true, whiteBoardId: whiteBoardId)
         
         onGetllComposite()?.launch(
             participants: [CommunicationUserIdentifier(participantId)],
