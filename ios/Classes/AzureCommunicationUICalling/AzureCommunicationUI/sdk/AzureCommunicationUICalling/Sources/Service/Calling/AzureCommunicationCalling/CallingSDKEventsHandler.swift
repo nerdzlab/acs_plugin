@@ -413,7 +413,10 @@ extension CallingSDKEventsHandler: CallDelegate,
     
     func call(_ call: Call, didChangeTotalParticipantCount args: PropertyChangedEventArgs) {
         // substract local participant from total participantCount
-        totalParticipantCountSubject.send(Int(call.totalParticipantCount) - 1)
+        
+        if (call.totalParticipantCount != 0) {
+            totalParticipantCountSubject.send(Int(call.totalParticipantCount) - 1)
+        }
     }
     
     // MARK: CapabilitiesDelegate
