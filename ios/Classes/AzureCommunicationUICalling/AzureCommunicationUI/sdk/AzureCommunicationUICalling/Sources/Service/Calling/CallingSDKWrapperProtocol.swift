@@ -20,7 +20,8 @@ class CompositeRemoteParticipant<WrappedType, VideoStreamType> {
 
     init(id: CommunicationIdentifier,
          videoStreams: [CompositeRemoteVideoStream<VideoStreamType>],
-         wrappedObject: WrappedType) {
+         wrappedObject: WrappedType
+    ) {
         self.identifier = id
         self.videoStreams = videoStreams
         self.wrappedObject = wrappedObject

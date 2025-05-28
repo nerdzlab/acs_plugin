@@ -21,6 +21,7 @@ struct ParticipantGridCellVideoView: View {
     @Binding var isPinned: Bool
     @Environment(\.screenSizeClass) var screenSizeClass: ScreenSizeClassType
     @State var show = true
+    let isWhiteBoard: Bool
         
     var body: some View {
 #if DEBUG
@@ -43,7 +44,8 @@ struct ParticipantGridCellVideoView: View {
                                  isHandRaised: $isHandRaised,
                                  isPinned: $isPinned,
                                  titleFont: AppFont.CircularStd.book.font(size: 13),
-                                 mutedIconSize: 14)
+                                 mutedIconSize: 14,
+                                 isWhiteBoard: isWhiteBoard)
                 .padding(.vertical, 2)
                 .background(Color.white)
                 .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -51,7 +53,9 @@ struct ParticipantGridCellVideoView: View {
                 .padding(.bottom, screenSizeClass == .iphoneLandscapeScreenSize
                     && UIDevice.current.hasHomeBar ? 16 : 8)
                 .onTapGesture {
-                    onUserClicked()
+                    if (!isWhiteBoard) {
+                        onUserClicked()
+                    }
                 }
             
             // Reaction overlay

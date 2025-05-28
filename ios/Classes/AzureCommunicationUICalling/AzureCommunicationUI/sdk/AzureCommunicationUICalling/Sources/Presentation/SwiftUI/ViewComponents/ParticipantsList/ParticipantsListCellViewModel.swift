@@ -19,6 +19,7 @@ class ParticipantsListCellViewModel: BaseDrawerItemViewModel {
     let confirmDeny: String?
     var accept: (() -> Void)?
     let deny: (() -> Void)?
+    let isWhiteBoard: Bool
     private let displayName: String
 
     init(localUserState: LocalUserState,
@@ -35,6 +36,7 @@ class ParticipantsListCellViewModel: BaseDrawerItemViewModel {
         self.confirmTitle = nil
         self.confirmAccept = nil
         self.deny = nil
+        self.isWhiteBoard = false
         self.avatarColor = Color(UIColor.compositeColor(.purpleBlue))
     }
 
@@ -59,6 +61,7 @@ class ParticipantsListCellViewModel: BaseDrawerItemViewModel {
         self.confirmDeny = confirmDeny
         self.confirmAccept = confirmAccept
         self.avatarColor = participantInfoModel.avatarColor
+        self.isWhiteBoard = participantInfoModel.isWhiteBoard
     }
 
     func getParticipantViewData(from avatarViewManager: AvatarViewManagerProtocol) -> ParticipantViewData? {

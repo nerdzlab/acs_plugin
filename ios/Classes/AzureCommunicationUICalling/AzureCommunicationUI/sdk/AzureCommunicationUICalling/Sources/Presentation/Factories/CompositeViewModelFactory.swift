@@ -137,7 +137,8 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                              capabilitiesManager: self.capabilitiesManager,
                                              callScreenOptions: callScreenOptions ?? CallScreenOptions(),
                                              rendererViewManager: rendererViewManager,
-                                             isChatEnable: localOptions?.isChatEnabled ?? false)
+                                             isChatEnable: localOptions?.isChatEnabled ?? false,
+                                             whiteBoardId: localOptions?.whiteBoardId)
             self.setupViewModel = nil
             self.callingViewModel = viewModel
             return viewModel
@@ -224,7 +225,8 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                      isRemoteParticipantsPresent: Bool,
                                      isDisplayed: Bool,
                                      isReactionEnable: Bool,
-                                     isRaiseHandAvailable: Bool
+                                     isRaiseHandAvailable: Bool,
+                                     isLayoutOptionsEnable: Bool
     ) -> MeetingOptionsViewModel {
         MeetingOptionsViewModel(
             localUserState: localUserState,
@@ -241,7 +243,8 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
             isDisplayed: isDisplayed,
             isRemoteParticipantsPresent: isRemoteParticipantsPresent,
             isReactionEnable: isReactionEnable,
-            isRaiseHandAvailable: isRaiseHandAvailable
+            isRaiseHandAvailable: isRaiseHandAvailable,
+            isLayoutOptionsEnable: isLayoutOptionsEnable
         )
     }
     
@@ -474,7 +477,8 @@ extension CompositeViewModelFactory {
                                      onResetReaction: { [weak self] in
             self?.store.dispatch(action: .remoteParticipantsAction(.resetParticipantReaction(participantModel.userIdentifier)))
         },
-                                     callType: callType)
+                                     callType: callType,
+                                     isWhiteBoard: participantModel.isWhiteBoard)
     }
     
     func makeParticipantGridsViewModel(isIpadInterface: Bool, rendererViewManager: RendererViewManager) -> ParticipantGridViewModel {
@@ -484,7 +488,7 @@ extension CompositeViewModelFactory {
                                  isIpadInterface: isIpadInterface,
                                  remoteParticipantsState: store.state.remoteParticipantsState,
                                  callType: callType,
-                                 rendererViewManager: rendererViewManager)
+                                 rendererViewManager: rendererViewManager, whiteBoardId: localOptions?.whiteBoardId ?? "")
     }
     
     func makeParticipantsListViewModel(localUserState: LocalUserState,
@@ -505,7 +509,8 @@ extension CompositeViewModelFactory {
     func makeParticipantOptionsViewModel(
         localUserState: LocalUserState,
         isDisplayed: Bool,
-        dispatchAction: @escaping ActionDispatch
+        dispatchAction: @escaping ActionDispatch,
+        isPinEnable: Bool
     ) -> ParticipantOptionsViewModel {
         ParticipantOptionsViewModel(
             localUserState: localUserState,
@@ -526,6 +531,7 @@ extension CompositeViewModelFactory {
                 dispatchAction(.hideDrawer)
                 dispatchAction(.remoteParticipantsAction(.hideParticipantVideo(participantId: participant.userIdentifier)))
             },
+            isPinEnable: isPinEnable,
             isDisplayed: isDisplayed)
     }
     

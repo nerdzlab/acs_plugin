@@ -17,6 +17,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     private let accessibilityProvider: AccessibilityProviderProtocol
     
     let id = UUID()
+    let isWhiteBoard: Bool
     
     @Published var videoViewModel: ParticipantVideoViewInfoModel?
     @Published var accessibilityLabel: String = ""
@@ -52,7 +53,9 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
          isCameraEnabled: Bool,
          onUserClicked: @escaping () -> Void,
          onResetReaction: @escaping () -> Void,
-         callType: CompositeCallType) {
+         callType: CompositeCallType,
+         isWhiteBoard: Bool
+    ) {
         self.localizationProvider = localizationProvider
         self.accessibilityProvider = accessibilityProvider
         self.participantStatus = participantModel.status
@@ -67,6 +70,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
             self.participantName = participantModel.displayName
             self.displayName = participantModel.displayName
         }
+        self.isWhiteBoard = isWhiteBoard
         self.avatarDisplayName = participantModel.displayName
         self.isSpeaking = participantModel.isSpeaking
         self.isHold = participantModel.status == .hold
@@ -86,6 +90,7 @@ class ParticipantGridCellViewModel: ObservableObject, Identifiable, Equatable {
     
     func update(participantModel: ParticipantInfoModel) {
         self.participantIdentifier = participantModel.userIdentifier
+        
         let videoViewModel = getDisplayingVideoStreamModel(participantModel)
         if self.videoViewModel?.videoStreamId != videoViewModel.videoStreamId ||
             self.videoViewModel?.videoStreamType != videoViewModel.videoStreamType {

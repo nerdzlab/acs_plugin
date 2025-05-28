@@ -59,6 +59,7 @@ struct ParticipantInfoModel: Hashable, Equatable {
     let avatarColor: Color
     
     let isRemoteUser: Bool
+    let isWhiteBoard: Bool
     let userIdentifier: String
     let status: ParticipantStatus
     
@@ -80,7 +81,8 @@ extension ParticipantInfoModel {
         status: ParticipantStatus? = nil,
         screenShareVideoStreamModel: VideoStreamInfoModel? = nil,
         cameraVideoStreamModel: VideoStreamInfoModel? = nil,
-        selectedReaction: ReactionPayload? = nil
+        selectedReaction: ReactionPayload? = nil,
+        isWhiteBoard: Bool? = nil
     ) -> ParticipantInfoModel {
         return ParticipantInfoModel(
             displayName: displayName ?? self.displayName,
@@ -92,6 +94,7 @@ extension ParticipantInfoModel {
             isVideoOnForMe: isVideoOnForMe ?? self.isVideoOnForMe,
             avatarColor: avatarColor ?? self.avatarColor,
             isRemoteUser: isRemoteUser ?? self.isRemoteUser,
+            isWhiteBoard: isWhiteBoard ?? self.isWhiteBoard,
             userIdentifier: userIdentifier ?? self.userIdentifier,
             status: status ?? self.status,
             screenShareVideoStreamModel: screenShareVideoStreamModel ?? self.screenShareVideoStreamModel,
@@ -112,6 +115,7 @@ extension ParticipantInfoModel {
         lhs.userIdentifier == rhs.userIdentifier &&
         lhs.status == rhs.status &&
         lhs.screenShareVideoStreamModel == rhs.screenShareVideoStreamModel &&
-        lhs.cameraVideoStreamModel == rhs.cameraVideoStreamModel
+        lhs.cameraVideoStreamModel == rhs.cameraVideoStreamModel &&
+        lhs.isWhiteBoard == rhs.isWhiteBoard
     }
 }

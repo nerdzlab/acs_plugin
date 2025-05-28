@@ -132,7 +132,8 @@ struct LocalVideoView: View {
                             isHandRaised: .constant(false),
                             isPinned: .constant(false),
                             titleFont: AppFont.CircularStd.book.font(size: 13),
-                            mutedIconSize: 16
+                            mutedIconSize: 16,
+                            isWhiteBoard: false
                         )
                         .padding(.vertical, 2)
                         .background(viewModel.cameraOperationalStatus == .on ? Color.white : .clear)
