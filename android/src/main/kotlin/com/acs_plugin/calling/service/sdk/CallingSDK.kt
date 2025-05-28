@@ -22,6 +22,7 @@ import com.acs_plugin.calling.models.NetworkQualityCallDiagnosticModel
 import com.acs_plugin.calling.models.ParticipantCapabilityType
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ParticipantRole
+import com.acs_plugin.calling.models.ReactionPayload
 import com.acs_plugin.calling.models.RttMessage
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.calling.redux.state.AudioState
@@ -75,6 +76,7 @@ internal interface CallingSDK {
     fun getCallIdStateFlow(): StateFlow<String?>
     fun getRemoteParticipantInfoModelSharedFlow(): Flow<Map<String, ParticipantInfoModel>>
     fun getRaisedHandParticipantsInfoSharedFlow(): SharedFlow<List<String>>
+    fun getReactionParticipantsInfoSharedFlow(): SharedFlow<Map<String, ReactionPayload>>
     /*  <CALL_START_TIME>
     fun getCallStartTimeSharedFlow(): SharedFlow<Date>
     </CALL_START_TIME> */

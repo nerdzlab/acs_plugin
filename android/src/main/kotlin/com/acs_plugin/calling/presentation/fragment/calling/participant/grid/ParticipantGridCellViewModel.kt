@@ -6,6 +6,7 @@ package com.acs_plugin.calling.presentation.fragment.calling.participant.grid
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ParticipantStatus
 import com.acs_plugin.calling.models.VideoStreamModel
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -20,6 +21,7 @@ internal class ParticipantGridCellViewModel(
     isRaisedHand: Boolean,
     modifiedTimestamp: Number,
     participantStatus: ParticipantStatus?,
+    reactionType: ReactionType?
 ) {
     private var isOnHoldStateFlow = MutableStateFlow(isOnHold(participantStatus))
     private var isCallingStateFlow = MutableStateFlow(isCalling(participantStatus))
@@ -27,6 +29,7 @@ internal class ParticipantGridCellViewModel(
     private var isMutedStateFlow = MutableStateFlow(isMuted)
     private var isSpeakingStateFlow = MutableStateFlow(isSpeaking && !isMuted)
     private var isRaisedHandStateFlow = MutableStateFlow(isRaisedHand)
+    private var reactionTypeStateFlow = MutableStateFlow(reactionType)
     private var isNameIndicatorVisibleStateFlow = MutableStateFlow(true)
     private var videoViewModelStateFlow = MutableStateFlow(
         getVideoStreamModel(
@@ -80,6 +83,10 @@ internal class ParticipantGridCellViewModel(
         return isRaisedHandStateFlow
     }
 
+    fun getReactionTypeStateFlow(): StateFlow<ReactionType?> {
+        return reactionTypeStateFlow
+    }
+
     fun update(
         participant: ParticipantInfoModel,
     ) {
@@ -103,6 +110,7 @@ internal class ParticipantGridCellViewModel(
         this.participantModifiedTimestamp = participant.modifiedTimestamp
         this.isCallingStateFlow.value = isCalling(participant.participantStatus)
         this.isRaisedHandStateFlow.value = participant.isRaisedHand
+        this.reactionTypeStateFlow.value = participant.selectedReaction
     }
 
     private fun isCalling(participantStatus: ParticipantStatus?) =

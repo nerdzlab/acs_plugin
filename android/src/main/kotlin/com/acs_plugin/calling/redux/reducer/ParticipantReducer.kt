@@ -37,6 +37,12 @@ internal class ParticipantStateReducerImpl :
                     raisedHandsInfo = action.raisedHandsInfo
                 )
             }
+            is ParticipantAction.ReactionParticipantUpdated -> {
+                state.copy(
+                    reactionModifiedTimestamp = System.currentTimeMillis(),
+                    reactionInfo = action.participantReactionMap
+                )
+            }
             else -> state
         }
     }

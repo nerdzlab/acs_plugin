@@ -238,8 +238,11 @@ internal class LocalParticipantView : ConstraintLayout {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getReactionFlow().collect {
-                reactionOverlay.show(it)
-                pipReactionOverlay.show(it)
+                if (it.first == LocalParticipantViewMode.SELFIE_PIP) {
+                    pipReactionOverlay.show(it.second)
+                } else {
+                    reactionOverlay.show(it.second)
+                }
             }
         }
     }

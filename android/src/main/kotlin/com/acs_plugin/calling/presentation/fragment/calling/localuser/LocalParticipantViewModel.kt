@@ -36,7 +36,7 @@ internal class LocalParticipantViewModel(
     private lateinit var isVisibleFlow: MutableStateFlow<Boolean>
     private lateinit var userNameLayerVisibilityFlow: MutableStateFlow<Boolean>
     private lateinit var displayRaisedHandFlow: MutableStateFlow<Boolean>
-    private lateinit var reactionFlow: MutableStateFlow<ReactionType?>
+    private lateinit var reactionFlow: MutableStateFlow<Pair<LocalParticipantViewMode, ReactionType?>>
 
 
     fun getVideoStatusFlow(): StateFlow<VideoModel> = videoStatusFlow
@@ -54,7 +54,7 @@ internal class LocalParticipantViewModel(
     fun getIsVisibleFlow(): StateFlow<Boolean> = isVisibleFlow
     fun getUserNameLayerVisibilityFlow(): StateFlow<Boolean> = userNameLayerVisibilityFlow
     fun getDisplayRaisedHandFlowFlow(): StateFlow<Boolean> = displayRaisedHandFlow
-    fun getReactionFlow(): StateFlow<ReactionType?> = reactionFlow
+    fun getReactionFlow(): StateFlow<Pair<LocalParticipantViewMode, ReactionType?>> = reactionFlow
 
     fun update(
         displayName: String?,
@@ -99,7 +99,7 @@ internal class LocalParticipantViewModel(
         isOverlayDisplayedFlow.value = isOverlayDisplayedOverGrid
         userNameLayerVisibilityFlow.value = viewMode == LocalParticipantViewMode.FULL_SCREEN
         displayRaisedHandFlow.value = raisedHandStatus == RaisedHandStatus.RAISED
-        reactionFlow.value = reactionType
+        reactionFlow.value = viewMode to reactionType
     }
 
     private fun isVisible(displayVideo: Boolean, pipStatus: VisibilityStatus, displayFullScreenAvatar: Boolean, avMode: CallCompositeAudioVideoMode): Boolean {
@@ -159,7 +159,7 @@ internal class LocalParticipantViewModel(
         isVisibleFlow = MutableStateFlow(isVisible(displayVideo, pipStatus, displayFullScreenAvatar, avMode))
         userNameLayerVisibilityFlow = MutableStateFlow(viewMode == LocalParticipantViewMode.FULL_SCREEN)
         displayRaisedHandFlow = MutableStateFlow(raisedHandStatus == RaisedHandStatus.RAISED)
-        reactionFlow = MutableStateFlow(null)
+        reactionFlow = MutableStateFlow(viewMode to null)
     }
 
     fun switchCamera() = dispatch(LocalParticipantAction.CameraSwitchTriggered())

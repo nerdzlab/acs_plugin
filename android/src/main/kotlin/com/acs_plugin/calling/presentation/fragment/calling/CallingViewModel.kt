@@ -312,6 +312,8 @@ internal class CallingViewModel(
                 isOverlayDisplayedOverGrid = isOverlayDisplayedOverGrid(state),
                 deviceConfigurationState = state.deviceConfigurationState,
                 captionsState = state.captionsState,
+                reaction = state.remoteParticipantState.reactionInfo,
+                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp
             )
             floatingHeaderViewModel.dismiss()
             lobbyHeaderViewModel.dismiss()
@@ -346,6 +348,8 @@ internal class CallingViewModel(
                 isOverlayDisplayedOverGrid = isOverlayDisplayedOverGrid(state),
                 deviceConfigurationState = state.deviceConfigurationState,
                 captionsState = state.captionsState,
+                reaction = state.remoteParticipantState.reactionInfo,
+                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp
             )
 
             floatingHeaderViewModel.update(

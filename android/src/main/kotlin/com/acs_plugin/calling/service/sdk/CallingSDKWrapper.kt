@@ -18,6 +18,8 @@ import com.acs_plugin.calling.models.CallCompositeCaptionsOptions
 import com.acs_plugin.calling.models.CallCompositeLobbyErrorCode
 import com.acs_plugin.calling.models.ParticipantCapabilityType
 import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.models.ReactionMessage
+import com.acs_plugin.calling.models.ReactionPayload
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.calling.redux.state.AudioOperationalStatus
 import com.acs_plugin.calling.redux.state.AudioState
@@ -60,6 +62,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.util.Collections
 import java.util.concurrent.CompletableFuture
@@ -72,6 +75,7 @@ internal class CallingSDKWrapper(
     private val logger: Logger? = null,
     private val callingSDKInitializer: CallingSDKInitializer,
     private val compositeCaptionsOptions: CallCompositeCaptionsOptions? = null,
+    private val localUserIdentifier: String?,
     /* <END_CALL_FOR_ALL>
     private val isOnCallEndTerminateForAll: Boolean = false,
     </END_CALL_FOR_ALL> */
@@ -170,6 +174,9 @@ internal class CallingSDKWrapper(
 
     override fun getRaisedHandParticipantsInfoSharedFlow(): SharedFlow<List<String>> =
         callingSDKEventHandler.getRaisedHandParticipantsInfoFlow()
+
+    override fun getReactionParticipantsInfoSharedFlow(): SharedFlow<Map<String, ReactionPayload>> =
+        callingSDKEventHandler.getReactionParticipantsInfoFlow()
 
     override fun hold(): CompletableFuture<Void> {
         val completableFuture = CompletableFuture<Void>()
@@ -744,28 +751,31 @@ internal class CallingSDKWrapper(
     override fun sendReaction(reactionType: ReactionType): CompletableFuture<Void> {
         val completableFuture = CompletableFuture<Void>()
 
-        val options = DataChannelSenderOptions().apply {
-            channelId = 1000
-            bitrateInKbps = 32
-            priority = DataChannelPriority.NORMAL
-            reliability = DataChannelReliability.LOSSY
+        try {
+            val options = DataChannelSenderOptions().apply {
+                channelId = 1000
+                bitrateInKbps = 32
+                priority = DataChannelPriority.NORMAL
+                reliability = DataChannelReliability.LOSSY
+            }
+
+            val feature = call.feature(Features.DATA_CHANNEL)
+            val sender = feature.getDataChannelSender(options)
+
+            val localUserId = localUserIdentifier ?: "unknown"
+            val payload = ReactionPayload(reactionType)
+            val message = ReactionMessage(mapOf(localUserId to payload))
+
+            val json = Json.encodeToString(ReactionMessage.serializer(), message)
+            sender.sendMessage(json.toByteArray(Charsets.UTF_8))
+
+            completableFuture.complete(null)
+        } catch (e: Exception) {
+            logger?.error("Failed to send reaction via data channel", e)
+            completableFuture.completeExceptionally(e)
         }
-
-        val feature = call.feature(Features.DATA_CHANNEL)
-        val sender = feature.getDataChannelSender(options)
-
-//TODO implement data channel logic
-//        val payload = ReactionPayload(reaction)
-//        val message = ReactionMessage(mapOf(userId to payload))
-//
-//        try {
-//            val json = Json.encodeToString(ReactionMessage.serializer(), message)
-//            sender.sendMessage(json.toByteArray(Charsets.UTF_8))
-//        } catch (e: Exception) {
-//            logger?.error("Failed to send reaction via data channel", e)
-//        }
-
-        return completableFuture    }
+        return completableFuture
+    }
     //endregion
 
     private fun createCallAgent(): CompletableFuture<CallAgent> {

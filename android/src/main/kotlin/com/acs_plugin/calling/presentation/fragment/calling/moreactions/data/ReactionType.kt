@@ -2,17 +2,23 @@ package com.acs_plugin.calling.presentation.fragment.calling.moreactions.data
 
 import androidx.annotation.StringRes
 import com.acs_plugin.R
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-enum class ReactionType(@StringRes val titleResId: Int, val serverKey: String) {
-    LIKE(R.string.emoji_like, ":+1:"),
-    HEART(R.string.emoji_heart, ":heart:"),
-    APPLAUSE(R.string.emoji_applause, ":clap:"),
-    LAUGH(R.string.emoji_laugh, ":laughing:"),
-    SURPRISED(R.string.emoji_surprised, ":astonished:");
+@Serializable
+enum class ReactionType(@StringRes val titleResId: Int) {
+    @SerialName(":+1:")
+    LIKE(R.string.emoji_like),
 
-    companion object {
-        fun fromServerKey(value: String): ReactionType? {
-            return entries.firstOrNull { it.serverKey == value }
-        }
-    }
+    @SerialName(":heart:")
+    HEART(R.string.emoji_heart),
+
+    @SerialName(":clap:")
+    APPLAUSE(R.string.emoji_applause),
+
+    @SerialName(":laughing:")
+    LAUGH(R.string.emoji_laugh),
+
+    @SerialName(":astonished:")
+    SURPRISED(R.string.emoji_surprised);
 }

@@ -5,6 +5,7 @@ package com.acs_plugin.calling.redux.action
 
 import com.acs_plugin.calling.models.CallCompositeLobbyErrorCode
 import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.models.ReactionPayload
 
 internal sealed class ParticipantAction : Action {
     class ListUpdated(val participantMap: Map<String, ParticipantInfoModel>) : ParticipantAction()
@@ -17,6 +18,7 @@ internal sealed class ParticipantAction : Action {
     class ClearLobbyError : ParticipantAction()
     class Remove(val userIdentifier: String) : ParticipantAction()
     class RemoveParticipantError : ParticipantAction()
+    class ReactionParticipantUpdated(val participantReactionMap: Map<String, ReactionPayload>) : ParticipantAction()
 
     class SetTotalParticipantCount(val totalParticipantCount: Int) : ParticipantAction()
 }

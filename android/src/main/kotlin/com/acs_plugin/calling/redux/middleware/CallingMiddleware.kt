@@ -93,7 +93,7 @@ internal class CallingMiddlewareImpl(
                     callingMiddlewareActionHandler.lowerHand(store)
                 }
                 is LocalParticipantAction.SendReactionTriggered -> {
-                    callingMiddlewareActionHandler.lowerHand(store)
+                    callingMiddlewareActionHandler.sendReaction(action.reactionType, store)
                 }
                 is CallingAction.HoldRequested -> {
                     callingMiddlewareActionHandler.hold(store)
