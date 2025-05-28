@@ -53,15 +53,23 @@ class _CallScreenState extends State<CallScreen> {
 
   // Configuration constants - move to a config file in a real app
   String get _acsToken {
-    if (isRealDevice) {
-      return Constants.userOneToken;
-    } else {
-      return Constants.userTwoToken;
+    if (_isSuperBrainsMode) {
+      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNy0zZmM4LTUxMGEtOTE4ZS1hZjNhMGQwMGFmMmUiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDg0MjM5OTYiLCJleHAiOjE3NDg1MTAzOTYsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiODY3YTVkYzAtYmNkZi00ZGM3LTg2MGYtM2ZjMzNkMmEzZmVlIiwicmVzb3VyY2VMb2NhdGlvbiI6Im5vcndheSIsImlhdCI6MTc0ODQyMzk5Nn0.VJINpao7lRMukLxn1SUcgHWXUsSj2_S5DhLzjaRik98wt9QKFHP2PjHGZSFdiZwOJglKyHxTjW0u87vkrKOtZyIGcaiARJWEHKBjk1cY3kZ4yUEt6Y_asHXUgmzmkXD1bFL5P0bIQjqSpubogTyACu7si1cZR9w9SCH1ldaJVuPhNKrJa-LmJCmr0LiCjlM9GvsNM7ibcoe6vuzSICJYRKqjTqi-ZGG10BRQAhaZmM9-1XY0SeIQs3E1VfLFZOEcb4Ml8PRFFw5eLkh8_6SpsS9jlH-BdqhBekqm5jH8jjF95Sab92fa12eNeAxaML75A0TjXLcclZeyU4hukfyn9g";
     }
+
+    // if (isRealDevice) {
+    // return Constants.userOneToken;
+    // } else {
+    return Constants.userTwoToken;
+    // }
   }
 
   String get _chatToken {
     return Constants.chatUserToken;
+  }
+
+  bool get _isSuperBrainsMode {
+    return false;
   }
 
   String get _whiteBoardId {
@@ -81,19 +89,27 @@ class _CallScreenState extends State<CallScreen> {
   static const String _teemsMeetingLink = Constants.teemsMeetingLink;
 
   String get _userId {
-    if (isRealDevice) {
-      return Constants.userOneId;
-    } else {
-      return Constants.userTwoId;
+    if (_isSuperBrainsMode) {
+      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000027-3fc8-510a-918e-af3a0d00af2e";
     }
+
+    // if (isRealDevice) {
+    // return Constants.userOneId;
+    // } else {
+    return Constants.userTwoId;
+    // }
   }
 
   String get _otherUserId {
-    if (isRealDevice) {
-      return Constants.userTwoId;
-    } else {
-      return Constants.userOneId;
+    if (_isSuperBrainsMode) {
+      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000027-3fbb-ad83-f4f3-ad3a0d00a6ac";
     }
+
+    // if (isRealDevice) {
+    // return Constants.userTwoId;
+    // } else {
+    return Constants.userOneId;
+    // }
   }
 
   @override
@@ -264,9 +280,9 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _setUserData() async {
     try {
       await _acsPlugin.setUserData(
-        token: _chatToken,
+        token: _acsToken,
         name: "Yra",
-        userId: _chatUserId,
+        userId: _userId,
       );
       log('Set user data successfully');
       _shwoSnacBar('Set user data successfully');
