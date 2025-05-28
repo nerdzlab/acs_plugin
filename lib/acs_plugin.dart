@@ -8,6 +8,7 @@ import 'package:acs_plugin/chat_models/chat_message_received_event/chat_message_
 import 'package:acs_plugin/chat_models/chat_message_type/chat_message_type.dart';
 import 'package:acs_plugin/chat_models/chat_messge_deleted_event/chat_messge_deleted_event.dart';
 import 'package:acs_plugin/chat_models/chat_participant/chat_participant.dart';
+import 'package:acs_plugin/chat_models/chat_thread/chat_thread.dart';
 import 'package:acs_plugin/chat_models/chat_thread_created_event/chat_thread_created_event.dart';
 import 'package:acs_plugin/chat_models/chat_thread_deleted_event/chat_thread_deleted_event.dart';
 import 'package:acs_plugin/chat_models/chat_thread_properties/chat_thread_properties.dart';
@@ -473,5 +474,26 @@ class AcsPlugin {
     }
 
     return ChatMessage.fromJson(result);
+  }
+
+  Future<List<ChatThread>> getInitialListThreads() async {
+    final result = await AcsPluginPlatform.instance.getInitialListThreads();
+    return result
+        .cast<Map>()
+        .map((e) => ChatThread.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
+  Future<List<ChatThread>> getNextThreads() async {
+    final result = await AcsPluginPlatform.instance.getNextThreads();
+    return result
+        .cast<Map>()
+        .map((e) => ChatThread.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
+  Future<bool> isMoreThreadsAvailable() async {
+    final result = await AcsPluginPlatform.instance.isMoreThreadsAvailable();
+    return result;
   }
 }

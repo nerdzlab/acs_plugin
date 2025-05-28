@@ -392,3 +392,16 @@ extension PushNotificationChatMessageReceivedEvent {
         return json
     }
 }
+
+extension ChatThreadItem {
+    func toJson() -> [String: Any] {
+        var json: [String: Any] = [:]
+        
+        json["id"] = id
+        json["topic"] = topic
+        json["deletedOn"] = deletedOn?.requestString
+        json["lastMessageReceivedOn"] = lastMessageReceivedOn?.requestString
+        
+        return json
+    }
+}

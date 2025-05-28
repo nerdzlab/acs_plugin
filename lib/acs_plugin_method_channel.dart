@@ -313,6 +313,41 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
+  Future<List<Map<String, dynamic>>> getInitialListThreads() async {
+    final result = await methodChannel.invokeMethod(
+      'getInitialListThreads',
+    );
+
+    if (result == null) return [];
+
+    // Cast each item in the result to Map<String, dynamic>
+    final List<dynamic> rawList = result as List<dynamic>;
+    return rawList.map((item) => Map<String, dynamic>.from(item)).toList();
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getNextThreads() async {
+    final result = await methodChannel.invokeMethod(
+      'getNextThreads',
+    );
+
+    if (result == null) return [];
+
+    // Cast each item in the result to Map<String, dynamic>
+    final List<dynamic> rawList = result as List<dynamic>;
+    return rawList.map((item) => Map<String, dynamic>.from(item)).toList();
+  }
+
+  @override
+  Future<bool> isMoreThreadsAvailable() async {
+    final result = await methodChannel.invokeMethod(
+      'isMoreThreadsAvailable',
+    );
+
+    return result as bool;
+  }
+
+  @override
   Future<Map<String, dynamic>?> getPreloadedAction() async {
     final result = await methodChannel.invokeMethod(
       'getPreloadedAction',
