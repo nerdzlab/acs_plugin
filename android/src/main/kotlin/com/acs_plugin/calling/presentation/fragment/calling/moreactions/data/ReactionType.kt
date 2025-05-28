@@ -7,18 +7,18 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class ReactionType(@StringRes val titleResId: Int) {
-    @SerialName(":+1:")
+    @SerialName("like")
     LIKE(R.string.emoji_like),
 
-    @SerialName(":heart:")
+    @SerialName("heart")
     HEART(R.string.emoji_heart),
 
-    @SerialName(":clap:")
+    @SerialName("applause")
     APPLAUSE(R.string.emoji_applause),
 
-    @SerialName(":laughing:")
+    @SerialName("laugh")
     LAUGH(R.string.emoji_laugh),
 
-    @SerialName(":astonished:")
+    @SerialName("surprised")
     SURPRISED(R.string.emoji_surprised);
 }
