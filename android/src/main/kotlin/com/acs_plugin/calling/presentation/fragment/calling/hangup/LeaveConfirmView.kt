@@ -33,9 +33,8 @@ internal class LeaveConfirmView(
     private lateinit var bottomCellAdapter: BottomCellAdapter
 
     init {
-        inflate(context, R.layout.azure_communication_ui_calling_listview, this)
-        leaveConfirmMenuTable = findViewById(R.id.bottom_drawer_table)
-        setBackgroundResource(R.color.azure_communication_ui_calling_color_bottom_drawer_background)
+        inflate(context, R.layout.leave_confirm_view, this)
+        leaveConfirmMenuTable = findViewById(R.id.leave_options_recycler_view)
     }
 
     fun stop() {
@@ -86,14 +85,6 @@ internal class LeaveConfirmView(
     private val bottomCellItems: List<BottomCellItem>
         get() {
             val bottomCellItems = mutableListOf(
-                // Leave title
-                BottomCellItem(
-                    title = context.getString(R.string.azure_communication_ui_calling_view_leave_call),
-                    contentDescription = context.getString(R.string.azure_communication_ui_calling_view_leave_confirm_menu),
-                    isOnHold = false,
-                    itemType = BottomCellItemType.BottomMenuTitle,
-                ),
-
                 // Leave
                 BottomCellItem(
                     icon = ContextCompat.getDrawable(
@@ -124,6 +115,7 @@ internal class LeaveConfirmView(
             )
             return bottomCellItems
         }
+
     class AccessibilityManipulatingLinearLayoutManager(context: Context) : LinearLayoutManager(context) {
         override fun getRowCountForAccessibility(
             recycler: RecyclerView.Recycler,
@@ -140,7 +132,7 @@ internal class LeaveConfirmView(
         ) {
             super.onInitializeAccessibilityNodeInfoForItem(recycler, state, host, info)
             try {
-                info?.let {
+                info.let {
                     val itemInfo = AccessibilityNodeInfoCompat.CollectionItemInfoCompat.obtain(max(info.collectionItemInfo.rowIndex - 1, 0), info.collectionItemInfo.rowSpan, info.collectionItemInfo.columnIndex, info.collectionItemInfo.columnSpan, info.collectionItemInfo.isHeading, info.collectionItemInfo.isSelected)
                     if (info.collectionItemInfo.rowIndex == 0) {
                         info.setCollectionItemInfo(null)

@@ -10,6 +10,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.acs_plugin.R
@@ -17,6 +18,7 @@ import com.acs_plugin.calling.models.CallCompositeParticipantViewData
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellAvatarView
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellVideoView
 import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
+import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.persona.AvatarView
 
 @SuppressLint("ViewConstructor")
@@ -61,13 +63,13 @@ internal class ParticipantGridCellView(
         val participantAvatarContainer: ConstraintLayout =
             findViewById(R.id.azure_communication_ui_participant_avatar_view_container)
 
-        val displayNameAudioTextView: TextView =
+        val displayNameAudioTextView: MaterialTextView =
             findViewById(R.id.azure_communication_ui_participant_audio_view_display_name)
 
-        val micIndicatorAudioImageView: ImageView =
+        val micIndicatorAudioImageView: AppCompatImageView =
             findViewById(R.id.azure_communication_ui_participant_audio_view_mic_indicator)
 
-        val onHoldTextView: TextView =
+        val onHoldTextView: MaterialTextView =
             findViewById(R.id.azure_communication_ui_calling_participant_audio_view_on_hold)
 
         avatarView = ParticipantGridCellAvatarView(
@@ -94,10 +96,10 @@ internal class ParticipantGridCellView(
         val displayNameAndMicIndicatorViewContainer: View =
             findViewById(R.id.azure_communication_ui_participant_view_on_video_information_container)
 
-        val displayNameOnVideoTextView: TextView =
+        val displayNameOnVideoTextView: MaterialTextView =
             findViewById(R.id.azure_communication_ui_participant_view_on_video_display_name)
 
-        val micIndicatorOnVideoImageView: ImageView =
+        val micIndicatorOnVideoImageView: AppCompatImageView =
             findViewById(R.id.azure_communication_ui_participant_view_on_video_mic_indicator)
 
         videoView = ParticipantGridCellVideoView(

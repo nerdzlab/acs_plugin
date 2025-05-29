@@ -29,7 +29,7 @@
             android:windowSoftInputMode="adjustResize"
             android:showOnLockScreen="true"
             android:turnScreenOn="true"
-            />
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.acs_plugin.calling.presentation.PiPCallCompositeActivity"
@@ -42,11 +42,11 @@
             android:windowSoftInputMode="adjustResize"
             android:showOnLockScreen="true"
             android:turnScreenOn="true"
-            />
+            android:screenOrientation="portrait" />
+
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false"
-            />
+            android:required="false" />
 
         <activity
             android:name="com.acs_plugin.calling.presentation.CallCompositeActivity"
@@ -56,14 +56,14 @@
             android:windowSoftInputMode="adjustResize"
             android:showOnLockScreen="true"
             android:turnScreenOn="true"
-            />
+            android:screenOrientation="portrait" />
 
         <service
             android:name="com.acs_plugin.calling.service.InCallService"
             android:foregroundServiceType="microphone"
             android:stopWithTask="false"
-            android:exported="false"
-            />
+            android:exported="false" />
+
         <service
             android:name="com.azure.android.communication.calling.TelecomConnectionService"
             android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
@@ -72,6 +72,7 @@
                 <action android:name="android.telecom.ConnectionService" />
             </intent-filter>
         </service>
+
     </application>
 
 </manifest>

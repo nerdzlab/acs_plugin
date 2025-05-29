@@ -6,4 +6,6 @@
     <string name="choose_audio" translatable="false">Choose audio</string>
     <string name="turn_off_audio" translatable="false">Turn off the audio</string>
     <string name="noise_suppression" translatable="false">Noise suppression</string>
+    <string name="participant_list" translatable="false">Participants (%d)</string>
+    <string name="share_meeting_link" translatable="false">Share meeting link</string>
 </resources>

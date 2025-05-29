@@ -2,26 +2,26 @@
    Copyright (c) Microsoft Corporation. All rights reserved.
    Licensed under the MIT License.
   -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="36dp"
-    android:layout_height="36dp"
-    android:background="@color/azure_communication_ui_calling_color_button_background_transparent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_input_rounded_r6"
+    android:backgroundTint="@color/white"
+    android:elevation="@dimen/elevation_4dp"
     android:clickable="true"
-    android:focusable="true"
-    >
+    android:focusable="true">
 
-    <ImageView
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="@drawable/azure_communication_ui_calling_corner_bottom_left_top_right_radius_rectangle_4dp"
-        android:backgroundTint="@color/azure_communication_ui_calling_color_button_switch_camera"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="@dimen/button_height_32dp"
+        android:layout_height="@dimen/button_height_32dp"
         android:contentDescription="@string/azure_communication_ui_calling_switch_camera_button_back"
-        android:padding="5dp"
+        android:padding="@dimen/padding_6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/azure_communication_ui_calling_ic_fluent_camera_switch_24_regular_composite_button_enabled"
-        />
+        app:srcCompat="@drawable/ic_camera_reverse" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
