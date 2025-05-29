@@ -200,6 +200,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
         let updatedList = updateHandRaisedParticipants(remoteParticipantsInfoList)
         
         participantsInfoListSubject.send(updatedList)
+        AudioPlayerManager.shared.playUserJoinedSound()
     }
     
     private func updateRemoteParticipant(userIdentifier: String) {
@@ -276,6 +277,7 @@ extension CallingSDKEventsHandler: CallDelegate,
             let updatedList = updateParticipantsList(participantsList, withReaction: reactionMessage)
             
             participantsInfoListSubject.send(updatedList)
+            AudioPlayerManager.shared.playReactionReceivedSound()
         } catch {
             print("❌ Failed to decode reaction message: \(error)")
         }

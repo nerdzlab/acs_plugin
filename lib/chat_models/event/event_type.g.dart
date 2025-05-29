@@ -26,5 +26,6 @@ const _$EventTypeEnumMap = {
   EventType.onChatThreadDeleted: 'onChatThreadDeleted',
   EventType.onParticipantsAdded: 'onParticipantsAdded',
   EventType.onParticipantsRemoved: 'onParticipantsRemoved',
+  EventType.onChatPushNotificationOpened: 'onChatPushNotificationOpened',
   EventType.unknown: 'unknown',
 };

@@ -116,6 +116,18 @@ public class ChatAdapter {
         try await chatSDKWrapper.retrieveChatThreadProperties(for: threadId)
     }
     
+    public func getInitialListThreads() async throws -> [ChatThreadItem] {
+        try await chatSDKWrapper.getInitialListThreads()
+    }
+    
+    public func isMoreThreadsAvailable() async throws -> Bool {
+        try await chatSDKWrapper.isMoreThreadsAvailable()
+    }
+    
+    public func getNextThreads() async throws -> [ChatThreadItem] {
+        try await chatSDKWrapper.getNextThreads()
+    }
+    
     public func sendMessage(
         threadId: String,
         content: String,
