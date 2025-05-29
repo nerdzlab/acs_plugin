@@ -1,6 +1,6 @@
 package com.acs_plugin.chat.service.sdk.wrapper
 
-internal enum class ChatEventType {
+enum class ChatEventType {
     CHAT_MESSAGE_RECEIVED,
     CHAT_MESSAGE_EDITED,
     CHAT_MESSAGE_DELETED,

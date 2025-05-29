@@ -1,14 +1,13 @@
 package com.acs_plugin.chat;
 
 import android.content.Context;
-import android.content.Intent;
 
 import com.acs_plugin.chat.configuration.ChatCompositeConfiguration;
 import com.acs_plugin.chat.models.ChatCompositeErrorEvent;
 import com.acs_plugin.chat.models.ChatCompositeRemoteOptions;
-import com.azure.android.communication.common.CommunicationIdentifier;
-import com.azure.android.communication.common.CommunicationTokenCredential;
 
+import com.acs_plugin.chat.service.sdk.wrapper.CommunicationIdentifier;
+import com.azure.android.communication.common.CommunicationTokenCredential;
 import java9.util.concurrent.CompletableFuture;
 
 /**

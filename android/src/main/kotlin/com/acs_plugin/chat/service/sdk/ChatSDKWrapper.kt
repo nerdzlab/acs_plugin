@@ -57,6 +57,7 @@ internal class ChatSDKWrapper(
     private val singleThreadedContext = Executors.newSingleThreadExecutor()
 
     private lateinit var threadClient: ChatThreadClient
+
     private lateinit var chatClient: ChatClient
 
     private val endPointURL = chatConfig.endpoint
@@ -88,6 +89,7 @@ internal class ChatSDKWrapper(
     override fun getChatEventSharedFlow(): SharedFlow<ChatEventModel> =
         chatEventModelSharedFlow
 
+    // Update initialization to work with Set
     override fun initialization(): CompletableFuture<Void> {
         val future = CompletableFuture<Void>()
         try {
@@ -112,7 +114,7 @@ internal class ChatSDKWrapper(
             future.complete(null)
         } catch (ex: Exception) {
             future.completeExceptionally(ex)
-            logger.debug("sendMessage failed.", ex)
+            logger.debug("initialization failed.", ex)
         }
         return future
     }

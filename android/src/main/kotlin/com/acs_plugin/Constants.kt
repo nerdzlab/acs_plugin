@@ -23,12 +23,7 @@ object Constants {
     }
 
     object FlutterEvents {
-        const val ON_CHAT_ERROR = "onChatError"
-        const val ON_REMOTE_PARTICIPANT_JOINED = "onRemoteParticipantJoined"
-        const val ON_UNREAD_MESSAGES_COUNT_CHANGED = "onUnreadMessagesCountChanged"
-        const val ON_NEW_MESSAGE_RECEIVED = "onNewMessageReceived"
         const val ON_REAL_TIME_NOTIFICATION_CONNECTED = "onRealTimeNotificationConnected"
-        const val ON_REAL_TIME_NOTIFICATION_DISCONNECTED = "onRealTimeNotificationDisconnected"
         const val ON_CHAT_MESSAGE_RECEIVED = "onChatMessageReceived"
         const val ON_TYPING_INDICATOR_RECEIVED = "onTypingIndicatorReceived"
         const val ON_READ_RECEIPT_RECEIVED = "onReadReceiptReceived"
@@ -45,5 +40,16 @@ object Constants {
     object Prefs {
         const val PREFS_NAME = "user_data_prefs"
         const val USER_DATA_KEY = "user_data"
+        const val CHAT_ENDPOINT = "chat_endpoint"
+    }
+
+    object Arguments {
+        const val ENDPOINT = "endpoint"
+        const val THREAD_ID = "threadId"
+        const val CONTENT = "content"
+        const val SENDER_DISPLAY_NAME = "senderDisplayName"
+        const val TYPE = "type"
+        const val METADATA = "metadata"
+        const val MESSAGE_ID = "messageId"
     }
 }

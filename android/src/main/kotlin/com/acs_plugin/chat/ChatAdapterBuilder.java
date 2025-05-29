@@ -1,8 +1,8 @@
 package com.acs_plugin.chat;
 
-import com.azure.android.communication.common.CommunicationIdentifier;
-import com.azure.android.communication.common.CommunicationTokenCredential;
 import com.acs_plugin.chat.configuration.ChatCompositeConfiguration;
+import com.acs_plugin.chat.service.sdk.wrapper.CommunicationIdentifier;
+import com.azure.android.communication.common.CommunicationTokenCredential;
 
 /**
  * Builder for creating {@link ChatAdapter}.

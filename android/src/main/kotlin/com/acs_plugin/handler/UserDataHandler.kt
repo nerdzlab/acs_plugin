@@ -2,17 +2,15 @@ package com.acs_plugin.handler
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.gson.Gson
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import androidx.core.content.edit
 import com.acs_plugin.Constants
 import com.acs_plugin.data.UserData
+import kotlinx.serialization.json.Json
 
 class UserDataHandler(
-    private val context: Context,
-    private val channel: MethodChannel,
-    private val onUserDataReceived: (UserData) -> Unit
+    private val context: Context, private val channel: MethodChannel, private val onUserDataReceived: (UserData) -> Unit
 ) : MethodHandler {
 
     var tokenRefresher: (((String?, Throwable?) -> Unit) -> Unit)? = null
@@ -38,12 +36,12 @@ class UserDataHandler(
     private fun loadSavedUserData() {
         val userDataJson = sharedPreferences.getString(Constants.Prefs.USER_DATA_KEY, null)
         userDataJson?.let {
-            userData = Gson().fromJson(it, UserData::class.java)
+            userData = Json.decodeFromString<UserData>(it)
         }
     }
 
     private fun saveUserData(userData: UserData) {
-        val userDataJson = Gson().toJson(userData)
+        val userDataJson = Json.encodeToString(UserData.serializer(), userData)
         sharedPreferences.edit { putString(Constants.Prefs.USER_DATA_KEY, userDataJson) }
     }
 
@@ -61,9 +59,7 @@ class UserDataHandler(
                         result.success(null)
                     } else {
                         result.error(
-                            "INVALID_ARGUMENTS",
-                            "Token, name and userId are required",
-                            null
+                            "INVALID_ARGUMENTS", "Token, name and userId are required", null
                         )
                     }
                     true

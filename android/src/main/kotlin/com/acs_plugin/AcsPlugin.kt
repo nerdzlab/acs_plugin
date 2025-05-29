@@ -6,6 +6,7 @@ import com.acs_plugin.calling.CallComposite
 import com.acs_plugin.calling.CallCompositeBuilder
 import com.acs_plugin.calling.models.CallCompositeJoinLocator
 import com.acs_plugin.calling.models.CallCompositeRoomLocator
+import com.acs_plugin.handler.ChatHandler
 import com.acs_plugin.handler.MethodHandler
 import com.acs_plugin.handler.UserDataHandler
 import com.azure.android.communication.common.CommunicationTokenCredential
@@ -88,6 +89,10 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         channel.setMethodCallHandler(null)
     }
 
+    fun chatPushOpened(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
+        handlers.filterIsInstance<ChatHandler>().firstOrNull()?.chatPushNotificationOpened(pushNotificationReceivedEvent)
+    }
+
     private fun initializeRoomCall(token: String, roomId: String, userId: String, result: MethodChannel.Result) {
         if (activity == null) {
             result.error("NO_ACTIVITY", "Plugin not attached to an Activity", null)
@@ -110,8 +115,20 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     private fun setupHandlers() {
-        handlers.add(UserDataHandler(context, channel) { userData ->
+        val userDataHandler = UserDataHandler(context, channel) { }
+        handlers.addAll(
+            listOf(
+                userDataHandler,
+                ChatHandler(
+                    context = context,
+                    tokenRefresher = userDataHandler.tokenRefresher,
+                    onSendEvent = { sendEventToFlutter(it.name, it.payload) }
+                )
+            )
+        )
+    }
 
-        })
+    private fun sendEventToFlutter(name: String, payload: String?) {
+        channel.invokeMethod(name, payload)
     }
 }
