@@ -3,6 +3,7 @@
 
 package com.acs_plugin.calling.presentation.fragment.calling.hangup
 
+import com.acs_plugin.Constants
 import com.acs_plugin.calling.redux.Store
 import com.acs_plugin.calling.redux.action.Action
 import com.acs_plugin.calling.redux.action.CallingAction
@@ -11,6 +12,7 @@ import com.acs_plugin.calling.redux.state.CallingStatus
 import com.acs_plugin.calling.redux.state.ReduxState
 import com.acs_plugin.calling.redux.state.VisibilityState
 import com.acs_plugin.calling.redux.state.VisibilityStatus
+import com.acs_plugin.utils.FlutterEventDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -28,6 +30,8 @@ internal class LeaveConfirmViewModel(private val store: Store<ReduxState>) {
     }
 
     fun confirm() {
+        FlutterEventDispatcher.sendEvent(Constants.FlutterEvents.ON_USER_CALL_ENDED)
+
         if (store.getCurrentState().localParticipantState.initialCallJoinState.skipSetupScreen &&
             (
                 store.getCurrentState().callState.callingStatus != CallingStatus.CONNECTED &&

@@ -6,13 +6,14 @@ import com.acs_plugin.calling.CallComposite
 import com.acs_plugin.calling.CallCompositeBuilder
 import com.acs_plugin.calling.models.CallCompositeJoinLocator
 import com.acs_plugin.calling.models.CallCompositeRoomLocator
+import com.acs_plugin.utils.FlutterEventDispatcher
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.communication.common.CommunicationTokenRefreshOptions
 import com.azure.android.communication.common.CommunicationUserIdentifier
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -25,6 +26,7 @@ class AcsPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
+  private lateinit var eventChannel: EventChannel
 
   private var activity: Activity? = null
   private lateinit var context: Context
@@ -34,6 +36,17 @@ class AcsPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "acs_plugin")
     channel.setMethodCallHandler(this)
+
+    eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "acs_plugin_events")
+    eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
+      override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        FlutterEventDispatcher.setEventSink(events)
+      }
+
+      override fun onCancel(arguments: Any?) {
+        FlutterEventDispatcher.clear()
+      }
+    })
   }
 
   // ActivityAware callbacks:
