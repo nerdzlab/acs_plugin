@@ -159,10 +159,9 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         print("pushRegistry payload: \(payload.dictionaryPayload)")
         if isAppInForeground() {
             print("calling demo app: app is in foreground")
-            //                    if let entryViewController = findEntryViewController() {
-            //                        print("calling demo app: onPushNotificationReceived")
-            //                        entryViewController.onPushNotificationReceived(dictionaryPayload: payload.dictionaryPayload)
-            //                    }
+            
+            let pushNotificationInfo = PushNotification(data: payload.dictionaryPayload)
+            userDataHandler.getCallComposite()?.handlePushNotification(pushNotification: pushNotificationInfo)
         } else {
             print("calling demo app: app is not in foreground")
             let pushInfo = PushNotification(data: payload.dictionaryPayload)
@@ -180,11 +179,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                                              callKitOptions: callKitOptions) { result in
                 if case .success = result {
                     DispatchQueue.global().async {
-                        //                                if let entryViewController = self.findEntryViewController() {
-                        //                                    print("calling demo app: onPushNotificationReceivedBackgroundMode")
-                        //                                    entryViewController.onPushNotificationReceivedBackgroundMode(
-                        //                                        dictionaryPayload: payload.dictionaryPayload)
-                        //                                }
+                        self.userDataHandler.getCallComposite()?.handlePushNotification(pushNotification: pushInfo)
                     }
                 } else {
                     print("calling demo app: failed on reportIncomingCall")
