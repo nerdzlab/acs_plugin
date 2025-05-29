@@ -42,8 +42,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     public static var shared: AcsPlugin = AcsPlugin()
+    private var voipRegistry: PKPushRegistry = PKPushRegistry(queue: DispatchQueue.main)
     
-    private var pushRegistry: PKPushRegistry?
     private var voipToken: Data?
     private var eventChannel: FlutterEventChannel?
     private var eventSink: FlutterEventSink?
@@ -140,10 +140,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     private func setupPushKit() {
-        let registry = PKPushRegistry(queue: .main)
-        registry.delegate = self
-        registry.desiredPushTypes = [.voIP]
-        self.pushRegistry = registry
+        voipRegistry.delegate = self
+        voipRegistry.desiredPushTypes = [PKPushType.voIP]
     }
     
     public func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
@@ -159,92 +157,91 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                              for type: PKPushType,
                              completion: @escaping () -> Void) {
         print("pushRegistry payload: \(payload.dictionaryPayload)")
-        //        os_log("pushRegistry payload: \(payload.dictionaryPayload)")
-        //        if isAppInForeground() {
-        //            os_log("calling demo app: app is in foreground")
-        //            if let entryViewController = findEntryViewController() {
-        //                os_log("calling demo app: onPushNotificationReceived")
-        //                entryViewController.onPushNotificationReceived(dictionaryPayload: payload.dictionaryPayload)
-        //            }
-        //        } else {
-        //            os_log("calling demo app: app is not in foreground")
-        //            let pushInfo = PushNotification(data: payload.dictionaryPayload)
-        //            let providerConfig = CXProviderConfiguration()
-        //            providerConfig.supportsVideo = true
-        //            providerConfig.maximumCallGroups = 1
-        //            providerConfig.maximumCallsPerCallGroup = 1
-        //            providerConfig.includesCallsInRecents = true
-        //            providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
-        //            let callKitOptions = CallKitOptions(providerConfig: providerConfig,
-        //                                                isCallHoldSupported: true,
-        //                                                provideRemoteInfo: incomingCallRemoteInfo,
-        //                                                configureAudioSession: configureAudioSession)
-        //            CallComposite.reportIncomingCall(pushNotification: pushInfo,
-        //                                             callKitOptions: callKitOptions) { result in
-        //                if case .success = result {
-        //                    DispatchQueue.global().async {
-        //                        if let entryViewController = self.findEntryViewController() {
-        //                            os_log("calling demo app: onPushNotificationReceivedBackgroundMode")
-        //                            entryViewController.onPushNotificationReceivedBackgroundMode(
-        //                                dictionaryPayload: payload.dictionaryPayload)
-        //                        }
-        //                    }
-        //                } else {
-        //                    os_log("calling demo app: failed on reportIncomingCall")
-        //                }
-        //            }
-        //        }
+        if isAppInForeground() {
+            print("calling demo app: app is in foreground")
+            //                    if let entryViewController = findEntryViewController() {
+            //                        print("calling demo app: onPushNotificationReceived")
+            //                        entryViewController.onPushNotificationReceived(dictionaryPayload: payload.dictionaryPayload)
+            //                    }
+        } else {
+            print("calling demo app: app is not in foreground")
+            let pushInfo = PushNotification(data: payload.dictionaryPayload)
+            let providerConfig = CXProviderConfiguration()
+            providerConfig.supportsVideo = true
+            providerConfig.maximumCallGroups = 1
+            providerConfig.maximumCallsPerCallGroup = 1
+            providerConfig.includesCallsInRecents = true
+            providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
+            let callKitOptions = CallKitOptions(providerConfig: providerConfig,
+                                                isCallHoldSupported: true,
+                                                provideRemoteInfo: incomingCallRemoteInfo,
+                                                configureAudioSession: configureAudioSession)
+            CallComposite.reportIncomingCall(pushNotification: pushInfo,
+                                             callKitOptions: callKitOptions) { result in
+                if case .success = result {
+                    DispatchQueue.global().async {
+                        //                                if let entryViewController = self.findEntryViewController() {
+                        //                                    print("calling demo app: onPushNotificationReceivedBackgroundMode")
+                        //                                    entryViewController.onPushNotificationReceivedBackgroundMode(
+                        //                                        dictionaryPayload: payload.dictionaryPayload)
+                        //                                }
+                    }
+                } else {
+                    print("calling demo app: failed on reportIncomingCall")
+                }
+            }
+        }
     }
     
-    //    private func getCallKitOptions() -> CallKitOptions {
-    //        let cxHandle = CXHandle(type: .generic, value: "Outgoing call")
-    //        let providerConfig = CXProviderConfiguration()
-    //        providerConfig.supportsVideo = true
-    //        providerConfig.maximumCallGroups = 1
-    //        providerConfig.maximumCallsPerCallGroup = 1
-    //        providerConfig.includesCallsInRecents = true
-    //        providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
-    //        let isCallHoldSupported = true
-    //        let callKitOptions = CallKitOptions(providerConfig: providerConfig,
-    //                                           isCallHoldSupported: isCallHoldSupported,
-    //                                           provideRemoteInfo: incomingCallRemoteInfo,
-    //                                           configureAudioSession: configureAudioSession)
-    //        return callKitOptions
-    //    }
-    //
-    //    public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
-    //        let cxHandle = CXHandle(type: .generic, value: "Incoming call")
-    //        var remoteInfoDisplayName = "Test display name"
-    //        if remoteInfoDisplayName.isEmpty {
-    //            remoteInfoDisplayName = info.displayName
-    //        }
-    //        let callKitRemoteInfo = CallKitRemoteInfo(displayName: remoteInfoDisplayName,
-    //                                                               handle: cxHandle)
-    //        return callKitRemoteInfo
-    //    }
-    //
-    //    public func configureAudioSession() -> Error? {
-    //        let audioSession = AVAudioSession.sharedInstance()
-    //        var configError: Error?
-    //
-    //        // Check the current audio output route
-    //        let currentRoute = audioSession.currentRoute
-    //        let isUsingSpeaker = currentRoute.outputs.contains { $0.portType == .builtInSpeaker }
-    //        let isUsingReceiver = currentRoute.outputs.contains { $0.portType == .builtInReceiver }
-    //
-    //        // Only configure the session if necessary (e.g., when not on speaker/receiver)
-    //        if !isUsingSpeaker && !isUsingReceiver {
-    //            do {
-    //                // Keeping default .playAndRecord without forcing speaker
-    //                try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
-    //                try audioSession.setActive(true)
-    //            } catch {
-    //                configError = error
-    //            }
-    //        }
-    //
-    //        return configError
-    //    }
+//    private func getCallKitOptions() -> CallKitOptions {
+//        let cxHandle = CXHandle(type: .generic, value: "Outgoing call")
+//        let providerConfig = CXProviderConfiguration()
+//        providerConfig.supportsVideo = true
+//        providerConfig.maximumCallGroups = 1
+//        providerConfig.maximumCallsPerCallGroup = 1
+//        providerConfig.includesCallsInRecents = true
+//        providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
+//        let isCallHoldSupported = true
+//        let callKitOptions = CallKitOptions(providerConfig: providerConfig,
+//                                            isCallHoldSupported: isCallHoldSupported,
+//                                            provideRemoteInfo: incomingCallRemoteInfo,
+//                                            configureAudioSession: configureAudioSession)
+//        return callKitOptions
+//    }
+    
+    public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
+        let cxHandle = CXHandle(type: .generic, value: "Incoming call")
+        var remoteInfoDisplayName = "Test display name"
+        if remoteInfoDisplayName.isEmpty {
+            remoteInfoDisplayName = info.displayName
+        }
+        let callKitRemoteInfo = CallKitRemoteInfo(displayName: remoteInfoDisplayName,
+                                                  handle: cxHandle)
+        return callKitRemoteInfo
+    }
+    
+    public func configureAudioSession() -> Error? {
+        let audioSession = AVAudioSession.sharedInstance()
+        var configError: Error?
+        
+        // Check the current audio output route
+        let currentRoute = audioSession.currentRoute
+        let isUsingSpeaker = currentRoute.outputs.contains { $0.portType == .builtInSpeaker }
+        let isUsingReceiver = currentRoute.outputs.contains { $0.portType == .builtInReceiver }
+        
+        // Only configure the session if necessary (e.g., when not on speaker/receiver)
+        if !isUsingSpeaker && !isUsingReceiver {
+            do {
+                // Keeping default .playAndRecord without forcing speaker
+                try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
+                try audioSession.setActive(true)
+            } catch {
+                configError = error
+            }
+        }
+        
+        return configError
+    }
     
     public func saveLaunchedChatNotification(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
         preloadedAction = PreloadedAction(type: .chatNotification, chatPushNotificationReceivedEvent: pushNotificationReceivedEvent)
@@ -267,6 +264,17 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         result(preloadedAction?.toJson())
         // Remove preloaded actin after first return
         preloadedAction = nil
+    }
+    
+    private func isAppInForeground() -> Bool {
+        let appState = UIApplication.shared.applicationState
+        
+        switch appState {
+        case .active:
+            return true
+        default:
+            return false
+        }
     }
 }
 
