@@ -264,9 +264,9 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _setUserData() async {
     try {
       await _acsPlugin.setUserData(
-        token: _chatToken,
+        token: _acsToken,
         name: "Yra",
-        userId: _chatUserId,
+        userId: _userId,
       );
       log('Set user data successfully');
       _shwoSnacBar('Set user data successfully');
