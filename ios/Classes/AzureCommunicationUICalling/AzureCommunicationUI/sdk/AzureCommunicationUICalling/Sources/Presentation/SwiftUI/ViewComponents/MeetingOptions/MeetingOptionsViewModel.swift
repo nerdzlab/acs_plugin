@@ -23,10 +23,13 @@ internal class MeetingOptionsViewModel: ObservableObject {
     private(set) var participantsButtonViewModel: IconWithLabelButtonViewModel<ParticipantsButtonState>!
     private(set) var effectsButtonViewModel: IconWithLabelButtonViewModel<EffectsButtonState>!
     
+    private var isRemoteParticipantsPresent: Bool
+    
     @Published private(set) var raiseHandButtonViewModel: IconWithLabelButtonViewModel<RaiseHandButtonState>!
     @Published private(set) var shareScreenViewModel: IconWithLabelButtonViewModel<ShareScreenButtonState>!
     @Published private(set) var layoutOptionsButtonViewModel: IconWithLabelButtonViewModel<LayoutOptionsButtonState>!
     
+    let isReactionEnable: Bool
     var isDisplayed: Bool
     
     init(
@@ -41,7 +44,10 @@ internal class MeetingOptionsViewModel: ObservableObject {
         onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
         onLayoutOptions: @escaping () -> Void,
         onReaction: @escaping (ReactionType) -> Void,
-        isDisplayed: Bool
+        isDisplayed: Bool,
+        isRemoteParticipantsPresent: Bool,
+        isReactionEnable: Bool,
+        isRaiseHandAvailable: Bool
     ) {
         self.localizationProvider = localizationProvider
         self.isDisplayed = false
@@ -54,11 +60,14 @@ internal class MeetingOptionsViewModel: ObservableObject {
         self.onEffects = onEffects
         self.onLayoutOptions = onLayoutOptions
         self.onReaction = onReaction
+        self.isRemoteParticipantsPresent = isRemoteParticipantsPresent
+        self.isReactionEnable = isReactionEnable
         
         raiseHandButtonViewModel = IconWithLabelButtonViewModel(
             selectedButtonState: localUserState.raiseHandState.operation == .handIsLower ? RaiseHandButtonState.raiseHand : RaiseHandButtonState.lowerHand,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
+            isDisabled: !isRaiseHandAvailable,
             isVisible: true,
             action: { [weak self] in
                 if localUserState.raiseHandState.operation == .handIsLower {
@@ -72,7 +81,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: localUserState.shareScreenState.operation == .screenIsSharing ? ShareScreenButtonState.shareOn : ShareScreenButtonState.shareOff,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-            isDisabled: false,
+            isDisabled: !isRemoteParticipantsPresent,
             isVisible: true,
             action: { [weak self] in
                 if localUserState.shareScreenState.operation == .screenIsSharing {
@@ -116,7 +125,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? EffectsButtonState.off : EffectsButtonState.on,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-            isDisabled: localUserState.cameraState.operation == .off,
+            isDisabled: localUserState.cameraState.operation != .on,
             isVisible: true,
             action: { [weak self] in
                 if (localUserState.backgroundEffectsState.operation == .off) {
@@ -127,7 +136,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             })
     }
     
-    func update(localUserState: LocalUserState, isDisplayed: Bool) {
+    func update(localUserState: LocalUserState, isDisplayed: Bool, isRemoteParticipantsPresent: Bool, isRaiseHandAvailable: Bool) {
         self.isDisplayed = isDisplayed
         
         let previousState = raiseHandButtonViewModel.selectedButtonState
@@ -145,6 +154,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: selectedState,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
+            isDisabled: !isRaiseHandAvailable,
             isVisible: true,
             action: { [weak self] in
                 if operation == .handIsLower {
@@ -158,7 +168,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: localUserState.shareScreenState.operation == .screenIsSharing ? ShareScreenButtonState.shareOn : ShareScreenButtonState.shareOff,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-            isDisabled: false,
+            isDisabled: !isRemoteParticipantsPresent,
             isVisible: true,
             action: { [weak self] in
                 if localUserState.shareScreenState.operation == .screenIsSharing {
@@ -202,7 +212,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? EffectsButtonState.off : EffectsButtonState.on,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-            isDisabled: localUserState.cameraState.operation == .off,
+            isDisabled: localUserState.cameraState.operation != .on,
             isVisible: true,
             action: { [weak self] in
                 if (localUserState.backgroundEffectsState.operation == .off) {

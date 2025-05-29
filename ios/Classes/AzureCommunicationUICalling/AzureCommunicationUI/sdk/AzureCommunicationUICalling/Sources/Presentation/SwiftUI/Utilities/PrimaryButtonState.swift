@@ -77,7 +77,12 @@ enum ShareScreenButtonState: ButtonState {
     case shareOff
     
     var iconName: CompositeIcon {
-        return .shareIcon
+        switch self {
+        case .shareOn:
+            return .stopShareIcon
+        case .shareOff:
+            return .shareIcon
+        }
     }
     
     var localizationKey: LocalizationKey {

@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
@@ -17,7 +18,6 @@ import com.acs_plugin.calling.redux.state.AudioState
 import com.acs_plugin.calling.redux.state.BlurStatus
 import com.acs_plugin.calling.redux.state.CameraOperationalStatus
 import com.acs_plugin.extension.onSingleClickListener
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class SetupControlBarView : LinearLayout {
@@ -59,7 +59,7 @@ internal class SetupControlBarView : LinearLayout {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isVisibleState.collect { visible ->
-                visibility = if (visible) VISIBLE else INVISIBLE
+                isVisible = visible
             }
         }
 
@@ -71,7 +71,7 @@ internal class SetupControlBarView : LinearLayout {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.cameraIsVisible.collect {
-                cameraButton.visibility = if (it) VISIBLE else GONE
+                cameraButton.isVisible = it
             }
         }
 
@@ -95,7 +95,7 @@ internal class SetupControlBarView : LinearLayout {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.micVisible.collect {
-                micButton.visibility = if (it) VISIBLE else GONE
+                micButton.isVisible = it
             }
         }
 
@@ -125,7 +125,7 @@ internal class SetupControlBarView : LinearLayout {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.audioDeviceButtonVisible.collect {
-                audioDeviceButton.visibility = if (it) VISIBLE else GONE
+                audioDeviceButton.isVisible = it
             }
         }
 

@@ -16,6 +16,7 @@ protocol CallingServiceProtocol {
     var dominantSpeakersSubject: CurrentValueSubject<[String], Never> { get }
     var participantRoleSubject: PassthroughSubject<ParticipantRoleEnum, Never> { get }
     var totalParticipantCountSubject: PassthroughSubject<Int, Never> { get }
+    var localUserLowerHandSubject: PassthroughSubject<String, Never> { get }
     /* <CALL_START_TIME>
     var callStartTimeSubject: PassthroughSubject<Date, Never> { get }
     </CALL_START_TIME> */
@@ -81,6 +82,11 @@ protocol CallingServiceProtocol {
     
     func noiseSuppressionCallOn()
     func noiseSuppressionCallOff()
+    
+    func requestScreenSharingStream()
+    func requestStopScreenSharingStream()
+    func stopScreenSharing() async throws
+    func showChat()
 }
 
 class CallingService: NSObject, CallingServiceProtocol {
@@ -101,6 +107,7 @@ class CallingService: NSObject, CallingServiceProtocol {
     var networkDiagnosticsSubject = PassthroughSubject<NetworkDiagnosticModel, Never>()
     var mediaDiagnosticsSubject = PassthroughSubject<MediaDiagnosticModel, Never>()
     var capabilitiesChangedSubject: PassthroughSubject<CapabilitiesChangedEvent, Never>
+    var localUserLowerHandSubject: PassthroughSubject<String, Never>
     /* <CALL_START_TIME>
     var callStartTimeSubject: PassthroughSubject<Date, Never>
     </CALL_START_TIME> */
@@ -144,6 +151,7 @@ class CallingService: NSObject, CallingServiceProtocol {
         callStartTimeSubject = callingSDKWrapper.callingEventsHandler.callStartTimeSubject
         </CALL_START_TIME> */
         videoEffectErrorSubject = callingSDKWrapper.callingEventsHandler.videoEffectError
+        localUserLowerHandSubject = callingSDKWrapper.callingEventsHandler.localUserLowerHandSubject
     }
 
     func setupCall() async throws {
@@ -275,5 +283,21 @@ class CallingService: NSObject, CallingServiceProtocol {
     
     func noiseSuppressionCallOff() {
         callingSDKWrapper.disableNoiseSuppression()
+    }
+    
+    func requestScreenSharingStream() {
+        callingSDKWrapper.requestScreenSharingStream()
+    }
+    
+    func requestStopScreenSharingStream() {
+        callingSDKWrapper.requestStopScreenSharingStream()
+    }
+    
+    func stopScreenSharing() async throws {
+        try await callingSDKWrapper.stopScreenSharingStream()
+    }
+    
+    func showChat() {
+        callingSDKWrapper.showChat()
     }
 }

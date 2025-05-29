@@ -28,6 +28,8 @@ enum CallCompositeInternalError: Error, Equatable {
     case captionsStartFailedSpokenLanguageNotSupported
     case captionsStartFailedCallNotConnected
     case setVideoEffectFailed
+    case startScreenSharingFailed
+    case stopScreenSharingFailed
 
     func toCallCompositeErrorCode() -> String? {
         switch self {
@@ -55,6 +57,10 @@ enum CallCompositeInternalError: Error, Equatable {
             return CallCompositeErrorCode.raiseHand
         case .lowerHandFailed:
             return CallCompositeErrorCode.lowerHand
+        case .stopScreenSharingFailed:
+            return CallCompositeErrorCode.stopScreenShareFailure
+        case .startScreenSharingFailed:
+            return CallCompositeErrorCode.startScreenShareFailure
         case .callHoldFailed,
                 .callResumeFailed,
                 .callEvicted,
@@ -92,6 +98,8 @@ enum CallCompositeInternalError: Error, Equatable {
                 .setVideoEffectFailed,
                 .unMuteFailed,
                 .muteFailed,
+                .startScreenSharingFailed,
+                .stopScreenSharingFailed,
                 .callJoinConnectionFailed:
             return false
         }

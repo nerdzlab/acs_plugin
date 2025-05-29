@@ -56,12 +56,14 @@ internal class CallingSDKInitializer: NSObject {
     }
 
     func setupCallAgent() async throws -> CallAgent {
-        self.callAgent = nil
+        //MTODO need to think about display name after call agent created
+//        self.callAgent = nil
         
-//        if let existingCallAgent = self.callAgent {
-//                logger.debug("Reusing call agent")
-//                return existingCallAgent
-//        }
+        if let existingCallAgent = self.callAgent {
+                logger.debug("Reusing call agent")
+                return existingCallAgent
+        }
+        
         
         let callClient = setupCallClient()
         let options = CallAgentOptions()
@@ -227,6 +229,18 @@ internal class CallingSDKInitializer: NSObject {
         incomingCall?.delegate = nil
         incomingCall = nil
     }
+    
+    func showChat() {
+        events.onShowUserChat?()
+    }
+    
+    func requestScreenSharing() {
+        events.onStartScreenSharing?()
+    }
+    
+    func requestStopSharing() {
+        events.onStopScreenSharing?()
+    }
 
     private func makeCallClient() -> CallClient {
         let clientOptions = CallClientOptions()
@@ -253,7 +267,7 @@ extension CallingSDKInitializer: CallAgentDelegate {
                           didRecieveIncomingCall incomingCall: AzureCommunicationCalling.IncomingCall) {
         self.incomingCall = incomingCall
         incomingCall.delegate = self
-        self.logger.debug("incoming all received \(incomingCall.id)")
+        self.logger.debug("incoming сall received \(incomingCall.id)")
         let incomingCallInfo = IncomingCall(
             callId: incomingCall.id,
             callerDisplayName: incomingCall.callerInfo.displayName,

@@ -29,6 +29,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
     private let setupScreenOptions: SetupScreenOptions?
     private let callScreenOptions: CallScreenOptions?
     private let callType: CompositeCallType
+    private let callConfiguration: CallConfiguration
     /* <CUSTOM_COLOR_FEATURE> */
     private let themeOptions: ThemeOptions
     /* </CUSTOM_COLOR_FEATURE> */
@@ -56,6 +57,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
          themeOptions: ThemeOptions,
          /* </CUSTOM_COLOR_FEATURE> */
          updatableOptionsManager: UpdatableOptionsManagerProtocol,
+         callConfiguration: CallConfiguration,
          retrieveLogFiles: @escaping () -> [URL]
     ) {
         self.logger = logger
@@ -79,6 +81,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
         self.themeOptions = themeOptions
         /* </CUSTOM_COLOR_FEATURE> */
         self.avatarManager = avatarManager
+        self.callConfiguration = callConfiguration
         self.updatableOptionsManager = updatableOptionsManager
     }
     
@@ -133,7 +136,8 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                              captionsOptions: localOptions?.captionsOptions ?? CaptionsOptions(),
                                              capabilitiesManager: self.capabilitiesManager,
                                              callScreenOptions: callScreenOptions ?? CallScreenOptions(),
-                                             rendererViewManager: rendererViewManager)
+                                             rendererViewManager: rendererViewManager,
+                                             isChatEnable: localOptions?.isChatEnabled ?? false)
             self.setupViewModel = nil
             self.callingViewModel = viewModel
             return viewModel
@@ -217,7 +221,11 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                      onEffects: @escaping (LocalUserState.BackgroundEffectType) -> Void,
                                      onLayoutOptions: @escaping () -> Void,
                                      onReaction: @escaping (ReactionType) -> Void,
-                                     isDisplayed: Bool) -> MeetingOptionsViewModel {
+                                     isRemoteParticipantsPresent: Bool,
+                                     isDisplayed: Bool,
+                                     isReactionEnable: Bool,
+                                     isRaiseHandAvailable: Bool
+    ) -> MeetingOptionsViewModel {
         MeetingOptionsViewModel(
             localUserState: localUserState,
             localizationProvider: localizationProvider,
@@ -230,7 +238,10 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
             onEffects: onEffects,
             onLayoutOptions: onLayoutOptions,
             onReaction: onReaction,
-            isDisplayed: isDisplayed
+            isDisplayed: isDisplayed,
+            isRemoteParticipantsPresent: isRemoteParticipantsPresent,
+            isReactionEnable: isReactionEnable,
+            isRaiseHandAvailable: isRaiseHandAvailable
         )
     }
     
@@ -406,9 +417,10 @@ extension CompositeViewModelFactory {
     
     func makeInfoHeaderViewModel(dispatchAction: @escaping ActionDispatch,
                                  localUserState: LocalUserState,
-                                 callScreenInfoHeaderState: CallScreenInfoHeaderState
+                                 callScreenInfoHeaderState: CallScreenInfoHeaderState,
+                                 isChatEnable: Bool,
                                  /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
-                                 ,
+                                
                                  buttonViewDataState: ButtonViewDataState,
                                  controlHeaderViewData: CallScreenHeaderViewData?
                                  /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
@@ -421,9 +433,10 @@ extension CompositeViewModelFactory {
                             dispatchAction: dispatchAction,
                             enableMultitasking: enableMultitasking,
                             enableSystemPipWhenMultitasking: enableSystemPipWhenMultitasking,
-                            callScreenInfoHeaderState: callScreenInfoHeaderState
+                            callScreenInfoHeaderState: callScreenInfoHeaderState,
+                            isChatEnable: isChatEnable,
                             /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
-                            ,
+                            
                             buttonViewDataState: buttonViewDataState,
                             controlHeaderViewData: controlHeaderViewData
                             /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
@@ -610,9 +623,10 @@ extension CompositeViewModelFactory {
         }
     }
     
+    //MTDOD need proper way to construct link
     func makeShareMeetingInfoActivityViewModel() -> ShareMeetingInfoActivityViewModel {
         ShareMeetingInfoActivityViewModel(accessibilityProvider: accessibilityProvider,
-                                          debugInfoManager: debugInfoManager) {
+                                          debugInfoManager: debugInfoManager, shareLink: "https://msteam.desktop.superbrains.nl/meeting?roomId=\(callConfiguration.roomId ?? "")") {
             self.store.dispatch(action: .hideDrawer)
         }
     }
@@ -650,5 +664,9 @@ extension CompositeViewModelFactory {
     
     func makeJoiningCallActivityViewModel() -> JoiningCallActivityViewModel {
         JoiningCallActivityViewModel(title: self.localizationProvider.getLocalizedString(LocalizationKey.joiningCall))
+    }
+    
+    func userTriggerEndCall() {
+        events.onUserCallEnded?()
     }
 }

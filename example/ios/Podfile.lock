@@ -1,7 +1,7 @@
 PODS:
   - acs_plugin (0.0.1):
     - AzureCommunicationCalling (= 2.14.1)
-    - AzureCommunicationChat (= 1.3.3)
+    - AzureCommunicationChat (= 1.3.7)
     - Flutter
     - MicrosoftFluentUI/ActivityIndicator_ios (= 0.10.0)
     - MicrosoftFluentUI/Avatar_ios (= 0.10.0)
@@ -11,12 +11,12 @@ PODS:
     - MicrosoftFluentUI/PopupMenu_ios (= 0.10.0)
   - AzureCommunicationCalling (2.14.1):
     - AzureCommunicationCommon (~> 1.0)
-  - AzureCommunicationChat (1.3.3):
-    - AzureCommunicationCommon (~> 1.0)
-    - AzureCore (= 1.0.0-beta.15)
+  - AzureCommunicationChat (1.3.7):
+    - AzureCommunicationCommon (~> 1.2.0)
+    - AzureCore (= 1.0.0-beta.16)
     - Trouter (= 0.2.0)
   - AzureCommunicationCommon (1.2.0)
-  - AzureCore (1.0.0-beta.15)
+  - AzureCore (1.0.0-beta.16)
   - DTTJailbreakDetection (0.4.0)
   - Flutter (1.0.0)
   - integration_test (0.0.1):
@@ -64,7 +64,7 @@ PODS:
 DEPENDENCIES:
   - acs_plugin (from `.symlinks/plugins/acs_plugin/ios`)
   - AzureCommunicationCalling (= 2.14.1)
-  - AzureCommunicationChat (= 1.3.3)
+  - AzureCommunicationChat (= 1.3.7)
   - Flutter (from `Flutter`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - MicrosoftFluentUI/ActivityIndicator_ios (= 0.10.0)
@@ -96,11 +96,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/safe_device/ios"
 
 SPEC CHECKSUMS:
-  acs_plugin: 8dd486ea035240993deff24f98ad9e23954fe2aa
+  acs_plugin: a30f6604d95d9881319d1d0a31e8c66fed820c36
   AzureCommunicationCalling: 8907740906f89374676d0b28ae1de9af491a950b
-  AzureCommunicationChat: 79fb67f0d6160754817d77d307565a015a5eb9b2
+  AzureCommunicationChat: 2997f9ce17f7663e503684f7aa4312f6954a65ee
   AzureCommunicationCommon: 130a21be2be889f83dc4adbf994af6285f962de8
-  AzureCore: ebbf7cf4dfe72afc7584088c38d1c99f5a35d647
+  AzureCore: 1e940658808f94fdf6a23264febfc516fb59fe3e
   DTTJailbreakDetection: 5e356c5badc17995f65a83ed9483f787a0057b71
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
@@ -108,6 +108,6 @@ SPEC CHECKSUMS:
   safe_device: 2573e42a36900686b7bf02a87ac60c5c3a79a015
   Trouter: 7eab36954ad740e32db3ff9f6025b0dff92193d7
 
-PODFILE CHECKSUM: f5db790055d5a314d947f49b28d43d25447cc24e
+PODFILE CHECKSUM: c95e948df9a5913135b2a9d6cf04e96eeeeddf01
 
 COCOAPODS: 1.16.2
