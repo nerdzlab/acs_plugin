@@ -35,7 +35,9 @@ internal class AppReduxState(
         participantMap = HashMap(),
         participantMapModifiedTimestamp = 0,
         dominantSpeakersInfo = emptyList(),
+        raisedHandsInfo = emptyList(),
         dominantSpeakersModifiedTimestamp = 0,
+        raisedHandsModifiedTimestamp = 0,
         lobbyErrorCode = null,
         totalParticipantCount = 0,
     )
@@ -71,6 +73,7 @@ internal class AppReduxState(
                 ParticipantCapabilityType.UNMUTE_MICROPHONE
             ),
             currentCapabilitiesAreDefault = true,
+            raisedHandStatus = RaisedHandStatus.LOWER
         )
 
     override var permissionState: PermissionState =

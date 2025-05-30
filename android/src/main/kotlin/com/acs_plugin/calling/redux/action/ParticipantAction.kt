@@ -9,6 +9,7 @@ import com.acs_plugin.calling.models.ParticipantInfoModel
 internal sealed class ParticipantAction : Action {
     class ListUpdated(val participantMap: Map<String, ParticipantInfoModel>) : ParticipantAction()
     class DominantSpeakersUpdated(val dominantSpeakersInfo: List<String>) : ParticipantAction()
+    class RaisedHandsUpdated(val raisedHandsInfo: List<String>) : ParticipantAction()
     class AdmitAll : ParticipantAction()
     class Admit(val userIdentifier: String) : ParticipantAction()
     class Reject(val userIdentifier: String) : ParticipantAction()

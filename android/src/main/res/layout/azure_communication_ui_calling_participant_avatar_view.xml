@@ -17,10 +17,20 @@
         android:background="@drawable/bg_light_pink_rounded_r12">
 
         <FrameLayout
+            android:id="@+id/azure_communication_ui_participant_view_avatar_raised_hand_frame"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_rounded_orange_frame_r12"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <FrameLayout
             android:id="@+id/azure_communication_ui_participant_view_avatar_is_speaking_frame"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/bg_rounde_purple_frame_r12"
+            android:background="@drawable/bg_rounded_purple_frame_r12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -62,6 +72,15 @@
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/azure_communication_ui_participant_audio_raise_hand_indicator"
+                android:layout_width="@dimen/icon_size_14dp"
+                android:layout_height="@dimen/icon_size_14dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/margin_4dp"
+                app:tint="@color/yellow"
+                app:srcCompat="@drawable/ic_raised_hand" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/azure_communication_ui_participant_audio_view_display_name"

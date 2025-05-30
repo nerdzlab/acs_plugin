@@ -31,6 +31,12 @@ internal class ParticipantStateReducerImpl :
             is ParticipantAction.SetTotalParticipantCount -> {
                 state.copy(totalParticipantCount = action.totalParticipantCount)
             }
+            is ParticipantAction.RaisedHandsUpdated -> {
+                state.copy(
+                    raisedHandsModifiedTimestamp = System.currentTimeMillis(),
+                    raisedHandsInfo = action.raisedHandsInfo
+                )
+            }
             else -> state
         }
     }

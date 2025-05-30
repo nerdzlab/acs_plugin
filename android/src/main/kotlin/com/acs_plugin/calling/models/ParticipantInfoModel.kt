@@ -25,4 +25,5 @@ internal data class ParticipantInfoModel(
     var screenShareVideoStreamModel: VideoStreamModel?,
     var cameraVideoStreamModel: VideoStreamModel?,
     var modifiedTimestamp: Number,
+    var isRaisedHand: Boolean = false
 )

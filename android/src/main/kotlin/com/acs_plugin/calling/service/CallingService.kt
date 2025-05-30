@@ -47,6 +47,7 @@ internal class CallingService(
     private val participantsInfoModelSharedFlow =
         MutableSharedFlow<Map<String, ParticipantInfoModel>>()
     private val dominantSpeakersSharedFlow = MutableSharedFlow<List<String>>()
+    private val raisedHandParticipantsInfoSharedFlow = MutableSharedFlow<List<String>>()
     private var callInfoModelSharedFlow = MutableSharedFlow<CallInfoModel>()
 
     private val coroutineScope = CoroutineScope((coroutineContextProvider.Default))
@@ -123,6 +124,10 @@ internal class CallingService(
         return dominantSpeakersSharedFlow
     }
 
+    fun getRaisedHandParticipantsInfoSharedFlow(): SharedFlow<List<String>> {
+        return raisedHandParticipantsInfoSharedFlow
+    }
+
     fun getIsMutedSharedFlow(): Flow<Boolean> = callingSdk.getIsMutedSharedFlow()
 
     fun getIsRecordingSharedFlow(): Flow<Boolean> = callingSdk.getIsRecordingSharedFlow()
@@ -184,6 +189,12 @@ internal class CallingService(
             }
         }
 
+        coroutineScope.launch {
+            callingSdk.getRaisedHandParticipantsInfoSharedFlow().collect {
+                raisedHandParticipantsInfoSharedFlow.emit(it)
+            }
+        }
+
         return callingSdk.startCall(cameraState, audioState)
     }
 
@@ -228,6 +239,14 @@ internal class CallingService(
 
     fun turnOffNoiseSuppression(): CompletableFuture<Void> {
         return callingSdk.turnOffNoiseSuppression()
+    }
+
+    fun raiseHand(): CompletableFuture<Void> {
+        return callingSdk.raiseHand()
+    }
+
+    fun lowerHand(): CompletableFuture<Void> {
+        return callingSdk.lowerHand()
     }
 
     fun getCaptionsSupportedSpokenLanguagesSharedFlow(): SharedFlow<List<String>> {

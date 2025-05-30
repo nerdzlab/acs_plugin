@@ -10,7 +10,9 @@ internal data class RemoteParticipantsState(
     val participantMap: Map<String, ParticipantInfoModel>,
     val participantMapModifiedTimestamp: Number,
     val dominantSpeakersInfo: List<String>,
+    val raisedHandsInfo: List<String>,
     val dominantSpeakersModifiedTimestamp: Number,
+    val raisedHandsModifiedTimestamp: Number,
     val lobbyErrorCode: CallCompositeLobbyErrorCode?,
     val totalParticipantCount: Int,
 )

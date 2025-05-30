@@ -66,6 +66,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/azure_communication_ui_call_local_pip_raised_hand_indicator"
+            android:layout_width="@dimen/button_height_28dp"
+            android:layout_height="@dimen/button_height_28dp"
+            android:layout_margin="@dimen/margin_8dp"
+            android:padding="@dimen/padding_4dp"
+            android:background="@drawable/bg_input_rounded_r6"
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/elevation_4dp"
+            app:tint="@color/yellow"
+            app:srcCompat="@drawable/ic_raised_hand"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

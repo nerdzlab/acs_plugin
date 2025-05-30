@@ -3,33 +3,9 @@
 
 package com.acs_plugin.calling.service.sdk
 
-import com.azure.android.communication.calling.Call
-import com.azure.android.communication.calling.CallCaptions
-import com.azure.android.communication.calling.CallState
-import com.azure.android.communication.calling.CapabilitiesCallFeature
-import com.azure.android.communication.calling.CapabilitiesChangedListener
-import com.azure.android.communication.calling.CommunicationCaptions
-import com.azure.android.communication.calling.CommunicationCaptionsListener
-import com.azure.android.communication.calling.DiagnosticFlagChangedListener
-import com.azure.android.communication.calling.DiagnosticQualityChangedListener
-import com.azure.android.communication.calling.DominantSpeakersCallFeature
-import com.azure.android.communication.calling.Features
-import com.azure.android.communication.calling.LocalUserDiagnosticsCallFeature
-import com.azure.android.communication.calling.MediaDiagnostics
-import com.azure.android.communication.calling.MediaStreamType
-import com.azure.android.communication.calling.NetworkDiagnostics
-import com.azure.android.communication.calling.ParticipantsUpdatedEvent
-import com.azure.android.communication.calling.ParticipantsUpdatedListener
-import com.azure.android.communication.calling.PropertyChangedListener
-import com.azure.android.communication.calling.RealTimeTextCallFeature
-import com.azure.android.communication.calling.RealTimeTextInfoReceivedListener
-import com.azure.android.communication.calling.RealTimeTextResultType
-import com.azure.android.communication.calling.RecordingCallFeature
-import com.azure.android.communication.calling.RemoteParticipant
-import com.azure.android.communication.calling.RemoteVideoStreamsUpdatedListener
-import com.azure.android.communication.calling.TeamsCaptions
-import com.azure.android.communication.calling.TeamsCaptionsListener
-import com.azure.android.communication.calling.TranscriptionCallFeature
+/*  <CALL_START_TIME>
+import java.util.Date
+</CALL_START_TIME> */
 import com.acs_plugin.calling.configuration.CallType
 import com.acs_plugin.calling.models.CallCompositeAudioVideoMode
 import com.acs_plugin.calling.models.CallCompositeCaptionsData
@@ -47,6 +23,39 @@ import com.acs_plugin.calling.models.ParticipantRole
 import com.acs_plugin.calling.models.RttMessage
 import com.acs_plugin.calling.models.into
 import com.acs_plugin.calling.utilities.CoroutineContextProvider
+import com.azure.android.communication.calling.Call
+import com.azure.android.communication.calling.CallCaptions
+import com.azure.android.communication.calling.CallFeature
+import com.azure.android.communication.calling.CallState
+import com.azure.android.communication.calling.CapabilitiesCallFeature
+import com.azure.android.communication.calling.CapabilitiesChangedListener
+import com.azure.android.communication.calling.CommunicationCaptions
+import com.azure.android.communication.calling.CommunicationCaptionsListener
+import com.azure.android.communication.calling.DiagnosticFlagChangedListener
+import com.azure.android.communication.calling.DiagnosticQualityChangedListener
+import com.azure.android.communication.calling.DominantSpeakersCallFeature
+import com.azure.android.communication.calling.Features
+import com.azure.android.communication.calling.LocalUserDiagnosticsCallFeature
+import com.azure.android.communication.calling.LoweredHandChangedEvent
+import com.azure.android.communication.calling.LoweredHandListener
+import com.azure.android.communication.calling.MediaDiagnostics
+import com.azure.android.communication.calling.MediaStreamType
+import com.azure.android.communication.calling.NetworkDiagnostics
+import com.azure.android.communication.calling.ParticipantsUpdatedEvent
+import com.azure.android.communication.calling.ParticipantsUpdatedListener
+import com.azure.android.communication.calling.PropertyChangedListener
+import com.azure.android.communication.calling.RaiseHandCallFeature
+import com.azure.android.communication.calling.RaisedHandChangedEvent
+import com.azure.android.communication.calling.RaisedHandListener
+import com.azure.android.communication.calling.RealTimeTextCallFeature
+import com.azure.android.communication.calling.RealTimeTextInfoReceivedListener
+import com.azure.android.communication.calling.RealTimeTextResultType
+import com.azure.android.communication.calling.RecordingCallFeature
+import com.azure.android.communication.calling.RemoteParticipant
+import com.azure.android.communication.calling.RemoteVideoStreamsUpdatedListener
+import com.azure.android.communication.calling.TeamsCaptions
+import com.azure.android.communication.calling.TeamsCaptionsListener
+import com.azure.android.communication.calling.TranscriptionCallFeature
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.cancel
@@ -57,9 +66,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
-/*  <CALL_START_TIME>
-import java.util.Date
-</CALL_START_TIME> */
 import java.util.concurrent.CompletableFuture
 import com.azure.android.communication.calling.CapabilitiesChangedEvent as SdkCapabilitiesChangedEvent
 
@@ -77,6 +83,7 @@ internal class CallingSDKEventHandler(
     private var isRecordingSharedFlow = MutableSharedFlow<Boolean>()
     private var isTranscribingSharedFlow = MutableSharedFlow<Boolean>()
     private var dominantSpeakersSharedFlow = MutableSharedFlow<DominantSpeakersInfo>()
+    private var raisedHandParticipantsInfoFlow = MutableSharedFlow<List<String>>()
     private var callingStateWrapperSharedFlow = MutableSharedFlow<CallingStateWrapper>()
     /*  <CALL_START_TIME>
     private var callStartTimeSharedFlow = MutableSharedFlow<Date>()
@@ -108,6 +115,7 @@ internal class CallingSDKEventHandler(
     private lateinit var dominantSpeakersCallFeature: DominantSpeakersCallFeature
     private lateinit var capabilitiesFeature: CapabilitiesCallFeature
     private lateinit var rttFeature: RealTimeTextCallFeature
+    private lateinit var raisedHandFeature: RaiseHandCallFeature
 
     private var rttTextSharedFlow = MutableSharedFlow<RttMessage>()
     private var networkDiagnostics: NetworkDiagnostics? = null
@@ -168,6 +176,7 @@ internal class CallingSDKEventHandler(
     fun getMediaCallDiagnosticsSharedFlow(): SharedFlow<MediaCallDiagnosticModel> = mediaCallDiagnosticsSharedFlow
     //endregion
     fun getDominantSpeakersSharedFlow(): SharedFlow<DominantSpeakersInfo> = dominantSpeakersSharedFlow
+    fun getRaisedHandParticipantsInfoFlow(): SharedFlow<List<String>> = raisedHandParticipantsInfoFlow
 
     fun getRttTextSharedFlow(): SharedFlow<RttMessage> = rttTextSharedFlow
 
@@ -242,6 +251,10 @@ internal class CallingSDKEventHandler(
         dominantSpeakersCallFeature = call.feature { DominantSpeakersCallFeature::class.java }
         dominantSpeakersCallFeature.addOnDominantSpeakersChangedListener(onDominantSpeakersChanged)
 
+        raisedHandFeature = call.feature { RaiseHandCallFeature::class.java }
+        raisedHandFeature.addOnHandRaisedListener(onRaiseHandChanged)
+        raisedHandFeature.addOnHandLoweredListener(onLowerHandChanged)
+
         capabilitiesFeature = call.feature { CapabilitiesCallFeature::class.java }
         capabilitiesFeature.addOnCapabilitiesChangedListener(onCapabilitiesChanged)
         subscribeToUserFacingDiagnosticsEvents()
@@ -270,6 +283,8 @@ internal class CallingSDKEventHandler(
             onTranscriptionChanged
         )
         dominantSpeakersCallFeature.removeOnDominantSpeakersChangedListener(onDominantSpeakersChanged)
+        raisedHandFeature.removeOnHandRaisedListener(onRaiseHandChanged)
+        raisedHandFeature.removeOnHandLoweredListener(onLowerHandChanged)
         capabilitiesFeature.removeOnCapabilitiesChangedListener(onCapabilitiesChanged)
         call?.removeOnRoleChangedListener(onRoleChanged)
         call?.removeOnTotalParticipantCountChangedListener(onTotalParticipantCountChanged)
@@ -491,6 +506,10 @@ internal class CallingSDKEventHandler(
             onParticipantsUpdated(it)
         }
 
+    private val onRaiseHandChanged = RaisedHandListener { onHandRaised() }
+
+    private val onLowerHandChanged = LoweredHandListener { onHandLowered() }
+
     private fun onRoleChanged() {
         coroutineScope.launch {
             callParticipantRoleSharedFlow.emit(call?.callParticipantRole?.into())
@@ -612,6 +631,18 @@ internal class CallingSDKEventHandler(
     private fun onDominantSpeakersChanged() {
         coroutineScope.launch {
             dominantSpeakersSharedFlow.emit(dominantSpeakersCallFeature.dominantSpeakersInfo.into())
+        }
+    }
+
+    private fun onHandRaised() {
+        coroutineScope.launch {
+            raisedHandParticipantsInfoFlow.emit(raisedHandFeature.raisedHands.map { it.identifier.rawId })
+        }
+    }
+
+    private fun onHandLowered() {
+        coroutineScope.launch {
+            raisedHandParticipantsInfoFlow.emit(raisedHandFeature.raisedHands.map { it.identifier.rawId })
         }
     }
 

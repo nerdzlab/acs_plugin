@@ -42,6 +42,7 @@ import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyErrorHead
 import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyHeaderView
 import com.acs_plugin.calling.presentation.fragment.calling.lobby.WaitingLobbyOverlayView
 import com.acs_plugin.calling.presentation.fragment.calling.localuser.LocalParticipantView
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.MoreActionsListView
 import com.acs_plugin.calling.presentation.fragment.calling.notification.ToastNotificationView
 import com.acs_plugin.calling.presentation.fragment.calling.notification.UpperMessageBarNotificationLayoutView
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridView
@@ -100,6 +101,7 @@ internal class CallingFragment :
     private lateinit var accessibilityManager: AccessibilityManager
     private lateinit var wakeLock: PowerManager.WakeLock
     private lateinit var moreCallOptionsListView: MoreCallOptionsListView
+    private lateinit var moreActionsListView: MoreActionsListView
     private lateinit var lobbyHeaderView: LobbyHeaderView
     private lateinit var lobbyErrorHeaderView: LobbyErrorHeaderView
     private lateinit var captionsListView: CaptionsListView
@@ -229,6 +231,9 @@ internal class CallingFragment :
         moreCallOptionsListView.layoutDirection =
             activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
         moreCallOptionsListView.start(viewLifecycleOwner)
+
+        moreActionsListView = MoreActionsListView(this.requireContext())
+        moreActionsListView.start(viewLifecycleOwner, viewModel.moreActionsListViewModel)
 
         captionsListView = CaptionsListView(
             context = this.requireContext(),
@@ -373,6 +378,7 @@ internal class CallingFragment :
         if (this::holdOverlay.isInitialized) holdOverlay.stop()
         if (this::errorInfoView.isInitialized) errorInfoView.stop()
         if (this::moreCallOptionsListView.isInitialized) moreCallOptionsListView.stop()
+        if (this::moreActionsListView.isInitialized) moreActionsListView.stop()
         if (this::upperMessageBarNotificationLayoutView.isInitialized) upperMessageBarNotificationLayoutView.stop()
         if (this::toastNotificationView.isInitialized) toastNotificationView.stop()
         if (this::captionsListView.isInitialized) captionsListView.stop()

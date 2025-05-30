@@ -3,29 +3,13 @@
 
 package com.acs_plugin.calling.service.sdk
 
+/*  <CALL_START_TIME>
+import kotlinx.coroutines.flow.SharedFlow
+</CALL_START_TIME> */
+/*  <CALL_START_TIME>
+import java.util.Date
+</CALL_START_TIME> */
 import android.content.Context
-import com.azure.android.communication.calling.AcceptCallOptions
-import com.azure.android.communication.calling.Call
-import com.azure.android.communication.calling.CallAgent
-import com.azure.android.communication.calling.CallClient
-import com.azure.android.communication.calling.CallingCommunicationException
-import com.azure.android.communication.calling.CameraFacing
-import com.azure.android.communication.calling.CapabilitiesCallFeature
-import com.azure.android.communication.calling.DeviceManager
-import com.azure.android.communication.calling.Features
-import com.azure.android.communication.calling.GroupCallLocator
-import com.azure.android.communication.calling.HangUpOptions
-import com.azure.android.communication.calling.JoinCallOptions
-import com.azure.android.communication.calling.JoinMeetingLocator
-import com.azure.android.communication.calling.OutgoingAudioOptions
-import com.azure.android.communication.calling.OutgoingVideoOptions
-import com.azure.android.communication.calling.RoomCallLocator
-import com.azure.android.communication.calling.StartCallOptions
-import com.azure.android.communication.calling.StartCaptionsOptions
-import com.azure.android.communication.calling.TeamsCaptions
-import com.azure.android.communication.calling.TeamsMeetingIdLocator
-import com.azure.android.communication.calling.TeamsMeetingLinkLocator
-import com.azure.android.communication.calling.VideoDevicesUpdatedListener
 import com.acs_plugin.calling.CallCompositeException
 import com.acs_plugin.calling.configuration.CallConfiguration
 import com.acs_plugin.calling.configuration.CallType
@@ -42,21 +26,38 @@ import com.acs_plugin.calling.redux.state.CameraState
 import com.acs_plugin.calling.redux.state.NoiseSuppressionStatus
 import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.calling.utilities.toJavaUtil
+import com.azure.android.communication.calling.AcceptCallOptions
 import com.azure.android.communication.calling.BackgroundBlurEffect
-import com.azure.android.communication.calling.LocalVideoEffectsFeature
+import com.azure.android.communication.calling.Call
+import com.azure.android.communication.calling.CallAgent
+import com.azure.android.communication.calling.CallClient
+import com.azure.android.communication.calling.CallingCommunicationException
+import com.azure.android.communication.calling.CameraFacing
+import com.azure.android.communication.calling.CapabilitiesCallFeature
+import com.azure.android.communication.calling.DeviceManager
+import com.azure.android.communication.calling.Features
+import com.azure.android.communication.calling.GroupCallLocator
+import com.azure.android.communication.calling.HangUpOptions
+import com.azure.android.communication.calling.JoinCallOptions
+import com.azure.android.communication.calling.JoinMeetingLocator
 import com.azure.android.communication.calling.NoiseSuppressionMode
 import com.azure.android.communication.calling.OutgoingAudioFilters
+import com.azure.android.communication.calling.OutgoingAudioOptions
+import com.azure.android.communication.calling.OutgoingVideoOptions
+import com.azure.android.communication.calling.RaiseHandCallFeature
+import com.azure.android.communication.calling.RoomCallLocator
+import com.azure.android.communication.calling.StartCallOptions
+import com.azure.android.communication.calling.StartCaptionsOptions
+import com.azure.android.communication.calling.TeamsCaptions
+import com.azure.android.communication.calling.TeamsMeetingIdLocator
+import com.azure.android.communication.calling.TeamsMeetingLinkLocator
+import com.azure.android.communication.calling.VideoDevicesUpdatedListener
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-/*  <CALL_START_TIME>
 import kotlinx.coroutines.flow.SharedFlow
-</CALL_START_TIME> */
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import java.util.Collections
-/*  <CALL_START_TIME>
-import java.util.Date
-</CALL_START_TIME> */
 import java.util.concurrent.CompletableFuture
 import com.azure.android.communication.calling.LocalVideoStream as NativeLocalVideoStream
 
@@ -162,6 +163,9 @@ internal class CallingSDKWrapper(
 
     override fun getRemoteParticipantInfoModelSharedFlow(): Flow<Map<String, ParticipantInfoModel>> =
         callingSDKEventHandler.getRemoteParticipantInfoModelFlow()
+
+    override fun getRaisedHandParticipantsInfoSharedFlow(): SharedFlow<List<String>> =
+        callingSDKEventHandler.getRaisedHandParticipantsInfoFlow()
 
     override fun hold(): CompletableFuture<Void> {
         val completableFuture = CompletableFuture<Void>()
@@ -701,6 +705,32 @@ internal class CallingSDKWrapper(
             call.unmuteIncomingAudio(context)
         } catch (e: Exception) {
             logger?.error("Failed to mute call", e)
+            completableFuture.completeExceptionally(e)
+        }
+
+        return completableFuture
+    }
+
+    override fun raiseHand(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            val raiseHandFeature: RaiseHandCallFeature = call.feature(Features.RAISED_HANDS)
+            raiseHandFeature.raiseHand()
+        } catch (e: Exception) {
+            completableFuture.completeExceptionally(e)
+        }
+
+        return completableFuture
+    }
+
+    override fun lowerHand(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            val raiseHandFeature: RaiseHandCallFeature = call.feature(Features.RAISED_HANDS)
+            raiseHandFeature.lowerHand()
+        } catch (e: Exception) {
             completableFuture.completeExceptionally(e)
         }
 
