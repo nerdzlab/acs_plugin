@@ -173,7 +173,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             providerConfig.supportsVideo = true
             providerConfig.maximumCallGroups = 1
             providerConfig.includesCallsInRecents = true
-            providerConfig.supportedHandleTypes = [.generic]
+            providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
+            
             let callKitOptions = CallKitOptions(providerConfig: providerConfig,
                                                 isCallHoldSupported: true,
                                                 provideRemoteInfo: incomingCallRemoteInfo,
@@ -182,13 +183,41 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                                              callKitOptions: callKitOptions) { result in
                 if case .success = result {
                     DispatchQueue.global().async {
-                        self.userDataHandler.getCallComposite()?.handlePushNotification(pushNotification: pushInfo)
+                        if let callCamposite = self.userDataHandler.getCallComposite() {
+                            callCamposite.handlePushNotification(pushNotification: pushInfo)
+                        } else {
+                            self.getCallComposite(callKitOptions: callKitOptions)?.handlePushNotification(pushNotification: pushInfo)
+                        }
                     }
                 } else {
                     os_log("calling demo app: failed on reportIncomingCall")
                 }
             }
         }
+    }
+    
+    private func getCallComposite(callKitOptions: CallKitOptions) ->  CallComposite? {
+        guard let userData = UserDefaults.standard.loadUserData() else { return nil }
+        
+        guard let credential = try? CommunicationTokenCredential(token: userData.token) else { return nil }
+        
+        let callCompositeOptions = CallCompositeOptions(
+            enableMultitasking: true,
+            enableSystemPictureInPictureWhenMultitasking: true,
+            callKitOptions: callKitOptions,
+            displayName: userData.name,
+            userId: CommunicationUserIdentifier(userData.userId)
+        )
+        
+        let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
+        
+//        if (GlobalCompositeManager.callComposite == nil) {
+//            onSubscribeToCallCompositeEvents(callComposite)
+//        }
+        
+        GlobalCompositeManager.callComposite = callComposite
+        
+        return callComposite
     }
     
 //    private func getCallKitOptions() -> CallKitOptions {
