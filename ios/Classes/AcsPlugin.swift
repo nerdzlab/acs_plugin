@@ -10,6 +10,7 @@ import AVKit
 import Combine
 import PushKit
 import AzureCore
+import os
 
 class GlobalCompositeManager {
     static var callComposite: CallComposite?
@@ -158,19 +159,21 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                              completion: @escaping () -> Void) {
         print("pushRegistry payload: \(payload.dictionaryPayload)")
         if isAppInForeground() {
-            print("calling demo app: app is in foreground")
+            os_log("calling demo app: app is in foreground")
             
             let pushNotificationInfo = PushNotification(data: payload.dictionaryPayload)
             userDataHandler.getCallComposite()?.handlePushNotification(pushNotification: pushNotificationInfo)
+            os_log("callId---------------------\(pushNotificationInfo.callId)")
         } else {
-            print("calling demo app: app is not in foreground")
+            os_log("calling demo app: app is not in foreground")
             let pushInfo = PushNotification(data: payload.dictionaryPayload)
+            os_log("callId---------------------\(pushInfo.callId)")
+            
             let providerConfig = CXProviderConfiguration()
             providerConfig.supportsVideo = true
             providerConfig.maximumCallGroups = 1
-            providerConfig.maximumCallsPerCallGroup = 1
             providerConfig.includesCallsInRecents = true
-            providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
+            providerConfig.supportedHandleTypes = [.generic]
             let callKitOptions = CallKitOptions(providerConfig: providerConfig,
                                                 isCallHoldSupported: true,
                                                 provideRemoteInfo: incomingCallRemoteInfo,
@@ -182,7 +185,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                         self.userDataHandler.getCallComposite()?.handlePushNotification(pushNotification: pushInfo)
                     }
                 } else {
-                    print("calling demo app: failed on reportIncomingCall")
+                    os_log("calling demo app: failed on reportIncomingCall")
                 }
             }
         }
@@ -206,10 +209,12 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     
     public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
         let cxHandle = CXHandle(type: .generic, value: "Incoming call")
-        var remoteInfoDisplayName = "Test display name"
+        var remoteInfoDisplayName = info.displayName
+        
         if remoteInfoDisplayName.isEmpty {
-            remoteInfoDisplayName = info.displayName
+            remoteInfoDisplayName = info.identifier.rawId
         }
+        
         let callKitRemoteInfo = CallKitRemoteInfo(displayName: remoteInfoDisplayName,
                                                   handle: cxHandle)
         return callKitRemoteInfo
