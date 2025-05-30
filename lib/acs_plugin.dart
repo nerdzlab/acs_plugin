@@ -82,12 +82,14 @@ class AcsPlugin {
   // Initialize the room call
   Future<void> initializeRoomCall({
     required String roomId,
+    required String callId,
     required bool isChatEnable,
     required String whiteBoardId,
     required bool isRejoin,
   }) async {
     await AcsPluginPlatform.instance.initializeRoomCall(
       roomId: roomId,
+      callId: callId,
       whiteBoardId: whiteBoardId,
       isChatEnable: isChatEnable,
       isRejoin: isRejoin,
@@ -97,12 +99,14 @@ class AcsPlugin {
   // Start teams meeting call
   Future<void> startTeamsMeetingCall({
     required String meetingLink,
+    required String callId,
     required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
   }) async {
     await AcsPluginPlatform.instance.startTeamsMeetingCall(
       meetingLink: meetingLink,
+      callId: callId,
       whiteBoardId: whiteBoardId,
       isChatEnable: isChatEnable,
       isRejoin: isRejoin,
@@ -111,16 +115,18 @@ class AcsPlugin {
 
   // Start one on one call
   Future<void> startOneOnOneCall({
-    required String token,
+    required String callId,
     required String whiteBoardId,
-    required String participantId,
+    required List<String> participantsId,
     required String userId,
+    required bool isRejoin,
   }) async {
     await AcsPluginPlatform.instance.startOneOnOneCall(
-      token: token,
+      callId: callId,
       whiteBoardId: whiteBoardId,
-      participantId: participantId,
+      participanstId: participantsId,
       userId: userId,
+      isRejoin: isRejoin,
     );
   }
 

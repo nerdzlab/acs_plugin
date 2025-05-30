@@ -20,6 +20,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
 
   Future<void> initializeRoomCall({
     required String roomId,
+    required String callId,
     required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
@@ -28,16 +29,18 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   }
 
   Future<void> startOneOnOneCall({
-    required String token,
+    required String callId,
     required String whiteBoardId,
-    required String participantId,
+    required List<String> participanstId,
     required String userId,
+    required bool isRejoin,
   }) {
     throw UnimplementedError('startOneOnOneCall() has not been implemented.');
   }
 
   Future<void> startTeamsMeetingCall({
     required String meetingLink,
+    required String callId,
     required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,

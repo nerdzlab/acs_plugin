@@ -37,6 +37,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   @override
   Future<void> initializeRoomCall({
     required String roomId,
+    required String callId,
     required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
@@ -45,6 +46,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       'initializeRoomCall',
       {
         'roomId': roomId,
+        'callId': callId,
         'whiteBoardId': whiteBoardId,
         'isChatEnable': isChatEnable,
         'isRejoin': isRejoin,
@@ -54,6 +56,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> startTeamsMeetingCall({
+    required String callId,
     required String meetingLink,
     required String whiteBoardId,
     required bool isChatEnable,
@@ -62,6 +65,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
     await methodChannel.invokeMethod(
       'startTeamsMeetingCall',
       {
+        'callId': callId,
         'meetingLink': meetingLink,
         'whiteBoardId': whiteBoardId,
         'isChatEnable': isChatEnable,
@@ -72,18 +76,20 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> startOneOnOneCall({
-    required String token,
+    required String callId,
     required String whiteBoardId,
-    required String participantId,
+    required List<String> participanstId,
     required String userId,
+    required bool isRejoin,
   }) async {
     await methodChannel.invokeMethod(
       'startOneOnOneCall',
       {
-        'token': token,
+        'callId': callId,
         'whiteBoardId': whiteBoardId,
-        'participantId': participantId,
+        'participantId': participanstId,
         'userId': userId,
+        'isRejoin': isRejoin,
       },
     );
   }

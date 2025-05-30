@@ -80,6 +80,10 @@ class _CallScreenState extends State<CallScreen> {
     return Constants.chatUserId;
   }
 
+  String get _callId {
+    return Constants.callId;
+  }
+
   static const String _roomId = Constants.roomId;
   static const _appGroupIdentifier = Constants.appGroupIdentifier;
   static const _extensionBundleId = Constants.extensionBundleId;
@@ -230,6 +234,7 @@ class _CallScreenState extends State<CallScreen> {
     try {
       await _acsPlugin.initializeRoomCall(
         roomId: _roomId,
+        callId: _callId,
         whiteBoardId: _whiteBoardId,
         isChatEnable: true,
         isRejoin: false,
@@ -246,6 +251,7 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _startTeamsMeetingCall() async {
     try {
       await _acsPlugin.startTeamsMeetingCall(
+        callId: _callId,
         meetingLink: _teemsMeetingLink,
         whiteBoardId: _whiteBoardId,
         isChatEnable: true,
@@ -263,10 +269,11 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _startOneOnOneCall() async {
     try {
       await _acsPlugin.startOneOnOneCall(
-        token: _acsToken,
-        participantId: _otherUserId,
+        callId: _callId,
+        participantsId: [_otherUserId],
         userId: _userId,
         whiteBoardId: _whiteBoardId,
+        isRejoin: false,
       );
       log('One on one call initialized successfully');
       _shwoSnacBar('One on one call initialized successfully');

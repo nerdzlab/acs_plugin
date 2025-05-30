@@ -57,11 +57,19 @@ final class CallHandler: MethodHandler {
         case Constants.MethodChannels.initializeRoomCall:
             if let arguments = call.arguments as? [String: Any],
                let roomId = arguments["roomId"] as? String,
+               let callId = arguments["callId"] as? String,
                let whiteBoardId = arguments["whiteBoardId"] as? String,
                let isChatEnable = arguments["isChatEnable"] as? Bool,
                let isRejoin = arguments["isRejoin"] as? Bool
             {
-                initializeRoomCall(roomId: roomId, whiteBoardId: whiteBoardId, isChatEnable: isChatEnable, isRejoin: isRejoin, result: result)
+                initializeRoomCall(
+                    roomId: roomId,
+                    callId: callId,
+                    whiteBoardId: whiteBoardId,
+                    isChatEnable: isChatEnable,
+                    isRejoin: isRejoin,
+                    result: result
+                )
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
@@ -70,12 +78,20 @@ final class CallHandler: MethodHandler {
             
         case Constants.MethodChannels.startOneOnOneCall:
             if let arguments = call.arguments as? [String: Any],
-               let token = arguments["token"] as? String,
+               let callId = arguments["callId"] as? String,
                let whiteBoardId = arguments["whiteBoardId"] as? String,
-               let participantId = arguments["participantId"] as? String,
-               let userId = arguments["userId"] as? String
+               let participantsId = arguments["participantsId"] as? [String],
+               let userId = arguments["userId"] as? String,
+               let isRejoin = arguments["isRejoin"] as? Bool
             {
-                startOneOnOneCall(token: token, participantId: participantId, whiteBoardId: whiteBoardId, userId: userId, result: result)
+                startOneOnOneCall(
+                    callId: callId,
+                    participantsId: participantsId,
+                    whiteBoardId: whiteBoardId,
+                    userId: userId,
+                    isRejoin: isRejoin,
+                    result: result
+                )
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, participantId and userId are required", details: nil))
             }
@@ -84,12 +100,20 @@ final class CallHandler: MethodHandler {
             
         case Constants.MethodChannels.startTeamsMeetingCall:
             if let arguments = call.arguments as? [String: Any],
+               let callId = arguments["callId"] as? String,
                let meetingLink = arguments["meetingLink"] as? String,
                let whiteBoardId = arguments["whiteBoardId"] as? String,
                let isChatEnable = arguments["isChatEnable"] as? Bool,
                let isRejoin = arguments["isRejoin"] as? Bool
             {
-                startTeamsMeetingCall(meetingLink: meetingLink, whiteBoardId: whiteBoardId, isChatEnable: isChatEnable, isRejoin: isRejoin, result: result)
+                startTeamsMeetingCall(
+                    meetingLink: meetingLink,
+                    callId: callId,
+                    whiteBoardId: whiteBoardId,
+                    isChatEnable: isChatEnable,
+                    isRejoin: isRejoin,
+                    result: result
+                )
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token and roomId are required", details: nil))
             }
@@ -103,39 +127,64 @@ final class CallHandler: MethodHandler {
 
     private func initializeRoomCall(
         roomId: String,
+        callId: String,
         whiteBoardId: String,
         isChatEnable: Bool,
         isRejoin: Bool,
         result: @escaping FlutterResult
     ) {
-        let localOptions = LocalOptions(cameraOn: true, isChatEnable: isChatEnable, microphoneOn: true, skipSetupScreen: isRejoin, whiteBoardId: whiteBoardId)
+        let localOptions = LocalOptions(
+            cameraOn: true,
+            isChatEnable: isChatEnable,
+            microphoneOn: true,
+            skipSetupScreen: isRejoin,
+            whiteBoardId: whiteBoardId,
+            callId: callId
+        )
         
         onGetllComposite()?.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
     }
     
     private func startTeamsMeetingCall(
         meetingLink: String,
+        callId: String,
         whiteBoardId: String,
         isChatEnable: Bool,
         isRejoin: Bool,
         result: @escaping FlutterResult
     ) {
-        let localOptions = LocalOptions(cameraOn: true, isChatEnable: isChatEnable, microphoneOn: true, skipSetupScreen: isRejoin, whiteBoardId: whiteBoardId)
+        let localOptions = LocalOptions(
+            cameraOn: true,
+            isChatEnable: isChatEnable,
+            microphoneOn: true,
+            skipSetupScreen: isRejoin,
+            whiteBoardId: whiteBoardId,
+            callId: callId
+        )
         
         onGetllComposite()?.launch(locator: .teamsMeeting(teamsLink: meetingLink), localOptions: localOptions)
     }
     
     private func startOneOnOneCall(
-        token: String,
-        participantId: String,
+        callId: String,
+        participantsId: [String],
         whiteBoardId: String,
         userId: String,
+        isRejoin: Bool,
         result: @escaping FlutterResult
     ) {
-        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true, whiteBoardId: whiteBoardId)
+        let localOptions = LocalOptions(
+            cameraOn: true,
+            microphoneOn: true,
+            skipSetupScreen: isRejoin,
+            whiteBoardId: whiteBoardId,
+            callId: callId
+        )
+        
+        let participants = participantsId.map { CommunicationUserIdentifier($0) }
         
         onGetllComposite()?.launch(
-            participants: [CommunicationUserIdentifier(participantId)],
+            participants: participants,
             localOptions: localOptions
         )
     }
