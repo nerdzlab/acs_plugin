@@ -16,4 +16,9 @@
     <string name="lower_hand" translatable="false">Lower hand</string>
     <string name="change_view" translatable="false">Change view</string>
     <string name="share_screen" translatable="false">Share screen</string>
+    <string name="emoji_heart" translatable="false">❤️</string>
+    <string name="emoji_laugh" translatable="false">😂</string>
+    <string name="emoji_surprised" translatable="false">😮</string>
+    <string name="emoji_applause" translatable="false">👏</string>
+    <string name="emoji_like" translatable="false">👍</string>
 </resources>

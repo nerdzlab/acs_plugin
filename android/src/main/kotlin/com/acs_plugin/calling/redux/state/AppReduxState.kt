@@ -40,6 +40,8 @@ internal class AppReduxState(
         raisedHandsModifiedTimestamp = 0,
         lobbyErrorCode = null,
         totalParticipantCount = 0,
+        reactionInfo = emptyMap(),
+        reactionModifiedTimestamp = 0
     )
 
     override var localParticipantState: LocalUserState =

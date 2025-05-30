@@ -16,6 +16,15 @@
         android:layout_margin="@dimen/margin_2dp"
         android:background="@drawable/bg_light_pink_rounded_r12">
 
+        <com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
+            android:id="@+id/azure_communication_ui_participant_video_reaction_overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
         <FrameLayout
             android:id="@+id/azure_communication_ui_participant_video_raised_hand_frame"
             android:layout_width="0dp"

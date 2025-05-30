@@ -337,6 +337,7 @@ internal class DependencyInjectionContainerImpl(
                 logger,
                 callingSDKInitializer,
                 compositeCaptionsOptions = localOptions?.captionsOptions,
+                configuration.localUserIdentifier?.rawId
                 /* <END_CALL_FOR_ALL>
                 isOnCallEndTerminateForAll = localOptions?.isOnCallEndTerminateForAll ?: false
                 </END_CALL_FOR_ALL> */

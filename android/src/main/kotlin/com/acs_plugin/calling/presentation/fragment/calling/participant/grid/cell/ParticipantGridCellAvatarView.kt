@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import com.acs_plugin.R
 import com.acs_plugin.calling.models.CallCompositeParticipantViewData
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridCellViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
 import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.persona.AvatarView
 import com.microsoft.fluentui.util.isVisible
@@ -33,6 +34,7 @@ internal class ParticipantGridCellAvatarView(
     private val onHoldTextView: MaterialTextView,
     private val context: Context,
     lifecycleScope: LifecycleCoroutineScope,
+    private val reactionOverlayView: ReactionOverlayView
 ) {
     private var lastParticipantViewData: CallCompositeParticipantViewData? = null
 
@@ -91,6 +93,12 @@ internal class ParticipantGridCellAvatarView(
         lifecycleScope.launch {
             participantViewModel.getIsRaisedHandStateFlow().collect {
                 setRaisedHandIndicator(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            participantViewModel.getReactionTypeStateFlow().collect {
+                reactionOverlayView.show(it)
             }
         }
     }

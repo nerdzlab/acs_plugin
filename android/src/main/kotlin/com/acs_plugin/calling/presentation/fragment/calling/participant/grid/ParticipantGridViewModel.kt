@@ -4,6 +4,7 @@
 package com.acs_plugin.calling.presentation.fragment.calling.participant.grid
 
 import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.models.ReactionPayload
 import com.acs_plugin.calling.presentation.fragment.factories.ParticipantGridCellViewModelFactory
 import com.acs_plugin.calling.redux.state.CaptionsState
 import com.acs_plugin.calling.redux.state.CaptionsStatus
@@ -33,6 +34,7 @@ internal class ParticipantGridViewModel(
     private var remoteParticipantStateModifiedTimeStamp: Number = 0
     private var dominantSpeakersStateModifiedTimestamp: Number = 0
     private var raisedHandStateModifiedTimestamp: Number = 0
+    private var reactionStateModifiedTimestamp: Number = 0
     private var visibilityStatus: VisibilityStatus? = null
     private lateinit var isOverlayDisplayedFlow: MutableStateFlow<Boolean>
     private lateinit var isVerticalStyleGridMutableFlow: MutableStateFlow<Boolean>
@@ -89,6 +91,8 @@ internal class ParticipantGridViewModel(
         isOverlayDisplayedOverGrid: Boolean,
         deviceConfigurationState: DeviceConfigurationState,
         captionsState: CaptionsState,
+        reaction: Map<String, ReactionPayload>,
+        reactionModifiedTimestamp: Number
     ) {
 
         isOverlayDisplayedFlow.value = isOverlayDisplayedOverGrid
@@ -97,6 +101,7 @@ internal class ParticipantGridViewModel(
         if (remoteParticipantsMapUpdatedTimestamp == remoteParticipantStateModifiedTimeStamp &&
             dominantSpeakersModifiedTimestamp == dominantSpeakersStateModifiedTimestamp &&
             raisedHandModifiedTimestamp == raisedHandStateModifiedTimestamp &&
+            reactionModifiedTimestamp == reactionStateModifiedTimestamp &&
             this.visibilityStatus == visibilityStatus
         ) {
             return
@@ -107,6 +112,8 @@ internal class ParticipantGridViewModel(
         this.visibilityStatus = visibilityStatus
 
         var remoteParticipantsMapSorted = updateRemoteParticipantsRaisedHand(remoteParticipantsMap, raisedHandInfo)
+        remoteParticipantsMapSorted = updateRemoteParticipantsReaction(remoteParticipantsMapSorted, reaction)
+
         val participantSharingScreen = getParticipantSharingScreen(remoteParticipantsMap)
 
         if (participantSharingScreen.isNullOrEmpty()) {
@@ -231,11 +238,15 @@ internal class ParticipantGridViewModel(
             val (id1, participant1) = p1
             val (id2, participant2) = p2
 
-            // 1. Prioritize raised hand participants
+            // 1. Raised hand
             if (participant1.isRaisedHand && !participant2.isRaisedHand) return@Comparator -1
             if (!participant1.isRaisedHand && participant2.isRaisedHand) return@Comparator 1
 
-            // 2. Then sort by dominant speaker order
+            // 1.5 Recent reactions
+            if (participant1.selectedReaction != null && participant2.selectedReaction == null) return@Comparator -1
+            if (participant1.selectedReaction == null && participant2.selectedReaction != null) return@Comparator 1
+
+            // 2. Dominant speaker order
             val order1 = dominantSpeakersOrder[id1]
             val order2 = dominantSpeakersOrder[id2]
             when {
@@ -244,7 +255,7 @@ internal class ParticipantGridViewModel(
                 order2 != null -> return@Comparator 1
             }
 
-            // 3. Then fallback to camera presence
+            // 3. Fallback to camera presence
             return@Comparator when {
                 participant1.cameraVideoStreamModel != null && participant2.cameraVideoStreamModel == null -> -1
                 participant1.cameraVideoStreamModel == null && participant2.cameraVideoStreamModel != null -> 1
@@ -300,4 +311,19 @@ internal class ParticipantGridViewModel(
         }
         return remoteParticipantsMap.toMap()
     }
+
+    private fun updateRemoteParticipantsReaction(
+        remoteParticipantsMap: Map<String, ParticipantInfoModel>,
+        reactionMap: Map<String, ReactionPayload>
+    ): Map<String, ParticipantInfoModel> {
+        reactionMap.forEach { (participantId, payload) ->
+            val participant = remoteParticipantsMap[participantId]
+            if (participant != null && participant.selectedReaction != payload.reaction) {
+                participant.selectedReaction = payload.reaction
+                participant.modifiedTimestamp = System.currentTimeMillis()
+            }
+        }
+        return remoteParticipantsMap.toMap()
+    }
+
 }

@@ -21,6 +21,7 @@ import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.Par
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.VideoViewModel
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.screenshare.ScreenShareViewManager
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.screenshare.ScreenShareZoomFrameLayout
+import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
 import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
 import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.util.isVisible
@@ -41,6 +42,7 @@ internal class ParticipantGridCellVideoView(
     private val showFloatingHeaderCallBack: () -> Unit,
     private val getScreenShareVideoStreamRendererCallback: () -> VideoStreamRenderer?,
     private val getParticipantViewDataCallback: (participantID: String) -> CallCompositeParticipantViewData?,
+    private val reactionOverlayView: ReactionOverlayView
 ) {
     private var videoStream: View? = null
     private var screenShareZoomFrameLayout: ScreenShareZoomFrameLayout? = null
@@ -92,6 +94,11 @@ internal class ParticipantGridCellVideoView(
         lifecycleScope.launch {
             participantViewModel.getIsRaisedHandStateFlow().collect {
                 setRaisedHandIndicator(it)
+            }
+        }
+        lifecycleScope.launch {
+            participantViewModel.getReactionTypeStateFlow().collect {
+                reactionOverlayView.show(it)
             }
         }
     }

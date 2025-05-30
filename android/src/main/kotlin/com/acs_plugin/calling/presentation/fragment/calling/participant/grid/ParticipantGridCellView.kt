@@ -15,6 +15,7 @@ import com.acs_plugin.R
 import com.acs_plugin.calling.models.CallCompositeParticipantViewData
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellAvatarView
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellVideoView
+import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
 import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
 import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.persona.AvatarView
@@ -76,6 +77,9 @@ internal class ParticipantGridCellView(
         val onHoldTextView: MaterialTextView =
             findViewById(R.id.azure_communication_ui_calling_participant_audio_view_on_hold)
 
+        val avatarReactionOverlay: ReactionOverlayView =
+            findViewById(R.id.azure_communication_ui_participant_avatar_reaction_overlay)
+
         avatarView = ParticipantGridCellAvatarView(
             avatarControl,
             participantAvatarSpeakingIndicator,
@@ -89,6 +93,7 @@ internal class ParticipantGridCellView(
             onHoldTextView,
             context,
             lifecycleScope,
+            avatarReactionOverlay
         )
     }
 
@@ -114,6 +119,9 @@ internal class ParticipantGridCellView(
         val participantVideoRaiseHandFrameIndicator: FrameLayout =
             findViewById(R.id.azure_communication_ui_participant_video_raised_hand_frame)
 
+        val participantReactionOverlay: ReactionOverlayView =
+            findViewById(R.id.azure_communication_ui_participant_video_reaction_overlay)
+
         videoView = ParticipantGridCellVideoView(
             context,
             lifecycleScope,
@@ -129,6 +137,7 @@ internal class ParticipantGridCellView(
             showFloatingHeaderCallBack,
             getScreenShareVideoStreamRendererCallback,
             getParticipantViewDataCallback,
+            participantReactionOverlay
         )
     }
 }

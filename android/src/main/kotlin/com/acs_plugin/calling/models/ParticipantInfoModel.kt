@@ -3,6 +3,8 @@
 
 package com.acs_plugin.calling.models
 
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
+
 internal enum class ParticipantStatus {
     IDLE,
     EARLY_MEDIA,
@@ -25,5 +27,6 @@ internal data class ParticipantInfoModel(
     var screenShareVideoStreamModel: VideoStreamModel?,
     var cameraVideoStreamModel: VideoStreamModel?,
     var modifiedTimestamp: Number,
-    var isRaisedHand: Boolean = false
+    var isRaisedHand: Boolean = false,
+    var selectedReaction: ReactionType? = null,
 )

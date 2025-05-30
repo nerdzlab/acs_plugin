@@ -280,7 +280,8 @@ internal class CallingViewModel(
             state.visibilityState.status,
             avMode,
             shouldDisplayLobbyOverlay(state),
-            state.localParticipantState.raisedHandStatus
+            state.localParticipantState.raisedHandStatus,
+            state.localParticipantState.reactionType
         )
 
         audioDeviceListViewModel.update(
@@ -311,6 +312,8 @@ internal class CallingViewModel(
                 isOverlayDisplayedOverGrid = isOverlayDisplayedOverGrid(state),
                 deviceConfigurationState = state.deviceConfigurationState,
                 captionsState = state.captionsState,
+                reaction = state.remoteParticipantState.reactionInfo,
+                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp
             )
             floatingHeaderViewModel.dismiss()
             lobbyHeaderViewModel.dismiss()
@@ -327,7 +330,8 @@ internal class CallingViewModel(
                 state.visibilityState.status,
                 avMode,
                 shouldDisplayLobbyOverlay(state),
-                state.localParticipantState.raisedHandStatus
+                state.localParticipantState.raisedHandStatus,
+                state.localParticipantState.reactionType
             )
         }
 
@@ -344,6 +348,8 @@ internal class CallingViewModel(
                 isOverlayDisplayedOverGrid = isOverlayDisplayedOverGrid(state),
                 deviceConfigurationState = state.deviceConfigurationState,
                 captionsState = state.captionsState,
+                reaction = state.remoteParticipantState.reactionInfo,
+                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp
             )
 
             floatingHeaderViewModel.update(

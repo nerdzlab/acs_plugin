@@ -2,6 +2,7 @@ package com.acs_plugin.calling.presentation.fragment.calling.moreactions
 
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.MoreActionItem
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.MoreActionType
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.calling.redux.action.Action
 import com.acs_plugin.calling.redux.action.LocalParticipantAction
 import com.acs_plugin.calling.redux.action.NavigationAction
@@ -50,7 +51,9 @@ internal class MoreActionsListViewModel(
             dispatch(NavigationAction.CloseMoreMenu())
     }
 
-    fun onSendReaction() {} //TODO implement send reaction flow
+    fun onSendReaction(reactionType: ReactionType) {
+        dispatch(LocalParticipantAction.SendReactionTriggered(reactionType))
+    }
 
     fun onActionClicked(actionType: MoreActionType) {
         when (actionType) {

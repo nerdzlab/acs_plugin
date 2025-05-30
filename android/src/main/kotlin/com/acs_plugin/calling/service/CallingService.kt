@@ -15,7 +15,9 @@ import com.acs_plugin.calling.models.NetworkQualityCallDiagnosticModel
 import com.acs_plugin.calling.models.ParticipantCapabilityType
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ParticipantRole
+import com.acs_plugin.calling.models.ReactionPayload
 import com.acs_plugin.calling.models.RttMessage
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.calling.redux.state.AudioState
 import com.acs_plugin.calling.redux.state.CallingStatus
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
@@ -28,7 +30,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.File
 /*  <CALL_START_TIME>
@@ -48,6 +49,7 @@ internal class CallingService(
         MutableSharedFlow<Map<String, ParticipantInfoModel>>()
     private val dominantSpeakersSharedFlow = MutableSharedFlow<List<String>>()
     private val raisedHandParticipantsInfoSharedFlow = MutableSharedFlow<List<String>>()
+    private val reactionParticipantsInfoSharedFlow = MutableSharedFlow<Map<String, ReactionPayload>>()
     private var callInfoModelSharedFlow = MutableSharedFlow<CallInfoModel>()
 
     private val coroutineScope = CoroutineScope((coroutineContextProvider.Default))
@@ -128,6 +130,10 @@ internal class CallingService(
         return raisedHandParticipantsInfoSharedFlow
     }
 
+    fun getReactionParticipantsInfoSharedFlow(): SharedFlow<Map<String, ReactionPayload>> {
+        return reactionParticipantsInfoSharedFlow
+    }
+
     fun getIsMutedSharedFlow(): Flow<Boolean> = callingSdk.getIsMutedSharedFlow()
 
     fun getIsRecordingSharedFlow(): Flow<Boolean> = callingSdk.getIsRecordingSharedFlow()
@@ -195,6 +201,12 @@ internal class CallingService(
             }
         }
 
+        coroutineScope.launch {
+            callingSdk.getReactionParticipantsInfoSharedFlow().collect {
+                reactionParticipantsInfoSharedFlow.emit(it)
+            }
+        }
+
         return callingSdk.startCall(cameraState, audioState)
     }
 
@@ -247,6 +259,10 @@ internal class CallingService(
 
     fun lowerHand(): CompletableFuture<Void> {
         return callingSdk.lowerHand()
+    }
+
+    fun sendReaction(reactionType: ReactionType): CompletableFuture<Void> {
+        return callingSdk.sendReaction(reactionType)
     }
 
     fun getCaptionsSupportedSpokenLanguagesSharedFlow(): SharedFlow<List<String>> {
