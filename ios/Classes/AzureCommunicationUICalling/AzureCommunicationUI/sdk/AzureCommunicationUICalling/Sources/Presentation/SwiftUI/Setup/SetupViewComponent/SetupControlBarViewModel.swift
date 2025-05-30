@@ -98,7 +98,7 @@ class SetupControlBarViewModel: ObservableObject {
         backgroundEffectButtonViewModel = compositeViewModelFactory.makePrimaryIconButtonViewModel(
             selectedButtonState: localUserState.backgroundEffectsState.operation == .off ? BackgroundEffectButtonState.off : BackgroundEffectButtonState.on,
             localizationProvider: self.localizationProvider,
-            isDisabled: cameraStatus == LocalUserState.CameraOperationalStatus.off) { [weak self] in
+            isDisabled: isCameraDisabled()) { [weak self] in
                 guard let self = self else {
                     return
                 }

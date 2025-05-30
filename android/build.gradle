@@ -7,6 +7,7 @@ buildscript {
         kotlin_version = '2.1.20'
 
         call_library_version_name = '1.14.0'
+        chat_library_version_name = '1.0.0-beta.3'
 
         ui_library_version_code = getVersionCode()
 
@@ -28,6 +29,8 @@ buildscript {
         androidx_navigation_compose = "2.5.2"
 
         azure_calling_sdk_version = '2.13.1'
+
+        azure_chat_sdk_version = '2.1.0'
 
         azure_common_sdk_version = '1.0.2'
 
@@ -115,6 +118,17 @@ android {
             }
         }
     }
+
+    packagingOptions {
+        resources {
+            excludes += [
+                    "META-INF/NOTICE.md",
+                    "META-INF/LICENSE.md",
+                    "META-INF/LICENSE",
+                    "META-INF/NOTICE"
+            ]
+        }
+    }
 }
 
 dependencies {
@@ -124,6 +138,8 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_layout_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$androidx_navigation_fragment_ktx_version"
     api ("com.azure.android:azure-communication-calling:$azure_calling_sdk_version")
+    api("com.azure.android:azure-communication-chat:$azure_chat_sdk_version")
+    api("com.azure.android:azure-communication-common:$azure_common_sdk_version")
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_lifecycle_viewmodel_ktx_version"
     implementation "com.microsoft.fluentui:fluentui_others:$microsoft_fluent_ui_version"
     implementation "com.microsoft.fluentui:fluentui_drawer:$microsoft_fluent_ui_version"

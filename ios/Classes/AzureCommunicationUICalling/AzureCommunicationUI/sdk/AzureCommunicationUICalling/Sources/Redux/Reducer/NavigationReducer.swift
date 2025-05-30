@@ -74,6 +74,10 @@ extension Reducer where State == NavigationState,
             drawerVisibility = .hidden
         case .showBackgroundEffectsView:
             drawerVisibility = .backgroundEffectsViewVisible
+        case .localUserAction(.screenShareOnRequested):
+            drawerVisibility = .hidden
+        case .localUserAction(.screenShareOffRequested):
+            drawerVisibility = .hidden
         case .audioSessionAction,
                 .callingAction(.callIdUpdated),
                 .callingAction(.callStartRequested),

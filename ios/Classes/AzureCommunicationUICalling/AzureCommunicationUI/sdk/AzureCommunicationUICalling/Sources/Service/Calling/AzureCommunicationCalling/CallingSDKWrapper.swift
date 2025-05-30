@@ -7,7 +7,9 @@ import AzureCommunicationCalling
 
 import Combine
 import Foundation
+import ReplayKit
 import AVFoundation
+import Accelerate
 
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
@@ -19,10 +21,12 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
     private var call: Call?
     private var deviceManager: DeviceManager?
     private var localVideoStream: AzureCommunicationCalling.LocalVideoStream?
+    private var localScreenShareOutgoingVideoStream: AzureCommunicationCalling.ScreenShareOutgoingVideoStream?
     private var newVideoDeviceAddedHandler: ((VideoDeviceInfo) -> Void)?
     private var callKitRemoteInfo: CallKitRemoteInfo?
     private var callingSDKInitializer: CallingSDKInitializer
     private var replacementEffect: BackgroundReplacementEffect
+    private var screenRecorder: RPScreenRecorder = RPScreenRecorder.shared()
     
     init(logger: Logger,
          callingEventsHandler: CallingSDKEventsHandling,
@@ -44,6 +48,7 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
     
     func dispose() {
         call = nil
+        resetVideoEffects()
     }
     
     func setupCall() async throws {
@@ -232,12 +237,14 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
                 options.outgoingAudioOptions = OutgoingAudioOptions()
                 options.outgoingAudioOptions?.muted = !isMicrophonePreferred
                 options.incomingVideoOptions = incomingVideoOptions
+                
                 if let remoteInfo = callKitRemoteInfo {
                     let callKitRemoteInfo = AzureCommunicationCalling.CallKitRemoteInfo()
                     callKitRemoteInfo.displayName = remoteInfo.displayName
                     callKitRemoteInfo.handle = remoteInfo.handle
                     options.callKitRemoteInfo = callKitRemoteInfo
                 }
+                
                 if let incomngCall = callingSDKInitializer.getIncomingCall() {
                     do {
                         call = try await incomngCall.accept(options: options)
@@ -331,6 +338,105 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             logger.debug("Local video stopped successfully")
         } catch {
             logger.error( "Local video failed to stop. \(error)")
+            throw error
+        }
+    }
+    
+    //Event to plugin to start broadcast, and return via completion buffer
+    
+    func startScreenSharingStream() async throws {
+        let stream = getValidScreenShareStream()
+        try await startCallScreenShareStream(stream)
+    }
+    
+    func requestScreenSharingStream() {
+        callingSDKInitializer.requestScreenSharing()
+    }
+    
+    private func startCallScreenShareStream(
+        _ videoStream: AzureCommunicationCalling.ScreenShareOutgoingVideoStream
+    ) async throws {
+        guard let call = self.call else {
+            let error = CallCompositeInternalError.cameraOnFailed
+            self.logger.error( "Start share screen video stream failed")
+            throw error
+        }
+        do {
+            try await call.startVideo(stream: videoStream)
+            
+            logger.debug("Screen share video started successfully")
+        } catch {
+            logger.error( "Screen share video failed to start. \(error)")
+            throw error
+        }
+    }
+    
+    func captureOutput(sampleBuffer: CMSampleBuffer, sampleBufferType: RPSampleBufferType, error: Error?) {
+        if sampleBufferType != .video {
+            return
+        }
+        
+        // Extract the pixel buffer from the sample buffer
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            return
+        }
+        
+        let rawVideoFrameBuffer = RawVideoFrameBuffer()
+        rawVideoFrameBuffer.buffer = pixelBuffer
+        
+        // Set the format if necessary
+        if let format = localScreenShareOutgoingVideoStream?.format {
+            let width = CVPixelBufferGetWidth(pixelBuffer)
+            let height = CVPixelBufferGetHeight(pixelBuffer)
+            let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
+            
+            format.width = Int32(width)
+            format.height = Int32(height)
+            format.stride1 = Int32(bytesPerRow)
+            rawVideoFrameBuffer.streamFormat = format
+        }
+        
+        // Send the raw video frame
+        sendRawVideoFrame(rawVideoFrameBuffer: rawVideoFrameBuffer)
+    }
+    
+    private func sendRawVideoFrame(rawVideoFrameBuffer: RawVideoFrameBuffer) {
+        let canSendRawVideoFrames = localScreenShareOutgoingVideoStream != nil &&
+        localScreenShareOutgoingVideoStream?.format != nil &&
+        localScreenShareOutgoingVideoStream?.state == .started
+        
+        if canSendRawVideoFrames {
+            localScreenShareOutgoingVideoStream?.send(frame: rawVideoFrameBuffer) { [weak self] error in
+                if (error != nil) {
+                    Task {
+                        self?.callingSDKInitializer.requestStopSharing()
+                        try? await self?.stopScreenSharingStream()
+                    }
+                    
+                    self?.logger.debug("Share screen error \(error!)")
+                }
+            }
+        }
+    }
+    
+    func requestStopScreenSharingStream() {
+        callingSDKInitializer.requestStopSharing()
+    }
+    
+    func stopScreenSharingStream() async throws {
+        guard let call = self.call,
+              let videoStream = self.localScreenShareOutgoingVideoStream else {
+            logger.debug("Share screen video stopped successfully without call")
+            return
+        }
+        do {
+            try await call.stopVideo(stream: videoStream)
+            self.localScreenShareOutgoingVideoStream?.delegate = nil
+            self.localScreenShareOutgoingVideoStream = nil
+            
+            logger.debug("Share screen video stopped successfully")
+        } catch {
+            logger.error( "Share screen video failed to stop. \(error)")
             throw error
         }
     }
@@ -748,9 +854,12 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             return
         }
         
-        call.liveOutgoingAudioFilters.musicModeEnabled = false
         call.liveOutgoingAudioFilters.acousticEchoCancellationEnabled = false
         call.liveOutgoingAudioFilters.noiseSuppressionMode = .off
+    }
+    
+    func showChat() {
+        callingSDKInitializer.showChat()
     }
 }
 
@@ -835,6 +944,74 @@ extension CallingSDKWrapper {
         }
         return "builtinCameraVideoStream"
     }
+    
+    private func getValidLocalVideoStream() async -> AzureCommunicationCalling.LocalVideoStream {
+        if let existingVideoStream = localVideoStream {
+            return existingVideoStream
+        }
+        
+        let videoDevice = await getVideoDeviceInfo(.front)
+        let videoStream = AzureCommunicationCalling.LocalVideoStream(camera: videoDevice)
+        localVideoStream = videoStream
+        return videoStream
+    }
+    
+    private func getValidScreenShareStream() -> AzureCommunicationCalling.ScreenShareOutgoingVideoStream {
+        if let existingScreenShareStream = localScreenShareOutgoingVideoStream {
+            return existingScreenShareStream
+        }
+        
+        let videoStream =  ScreenShareOutgoingVideoStream(
+            videoStreamOptions: createRawOutgoingVideoStreamOptions())
+        localScreenShareOutgoingVideoStream = videoStream
+        localScreenShareOutgoingVideoStream?.delegate = self
+        return videoStream
+    }
+    
+    private func createRawOutgoingVideoStreamOptions() -> RawOutgoingVideoStreamOptions {
+        let format = createVideoStreamFormat()
+        
+        let options = RawOutgoingVideoStreamOptions()
+        options.formats = [format]
+        
+        return options
+    }
+    
+    private func createVideoStreamFormat() -> VideoStreamFormat {
+        let format = VideoStreamFormat()
+        format.pixelFormat = VideoStreamPixelFormat.nv12
+        format.framesPerSecond = 30.0
+        
+        let maxWidth: Double = 1920.0
+        let maxHeight: Double = 1080.0
+        
+        let screenSize = UIScreen.main.bounds
+        var w = screenSize.width
+        var h = screenSize.height
+        
+        if h > maxHeight {
+            let percentage = abs((maxHeight / h) - 1);
+            w = ceil((w * percentage));
+            h = maxHeight;
+        }
+        
+        if w > maxWidth {
+            let percentage = abs((maxWidth / w) - 1);
+            h = ceil((h * percentage));
+            w = maxWidth;
+        }
+        
+        format.width = Int32(w)
+        format.height = Int32(h)
+        format.stride1 = Int32(w)
+        format.stride2 = Int32(w)
+        
+        return format
+    }
+    
+    private func resetVideoEffects() {
+        localVideoStream?.feature(Features.localVideoEffects).disable(effect: BackgroundBlurEffect())
+    }
 }
 // swiftlint:enable type_body_length
 
@@ -861,15 +1038,36 @@ extension CallingSDKWrapper: DeviceManagerDelegate {
             }
         })
     }
-    
-    private func getValidLocalVideoStream() async -> AzureCommunicationCalling.LocalVideoStream {
-        if let existingVideoStream = localVideoStream {
-            return existingVideoStream
+}
+
+extension CallingSDKWrapper: ScreenShareOutgoingVideoStreamDelegate {
+    func screenShareOutgoingVideoStream(_ screenShareOutgoingVideoStream: ScreenShareOutgoingVideoStream,
+                                        didChangeState args: VideoStreamStateChangedEventArgs) {
+        let stream = args.stream
+        switch (stream.direction) {
+        case .outgoing:
+            outgoingVideoStreamStateChanged(stream: stream as! OutgoingVideoStream)
+            
+        default:
+            break
         }
-        
-        let videoDevice = await getVideoDeviceInfo(.front)
-        let videoStream = AzureCommunicationCalling.LocalVideoStream(camera: videoDevice)
-        localVideoStream = videoStream
-        return videoStream
+    }
+    
+    private func outgoingVideoStreamStateChanged(stream: OutgoingVideoStream) {
+        switch stream.state {
+        case .stopped:
+            switch stream.type {
+            case .screenShareOutgoing:
+                Task {
+                    try? await stopScreenSharingStream()
+                }
+                
+            default:
+                break
+            }
+            
+        default:
+            break
+        }
     }
 }

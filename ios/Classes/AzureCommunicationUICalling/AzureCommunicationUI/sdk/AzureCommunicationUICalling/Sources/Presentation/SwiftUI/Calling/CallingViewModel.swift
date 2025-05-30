@@ -8,6 +8,7 @@ import Foundation
 // swiftlint:disable type_body_length
 internal class CallingViewModel: ObservableObject {
     @Published var isParticipantGridDisplayed: Bool
+    @Published var isScreenSharing: Bool
     @Published var isVideoGridViewAccessibilityAvailable = false
     @Published var appState: AppStatus = .foreground
     @Published var isInPip = false
@@ -15,18 +16,20 @@ internal class CallingViewModel: ObservableObject {
     @Published var captionsStarted = false
     @Published var isShareMeetingLinkDisplayed = false
 
+    
     private let compositeViewModelFactory: CompositeViewModelFactoryProtocol
     private let store: Store<AppState, Action>
-    private let localizationProvider: LocalizationProviderProtocol
     private let accessibilityProvider: AccessibilityProviderProtocol
     private let callType: CompositeCallType
     private let captionsOptions: CaptionsOptions
     private let callScreenOptions: CallScreenOptions
+    private let isChatEnabled: Bool
 
     private var cancellables = Set<AnyCancellable>()
     private var callHasConnected = false
     private var callClientRequested = false
 
+    let localizationProvider: LocalizationProviderProtocol
     let localVideoViewModel: LocalVideoViewModel
     let participantGridsViewModel: ParticipantGridViewModel
     let bannerViewModel: BannerViewModel
@@ -69,7 +72,8 @@ internal class CallingViewModel: ObservableObject {
          captionsOptions: CaptionsOptions,
          capabilitiesManager: CapabilitiesManager,
          callScreenOptions: CallScreenOptions,
-         rendererViewManager: RendererViewManager
+         rendererViewManager: RendererViewManager,
+         isChatEnable: Bool
     ) {
         self.store = store
         self.compositeViewModelFactory = compositeViewModelFactory
@@ -81,6 +85,7 @@ internal class CallingViewModel: ObservableObject {
         self.callType = callType
         self.captionsOptions = captionsOptions
         self.callScreenOptions = callScreenOptions
+        self.isChatEnabled = isChatEnable
         self.shareMeetingLinkViewModel = compositeViewModelFactory.makeShareMeetingInfoActivityViewModel()
 
         let actionDispatch: ActionDispatch = store.dispatch
@@ -114,9 +119,9 @@ internal class CallingViewModel: ObservableObject {
         infoHeaderViewModel = compositeViewModelFactory
             .makeInfoHeaderViewModel(dispatchAction: actionDispatch,
                                      localUserState: store.state.localUserState,
-                                     callScreenInfoHeaderState: store.state.callScreenInfoHeaderState
+                                     callScreenInfoHeaderState: store.state.callScreenInfoHeaderState,
+                                     isChatEnable: isChatEnable,
                                      /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
-                                     ,
                                      buttonViewDataState: store.state.buttonViewDataState,
                                      controlHeaderViewData: callScreenOptions.headerViewData
                                      /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
@@ -140,6 +145,7 @@ internal class CallingViewModel: ObservableObject {
         leaveCallConfirmationViewModel = compositeViewModelFactory.makeLeaveCallConfirmationViewModel(
             endCall: {
                 store.dispatch(action: .callingAction(.callEndRequested))
+                compositeViewModelFactory.userTriggerEndCall()
             }, dismissConfirmation: {
                 store.dispatch(action: .hideDrawer)
             }
@@ -176,14 +182,16 @@ internal class CallingViewModel: ObservableObject {
                 isDisplayed: store.state.navigationState.participantActionsVisible,
                 dispatchAction: store.dispatch)
         
+        isScreenSharing = store.state.localUserState.shareScreenState.operation == .screenIsSharing
+        
         meetingOptionsViewModel = compositeViewModelFactory.makeMeetingOptionsViewModel(
             localUserState: store.state.localUserState,
             localizationProvider: localizationProvider,
             onShareScreen: {
-                print("On share screen")
+                store.dispatch(action: .localUserAction(.screenShareOnRequested))
             },
             onStopShareScreen: {
-                print("On stop share screen")
+                store.dispatch(action: .localUserAction(.screenShareOffRequested))
             },
             onChat: {
                 print("On chat screen")
@@ -206,7 +214,11 @@ internal class CallingViewModel: ObservableObject {
             onReaction: { reaction in
                 store.dispatch(action: .localUserAction(.sendReaction(reaction: reaction)))
             },
-            isDisplayed: store.state.navigationState.meetignOptionsVisible
+            isRemoteParticipantsPresent: (isCallConnected || isOutgoingCall || isRemoteHold) &&
+            CallingViewModel.hasRemoteParticipants(store.state.remoteParticipantsState.participantInfoList),
+            isDisplayed: store.state.navigationState.meetignOptionsVisible,
+            isReactionEnable: callType == .roomsCall,
+            isRaiseHandAvailable: callingStatus == .connected
         )
 
         controlBarViewModel = compositeViewModelFactory
@@ -286,6 +298,10 @@ internal class CallingViewModel: ObservableObject {
     func dismissDrawer() {
         store.dispatch(action: .hideDrawer)
     }
+    
+    func requestStopScreenSharing() {
+        store.dispatch(action: .localUserAction(.screenShareOffRequested))
+    }
 
     func receive(_ state: AppState) {
         if appState != state.lifeCycleState.currentStatus {
@@ -306,10 +322,18 @@ internal class CallingViewModel: ObservableObject {
         participantOptionsViewModel.update(localUserState: state.localUserState, isDisplayed: state.navigationState.participantOptionsVisible, participantInfoModel: selectedParticipent
         )
         
+        isScreenSharing = state.localUserState.shareScreenState.operation == .screenIsSharing
+        
         meetingOptionsViewModel.update(
             localUserState: state.localUserState,
-            isDisplayed: state.navigationState.meetignOptionsVisible
+            isDisplayed: state.navigationState.meetignOptionsVisible,
+            isRemoteParticipantsPresent: isParticipantGridDisplayed,
+            isRaiseHandAvailable: state.callingState.status == .connected
         )
+        
+        if (!isParticipantGridDisplayed && state.localUserState.shareScreenState.operation == .screenIsSharing) {
+            store.dispatch(action: .localUserAction(.screenShareOffRequested))
+        }
         
         layoutOptionsViewModel.update(
             localUserState: state.localUserState,

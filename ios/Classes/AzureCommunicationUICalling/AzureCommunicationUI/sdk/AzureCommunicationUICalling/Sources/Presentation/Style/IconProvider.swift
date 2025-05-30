@@ -51,6 +51,7 @@ enum CompositeIcon: String {
     case pinIcon = "pin_icon"
     case unpinIcon = "unpin_icon"
     case shareIcon = "share_icon"
+    case stopShareIcon = "stop_share_icon"
     case speakerIcon = "speaker_icon"
     case gridIcon = "grid_icon"
     case handUp = "hand_up"

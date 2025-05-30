@@ -14,23 +14,25 @@ struct MeetingOptionsView: View {
         
         VStack(spacing: 8) {
             Spacer()
-            HStack {
-                Spacer()
-                ForEach(ReactionType.allCases, id: \.self) { reaction in
-                    Button(action: {
-                            viewModel.sendReaction(reaction)
-                        }) {
-                            Text(reaction.emoji)
-                                .font(AppFont.CircularStd.medium.font(size: 36))
-                                .frame(width: 36, height: 36)
-                        }
+            if (viewModel.isReactionEnable) {
+                HStack {
                     Spacer()
+                    ForEach(ReactionType.allCases, id: \.self) { reaction in
+                        Button(action: {
+                                viewModel.sendReaction(reaction)
+                            }) {
+                                Text(reaction.emoji)
+                                    .font(AppFont.CircularStd.medium.font(size: 36))
+                                    .frame(width: 36, height: 36)
+                            }
+                        Spacer()
+                    }
                 }
+                .frame(height: 60)
+                .frame(maxWidth: .infinity)
+                .background(Color(StyleProvider.color.drawerColor))
+                .cornerRadius(DrawerConstants.drawerCornerRadius)
             }
-            .frame(height: 60)
-            .frame(maxWidth: .infinity)
-            .background(Color(StyleProvider.color.drawerColor))
-            .cornerRadius(DrawerConstants.drawerCornerRadius)
             
             VStack(alignment: .center) {
                 Spacer()

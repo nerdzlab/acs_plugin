@@ -19,6 +19,7 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
     var callIdSubject = PassthroughSubject<String, Never>()
     var participantRoleSubject = PassthroughSubject<ParticipantRoleEnum, Never>()
     var totalParticipantCountSubject = PassthroughSubject<Int, Never>()
+    var localUserLowerHandSubject = PassthroughSubject<String, Never>()
     /* <CALL_START_TIME>
      var callStartTimeSubject = PassthroughSubject<Date, Never>()
      </CALL_START_TIME> */
@@ -412,7 +413,10 @@ extension CallingSDKEventsHandler: CallDelegate,
     
     func call(_ call: Call, didChangeTotalParticipantCount args: PropertyChangedEventArgs) {
         // substract local participant from total participantCount
-        totalParticipantCountSubject.send(Int(call.totalParticipantCount) - 1)
+        
+        if (call.totalParticipantCount != 0) {
+            totalParticipantCountSubject.send(Int(call.totalParticipantCount) - 1)
+        }
     }
     
     // MARK: CapabilitiesDelegate
@@ -576,6 +580,12 @@ extension CallingSDKEventsHandler: CallDelegate,
                 currentList[index] = participant.copy(isHandRaised: isRaised)
                 participantsInfoListSubject.send(currentList)
             }
+        }
+        
+        //Need update local user state if admin lower hand
+        if !isRaised && !currentList.contains(where: { $0.userIdentifier == identifier }) {
+            //If there no participant in list it means that it is local user
+            localUserLowerHandSubject.send(identifier)
         }
     }
     

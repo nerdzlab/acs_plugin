@@ -122,8 +122,11 @@ struct InfoHeaderView: View {
                     .accessibilityFocused($focusedOnCustomButton2, equals: true)
             }
             /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
-            chatButton
-                .padding(.trailing, 0)
+            if viewModel.isChatEnable {
+                chatButton
+                    .padding(.trailing, 0)
+            }
+        
             participantListButton
         }
         .padding(EdgeInsets(top: 8,
