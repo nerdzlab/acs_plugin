@@ -9,13 +9,14 @@ import com.acs_plugin.calling.models.CallCompositeRoomLocator
 import com.acs_plugin.handler.ChatHandler
 import com.acs_plugin.handler.MethodHandler
 import com.acs_plugin.handler.UserDataHandler
+import com.acs_plugin.utils.FlutterEventDispatcher
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.communication.common.CommunicationTokenRefreshOptions
 import com.azure.android.communication.common.CommunicationUserIdentifier
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -31,6 +32,7 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private var activity: Activity? = null
     private lateinit var context: Context
+    private lateinit var eventChannel: EventChannel
 
     private val handlers = mutableListOf<MethodHandler>()
 
@@ -39,13 +41,24 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "acs_plugin")
         channel.setMethodCallHandler(this)
-        setupHandlers()
+
+        eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "acs_plugin_events")
+        eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
+            override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+                FlutterEventDispatcher.setEventSink(events)
+            }
+
+            override fun onCancel(arguments: Any?) {
+                FlutterEventDispatcher.clear()
+            }
+        })
     }
 
 
     // ActivityAware callbacks:
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
+        setupHandlers()
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -81,16 +94,12 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
             }
 
-            else -> result.notImplemented()
+            else -> {}
         }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
-    }
-
-    fun chatPushOpened(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
-        handlers.filterIsInstance<ChatHandler>().firstOrNull()?.chatPushNotificationOpened(pushNotificationReceivedEvent)
     }
 
     private fun initializeRoomCall(token: String, roomId: String, userId: String, result: MethodChannel.Result) {
@@ -129,6 +138,6 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     private fun sendEventToFlutter(name: String, payload: String?) {
-        channel.invokeMethod(name, payload)
+        FlutterEventDispatcher.sendEvent(name, payload)
     }
 }

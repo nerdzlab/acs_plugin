@@ -1,5 +1,7 @@
 package com.acs_plugin.chat.service.sdk.wrapper
 
+import com.acs_plugin.calling.service.sdk.ext.id
+
 
 internal sealed class CommunicationIdentifier(val id: String) {
     data class CommunicationUserIdentifier(val userId: String) : CommunicationIdentifier(userId)
@@ -12,17 +14,17 @@ internal sealed class CommunicationIdentifier(val id: String) {
 
 internal fun com.azure.android.communication.common.CommunicationIdentifier.into(): CommunicationIdentifier {
     return when (this) {
-        is CommunicationIdentifier.CommunicationUserIdentifier -> CommunicationIdentifier.CommunicationUserIdentifier(
+        is com.azure.android.communication.common.CommunicationUserIdentifier -> CommunicationIdentifier.CommunicationUserIdentifier(
             this.id
         )
 
-        is CommunicationIdentifier.MicrosoftTeamsUserIdentifier -> CommunicationIdentifier.MicrosoftTeamsUserIdentifier(
-            this.userId,
+        is com.azure.android.communication.common.MicrosoftTeamsUserIdentifier -> CommunicationIdentifier.MicrosoftTeamsUserIdentifier(
+            this.id(),
             this.isAnonymous
         )
 
-        is CommunicationIdentifier.PhoneNumberIdentifier -> CommunicationIdentifier.PhoneNumberIdentifier(this.phoneNumber)
-        is CommunicationIdentifier.UnknownIdentifier -> CommunicationIdentifier.UnknownIdentifier(this.id)
+        is com.azure.android.communication.common.PhoneNumberIdentifier -> CommunicationIdentifier.PhoneNumberIdentifier(this.phoneNumber)
+        is com.azure.android.communication.common.UnknownIdentifier -> CommunicationIdentifier.UnknownIdentifier(this.id)
         else -> {
             throw IllegalStateException("Unknown type of CommunicationIdentifier: $this")
         }
