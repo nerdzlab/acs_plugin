@@ -6,6 +6,7 @@ package com.acs_plugin.calling.redux.action
 import com.acs_plugin.calling.error.CallCompositeError
 import com.acs_plugin.calling.models.ParticipantCapabilityType
 import com.acs_plugin.calling.models.ParticipantRole
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.calling.redux.state.AudioDeviceSelectionStatus
 import com.acs_plugin.calling.redux.state.AudioOperationalStatus
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
@@ -91,4 +92,16 @@ internal sealed class LocalParticipantAction : Action {
     class NoiseSuppressionOffTriggered : LocalParticipantAction()
     object NoiseSuppressionOffSucceeded : LocalParticipantAction()
     data class NoiseSuppressionOffFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class RaiseHandTriggered : LocalParticipantAction()
+    object RaiseHandSucceeded : LocalParticipantAction()
+    data class RaiseHandFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class LowerHandTriggered : LocalParticipantAction()
+    object LowerHandSucceeded : LocalParticipantAction()
+    data class LowerHandFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class SendReactionTriggered(val reactionType: ReactionType) : LocalParticipantAction()
+    object SendReactionSucceeded : LocalParticipantAction()
+    data class SendReactionFailed(val error: CallCompositeError) : LocalParticipantAction()
 }

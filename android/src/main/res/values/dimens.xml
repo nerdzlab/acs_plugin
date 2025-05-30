@@ -10,6 +10,7 @@
 
     <!-- Text sizes -->
     <dimen name="text_size_48">48sp</dimen>
+    <dimen name="text_size_40">40sp</dimen>
     <dimen name="text_size_24">24sp</dimen>
     <dimen name="text_size_20">20sp</dimen>
     <dimen name="text_size_32">32sp</dimen>
@@ -18,7 +19,6 @@
     <dimen name="text_size_12">12sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
     <dimen name="text_size_10">10sp</dimen>
-    <dimen name="text_size_40">40sp</dimen>
     <dimen name="text_size_6">6sp</dimen>
 
     <dimen name="text_1_step">1sp</dimen>
@@ -40,6 +40,7 @@
     <dimen name="margin_12dp">12dp</dimen>
     <dimen name="margin_18dp">18dp</dimen>
     <dimen name="margin_10dp">10dp</dimen>
+    <dimen name="margin_32dp">32dp</dimen>
     <dimen name="margin_minus_12dp">-12dp</dimen>
     <dimen name="margin_minus_8dp">-8dp</dimen>
     <dimen name="margin_minus_6dp">-6dp</dimen>
@@ -75,6 +76,7 @@
     <dimen name="icon_size_14dp">14dp</dimen>
     <dimen name="icon_size_18dp">18dp</dimen>
     <dimen name="icon_size_24dp">24dp</dimen>
+    <dimen name="icon_size_26dp">26dp</dimen>
 
     <!-- Progress size -->
     <dimen name="progress_size_24dp">24dp</dimen>

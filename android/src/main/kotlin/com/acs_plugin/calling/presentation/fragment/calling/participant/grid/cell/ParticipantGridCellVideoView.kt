@@ -21,8 +21,10 @@ import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.Par
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.VideoViewModel
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.screenshare.ScreenShareViewManager
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.screenshare.ScreenShareZoomFrameLayout
+import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
 import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
 import com.google.android.material.textview.MaterialTextView
+import com.microsoft.fluentui.util.isVisible
 import kotlinx.coroutines.launch
 
 internal class ParticipantGridCellVideoView(
@@ -33,11 +35,14 @@ internal class ParticipantGridCellVideoView(
     private val displayNameAndMicIndicatorViewContainer: View,
     private val displayNameOnVideoTextView: MaterialTextView,
     private val micIndicatorOnVideoImageView: AppCompatImageView,
+    private val raiseHandIndicatorVideoImageView: AppCompatImageView,
+    private val participantVideoRaiseHandFrameIndicator: FrameLayout,
     private val participantViewModel: ParticipantGridCellViewModel,
     private val getVideoStreamCallback: (String, String) -> View?,
     private val showFloatingHeaderCallBack: () -> Unit,
     private val getScreenShareVideoStreamRendererCallback: () -> VideoStreamRenderer?,
     private val getParticipantViewDataCallback: (participantID: String) -> CallCompositeParticipantViewData?,
+    private val reactionOverlayView: ReactionOverlayView
 ) {
     private var videoStream: View? = null
     private var screenShareZoomFrameLayout: ScreenShareZoomFrameLayout? = null
@@ -84,6 +89,16 @@ internal class ParticipantGridCellVideoView(
                 } else {
                     videoContainer.visibility = INVISIBLE
                 }
+            }
+        }
+        lifecycleScope.launch {
+            participantViewModel.getIsRaisedHandStateFlow().collect {
+                setRaisedHandIndicator(it)
+            }
+        }
+        lifecycleScope.launch {
+            participantViewModel.getReactionTypeStateFlow().collect {
+                reactionOverlayView.show(it)
             }
         }
     }
@@ -163,7 +178,11 @@ internal class ParticipantGridCellVideoView(
             )
             participantVideoContainerSpeakingFrameLayout.background = ContextCompat.getDrawable(
                 context,
-                R.drawable.bg_rounde_purple_frame_r12
+                R.drawable.bg_rounded_purple_frame_r12
+            )
+            participantVideoRaiseHandFrameIndicator.background = ContextCompat.getDrawable(
+                context,
+                R.drawable.bg_rounded_orange_frame_r12
             )
             return
         }
@@ -178,7 +197,11 @@ internal class ParticipantGridCellVideoView(
         )
         participantVideoContainerSpeakingFrameLayout.background = ContextCompat.getDrawable(
             context,
-            R.drawable.bg_rounde_purple_frame_r12
+            R.drawable.bg_rounded_purple_frame_r12
+        )
+        participantVideoRaiseHandFrameIndicator.background = ContextCompat.getDrawable(
+            context,
+            R.drawable.bg_rounded_orange_frame_r12
         )
         videoContainer.addView(rendererView, 0)
     }
@@ -211,6 +234,11 @@ internal class ParticipantGridCellVideoView(
         } else {
             displayNameAndMicIndicatorViewContainer.visibility = VISIBLE
         }
+    }
+
+    private fun setRaisedHandIndicator(isRaisedHand: Boolean) {
+        raiseHandIndicatorVideoImageView.isVisible = isRaisedHand
+        participantVideoRaiseHandFrameIndicator.isVisible = isRaisedHand
     }
 
     private fun detachFromParentView(view: View?) {

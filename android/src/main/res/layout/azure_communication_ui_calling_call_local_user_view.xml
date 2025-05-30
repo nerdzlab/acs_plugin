@@ -22,7 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <include layout="@layout/azure_communication_ui_calling_call_local_pip_video"/>
+    <include layout="@layout/azure_communication_ui_calling_call_local_pip_video" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/azure_communication_ui_call_switch_camera_button"
@@ -65,6 +65,15 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
+        android:id="@+id/local_participant_reaction_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/local_participant_layer"
         android:layout_width="wrap_content"
@@ -77,6 +86,15 @@
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/azure_communication_ui_call_local_raise_hand_indicator"
+            android:layout_width="@dimen/icon_size_14dp"
+            android:layout_height="@dimen/icon_size_14dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/margin_4dp"
+            app:tint="@color/yellow"
+            app:srcCompat="@drawable/ic_raised_hand" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/azure_communication_ui_call_local_display_name"

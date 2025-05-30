@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/moreActionsRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_top_rounded_r12_white">
+
+    <LinearLayout
+        android:id="@+id/emoji_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_12dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:visibility="visible">
+
+        <!-- Example Emoji -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/emoji_like"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/emoji_like"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/text_primary" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/emoji_heart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="@string/emoji_heart"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/text_primary" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/emoji_applause"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/emoji_applause"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/text_primary" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/emoji_laugh"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/emoji_laugh"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/text_primary" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/emoji_surprised"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/emoji_surprised"
+            android:textSize="@dimen/text_size_24"
+            android:textColor="@color/text_primary" />
+
+    </LinearLayout>
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/action_flexbox_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_24dp"
+        android:padding="@dimen/padding_8dp"
+        app:flexWrap="wrap"
+        app:justifyContent="space_between"
+        app:alignItems="center">
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+</LinearLayout>

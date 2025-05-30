@@ -7,9 +7,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -17,6 +15,7 @@ import com.acs_plugin.R
 import com.acs_plugin.calling.models.CallCompositeParticipantViewData
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellAvatarView
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellVideoView
+import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
 import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
 import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.persona.AvatarView
@@ -69,8 +68,17 @@ internal class ParticipantGridCellView(
         val micIndicatorAudioImageView: AppCompatImageView =
             findViewById(R.id.azure_communication_ui_participant_audio_view_mic_indicator)
 
+        val raiseHandIndicatorAudioImageView: AppCompatImageView =
+            findViewById(R.id.azure_communication_ui_participant_audio_raise_hand_indicator)
+
+        val participantRaiseHandFrameIndicator: FrameLayout =
+            findViewById(R.id.azure_communication_ui_participant_view_avatar_raised_hand_frame)
+
         val onHoldTextView: MaterialTextView =
             findViewById(R.id.azure_communication_ui_calling_participant_audio_view_on_hold)
+
+        val avatarReactionOverlay: ReactionOverlayView =
+            findViewById(R.id.azure_communication_ui_participant_avatar_reaction_overlay)
 
         avatarView = ParticipantGridCellAvatarView(
             avatarControl,
@@ -78,11 +86,14 @@ internal class ParticipantGridCellView(
             participantAvatarContainer,
             displayNameAudioTextView,
             micIndicatorAudioImageView,
+            raiseHandIndicatorAudioImageView,
+            participantRaiseHandFrameIndicator,
             getParticipantViewDataCallback,
             participantViewModel,
             onHoldTextView,
             context,
             lifecycleScope,
+            avatarReactionOverlay
         )
     }
 
@@ -102,6 +113,15 @@ internal class ParticipantGridCellView(
         val micIndicatorOnVideoImageView: AppCompatImageView =
             findViewById(R.id.azure_communication_ui_participant_view_on_video_mic_indicator)
 
+        val raiseHandIndicatorVideoImageView: AppCompatImageView =
+            findViewById(R.id.azure_communication_ui_participant_view_on_video_raise_hand_indicator)
+
+        val participantVideoRaiseHandFrameIndicator: FrameLayout =
+            findViewById(R.id.azure_communication_ui_participant_video_raised_hand_frame)
+
+        val participantReactionOverlay: ReactionOverlayView =
+            findViewById(R.id.azure_communication_ui_participant_video_reaction_overlay)
+
         videoView = ParticipantGridCellVideoView(
             context,
             lifecycleScope,
@@ -110,11 +130,14 @@ internal class ParticipantGridCellView(
             displayNameAndMicIndicatorViewContainer,
             displayNameOnVideoTextView,
             micIndicatorOnVideoImageView,
+            raiseHandIndicatorVideoImageView,
+            participantVideoRaiseHandFrameIndicator,
             participantViewModel,
             getVideoStreamCallback,
             showFloatingHeaderCallBack,
             getScreenShareVideoStreamRendererCallback,
             getParticipantViewDataCallback,
+            participantReactionOverlay
         )
     }
 }

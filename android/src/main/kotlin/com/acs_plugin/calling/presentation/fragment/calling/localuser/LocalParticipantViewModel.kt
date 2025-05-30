@@ -4,11 +4,13 @@
 package com.acs_plugin.calling.presentation.fragment.calling.localuser
 
 import com.acs_plugin.calling.models.CallCompositeAudioVideoMode
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.calling.redux.action.Action
 import com.acs_plugin.calling.redux.action.LocalParticipantAction
 import com.acs_plugin.calling.redux.state.AudioOperationalStatus
 import com.acs_plugin.calling.redux.state.CallingStatus
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
+import com.acs_plugin.calling.redux.state.RaisedHandStatus
 import com.acs_plugin.calling.redux.state.VisibilityStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +35,9 @@ internal class LocalParticipantViewModel(
     private lateinit var numberOfRemoteParticipantsFlow: MutableStateFlow<Int>
     private lateinit var isVisibleFlow: MutableStateFlow<Boolean>
     private lateinit var userNameLayerVisibilityFlow: MutableStateFlow<Boolean>
+    private lateinit var displayRaisedHandFlow: MutableStateFlow<Boolean>
+    private lateinit var reactionFlow: MutableStateFlow<Pair<LocalParticipantViewMode, ReactionType?>>
+
 
     fun getVideoStatusFlow(): StateFlow<VideoModel> = videoStatusFlow
     fun getDisplayFullScreenAvatarFlow(): StateFlow<Boolean> = displayFullScreenAvatarFlow
@@ -48,6 +53,8 @@ internal class LocalParticipantViewModel(
 
     fun getIsVisibleFlow(): StateFlow<Boolean> = isVisibleFlow
     fun getUserNameLayerVisibilityFlow(): StateFlow<Boolean> = userNameLayerVisibilityFlow
+    fun getDisplayRaisedHandFlowFlow(): StateFlow<Boolean> = displayRaisedHandFlow
+    fun getReactionFlow(): StateFlow<Pair<LocalParticipantViewMode, ReactionType?>> = reactionFlow
 
     fun update(
         displayName: String?,
@@ -60,6 +67,8 @@ internal class LocalParticipantViewModel(
         pipStatus: VisibilityStatus,
         avMode: CallCompositeAudioVideoMode,
         isOverlayDisplayedOverGrid: Boolean,
+        raisedHandStatus: RaisedHandStatus,
+        reactionType: ReactionType?
     ) {
         val viewMode = getLocalParticipantViewMode(numberOfRemoteParticipants)
         val displayVideo = shouldDisplayVideo(videoStreamID)
@@ -89,6 +98,8 @@ internal class LocalParticipantViewModel(
         isVisibleFlow.value = isVisible(displayVideo, pipStatus, displayFullScreenAvatar, avMode)
         isOverlayDisplayedFlow.value = isOverlayDisplayedOverGrid
         userNameLayerVisibilityFlow.value = viewMode == LocalParticipantViewMode.FULL_SCREEN
+        displayRaisedHandFlow.value = raisedHandStatus == RaisedHandStatus.RAISED
+        reactionFlow.value = viewMode to reactionType
     }
 
     private fun isVisible(displayVideo: Boolean, pipStatus: VisibilityStatus, displayFullScreenAvatar: Boolean, avMode: CallCompositeAudioVideoMode): Boolean {
@@ -118,6 +129,7 @@ internal class LocalParticipantViewModel(
         pipStatus: VisibilityStatus,
         avMode: CallCompositeAudioVideoMode,
         isOverlayDisplayedOverGrid: Boolean,
+        raisedHandStatus: RaisedHandStatus
     ) {
 
         val viewMode = getLocalParticipantViewMode(numberOfRemoteParticipants)
@@ -146,6 +158,8 @@ internal class LocalParticipantViewModel(
         numberOfRemoteParticipantsFlow = MutableStateFlow(numberOfRemoteParticipants)
         isVisibleFlow = MutableStateFlow(isVisible(displayVideo, pipStatus, displayFullScreenAvatar, avMode))
         userNameLayerVisibilityFlow = MutableStateFlow(viewMode == LocalParticipantViewMode.FULL_SCREEN)
+        displayRaisedHandFlow = MutableStateFlow(raisedHandStatus == RaisedHandStatus.RAISED)
+        reactionFlow = MutableStateFlow(viewMode to null)
     }
 
     fun switchCamera() = dispatch(LocalParticipantAction.CameraSwitchTriggered())

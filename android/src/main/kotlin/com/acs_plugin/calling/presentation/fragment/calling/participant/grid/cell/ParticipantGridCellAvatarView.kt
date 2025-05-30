@@ -15,8 +15,10 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import com.acs_plugin.R
 import com.acs_plugin.calling.models.CallCompositeParticipantViewData
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridCellViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
 import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.persona.AvatarView
+import com.microsoft.fluentui.util.isVisible
 import kotlinx.coroutines.launch
 
 internal class ParticipantGridCellAvatarView(
@@ -25,11 +27,14 @@ internal class ParticipantGridCellAvatarView(
     private val participantContainer: ConstraintLayout,
     private val displayNameAudioTextView: MaterialTextView,
     private val micIndicatorAudioImageView: AppCompatImageView,
+    private val raiseHandIndicatorAudioImageView: AppCompatImageView,
+    private val participantRaiseHandFrameIndicator: FrameLayout,
     private val getParticipantViewDataCallback: (participantID: String) -> CallCompositeParticipantViewData?,
     private val participantViewModel: ParticipantGridCellViewModel,
     private val onHoldTextView: MaterialTextView,
     private val context: Context,
     lifecycleScope: LifecycleCoroutineScope,
+    private val reactionOverlayView: ReactionOverlayView
 ) {
     private var lastParticipantViewData: CallCompositeParticipantViewData? = null
 
@@ -84,6 +89,18 @@ internal class ParticipantGridCellAvatarView(
                 }
             }
         }
+
+        lifecycleScope.launch {
+            participantViewModel.getIsRaisedHandStateFlow().collect {
+                setRaisedHandIndicator(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            participantViewModel.getReactionTypeStateFlow().collect {
+                reactionOverlayView.show(it)
+            }
+        }
     }
 
     fun updateParticipantViewData() {
@@ -128,11 +145,16 @@ internal class ParticipantGridCellAvatarView(
         if (isSpeaking) {
             participantAvatarSpeakingFrameLayout.background = ContextCompat.getDrawable(
                 context,
-                R.drawable.bg_rounde_purple_frame_r12
+                R.drawable.bg_rounded_purple_frame_r12
             )
         } else {
             participantAvatarSpeakingFrameLayout.setBackgroundResource(0)
         }
+    }
+
+    private fun setRaisedHandIndicator(isRaisedHand: Boolean) {
+        raiseHandIndicatorAudioImageView.isVisible = isRaisedHand
+        participantRaiseHandFrameIndicator.isVisible = isRaisedHand
     }
 
     private fun setDisplayName(displayName: String) {

@@ -150,7 +150,7 @@ internal class MoreCallOptionsListViewModel(
             close()
 
         listEntriesMutableStateFlow.value = createButtons(buttonViewDataState)
-        displayStateFlow.value = navigationState.showMoreMenu
+//        displayStateFlow.value = navigationState.showMoreMenu
     }
 
     private fun isAnyCaptionsSubMenuButtonsVisible(): Boolean {

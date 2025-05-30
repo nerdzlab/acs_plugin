@@ -7,6 +7,7 @@ import com.acs_plugin.calling.error.CallCompositeError
 import com.acs_plugin.calling.models.CallCompositeAudioVideoMode
 import com.acs_plugin.calling.models.ParticipantCapabilityType
 import com.acs_plugin.calling.models.ParticipantRole
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 
 internal enum class CameraOperationalStatus {
     PENDING,
@@ -58,6 +59,11 @@ internal enum class NoiseSuppressionStatus {
     OFF
 }
 
+internal enum class RaisedHandStatus {
+    RAISED,
+    LOWER
+}
+
 internal data class CameraState(
     val operation: CameraOperationalStatus,
     val device: CameraDeviceSelectionStatus,
@@ -73,8 +79,7 @@ internal data class AudioState(
     val bluetoothState: BluetoothState,
     val noiseSuppression: NoiseSuppressionStatus,
     val error: CallCompositeError? = null,
-    val isHeadphonePlugged: Boolean = false,
-    //TODO Add audio filters
+    val isHeadphonePlugged: Boolean = false
 )
 
 internal data class BluetoothState(
@@ -99,4 +104,6 @@ internal data class LocalUserState(
     val audioVideoMode: CallCompositeAudioVideoMode = CallCompositeAudioVideoMode.AUDIO_AND_VIDEO,
     val capabilities: Set<ParticipantCapabilityType> = emptySet(),
     val currentCapabilitiesAreDefault: Boolean = true,
+    val raisedHandStatus: RaisedHandStatus,
+    val reactionType: ReactionType? = null
 )

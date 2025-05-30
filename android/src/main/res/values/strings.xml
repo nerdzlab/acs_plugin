@@ -8,4 +8,17 @@
     <string name="noise_suppression" translatable="false">Noise suppression</string>
     <string name="participant_list" translatable="false">Participants (%d)</string>
     <string name="share_meeting_link" translatable="false">Share meeting link</string>
+    <string name="chat" translatable="false">Chat</string>
+    <string name="participants" translatable="false">Participants</string>
+    <string name="turn_blur_off" translatable="false">Turn blur off</string>
+    <string name="turn_blur_on" translatable="false">Turn blur on</string>
+    <string name="raise_hand" translatable="false">Raise hand</string>
+    <string name="lower_hand" translatable="false">Lower hand</string>
+    <string name="change_view" translatable="false">Change view</string>
+    <string name="share_screen" translatable="false">Share screen</string>
+    <string name="emoji_heart" translatable="false">❤️</string>
+    <string name="emoji_laugh" translatable="false">😂</string>
+    <string name="emoji_surprised" translatable="false">😮</string>
+    <string name="emoji_applause" translatable="false">👏</string>
+    <string name="emoji_like" translatable="false">👍</string>
 </resources>
