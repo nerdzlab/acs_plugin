@@ -2,6 +2,7 @@ package com.acs_plugin.handler
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import com.acs_plugin.Constants
 import com.acs_plugin.calling.CallComposite
 import com.acs_plugin.calling.CallCompositeBuilder
@@ -15,12 +16,28 @@ import com.azure.android.communication.common.CommunicationTokenRefreshOptions
 import com.azure.android.communication.common.CommunicationUserIdentifier
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.serialization.json.Json
 
 class CallHandler(
     private val context: Context,
-    private val activity: Activity?,
-    private val user: UserData?
+    private val activity: Activity?
 ) : MethodHandler {
+
+    private val sharedPreferences: SharedPreferences by lazy {
+        context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
+    }
+
+    private val userData: UserData?
+        get() {
+            val json = sharedPreferences.getString(Constants.Prefs.USER_DATA_KEY, null)
+            return json?.let {
+                try {
+                    Json.decodeFromString<UserData>(it)
+                } catch (_: Exception) {
+                    null
+                }
+            }
+        }
 
     override fun handle(call: MethodCall, result: MethodChannel.Result): Boolean {
         return when (call.method) {
@@ -59,12 +76,12 @@ class CallHandler(
             return
         }
 
-        if (user == null) {
+        if (userData == null) {
             result.error("NO_USER_DATA", "User data not available", null)
             return
         }
 
-        val communicationTokenRefreshOptions = CommunicationTokenRefreshOptions({ user.token }, true)
+        val communicationTokenRefreshOptions = CommunicationTokenRefreshOptions({ userData?.token }, true)
         val communicationTokenCredential = CommunicationTokenCredential(communicationTokenRefreshOptions)
 
         val localOptions = CallCompositeLocalOptions().apply {
@@ -76,8 +93,8 @@ class CallHandler(
         val callComposite: CallComposite = CallCompositeBuilder()
             .applicationContext(this.context)
             .credential(communicationTokenCredential)
-            .displayName(user.name)
-            .userId(CommunicationUserIdentifier(user.userId))
+            .displayName(userData?.name)
+            .userId(CommunicationUserIdentifier(userData?.userId))
             .build()
 
         callComposite.launch(this.activity, locator, localOptions)

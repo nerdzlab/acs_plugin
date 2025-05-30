@@ -71,7 +71,7 @@ class AcsPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
   private fun setupHandlers() {
     val userDataHandler = UserDataHandler(context, channel) {}
-    val callHandler = CallHandler(context, activity, userDataHandler.getUserData())
+    val callHandler = CallHandler(context, activity)
     handlers.addAll(
       listOf(
         userDataHandler,
