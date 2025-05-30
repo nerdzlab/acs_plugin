@@ -4,12 +4,14 @@
 package com.acs_plugin.calling.presentation.fragment.calling.header
 
 import android.content.Context
+import com.acs_plugin.Constants
 import com.acs_plugin.calling.logger.Logger
 import com.acs_plugin.calling.models.createCustomButtonClickEvent
 import com.acs_plugin.calling.presentation.manager.UpdatableOptionsManager
 import com.acs_plugin.calling.redux.state.ButtonState
 import com.acs_plugin.calling.redux.state.CallScreenInfoHeaderState
 import com.acs_plugin.calling.redux.state.VisibilityStatus
+import com.acs_plugin.utils.FlutterEventDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 /* <CALL_START_TIME>
@@ -40,6 +42,8 @@ internal class InfoHeaderViewModel(
     private var buttonState: ButtonState? = null
     private lateinit var customButton1MutableStateFlow: MutableStateFlow<CustomButtonEntry?>
     private lateinit var customButton2MutableStateFlow: MutableStateFlow<CustomButtonEntry?>
+
+    private lateinit var chatButtonVisibilityMutableStateFlow: MutableStateFlow<Boolean>
     /* <CALL_START_TIME>
     private var callDurationTimer: Timer? = null
     </CALL_START_TIME> */
@@ -55,6 +59,7 @@ internal class InfoHeaderViewModel(
     fun getNumberOfParticipantsFlow(): StateFlow<Int> = numberOfParticipantsFlow
     fun getCustomButton1StateFlow(): StateFlow<CustomButtonEntry?> = customButton1MutableStateFlow
     fun getCustomButton2StateFlow(): StateFlow<CustomButtonEntry?> = customButton2MutableStateFlow
+    fun getChatButtonVisibilityStateFlow(): StateFlow<Boolean> = chatButtonVisibilityMutableStateFlow
 
     fun init(
         numberOfRemoteParticipants: Int,
@@ -76,6 +81,7 @@ internal class InfoHeaderViewModel(
         customButton1MutableStateFlow = MutableStateFlow(null)
         customButton2MutableStateFlow = MutableStateFlow(null)
         updateCustomButtonsState(buttonState)
+        chatButtonVisibilityMutableStateFlow = MutableStateFlow(buttonState.callScreenHeaderChatButtonsState?.isVisible == true)
         /* <CALL_START_TIME>
         isCallDurationDisplayedFlow = MutableStateFlow(shouldDisplayCallDuration(callScreenInfoHeaderState, callStartTime))
         callDurationFlow = MutableStateFlow("00:00")
@@ -96,6 +102,7 @@ internal class InfoHeaderViewModel(
         titleStateFlow.value = callScreenInfoHeaderState.title
         subtitleStateFlow.value = callScreenInfoHeaderState.subtitle
         numberOfParticipantsFlow.value = numberOfRemoteParticipants
+        chatButtonVisibilityMutableStateFlow.value = buttonState.callScreenHeaderChatButtonsState?.isVisible == true
         /* <CALL_START_TIME>
         isCallDurationDisplayedFlow.value = shouldDisplayCallDuration(callScreenInfoHeaderState, callStartTime)
         if (isCallDurationDisplayedFlow.value) {
@@ -128,6 +135,10 @@ internal class InfoHeaderViewModel(
 
     fun requestCallEnd() {
         requestCallEndCallback()
+    }
+
+    fun onChatButtonClicked() {
+        FlutterEventDispatcher.sendEvent(Constants.FlutterEvents.ON_SHOW_CHAT)
     }
 
     fun onCustomButtonClicked(context: Context, id: String) {

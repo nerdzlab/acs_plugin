@@ -10,7 +10,7 @@
     android:importantForAccessibility="yes"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_12dp"
+    android:layout_margin="@dimen/margin_16dp"
     android:background="@drawable/bg_white_rounded_r10"
     android:elevation="@dimen/elevation_4dp"
     android:visibility="gone"
@@ -39,7 +39,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/azure_communication_ui_call_header_custom_button_1"
+        app:layout_constraintEnd_toStartOf="@+id/azure_communication_ui_call_info_header_chat_button"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/azure_communication_ui_call_header_back_button"
         app:layout_constraintTop_toTopOf="parent"
@@ -81,32 +81,46 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <ImageButton
-        android:id="@+id/azure_communication_ui_call_header_custom_button_1"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:backgroundTint="@color/azure_communication_ui_calling_color_button_background_transparent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/azure_communication_ui_call_header_custom_button_2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/azure_communication_ui_calling_ic_fluent_people_24_selector"
-        android:visibility="gone"
-        />
+<!--    <ImageButton-->
+<!--        android:id="@+id/azure_communication_ui_call_header_custom_button_1"-->
+<!--        android:layout_width="24dp"-->
+<!--        android:layout_height="24dp"-->
+<!--        android:layout_marginStart="12dp"-->
+<!--        android:layout_marginEnd="12dp"-->
+<!--        android:backgroundTint="@color/azure_communication_ui_calling_color_button_background_transparent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/azure_communication_ui_call_header_custom_button_2"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:srcCompat="@drawable/azure_communication_ui_calling_ic_fluent_people_24_selector"-->
+<!--        android:visibility="gone"-->
+<!--        />-->
 
-    <ImageButton
-        android:id="@+id/azure_communication_ui_call_header_custom_button_2"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:backgroundTint="@color/azure_communication_ui_calling_color_button_background_transparent"
+<!--    <ImageButton-->
+<!--        android:id="@+id/azure_communication_ui_call_header_custom_button_2"-->
+<!--        android:layout_width="24dp"-->
+<!--        android:layout_height="24dp"-->
+<!--        android:layout_marginStart="12dp"-->
+<!--        android:layout_marginEnd="12dp"-->
+<!--        android:backgroundTint="@color/azure_communication_ui_calling_color_button_background_transparent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/azure_communication_ui_call_bottom_drawer_button"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:srcCompat="@drawable/azure_communication_ui_calling_ic_fluent_people_24_selector"-->
+<!--        android:visibility="gone" />-->
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/azure_communication_ui_call_info_header_chat_button"
+        android:layout_width="@dimen/button_height_32dp"
+        android:layout_height="@dimen/button_height_32dp"
+        android:layout_marginEnd="@dimen/margin_8dp"
+        android:padding="@dimen/padding_4dp"
+        app:tint="@color/purple"
+        app:srcCompat="@drawable/ic_chat"
+        android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/azure_communication_ui_call_bottom_drawer_button"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/azure_communication_ui_calling_ic_fluent_people_24_selector"
-        android:visibility="gone" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/azure_communication_ui_call_bottom_drawer_button"

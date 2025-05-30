@@ -5,7 +5,9 @@ import android.content.Context
 import com.acs_plugin.calling.CallComposite
 import com.acs_plugin.calling.CallCompositeBuilder
 import com.acs_plugin.calling.models.CallCompositeJoinLocator
+import com.acs_plugin.calling.models.CallCompositeLocalOptions
 import com.acs_plugin.calling.models.CallCompositeRoomLocator
+import com.acs_plugin.extension.falseIfNull
 import com.acs_plugin.utils.FlutterEventDispatcher
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.communication.common.CommunicationTokenRefreshOptions
@@ -63,9 +65,11 @@ class AcsPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         val token = args?.get("token") as? String
         val roomId = args?.get("roomId") as? String
         val userId = args?.get("userId") as? String
+        val isChatEnabled = args?.get("isChatEnable") as? Boolean
+        val isRejoined = args?.get("isRejoin") as? Boolean
 
         if (token != null && roomId != null && userId != null) {
-          initializeRoomCall(token, roomId, userId, result)
+          initializeRoomCall(token, roomId, userId, isChatEnabled.falseIfNull(), isRejoined.falseIfNull(), result)
         } else {
           result.error(
             "INVALID_ARGUMENTS",
@@ -83,7 +87,14 @@ class AcsPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     channel.setMethodCallHandler(null)
   }
 
-  private fun initializeRoomCall(token: String, roomId: String, userId: String, result: MethodChannel.Result) {
+  private fun initializeRoomCall(
+    token: String,
+    roomId: String,
+    userId: String,
+    isChatEnabled: Boolean,
+    isRejoined: Boolean,
+    result: MethodChannel.Result
+  ) {
     if (activity == null) {
       result.error("NO_ACTIVITY", "Plugin not attached to an Activity", null)
       return
@@ -91,6 +102,11 @@ class AcsPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
     val communicationTokenRefreshOptions = CommunicationTokenRefreshOptions({ token }, true)
     val communicationTokenCredential = CommunicationTokenCredential(communicationTokenRefreshOptions)
+
+    val localOptions = CallCompositeLocalOptions().apply {
+      setSkipSetupScreen(isRejoined)
+      setChatEnabled(isChatEnabled)
+    }
 
     val locator: CallCompositeJoinLocator = CallCompositeRoomLocator(roomId)
     val callComposite: CallComposite = CallCompositeBuilder()
@@ -100,7 +116,7 @@ class AcsPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       .userId(CommunicationUserIdentifier(userId))
       .build()
 
-    callComposite.launch(this.activity, locator)
+    callComposite.launch(this.activity, locator, localOptions)
     result.success(null)
   }
 }

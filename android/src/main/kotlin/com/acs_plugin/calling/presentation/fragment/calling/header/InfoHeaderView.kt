@@ -20,7 +20,6 @@ import com.acs_plugin.calling.utilities.launchAll
 import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.util.activity
-import kotlinx.coroutines.flow.collect
 
 internal class InfoHeaderView : ConstraintLayout {
     constructor(context: Context) : super(context)
@@ -37,6 +36,7 @@ internal class InfoHeaderView : ConstraintLayout {
     private lateinit var backButton: AppCompatImageView
     private lateinit var customButton1: ImageButton
     private lateinit var customButton2: ImageButton
+    private lateinit var chatButton: AppCompatImageView
     private lateinit var infoHeaderViewModel: InfoHeaderViewModel
     private lateinit var displayParticipantListCallback: () -> Unit
 
@@ -64,8 +64,10 @@ internal class InfoHeaderView : ConstraintLayout {
                 infoHeaderViewModel.requestCallEnd()
             }
         }
-        customButton1 = findViewById(R.id.azure_communication_ui_call_header_custom_button_1)
-        customButton2 = findViewById(R.id.azure_communication_ui_call_header_custom_button_2)
+//        customButton1 = findViewById(R.id.azure_communication_ui_call_header_custom_button_1)
+//        customButton2 = findViewById(R.id.azure_communication_ui_call_header_custom_button_2)
+        chatButton = findViewById(R.id.azure_communication_ui_call_info_header_chat_button)
+        chatButton.onSingleClickListener { infoHeaderViewModel.onChatButtonClicked() }
     }
 
     fun start(
@@ -138,15 +140,20 @@ internal class InfoHeaderView : ConstraintLayout {
                 }
             },
             {
-                infoHeaderViewModel.getCustomButton1StateFlow().collect { button ->
-                    updateCustomButton(button, customButton1)
+                infoHeaderViewModel.getChatButtonVisibilityStateFlow().collect {
+                    chatButton.isVisible = it
                 }
             },
-            {
-                infoHeaderViewModel.getCustomButton2StateFlow().collect { button ->
-                    updateCustomButton(button, customButton2)
-                }
-            },
+//            {
+//                infoHeaderViewModel.getCustomButton1StateFlow().collect { button ->
+//                    updateCustomButton(button, customButton1)
+//                }
+//            },
+//            {
+//                infoHeaderViewModel.getCustomButton2StateFlow().collect { button ->
+//                    updateCustomButton(button, customButton2)
+//                }
+//            },
             /* <CALL_START_TIME>
             {
                 infoHeaderViewModel.getDisplayCallDurationFlow().collect {

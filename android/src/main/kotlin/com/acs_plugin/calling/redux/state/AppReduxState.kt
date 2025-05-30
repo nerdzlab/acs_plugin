@@ -181,7 +181,11 @@ internal class AppReduxState(
                 title = it.title,
                 drawableId = it.drawableId,
             )
-        } ?: emptyList()
+        } ?: emptyList(),
+        callScreenHeaderChatButtonsState = DefaultButtonState(
+            isEnabled = localOptions?.isChatEnabled,
+            isVisible = localOptions?.isChatEnabled
+        )
     )
 
     override var deviceConfigurationState = DeviceConfigurationState(
