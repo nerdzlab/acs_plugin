@@ -68,7 +68,9 @@ internal class MoreActionsListView @JvmOverloads constructor(
                     menuDrawer.show()
                 }
             }
+        }
 
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.actionItemsFlow.collect {
                 actionsFlexboxLayer.removeAllViews()
 
@@ -87,6 +89,7 @@ internal class MoreActionsListView @JvmOverloads constructor(
                 }
             }
         }
+
     }
 
     fun stop() {

@@ -8,11 +8,7 @@ import com.acs_plugin.R
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.extension.setTextColorResource
 import com.google.android.material.textview.MaterialTextView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class ReactionOverlayView @JvmOverloads constructor(
     context: Context,
@@ -20,13 +16,13 @@ class ReactionOverlayView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val emojiTextView = MaterialTextView(context).apply {
-        textSize = 40f
-        setTextColorResource(R.color.text_primary)
-        gravity = Gravity.CENTER
+    private val emojiTextView: MaterialTextView by lazy {
+        MaterialTextView(context).apply {
+            textSize = 40f
+            setTextColorResource(R.color.text_primary)
+            gravity = Gravity.CENTER
+        }
     }
-
-    private var hideJob: Job? = null
 
     init {
         layoutParams = LayoutParams(
@@ -50,16 +46,12 @@ class ReactionOverlayView @JvmOverloads constructor(
         visibility = GONE
     }
 
-    fun show(reaction: ReactionType?) {
+    suspend fun show(reaction: ReactionType?) {
         if (reaction != null) {
             emojiTextView.setText(reaction.titleResId)
             visibility = VISIBLE
-
-            hideJob?.cancel()
-            hideJob = CoroutineScope(Dispatchers.Main).launch {
-                delay(3000L)
-                visibility = GONE
-            }
+            delay(3000L)
+            visibility = GONE
         }
     }
 }
