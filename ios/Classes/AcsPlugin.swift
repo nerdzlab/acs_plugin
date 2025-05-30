@@ -211,13 +211,23 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         
         let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
         
-//        if (GlobalCompositeManager.callComposite == nil) {
-//            onSubscribeToCallCompositeEvents(callComposite)
-//        }
+        if (GlobalCompositeManager.callComposite == nil) {
+            subscribeToEvents(callComposite: callComposite)
+        }
         
         GlobalCompositeManager.callComposite = callComposite
         
         return callComposite
+    }
+    
+    func subscribeToEvents(callComposite: CallComposite) {
+        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
+        
+        let callKitCallAccepted: (String) -> Void = { [weak callComposite] callId in
+            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: localOptions)
+        }
+        
+        callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted
     }
     
 //    private func getCallKitOptions() -> CallKitOptions {
