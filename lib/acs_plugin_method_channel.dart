@@ -87,7 +87,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       {
         'callId': callId,
         'whiteBoardId': whiteBoardId,
-        'participantId': participanstId,
+        'participantsId': participanstId,
         'userId': userId,
         'isRejoin': isRejoin,
       },
