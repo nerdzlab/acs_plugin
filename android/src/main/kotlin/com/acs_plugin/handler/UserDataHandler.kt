@@ -52,9 +52,9 @@ class UserDataHandler(
             Constants.MethodChannels.SET_USER_DATA -> {
                 try {
                     val arguments = call.arguments as? Map<*, *>
-                    val token = arguments?.get("token") as? String
-                    val name = arguments?.get("name") as? String
-                    val userId = arguments?.get("userId") as? String
+                    val token = arguments?.get(Constants.Arguments.TOKEN) as? String
+                    val name = arguments?.get(Constants.Arguments.NAME) as? String
+                    val userId = arguments?.get(Constants.Arguments.USER_ID) as? String
 
                     if (token != null && name != null && userId != null) {
                         userData = UserData(token = token, name = name, userId = userId)
@@ -62,8 +62,6 @@ class UserDataHandler(
                     } else {
                         result.error(
                             "INVALID_ARGUMENTS", "Token, name and userId are required", null
-
-
                         )
                     }
                     true
