@@ -6,6 +6,7 @@ package com.acs_plugin.calling.presentation.fragment.calling.participantlist
 import android.app.AlertDialog
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
+import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -19,10 +20,10 @@ import com.acs_plugin.calling.presentation.manager.AvatarViewManager
 import com.acs_plugin.calling.utilities.BottomCellAdapter
 import com.acs_plugin.calling.utilities.BottomCellItem
 import com.acs_plugin.calling.utilities.BottomCellItemType
-import com.acs_plugin.calling.utilities.implementation.CompositeDrawerDialog
 import com.acs_plugin.extension.onSingleClickListener
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textview.MaterialTextView
-import com.microsoft.fluentui.drawer.DrawerDialog
 import kotlinx.coroutines.launch
 
 internal class ParticipantListView(
@@ -34,7 +35,7 @@ internal class ParticipantListView(
     private var participantTitle: MaterialTextView
     private var shareMeetingLink: MaterialTextView
 
-    private lateinit var participantListDrawer: CompositeDrawerDialog
+    private lateinit var participantListDialog: BottomSheetDialog
     private lateinit var bottomCellAdapter: BottomCellAdapter
     private lateinit var accessibilityManager: AccessibilityManager
     private var admitDeclinePopUpParticipantId = ""
@@ -55,7 +56,7 @@ internal class ParticipantListView(
 
         viewLifecycleOwner.lifecycleScope.launch {
             avatarViewManager.getRemoteParticipantsPersonaSharedFlow().collect {
-                if (participantListDrawer.isShowing) {
+                if (participantListDialog.isShowing) {
                     updateParticipantListContent(
                         viewModel.participantListContentStateFlow.value,
                     )
@@ -68,13 +69,13 @@ internal class ParticipantListView(
                 if (vvm.isDisplayed) {
                     showParticipantList()
                 } else {
-                    if (participantListDrawer.isShowing) {
-                        participantListDrawer.dismissDialog()
+                    if (participantListDialog.isShowing) {
+                        participantListDialog.dismiss()
                     }
                 }
 
                 // To avoid, unnecessary updated to list, the state will update lists only when displayed
-                if (participantListDrawer.isShowing) {
+                if (participantListDialog.isShowing) {
                     updateParticipantListContent(vvm)
                 }
 
@@ -91,33 +92,42 @@ internal class ParticipantListView(
         // during screen rotation, destroy, the drawer should be displayed if open
         // to remove memory leak, on activity destroy dialog is dismissed
         // this setOnDismissListener(null) helps to not call view model state change during orientation
-        participantListDrawer.setOnDismissListener(null)
+        participantListDialog.setOnDismissListener(null)
         bottomCellAdapter.setBottomCellItems(mutableListOf())
         participantTable.layoutManager = null
-        participantListDrawer.dismiss()
-        participantListDrawer.dismissDialog()
+        participantListDialog.dismiss()
         this.removeAllViews()
     }
 
     private fun showParticipantList() {
-        if (!participantListDrawer.isShowing) {
-            participantListDrawer.show()
+        if (!participantListDialog.isShowing) {
+            participantListDialog.show()
         }
     }
 
     private fun initializeParticipantListDrawer() {
         accessibilityManager =
             context?.applicationContext?.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-        participantListDrawer =
-            CompositeDrawerDialog(
-                context,
-                DrawerDialog.BehaviorType.BOTTOM,
-                R.string.azure_communication_ui_calling_view_participant_list_accessibility_label,
-            )
-        participantListDrawer.setOnDismissListener {
-            viewModel.closeParticipantList()
+
+        participantListDialog = BottomSheetDialog(context, R.style.TopRoundedBottomSheetDialog).apply {
+            setContentView(this@ParticipantListView)
+            setOnDismissListener {
+                viewModel.closeParticipantList()
+            }
+
+            setOnShowListener { dialog ->
+                val bottomSheet = (dialog as BottomSheetDialog)
+                    .findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+                bottomSheet?.let {
+                    val behavior = BottomSheetBehavior.from(it)
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    behavior.skipCollapsed = true
+                    behavior.isDraggable = true
+                    it.layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
+                }
+            }
         }
-        participantListDrawer.setContentView(this)
+
         bottomCellAdapter = BottomCellAdapter()
         participantTable.adapter = bottomCellAdapter
         participantTable.layoutManager = LinearLayoutManager(context)
@@ -296,7 +306,7 @@ internal class ParticipantListView(
                 }
 
                 if (status != ParticipantStatus.IN_LOBBY && accessibilityManager.isEnabled) {
-                    participantListDrawer.dismiss()
+                    participantListDialog.dismiss()
                 }
             }
         )

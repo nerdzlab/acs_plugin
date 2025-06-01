@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingVertical="@dimen/padding_24dp"
-    android:background="@drawable/bg_top_rounded_r12_white">
+    android:background="@drawable/bg_white_rounded_r12">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/azure_communication_ui_toolbar_title"

@@ -54,6 +54,8 @@ import com.acs_plugin.calling.utilities.convertDpToPx
 import com.acs_plugin.calling.utilities.hideKeyboard
 import com.acs_plugin.calling.utilities.isKeyboardOpen
 import com.acs_plugin.calling.utilities.isTablet
+import com.acs_plugin.extension.applyNavigationBarInsetPaddingBottom
+import com.acs_plugin.extension.applyStatusBarInsetMarginTop
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -117,6 +119,7 @@ internal class CallingFragment :
         viewModel.init(viewLifecycleOwner.lifecycleScope)
 
         callScreenLayout = view.findViewById(R.id.azure_communication_ui_calling_call_frame_layout)
+        callScreenLayout.applyStatusBarInsetMarginTop()
 
         confirmLeaveOverlayView =
             LeaveConfirmView(viewModel.confirmLeaveOverlayViewModel, this.requireContext())
@@ -127,6 +130,7 @@ internal class CallingFragment :
         )
 
         controlBarView = view.findViewById(R.id.azure_communication_ui_call_call_buttons)
+        controlBarView.applyNavigationBarInsetPaddingBottom()
         controlBarView.start(viewLifecycleOwner, viewModel.controlBarViewModel)
 
         participantGridView =

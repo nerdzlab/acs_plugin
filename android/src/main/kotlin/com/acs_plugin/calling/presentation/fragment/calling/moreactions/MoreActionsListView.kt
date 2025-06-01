@@ -4,16 +4,17 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
-import com.acs_plugin.calling.utilities.implementation.CompositeDrawerDialog
 import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.flexbox.FlexboxLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textview.MaterialTextView
-import com.microsoft.fluentui.drawer.DrawerDialog
 import kotlinx.coroutines.launch
 
 internal class MoreActionsListView @JvmOverloads constructor(
@@ -30,7 +31,7 @@ internal class MoreActionsListView @JvmOverloads constructor(
     private var emojiSurprised: MaterialTextView
     private var actionsFlexboxLayer: FlexboxLayout
 
-    private lateinit var menuDrawer: DrawerDialog
+    private lateinit var menuDialog: BottomSheetDialog
 
     init {
         orientation = VERTICAL
@@ -60,12 +61,12 @@ internal class MoreActionsListView @JvmOverloads constructor(
     ) {
         this.viewModel = viewModel
 
-        initializeDrawer()
+        initializeMenuDialog()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.displayStateFlow.collect {
                 if (it) {
-                    menuDrawer.show()
+                    menuDialog.show()
                 }
             }
         }
@@ -82,7 +83,7 @@ internal class MoreActionsListView @JvmOverloads constructor(
                 it.forEach { item ->
                     val actionView = MoreActionItemView(context)
                     actionView.setAction(item) {
-                        menuDrawer.dismissDialog()
+                        menuDialog.dismiss()
                         viewModel.onActionClicked(it)
                     }
                     actionsFlexboxLayer.addView(actionView, lp)
@@ -93,24 +94,33 @@ internal class MoreActionsListView @JvmOverloads constructor(
     }
 
     fun stop() {
-        menuDrawer.dismiss()
+        menuDialog.dismiss()
         this.removeAllViews()
     }
 
-    private fun initializeDrawer() {
-        menuDrawer = CompositeDrawerDialog(
-            context,
-            DrawerDialog.BehaviorType.BOTTOM,
-            R.string.azure_communication_ui_calling_view_more_menu_list_accessibility_label,
-        )
-        menuDrawer.setContentView(this)
-        menuDrawer.setOnDismissListener {
-            viewModel.close()
+    private fun initializeMenuDialog() {
+        menuDialog = BottomSheetDialog(context, R.style.RoundedBottomSheetDialog).apply {
+            setContentView(this@MoreActionsListView)
+            setOnDismissListener {
+                viewModel.close()
+            }
+
+            setOnShowListener { dialog ->
+                val bottomSheet = (dialog as BottomSheetDialog)
+                    .findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+                bottomSheet?.let {
+                    val behavior = BottomSheetBehavior.from(it)
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    behavior.skipCollapsed = true
+                    behavior.isDraggable = true
+                    it.layoutParams.height = WRAP_CONTENT
+                }
+            }
         }
     }
 
     private fun sendReaction(reactionType: ReactionType) {
-        menuDrawer.dismissDialog()
+        menuDialog.dismiss()
         viewModel.onSendReaction(reactionType)
     }
 

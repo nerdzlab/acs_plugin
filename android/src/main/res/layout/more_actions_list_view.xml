@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/bg_top_rounded_r12_white">
+    android:background="@drawable/bg_white_rounded_r12">
 
     <LinearLayout
         android:id="@+id/emoji_row"
@@ -79,7 +79,7 @@
         android:id="@+id/action_flexbox_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/margin_24dp"
+        android:layout_marginTop="@dimen/margin_24dp"
         android:padding="@dimen/padding_8dp"
         app:flexWrap="wrap"
         app:justifyContent="space_between"
