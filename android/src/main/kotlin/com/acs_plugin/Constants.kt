@@ -20,6 +20,9 @@ object Constants {
         const val GET_LIST_READ_RECEIPTS = "getListReadReceipts"
         const val SET_USER_DATA = "setUserData"
         const val GET_TOKEN = "getToken"
+        const val GET_INITIAL_LIST_THREADS = "getInitialListThreads"
+        const val IS_MORE_THREADS_AVAILABLE = "isMoreThreadsAvailable"
+        const val GET_NEXT_THREADS = "getNextThreads"
     }
 
     object FlutterEvents {
@@ -87,5 +90,9 @@ object Constants {
         const val DISPLAY_NAME = "displayName"
         const val SHARE_HISTORY_TIME = "shareHistoryTime"
         const val CONTENT = "content"
+    }
+
+    object PageSize {
+        const val SIZE_20 = 20
     }
 }

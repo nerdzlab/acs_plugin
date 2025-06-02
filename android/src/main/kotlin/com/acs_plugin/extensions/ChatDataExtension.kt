@@ -184,3 +184,14 @@ fun ChatMessage.toJson(): String {
     }
     return Json.encodeToString(map)
 }
+
+fun ChatThreadItem.toJson(): String {
+    val map = buildMap {
+        put(Constants.JsonKeys.ID, id)
+        put(Constants.JsonKeys.TOPIC, topic)
+        deletedOn?.let { put(Constants.JsonKeys.DELETED_ON, it.toString()) }
+        lastMessageReceivedOn?.let { put(Constants.JsonKeys.RECEIVED_ON, it.toString()) }
+    }
+    return Json.encodeToString(map)
+}
+

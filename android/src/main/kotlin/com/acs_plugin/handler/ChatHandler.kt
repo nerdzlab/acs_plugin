@@ -18,6 +18,8 @@ import com.azure.android.communication.chat.ChatClient
 import com.azure.android.communication.chat.ChatClientBuilder
 import com.azure.android.communication.chat.models.*
 import com.azure.android.communication.common.CommunicationTokenCredential
+import com.azure.android.core.rest.util.paging.PagedIterable
+import com.azure.android.core.util.RequestContext
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +39,7 @@ class ChatHandler(
     private var chatAdapter: ChatAdapter? = null
 
     private val finishedResults = Collections.synchronizedSet(HashSet<MethodChannel.Result>())
+    private var threadsPagedIterable: PagedIterable<ChatThreadItem>? = null
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
@@ -266,6 +269,21 @@ class ChatHandler(
                 true
             }
 
+            Constants.MethodChannels.GET_INITIAL_LIST_THREADS -> {
+                getInitialListThreads(result)
+                true
+            }
+
+            Constants.MethodChannels.GET_NEXT_THREADS -> {
+                getNextThreads(result)
+                true
+            }
+
+            Constants.MethodChannels.IS_MORE_THREADS_AVAILABLE -> {
+                isMoreThreadsAvailable(result)
+                true
+            }
+
             else -> {
                 try {
                     result.notImplemented()
@@ -382,13 +400,13 @@ class ChatHandler(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val chatThreadClient = chatClient?.getChatThreadClient(threadId)
-                chatThreadClient?.sendMessage(SendChatMessageOptions().apply {
+                val sendMessageResult = chatThreadClient?.sendMessage(SendChatMessageOptions().apply {
                     setContent(content)
                     setSenderDisplayName(senderDisplayName)
                     setType(type?.into())
                     setMetadata(metadata)
                 })
-                handleResultSuccess(result)
+                handleResultSuccess(result, sendMessageResult?.id)
             } catch (e: Exception) {
                 handleResultError(result, "SEND_MESSAGE_ERROR", e.message, null)
             }
@@ -537,6 +555,68 @@ class ChatHandler(
             }
         }
     }
+
+    private fun getInitialListThreads(result: MethodChannel.Result) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val threads = chatClient?.listChatThreads(
+                    ListChatThreadsOptions().apply { setMaxPageSize(Constants.PageSize.SIZE_20) },
+                    RequestContext.NONE
+                )
+                threadsPagedIterable = threads
+                handleResultSuccess(result, threads?.map { it.toJson() })
+            } catch (e: Exception) {
+                handleResultError(result, "GET_INITIAL_LIST_THREADS_ERROR", e.message, null)
+            }
+        }
+    }
+
+
+    private fun getNextThreads(result: MethodChannel.Result) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // If we don't have a saved collection, get initial threads
+                if (threadsPagedIterable == null) {
+                    getInitialListThreads(result)
+                    return@launch
+                }
+
+                // Get the iterator if we haven't already
+                val iterator = threadsPagedIterable?.iterator()
+
+                if (iterator?.hasNext() == false) {
+                    handleResultSuccess(result)
+                    return@launch
+                }
+
+                val nextPageItems = mutableListOf<ChatThreadItem>()
+                while (iterator?.hasNext() == false && nextPageItems.size < Constants.PageSize.SIZE_20) {
+                    nextPageItems.add(iterator.next())
+                }
+
+                handleResultSuccess(result, nextPageItems.map { it.toJson() })
+            } catch (e: Exception) {
+                handleResultError(result, "GET_NEXT_THREADS_ERROR", e.message, null)
+            }
+        }
+    }
+
+    private fun isMoreThreadsAvailable(result: MethodChannel.Result) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (threadsPagedIterable == null) {
+                    handleResultSuccess(result, false)
+                    return@launch
+                }
+
+                val iterator = threadsPagedIterable?.iterator()
+                handleResultSuccess(result, iterator?.hasNext() ?: false)
+            } catch (e: Exception) {
+                handleResultError(result, "IS_MORE_THREADS_AVAILABLE_ERROR", e.message, null)
+            }
+        }
+    }
+
 
     private fun subscribeToChatEvents() {
         chatClient?.let { client ->
