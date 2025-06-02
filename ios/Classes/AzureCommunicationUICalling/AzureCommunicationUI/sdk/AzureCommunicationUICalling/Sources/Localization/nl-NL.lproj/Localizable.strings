@@ -210,4 +210,4 @@
 "AzureCommunicationUICalling.CallingView.ParticipantMenu.Remove.AccessibilityLabel"="Verwijder de deelnemer uit het menu Bellen.";
 "AzureCommunicationUICalling.CallingView.Toast.FeaturesLost"="Oproepinstellingen bijgewerkt. Sommige functies zijn mogelijk niet beschikbaar voor u.";
 "AzureCommunicationUICalling.CallingView.Toast.FeaturesGained"="Oproepinstellingen bijgewerkt. Sommige aanvullende acties zijn mogelijk nu beschikbaar voor u.";
-
+"AzureCommunicationUICalling.EmptyString" = "";
