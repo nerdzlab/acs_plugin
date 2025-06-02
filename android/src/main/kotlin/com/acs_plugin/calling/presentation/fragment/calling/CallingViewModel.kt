@@ -230,6 +230,7 @@ internal class CallingViewModel(
             cameraState = state.localParticipantState.cameraState,
             raisedHandStatus = state.localParticipantState.raisedHandStatus,
             navigationState = state.navigationState,
+            buttonState = state.buttonState,
             displayParticipantList = { participantListViewModel.displayParticipantList() }
         )
 
@@ -451,9 +452,10 @@ internal class CallingViewModel(
         isCaptionsMaximized = state.rttState.isMaximized
 
         moreActionsListViewModel.update(
-            state.localParticipantState.cameraState,
-            state.localParticipantState.raisedHandStatus,
-            state.navigationState
+            cameraState = state.localParticipantState.cameraState,
+            raisedHandStatus = state.localParticipantState.raisedHandStatus,
+            navigationState = state.navigationState,
+            buttonState = state.buttonState
         )
     }
 

@@ -27,5 +27,7 @@ object Constants {
         const val ROOM_ID = "roomId"
         const val IS_CHAT_ENABLED = "isChatEnable"
         const val IS_REJOINED = "isRejoin"
+        const val CALL_ID = "callId"
+        const val WHITEBOARD_ID = "whiteBoardId"
     }
 }

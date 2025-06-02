@@ -54,6 +54,13 @@ fun View.applyStatusBarInsetMarginTop() {
     }
 }
 
+fun View.applyNavigationBarInsetMarginBottom() {
+    applyInsetter {
+        type(navigationBars = true, ime = true)
+        { margin(bottom = true) }
+    }
+}
+
 fun View.applyNavigationBarInsetMarginBottomWithIME() {
     applyInsetter {
         type(navigationBars = true, ime = true) {
