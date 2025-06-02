@@ -60,24 +60,6 @@ struct SetupView: View {
                                         }
                                         
                                         HStack(alignment: .top, spacing: 12) {
-                                            if !viewModel.isJoinRequested {
-                                                TextField(viewModel.textFieldPLaceholder, text: $updatedDisplayName)
-                                                    .padding(.horizontal, 12)
-                                                    .font(AppFont.CircularStd.book.font(size: 16))
-                                                    .frame(height: 44)
-                                                    .background(Color(UIColor.compositeColor(.filledFill)))
-                                                    .cornerRadius(8)
-                                                    .overlay(
-                                                        RoundedRectangle(cornerRadius: 8)
-                                                            .stroke(Color(UIColor.compositeColor(.filledBorder)), lineWidth: 1)
-                                                    )
-                                                    .textContentType(.name)
-                                                    .keyboardType(.alphabet)
-                                                    .disableAutocorrection(true)
-                                                    .onChange(of: updatedDisplayName) { newValue in
-                                                        viewModel.updatedDisplayName = newValue
-                                                    }
-                                            }
                                             joinCallView
                                         }
                                         .padding(.bottom, 34)
@@ -113,7 +95,7 @@ struct SetupView: View {
                 JoiningCallActivityView(viewModel: viewModel.joiningCallActivityViewModel)
             } else {
                 AppPrimaryButton(viewModel: viewModel.joinCallButtonViewModel)
-                    .frame(width: 128, height: 40)
+                    .frame(height: 40)
                     .accessibilityIdentifier(AccessibilityIdentifier.joinCallAccessibilityID.rawValue)
             }
         }
