@@ -30,7 +30,7 @@ struct BannerView: View {
             .padding(.top, safeAreaInsets.top)
         } else {
             Spacer()
-                .frame(height: 8)
+                .frame(height: 0)
         }
     }
 
