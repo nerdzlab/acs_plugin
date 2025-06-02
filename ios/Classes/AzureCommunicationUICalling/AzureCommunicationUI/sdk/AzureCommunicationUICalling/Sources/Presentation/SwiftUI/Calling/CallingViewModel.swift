@@ -204,7 +204,8 @@ internal class CallingViewModel: ObservableObject {
                 store.dispatch(action: .localUserAction(.screenShareOffRequested))
             },
             onChat: {
-                print("On chat screen")
+                store.dispatch(action: .localUserAction(.showChat))
+                store.dispatch(action: .visibilityAction(.pipModeRequested))
             },
             onParticipants: {
                 store.dispatch(action: .showParticipants)
@@ -229,7 +230,8 @@ internal class CallingViewModel: ObservableObject {
             isDisplayed: store.state.navigationState.meetignOptionsVisible,
             isReactionEnable: callType == .roomsCall,
             isRaiseHandAvailable: callingStatus == .connected,
-            isLayoutOptionsEnable: !isWhiteBoardPresenting
+            isLayoutOptionsEnable: !isWhiteBoardPresenting,
+            isChatEnable: isChatEnable
         )
 
         controlBarViewModel = compositeViewModelFactory

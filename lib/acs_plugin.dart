@@ -119,14 +119,12 @@ class AcsPlugin {
     required String whiteBoardId,
     required List<String> participantsId,
     required String userId,
-    required bool isRejoin,
   }) async {
     await AcsPluginPlatform.instance.startOneOnOneCall(
       callId: callId,
       whiteBoardId: whiteBoardId,
       participanstId: participantsId,
       userId: userId,
-      isRejoin: isRejoin,
     );
   }
 

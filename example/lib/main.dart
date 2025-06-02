@@ -60,7 +60,7 @@ class _CallScreenState extends State<CallScreen> {
     // if (isRealDevice) {
     // return Constants.userOneToken;
     // } else {
-    return Constants.userTwoToken;
+    return Constants.userOneToken;
     // }
   }
 
@@ -100,7 +100,7 @@ class _CallScreenState extends State<CallScreen> {
     // if (isRealDevice) {
     // return Constants.userOneId;
     // } else {
-    return Constants.userTwoId;
+    return Constants.userOneId;
     // }
   }
 
@@ -273,7 +273,6 @@ class _CallScreenState extends State<CallScreen> {
         participantsId: [_otherUserId],
         userId: _userId,
         whiteBoardId: _whiteBoardId,
-        isRejoin: false,
       );
       log('One on one call initialized successfully');
       _shwoSnacBar('One on one call initialized successfully');

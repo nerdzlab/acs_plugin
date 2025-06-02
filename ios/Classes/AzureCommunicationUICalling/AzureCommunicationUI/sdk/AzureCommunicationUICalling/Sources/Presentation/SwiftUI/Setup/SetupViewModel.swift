@@ -16,6 +16,7 @@ class SetupViewModel: ObservableObject {
     
     let isRightToLeft: Bool
     let previewAreaViewModel: PreviewAreaViewModel
+    let initialDisplayName: String?
     var title: String
     var subTitle: String?
     var textFieldPLaceholder: String
@@ -40,7 +41,8 @@ class SetupViewModel: ObservableObject {
          audioSessionManager: AudioSessionManagerProtocol,
          localizationProvider: LocalizationProviderProtocol,
          setupScreenViewData: SetupScreenViewData? = nil,
-         callType: CompositeCallType) {
+         callType: CompositeCallType
+    ) {
         let actionDispatch: ActionDispatch = store.dispatch
         self.store = store
         self.networkManager = networkManager
@@ -50,6 +52,7 @@ class SetupViewModel: ObservableObject {
         self.isRightToLeft = localizationProvider.isRightToLeft
         self.logger = logger
         self.callType = callType
+        self.initialDisplayName = store.state.localUserState.initialDisplayName
         
         if let title = setupScreenViewData?.title, !title.isEmpty {
             // if title is not nil/empty, use given title and optional subtitle
@@ -97,7 +100,7 @@ class SetupViewModel: ObservableObject {
         
         updateAccessibilityLabel()
         dismissButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
-            iconName: .leftArrow,
+            iconName: .callClose,
             buttonType: .backNavigation,
             isDisabled: false,
             renderAsOriginal: true) { [weak self] in

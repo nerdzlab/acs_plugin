@@ -18,6 +18,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
     private let onEffects: (LocalUserState.BackgroundEffectType) -> Void
     private let onLayoutOptions: () -> Void
     private let onReaction: (ReactionType) -> Void
+    private let isChatEnable: Bool
     
     private(set) var chatButtonViewModel: IconWithLabelButtonViewModel<ChatButtonState>!
     private(set) var participantsButtonViewModel: IconWithLabelButtonViewModel<ParticipantsButtonState>!
@@ -49,7 +50,8 @@ internal class MeetingOptionsViewModel: ObservableObject {
         isRemoteParticipantsPresent: Bool,
         isReactionEnable: Bool,
         isRaiseHandAvailable: Bool,
-        isLayoutOptionsEnable: Bool
+        isLayoutOptionsEnable: Bool,
+        isChatEnable: Bool
     ) {
         self.localizationProvider = localizationProvider
         self.isDisplayed = false
@@ -65,6 +67,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
         self.isRemoteParticipantsPresent = isRemoteParticipantsPresent
         self.isReactionEnable = isReactionEnable
         self.isLayoutOptionsEnable = isLayoutOptionsEnable
+        self.isChatEnable = isChatEnable
         
         raiseHandButtonViewModel = IconWithLabelButtonViewModel(
             selectedButtonState: localUserState.raiseHandState.operation == .handIsLower ? RaiseHandButtonState.raiseHand : RaiseHandButtonState.lowerHand,
@@ -108,7 +111,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             selectedButtonState: ChatButtonState.default,
             localizationProvider: localizationProvider,
             buttonColor: Color(UIColor.compositeColor(.purpleBlue)),
-            isDisabled: false,
+            isDisabled: isChatEnable,
             isVisible: true,
             action: { [weak self] in
                 self?.onChat()

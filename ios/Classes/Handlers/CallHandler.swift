@@ -81,15 +81,13 @@ final class CallHandler: MethodHandler {
                let callId = arguments["callId"] as? String,
                let whiteBoardId = arguments["whiteBoardId"] as? String,
                let participantsId = arguments["participantsId"] as? [String],
-               let userId = arguments["userId"] as? String,
-               let isRejoin = arguments["isRejoin"] as? Bool
+               let userId = arguments["userId"] as? String
             {
                 startOneOnOneCall(
                     callId: callId,
                     participantsId: participantsId,
                     whiteBoardId: whiteBoardId,
                     userId: userId,
-                    isRejoin: isRejoin,
                     result: result
                 )
             } else {
@@ -170,13 +168,12 @@ final class CallHandler: MethodHandler {
         participantsId: [String],
         whiteBoardId: String,
         userId: String,
-        isRejoin: Bool,
         result: @escaping FlutterResult
     ) {
         let localOptions = LocalOptions(
-            cameraOn: true,
+            cameraOn: false,
             microphoneOn: true,
-            skipSetupScreen: isRejoin,
+            skipSetupScreen: true,
             whiteBoardId: whiteBoardId,
             callId: callId
         )

@@ -80,7 +80,6 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
     required String whiteBoardId,
     required List<String> participanstId,
     required String userId,
-    required bool isRejoin,
   }) async {
     await methodChannel.invokeMethod(
       'startOneOnOneCall',
@@ -89,7 +88,6 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         'whiteBoardId': whiteBoardId,
         'participantsId': participanstId,
         'userId': userId,
-        'isRejoin': isRejoin,
       },
     );
   }

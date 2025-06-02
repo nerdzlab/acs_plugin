@@ -226,7 +226,8 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                      isDisplayed: Bool,
                                      isReactionEnable: Bool,
                                      isRaiseHandAvailable: Bool,
-                                     isLayoutOptionsEnable: Bool
+                                     isLayoutOptionsEnable: Bool,
+                                     isChatEnable: Bool
     ) -> MeetingOptionsViewModel {
         MeetingOptionsViewModel(
             localUserState: localUserState,
@@ -244,7 +245,8 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
             isRemoteParticipantsPresent: isRemoteParticipantsPresent,
             isReactionEnable: isReactionEnable,
             isRaiseHandAvailable: isRaiseHandAvailable,
-            isLayoutOptionsEnable: isLayoutOptionsEnable
+            isLayoutOptionsEnable: isLayoutOptionsEnable,
+            isChatEnable: isChatEnable
         )
     }
     

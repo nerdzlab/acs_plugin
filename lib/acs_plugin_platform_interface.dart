@@ -33,7 +33,6 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     required String whiteBoardId,
     required List<String> participanstId,
     required String userId,
-    required bool isRejoin,
   }) {
     throw UnimplementedError('startOneOnOneCall() has not been implemented.');
   }

@@ -114,7 +114,8 @@ protocol CompositeViewModelFactoryProtocol {
                                      isDisplayed: Bool,
                                      isReactionEnable: Bool,
                                      isRaiseHandAvailable: Bool,
-                                     isLayoutOptionsEnable: Bool
+                                     isLayoutOptionsEnable: Bool,
+                                     isChatEnable: Bool
     ) -> MeetingOptionsViewModel
     
     func makeLayoutOptionsViewModel(
