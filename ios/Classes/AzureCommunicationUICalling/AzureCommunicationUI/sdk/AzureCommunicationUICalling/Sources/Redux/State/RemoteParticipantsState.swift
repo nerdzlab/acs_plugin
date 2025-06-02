@@ -16,6 +16,7 @@ struct RemoteParticipantsState {
     let totalParticipantCount: Int
     let pinnedParticipantId: String?
     let listOfDisabledVideoParticipants: Set<String> // 🆕
+    let whiteBoardId: String?
 
     init(participantInfoList: [ParticipantInfoModel] = [],
          lastUpdateTimeStamp: Date = Date(),
@@ -24,7 +25,8 @@ struct RemoteParticipantsState {
          lobbyError: LobbyError? = nil,
          totalParticipantCount: Int,
          pinnedParticipantId: String? = nil,
-         listOfDisabledVideoParticipants: Set<String> = []
+         listOfDisabledVideoParticipants: Set<String> = [],
+         whiteBoardId: String?
     ) {
         self.participantInfoList = participantInfoList
         self.lastUpdateTimeStamp = lastUpdateTimeStamp
@@ -34,6 +36,7 @@ struct RemoteParticipantsState {
         self.totalParticipantCount = totalParticipantCount
         self.pinnedParticipantId = pinnedParticipantId
         self.listOfDisabledVideoParticipants = listOfDisabledVideoParticipants
+        self.whiteBoardId = whiteBoardId
     }
 }
 

@@ -91,7 +91,8 @@ protocol CompositeViewModelFactoryProtocol {
     
     func makeParticipantOptionsViewModel(localUserState: LocalUserState,
                                          isDisplayed: Bool,
-                                         dispatchAction: @escaping ActionDispatch
+                                         dispatchAction: @escaping ActionDispatch,
+                                         isPinEnable: Bool
     ) -> ParticipantOptionsViewModel
     
     func makeParticipantMenuViewModel(localUserState: LocalUserState,
@@ -112,7 +113,10 @@ protocol CompositeViewModelFactoryProtocol {
                                      isRemoteParticipantsPresent: Bool,
                                      isDisplayed: Bool,
                                      isReactionEnable: Bool,
-                                     isRaiseHandAvailable: Bool) -> MeetingOptionsViewModel
+                                     isRaiseHandAvailable: Bool,
+                                     isLayoutOptionsEnable: Bool,
+                                     isChatEnable: Bool
+    ) -> MeetingOptionsViewModel
     
     func makeLayoutOptionsViewModel(
         localUserState: LocalUserState,

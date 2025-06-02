@@ -64,8 +64,20 @@ class _CallScreenState extends State<CallScreen> {
     return Constants.chatUserToken;
   }
 
+  bool get _isSuperBrainsMode {
+    return false;
+  }
+
+  String get _whiteBoardId {
+    return Constants.whiteBoardId;
+  }
+
   String get _chatUserId {
     return Constants.chatUserId;
+  }
+
+  String get _callId {
+    return Constants.callId;
   }
 
   static const String _roomId = Constants.roomId;
@@ -225,7 +237,9 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _startTeamsMeetingCall() async {
     try {
       await _acsPlugin.startTeamsMeetingCall(
+        callId: _callId,
         meetingLink: _teemsMeetingLink,
+        whiteBoardId: _whiteBoardId,
         isChatEnable: true,
         isRejoin: false,
       );
@@ -241,8 +255,8 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _startOneOnOneCall() async {
     try {
       await _acsPlugin.startOneOnOneCall(
-        token: _acsToken,
-        participantId: _otherUserId,
+        callId: _callId,
+        participantsId: [_otherUserId],
         userId: _userId,
       );
       log('One on one call initialized successfully');
@@ -385,6 +399,28 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  Future<void> _getInitialListThreads() async {
+    try {
+      final threads = await _acsPlugin.getInitialListThreads();
+      log('Threads successfully fetched');
+      _shwoSnacBar('Threads successfully fetched: ${threads.length}');
+    } on PlatformException catch (error) {
+      log('Failed to get threads: ${error.toString()}');
+      _shwoSnacBar('Failed to get threads: ${error.message}');
+    }
+  }
+
+  Future<void> _isMoreThreadsAvailable() async {
+    try {
+      final isMoreThreadsAvailable = await _acsPlugin.isMoreThreadsAvailable();
+      log('More threads available: ${isMoreThreadsAvailable}');
+      _shwoSnacBar('More threads available: ${isMoreThreadsAvailable}');
+    } on PlatformException catch (error) {
+      log('Failed to get info about more threads: ${error.toString()}');
+      _shwoSnacBar('Failed to get info about more threads: ${error.message}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -454,6 +490,16 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'Get last message messages',
                   onTap: _getLastMessage,
+                  icon: Icons.message,
+                ),
+                ButtonConfig(
+                  label: 'Get list of threads',
+                  onTap: _getInitialListThreads,
+                  icon: Icons.message,
+                ),
+                ButtonConfig(
+                  label: 'Is more threads available',
+                  onTap: _isMoreThreadsAvailable,
                   icon: Icons.message,
                 ),
               ]),

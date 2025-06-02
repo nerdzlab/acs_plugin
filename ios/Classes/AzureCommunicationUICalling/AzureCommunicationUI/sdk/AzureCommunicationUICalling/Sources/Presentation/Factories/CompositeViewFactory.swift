@@ -29,7 +29,9 @@ struct CompositeViewFactory: CompositeViewFactoryProtocol {
     func makeSetupView() -> SetupView {
         return SetupView(viewModel: compositeViewModelFactory.getSetupViewModel(),
                          viewManager: videoViewManager,
-                         avatarManager: avatarManager)
+                         avatarManager: avatarManager,
+                         updatedDisplayName: compositeViewModelFactory.getSetupViewModel().initialDisplayName ?? ""
+        )
     }
 
     func makeCallingView() -> CallingView {

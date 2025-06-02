@@ -357,7 +357,7 @@ public struct LocalUserState {
          participantRole: ParticipantRoleEnum? = nil,
          capabilities: Set<ParticipantCapabilityType> = [.unmuteMicrophone, .turnVideoOn],
          currentCapabilitiesAreDefault: Bool = true,
-         noiseSuppressionState: NoiseSuppressionState = NoiseSuppressionState(operation: .off, error: nil),
+         noiseSuppressionState: NoiseSuppressionState = NoiseSuppressionState(operation: .on, error: nil),
          incomingAudioState: IncomingAudioState = IncomingAudioState(operation: .unmuted, error: nil),
          meetingLayoutState: MeetingLayoutState = MeetingLayoutState(operation: .grid),
          raiseHandState: RaiseHandState = RaiseHandState(operation: .handIsLower),

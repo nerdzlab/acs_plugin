@@ -15,6 +15,11 @@ public struct LocalOptions {
     let setupScreenViewData: SetupScreenViewData?
     /// Configuration for captions
     let captionsOptions: CaptionsOptions?
+    
+    /// White board id
+    let whiteBoardId: String?
+    
+    let callId: String?
 
     ///  The CameraOn is used when we skip the setup screen
 
@@ -55,7 +60,10 @@ public struct LocalOptions {
                 audioVideoMode: CallCompositeAudioVideoMode = .audioAndVideo,
                 captionsOptions: CaptionsOptions? = nil,
                 setupScreenOptions: SetupScreenOptions? = nil,
-                callScreenOptions: CallScreenOptions? = nil) {
+                callScreenOptions: CallScreenOptions? = nil,
+                whiteBoardId: String? = nil,
+                callId: String? = nil
+    ) {
         self.participantViewData = participantViewData
         self.setupScreenViewData = setupScreenViewData
         self.cameraOnInternal = cameraOn
@@ -66,6 +74,8 @@ public struct LocalOptions {
         self.setupScreenOptions = setupScreenOptions
         self.callScreenOptions = callScreenOptions
         self.isChatEnabled = isChatEnable
+        self.whiteBoardId = whiteBoardId
+        self.callId = callId
     }
 
     /// Determines the actual state of the camera

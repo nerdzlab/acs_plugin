@@ -32,6 +32,9 @@ final class ChatHandler: MethodHandler {
             static let sendTypingIndicator = "sendTypingIndicator"
             static let isChatHasMoreMessages = "isChatHasMoreMessages"
             static let getListReadReceipts = "getListReadReceipts"
+            static let getInitialListThreads = "getInitialListThreads"
+            static let isMoreThreadsAvailable = "isMoreThreadsAvailable"
+            static let getNextThreads = "getNextThreads"
         }
         
         enum FlutterEvents {
@@ -281,6 +284,18 @@ final class ChatHandler: MethodHandler {
             }
             
             getLastMessage(threadId: threadId, result: result)
+            return true
+            
+        case Constants.MethodChannels.getInitialListThreads:
+            getInitialListThreads(result: result)
+            return true
+            
+        case Constants.MethodChannels.getNextThreads:
+            getNextThreads(result: result)
+            return true
+            
+        case Constants.MethodChannels.isMoreThreadsAvailable:
+            isMoreThreadsAvailable(result: result)
             return true
             
         default:
@@ -553,6 +568,39 @@ final class ChatHandler: MethodHandler {
             do {
                 let lastMessage = try await chatAdapter?.getLastMessage(threadId: threadId)
                 result(lastMessage?.toJson())
+            } catch {
+                handleChatError(error, result: result)
+            }
+        }
+    }
+    
+    private func getInitialListThreads(result: @escaping FlutterResult) {
+        Task {
+            do {
+                let listThreads = try await chatAdapter?.getInitialListThreads() ?? []
+                result(listThreads.map { $0.toJson() })
+            } catch {
+                handleChatError(error, result: result)
+            }
+        }
+    }
+    
+    private func isMoreThreadsAvailable(result: @escaping FlutterResult) {
+        Task {
+            do {
+                let isMoreThreadsAvailable = try await chatAdapter?.isMoreThreadsAvailable()
+                result(isMoreThreadsAvailable)
+            } catch {
+                handleChatError(error, result: result)
+            }
+        }
+    }
+    
+    private func getNextThreads(result: @escaping FlutterResult) {
+        Task {
+            do {
+                let listThreads = try await chatAdapter?.getNextThreads() ?? []
+                result(listThreads.map { $0.toJson() })
             } catch {
                 handleChatError(error, result: result)
             }

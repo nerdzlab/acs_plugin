@@ -26,8 +26,8 @@ extension AzureCommunicationCalling.RemoteParticipant {
                                     isVideoOnForMe: true,
                                     avatarColor: Color(UIColor.avatarColors.randomElement() ?? UIColor.compositeColor(.purpleBlue)),
                                     isRemoteUser: true,
+                                    isWhiteBoard: false,
                                     userIdentifier: identifier.rawId,
-                                    
                                     status: state.toCompositeParticipantStatus(),
                                     screenShareVideoStreamModel: screenShareVideoStreamModel,
                                     cameraVideoStreamModel: cameraVideoStreamModel)

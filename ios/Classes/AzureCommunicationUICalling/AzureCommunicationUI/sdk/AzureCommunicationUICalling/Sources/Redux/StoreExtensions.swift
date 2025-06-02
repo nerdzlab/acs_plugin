@@ -19,7 +19,8 @@ extension Store where State == AppState, Action == acs_plugin.Action {
         skipSetupScreen: Bool?,
         callType: CompositeCallType,
         setupScreenOptions: SetupScreenOptions? = nil,
-        callScreenOptions: CallScreenOptions? = nil
+        callScreenOptions: CallScreenOptions? = nil,
+        whiteBoardId: String?
     ) -> Store<AppState, Action> {
 
         let cameraState = startWithCameraOn
@@ -79,8 +80,9 @@ extension Store where State == AppState, Action == acs_plugin.Action {
             state: AppState(callingState: callingState,
                             localUserState: localUserState,
                             navigationState: navigationState,
-                            defaultUserState: defaultUserState,
-                            buttonViewDataState: buttonViewDataState)
+                            remoteParticipantsState: RemoteParticipantsState.init(totalParticipantCount: 0, whiteBoardId: whiteBoardId), defaultUserState: defaultUserState,
+                            buttonViewDataState: buttonViewDataState
+                           )
         )
     }
 }

@@ -14,17 +14,24 @@ final class KeyboardResponder: ObservableObject {
     private var cancellableSet: Set<AnyCancellable> = []
 
     init() {
-        let keyboardWillShow = NotificationCenter.default
-            .publisher(for: UIResponder.keyboardWillShowNotification)
-            .compactMap { $0.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect }
-            .map { $0.height }
+        let willShow = NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+        let willHide = NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
 
-        let keyboardWillHide = NotificationCenter.default
-            .publisher(for: UIResponder.keyboardWillHideNotification)
-            .map { _ in CGFloat(0) }
+        willShow
+            .merge(with: willHide)
+            .sink { notification in
+                guard let userInfo = notification.userInfo else { return }
 
-        Publishers.Merge(keyboardWillShow, keyboardWillHide)
-            .assign(to: \.currentHeight, on: self)
+                let endFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect ?? .zero
+                let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double ?? .zero
+                let curveRaw = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt ?? 0
+                _ = UIView.AnimationCurve(rawValue: Int(curveRaw)) ?? .easeInOut
+                let height = notification.name == UIResponder.keyboardWillHideNotification ? 0 : endFrame.height
+
+                withAnimation(.easeOut(duration: duration)) {
+                    self.currentHeight = height
+                }
+            }
             .store(in: &cancellableSet)
     }
 }
