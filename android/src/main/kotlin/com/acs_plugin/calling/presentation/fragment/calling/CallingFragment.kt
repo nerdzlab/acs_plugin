@@ -56,7 +56,7 @@ import com.acs_plugin.calling.utilities.isKeyboardOpen
 import com.acs_plugin.calling.utilities.isTablet
 import com.acs_plugin.extension.applyNavigationBarInsetPaddingBottom
 import com.acs_plugin.extension.applyStatusBarInsetMarginTop
-import kotlinx.coroutines.flow.collect
+import com.acs_plugin.utils.IntentUtils
 import kotlinx.coroutines.launch
 
 internal class CallingFragment :
@@ -200,10 +200,12 @@ internal class CallingFragment :
         audioDeviceListView.start(viewLifecycleOwner)
 
         participantListView = ParticipantListView(
-            viewModel.participantListViewModel,
             this.requireContext(),
-            avatarViewManager,
-        )
+            viewModel.participantListViewModel,
+            avatarViewManager
+        ) {
+            viewModel.onShareMeetingLinkClicked()
+        }
         participantListView.layoutDirection =
             activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
         participantListView.start(viewLifecycleOwner)
@@ -272,6 +274,14 @@ internal class CallingFragment :
         )
 
         captionsOverlay.setOnClickListener { viewModel.minimizeCaptions() }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.shareMeetingLinkMutableFlow.collect {
+                if (it.isNotEmpty()) {
+                    IntentUtils.shareText(requireActivity(), getString(R.string.share_meeting_link, it))
+                }
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
