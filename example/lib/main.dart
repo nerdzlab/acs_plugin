@@ -64,10 +64,6 @@ class _CallScreenState extends State<CallScreen> {
     return Constants.chatUserToken;
   }
 
-  bool get _isSuperBrainsMode {
-    return false;
-  }
-
   String get _whiteBoardId {
     return Constants.whiteBoardId;
   }
@@ -221,6 +217,8 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> initializeRoomCall() async {
     try {
       await _acsPlugin.initializeRoomCall(
+        whiteBoardId: _whiteBoardId,
+        callId: _callId,
         roomId: _roomId,
         isChatEnable: true,
         isRejoin: false,
@@ -256,6 +254,7 @@ class _CallScreenState extends State<CallScreen> {
     try {
       await _acsPlugin.startOneOnOneCall(
         callId: _callId,
+        whiteBoardId: _whiteBoardId,
         participantsId: [_otherUserId],
         userId: _userId,
       );
