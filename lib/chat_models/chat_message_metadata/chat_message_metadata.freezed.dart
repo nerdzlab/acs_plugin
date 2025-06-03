@@ -22,6 +22,9 @@ ChatMessageMetadata _$ChatMessageMetadataFromJson(Map<String, dynamic> json) {
 mixin _$ChatMessageMetadata {
   @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
   RepliedTo? get repliedTo => throw _privateConstructorUsedError;
+  @ChatMetadataTypeConverter()
+  @JsonKey(name: 'type')
+  ChatMetadataType? get type => throw _privateConstructorUsedError;
   @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
   Emojes? get emojes => throw _privateConstructorUsedError;
   String? get version => throw _privateConstructorUsedError;
@@ -49,6 +52,9 @@ abstract class $ChatMessageMetadataCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
       RepliedTo? repliedTo,
+      @ChatMetadataTypeConverter()
+      @JsonKey(name: 'type')
+      ChatMetadataType? type,
       @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
       Emojes? emojes,
       String? version,
@@ -77,6 +83,7 @@ class _$ChatMessageMetadataCopyWithImpl<$Res, $Val extends ChatMessageMetadata>
   @override
   $Res call({
     Object? repliedTo = freezed,
+    Object? type = freezed,
     Object? emojes = freezed,
     Object? version = freezed,
     Object? attachments = freezed,
@@ -87,6 +94,10 @@ class _$ChatMessageMetadataCopyWithImpl<$Res, $Val extends ChatMessageMetadata>
           ? _value.repliedTo
           : repliedTo // ignore: cast_nullable_to_non_nullable
               as RepliedTo?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as ChatMetadataType?,
       emojes: freezed == emojes
           ? _value.emojes
           : emojes // ignore: cast_nullable_to_non_nullable
@@ -146,6 +157,9 @@ abstract class _$$ChatMessageMetadataImplCopyWith<$Res>
   $Res call(
       {@JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
       RepliedTo? repliedTo,
+      @ChatMetadataTypeConverter()
+      @JsonKey(name: 'type')
+      ChatMetadataType? type,
       @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
       Emojes? emojes,
       String? version,
@@ -174,6 +188,7 @@ class __$$ChatMessageMetadataImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? repliedTo = freezed,
+    Object? type = freezed,
     Object? emojes = freezed,
     Object? version = freezed,
     Object? attachments = freezed,
@@ -184,6 +199,10 @@ class __$$ChatMessageMetadataImplCopyWithImpl<$Res>
           ? _value.repliedTo
           : repliedTo // ignore: cast_nullable_to_non_nullable
               as RepliedTo?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as ChatMetadataType?,
       emojes: freezed == emojes
           ? _value.emojes
           : emojes // ignore: cast_nullable_to_non_nullable
@@ -210,6 +229,7 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
   const _$ChatMessageMetadataImpl(
       {@JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
       this.repliedTo,
+      @ChatMetadataTypeConverter() @JsonKey(name: 'type') this.type,
       @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject) this.emojes,
       this.version,
       @JsonKey(
@@ -224,6 +244,10 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
   @override
   @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
   final RepliedTo? repliedTo;
+  @override
+  @ChatMetadataTypeConverter()
+  @JsonKey(name: 'type')
+  final ChatMetadataType? type;
   @override
   @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
   final Emojes? emojes;
@@ -246,7 +270,7 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
 
   @override
   String toString() {
-    return 'ChatMessageMetadata(repliedTo: $repliedTo, emojes: $emojes, version: $version, attachments: $attachments, isEdited: $isEdited)';
+    return 'ChatMessageMetadata(repliedTo: $repliedTo, type: $type, emojes: $emojes, version: $version, attachments: $attachments, isEdited: $isEdited)';
   }
 
   @override
@@ -256,6 +280,7 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
             other is _$ChatMessageMetadataImpl &&
             (identical(other.repliedTo, repliedTo) ||
                 other.repliedTo == repliedTo) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.emojes, emojes) || other.emojes == emojes) &&
             (identical(other.version, version) || other.version == version) &&
             const DeepCollectionEquality()
@@ -266,7 +291,7 @@ class _$ChatMessageMetadataImpl implements _ChatMessageMetadata {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, repliedTo, emojes, version,
+  int get hashCode => Object.hash(runtimeType, repliedTo, type, emojes, version,
       const DeepCollectionEquality().hash(_attachments), isEdited);
 
   /// Create a copy of ChatMessageMetadata
@@ -290,6 +315,9 @@ abstract class _ChatMessageMetadata implements ChatMessageMetadata {
   const factory _ChatMessageMetadata(
       {@JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
       final RepliedTo? repliedTo,
+      @ChatMetadataTypeConverter()
+      @JsonKey(name: 'type')
+      final ChatMetadataType? type,
       @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
       final Emojes? emojes,
       final String? version,
@@ -304,6 +332,10 @@ abstract class _ChatMessageMetadata implements ChatMessageMetadata {
   @override
   @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
   RepliedTo? get repliedTo;
+  @override
+  @ChatMetadataTypeConverter()
+  @JsonKey(name: 'type')
+  ChatMetadataType? get type;
   @override
   @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
   Emojes? get emojes;
