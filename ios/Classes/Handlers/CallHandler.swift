@@ -163,6 +163,7 @@ final class CallHandler: MethodHandler {
     ) {
         let localOptions = LocalOptions(
             cameraOn: false,
+            isChatEnable: true,
             microphoneOn: true,
             skipSetupScreen: true
         )
