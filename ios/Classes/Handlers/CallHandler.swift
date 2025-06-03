@@ -15,6 +15,7 @@ final class CallHandler: MethodHandler {
             static let onCallUIClosed = "onCallUIClosed"
             static let onPluginStarted = "onPluginStarted"
             static let onUserCallEnded = "onUserCallEnded"
+            static let onOneOnOneCallEnded = "onOneOnOneCallEnded"
         }
         
         enum MethodChannels {
@@ -214,5 +215,11 @@ final class CallHandler: MethodHandler {
         }
         
         callComposite.events.onUserCallEnded = onUserCallEnded
+        
+        let onOneOnOneCallEnded: () -> Void = { [weak self] in
+            self?.onSendEvent(Event(name: Constants.FlutterEvents.onOneOnOneCallEnded))
+        }
+        
+        callComposite.events.onOneOnOneCallEnded = onOneOnOneCallEnded
     }
 }

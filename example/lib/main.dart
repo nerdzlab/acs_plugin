@@ -165,6 +165,10 @@ class _CallScreenState extends State<CallScreen> {
         log("User call ended");
         _shwoSnacBar("User ended call");
       }
+      ..onOneOnOneCallEnded = () {
+        log("User one on one call ended");
+        _shwoSnacBar("User one on one call ended");
+      }
       ..onRealTimeNotificationConnected = () {
         log("Real-time notification connected");
       }

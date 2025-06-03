@@ -36,6 +36,7 @@ class AcsPlugin {
   VoidCallback? onCallUIClosed;
   VoidCallback? onPluginStarted;
   VoidCallback? onUserCallEnded;
+  VoidCallback? onOneOnOneCallEnded;
   VoidCallback? onRealTimeNotificationConnected;
   VoidCallback? onRealTimeNotificationDisconnected;
 
@@ -211,6 +212,10 @@ class AcsPlugin {
       case EventType.onUserCallEnded:
         log("User call ended");
         onUserCallEnded?.call();
+        break;
+      case EventType.onOneOnOneCallEnded:
+        log("User one on one call ended");
+        onOneOnOneCallEnded?.call();
         break;
       case EventType.onRealTimeNotificationConnected:
         log("Real-time notification connected");
