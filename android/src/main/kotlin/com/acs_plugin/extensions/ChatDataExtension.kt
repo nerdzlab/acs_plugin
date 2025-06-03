@@ -172,7 +172,7 @@ fun ChatParticipant.toJson(): String {
     return gson.toJson(map)
 }
 
-fun ChatMessage.toJson(): String {
+fun ChatMessage.toJson(): MutableMap<String, Any?> {
     val gson = com.google.gson.Gson()
     val map = mutableMapOf<String, Any?>()
     map[Constants.JsonKeys.ID] = id
@@ -185,7 +185,7 @@ fun ChatMessage.toJson(): String {
     deletedOn?.let { map[Constants.JsonKeys.DELETED_ON] = it.toString() }
     editedOn?.let { map[Constants.JsonKeys.EDITED_ON] = it.toString() }
     metadata?.let { map[Constants.JsonKeys.METADATA] = gson.fromJson(gson.toJson(it), Map::class.java) }
-    return gson.toJson(map)
+    return map
 }
 
 fun ChatMessageContent.toJson(): String {
@@ -203,13 +203,13 @@ fun ChatMessageContent.toJson(): String {
     return gson.toJson(map)
 }
 
-fun ChatThreadItem.toJson(): String {
+fun ChatThreadItem.toJson(): MutableMap<String, Any?> {
     val gson = com.google.gson.Gson()
     val map = mutableMapOf<String, Any?>()
     map[Constants.JsonKeys.ID] = id
     map[Constants.JsonKeys.TOPIC] = topic
     deletedOn?.let { map[Constants.JsonKeys.DELETED_ON] = it.toString() }
     lastMessageReceivedOn?.let { map[Constants.JsonKeys.RECEIVED_ON] = it.toString() }
-    return gson.toJson(map)
+    return map
 }
 
