@@ -12,6 +12,7 @@ extension UserDefaults {
         static let chatEndpoint = "chatEndpoint"
         static let apnsToken = "APNSToken"
         static let identifier = "identifier"
+        static let languageCode = "languageCode"
     }
 
     // MARK: - UserData
@@ -62,6 +63,16 @@ extension UserDefaults {
     
     public func getAppGroupIdentifier() -> String? {
         string(forKey: Keys.identifier)
+    }
+    
+    // MARK: - Language Code
+    
+    public func setLanguageCode(_ identifier: String?) {
+        set(identifier, forKey: Keys.languageCode)
+    }
+    
+    public func getLanguageCode() -> String? {
+        string(forKey: Keys.languageCode)
     }
 }
 

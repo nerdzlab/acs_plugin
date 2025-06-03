@@ -56,10 +56,9 @@ final class BackgroundChatManager {
     }
     
     private func createChatClient() {
-        guard let appGroupIdentifier = UserDefaults.standard.getAppGroupIdentifier(),
+        guard
               let endpoint = UserDefaults.standard.getChatEndpoint(),
-              //App group only for shared data
-              let userData = UserDefaults(suiteName: appGroupIdentifier)?.loadUserData() else {
+              let userData = UserDefaults.standard.loadUserData() else {
             return
         }
 
