@@ -76,18 +76,12 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> startOneOnOneCall({
-    required String callId,
-    required String whiteBoardId,
     required List<String> participanstId,
-    required String userId,
   }) async {
     await methodChannel.invokeMethod(
       'startOneOnOneCall',
       {
-        'callId': callId,
-        'whiteBoardId': whiteBoardId,
         'participantsId': participanstId,
-        'userId': userId,
       },
     );
   }

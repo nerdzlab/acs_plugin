@@ -29,10 +29,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   }
 
   Future<void> startOneOnOneCall({
-    required String callId,
-    required String whiteBoardId,
     required List<String> participanstId,
-    required String userId,
   }) {
     throw UnimplementedError('startOneOnOneCall() has not been implemented.');
   }

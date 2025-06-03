@@ -115,16 +115,10 @@ class AcsPlugin {
 
   // Start one on one call
   Future<void> startOneOnOneCall({
-    required String callId,
-    required String whiteBoardId,
     required List<String> participantsId,
-    required String userId,
   }) async {
     await AcsPluginPlatform.instance.startOneOnOneCall(
-      callId: callId,
-      whiteBoardId: whiteBoardId,
       participanstId: participantsId,
-      userId: userId,
     );
   }
 

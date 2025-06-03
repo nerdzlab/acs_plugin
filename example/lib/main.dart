@@ -269,10 +269,7 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _startOneOnOneCall() async {
     try {
       await _acsPlugin.startOneOnOneCall(
-        callId: _callId,
         participantsId: [_otherUserId],
-        userId: _userId,
-        whiteBoardId: _whiteBoardId,
       );
       log('One on one call initialized successfully');
       _shwoSnacBar('One on one call initialized successfully');
