@@ -19,6 +19,7 @@ import com.azure.android.communication.chat.ChatClientBuilder
 import com.azure.android.communication.chat.models.*
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.core.rest.util.paging.PagedIterable
+import com.azure.android.core.util.RequestContext
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
@@ -314,12 +315,12 @@ class ChatHandler(
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val credential =
-                        CommunicationTokenCredential("eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjZkMTQxM2NmLTJkMjQtNDE5MS1hNTcwLTExZGE5MTZlODQyNV8wMDAwMDAyNy1iNjUwLWUxODQtNWI0Mi1hZDNhMGQwMDRkNjEiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDg5NTAzNzQiLCJleHAiOjE3NDkwMzY3NzQsInJnbiI6ImRlIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiNmQxNDEzY2YtMmQyNC00MTkxLWE1NzAtMTFkYTkxNmU4NDI1IiwicmVzb3VyY2VMb2NhdGlvbiI6Imdlcm1hbnkiLCJpYXQiOjE3NDg5NTAzNzR9.DKkopEwK0HaEeJ_3QpIYtJHyWOuHHHKjqJo-mwqyz2DkmgSuHHMaYKGYwQRjToYx67YWMhks39U-8WnzEStis2p1L6ImBGfQIme6mvNO58ridkLfSfQubEf-PXfm9VzymKGcDJIQzV_W9QeWMUa25wv156q4fNo5FEwwiG1ZmM3RaoPqMuVFUm_OTukZf1bJsIr_nDKYKd7airSdhPMaxKSjzTE1A0JNGkCvdsIMXxJNylnXt5v79tTqyJXFm0Z1RoRGjcRLYt68kW2GjbB7JWeo-I5KQlu-0fN0zem3DTyS0cnbH18JB6GVwD2PjsbV2UlqM9XE9MVlW3SXbtEPcw")
+                        CommunicationTokenCredential(token)
 
                     chatClient = ChatClientBuilder().endpoint(endpoint).credential(credential).buildClient()
 
                     val identifier: CommunicationIdentifier =
-                        CommunicationIdentifier.CommunicationUserIdentifier("8:acs:6d1413cf-2d24-4191-a570-11da916e8425_00000027-b650-e184-5b42-ad3a0d004d61")
+                        CommunicationIdentifier.CommunicationUserIdentifier(userData.userId)
                     chatClient?.startRealtimeNotifications(context) {}
 
                     chatAdapter = ChatAdapterBuilder().endpoint(endpoint).identity(identifier).credential(credential)
@@ -557,8 +558,12 @@ class ChatHandler(
 
     private fun getInitialListThreads(result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
+            val options = ListChatThreadsOptions().apply { setMaxPageSize(20) }
             try {
-                val threads = chatClient?.listChatThreads()
+                val threads = chatClient?.listChatThreads(
+                    options,
+                    RequestContext.NONE
+                )
                 threadsPagedIterable = threads
                 handleResultSuccess(result, threads?.map { it.toMap() })
             } catch (e: Exception) {
