@@ -13,6 +13,7 @@ import com.acs_plugin.calling.redux.state.CameraOperationalStatus
 import com.acs_plugin.calling.redux.state.CameraTransmissionStatus
 import com.acs_plugin.calling.redux.state.LocalUserState
 import com.acs_plugin.calling.redux.state.NoiseSuppressionStatus
+import com.acs_plugin.calling.redux.state.RaisedHandStatus
 
 internal interface LocalParticipantStateReducer : Reducer<LocalUserState>
 
@@ -297,6 +298,39 @@ internal class LocalParticipantStateReducerImpl : LocalParticipantStateReducer {
             is LocalParticipantAction.NoiseSuppressionOnFailed -> {
                 localUserState.copy(
                     audioState = localUserState.audioState.copy(noiseSuppression = NoiseSuppressionStatus.OFF)
+                )
+            }
+            is LocalParticipantAction.RaiseHandTriggered -> {
+                localUserState.copy(
+                    raisedHandStatus = RaisedHandStatus.RAISED
+                )
+            }
+
+            is LocalParticipantAction.LowerHandTriggered -> {
+                localUserState.copy(
+                    raisedHandStatus = RaisedHandStatus.LOWER
+                )
+            }
+            is LocalParticipantAction.RaiseHandFailed -> {
+                localUserState.copy(
+                    raisedHandStatus = RaisedHandStatus.LOWER
+                )
+            }
+
+            is LocalParticipantAction.LowerHandFailed -> {
+                localUserState.copy(
+                    raisedHandStatus = RaisedHandStatus.RAISED
+                )
+            }
+
+            is LocalParticipantAction.SendReactionTriggered -> {
+                localUserState.copy(
+                    reactionType = action.reactionType
+                )
+            }
+            is LocalParticipantAction.SendReactionFailed -> {
+                localUserState.copy(
+                    reactionType = null
                 )
             }
             else -> localUserState

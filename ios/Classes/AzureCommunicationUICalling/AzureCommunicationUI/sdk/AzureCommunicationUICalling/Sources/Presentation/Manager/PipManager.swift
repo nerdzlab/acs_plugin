@@ -110,9 +110,10 @@ class PipManager: NSObject, PipManagerProtocol {
 
             let contentSource = AVPictureInPictureController.ContentSource(
                 activeVideoCallSourceView: pipPlaceholderView, contentViewController: pipVideoCallViewController)
-
+            
             let avKitPipController = AVPictureInPictureController(contentSource: contentSource)
-
+            
+            pipVideoCallViewController.preferredContentSize = CGSize(width: 16, height: 9) //This will set aspect ratio
             avKitPipController.canStartPictureInPictureAutomaticallyFromInline = true
             avKitPipController.delegate = self
 

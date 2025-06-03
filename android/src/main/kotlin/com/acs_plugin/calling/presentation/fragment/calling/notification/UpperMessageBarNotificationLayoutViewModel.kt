@@ -35,7 +35,7 @@ internal class UpperMessageBarNotificationLayoutViewModel(private val dispatch: 
                     callDiagnosticsState.mediaCallDiagnostic.diagnosticValue
                 ) {
                     var upperMessageBarNotificationModel = UpperMessageBarNotificationModel(
-                        R.drawable.azure_communication_ui_calling_ic_fluent_speaker_mute_24_regular,
+                        R.drawable.ic_speaker_off,
                         R.string.azure_communication_ui_calling_diagnostics_unable_to_locate_speaker,
                         MediaCallDiagnostic.NO_SPEAKER_DEVICES_AVAILABLE,
                     )
@@ -83,7 +83,7 @@ internal class UpperMessageBarNotificationLayoutViewModel(private val dispatch: 
                     callDiagnosticsState.mediaCallDiagnostic.diagnosticValue
                 ) {
                     var upperMessageBarNotificationModel = UpperMessageBarNotificationModel(
-                        R.drawable.azure_communication_ui_calling_ic_fluent_speaker_mute_24_regular,
+                        R.drawable.ic_speaker_off,
                         R.string.azure_communication_ui_calling_diagnostics_speaker_not_working_as_expected,
                         MediaCallDiagnostic.SPEAKER_NOT_FUNCTIONING
                     )

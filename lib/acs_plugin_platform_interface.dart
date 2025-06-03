@@ -20,6 +20,8 @@ abstract class AcsPluginPlatform extends PlatformInterface {
 
   Future<void> initializeRoomCall({
     required String roomId,
+    required String callId,
+    required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
   }) {
@@ -27,8 +29,9 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   }
 
   Future<void> startOneOnOneCall({
-    required String token,
-    required String participantId,
+    required String callId,
+    required String whiteBoardId,
+    required List<String> participanstId,
     required String userId,
   }) {
     throw UnimplementedError('startOneOnOneCall() has not been implemented.');
@@ -36,6 +39,8 @@ abstract class AcsPluginPlatform extends PlatformInterface {
 
   Future<void> startTeamsMeetingCall({
     required String meetingLink,
+    required String callId,
+    required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
   }) {
@@ -166,6 +171,20 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     required String threadId,
   }) async {
     throw UnimplementedError('getLastMessage() has not been implemented.');
+  }
+
+  Future<List<Map<String, dynamic>>> getInitialListThreads() async {
+    throw UnimplementedError(
+        'getInitialListThreads() has not been implemented.');
+  }
+
+  Future<List<Map<String, dynamic>>> getNextThreads() async {
+    throw UnimplementedError('getNextThreads() has not been implemented.');
+  }
+
+  Future<bool> isMoreThreadsAvailable() async {
+    throw UnimplementedError(
+        'isMoreThreadsAvailable() has not been implemented.');
   }
 
   // Event stream for chat events etc.

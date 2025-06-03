@@ -27,6 +27,8 @@ internal class ErrorCode : ExpandableStringEnum<ErrorCode?>() {
         val DISABLE_BLUR_FAILED = fromString("DISABLE_BLUR_FAILED")
         val ENABLE_NOISE_SUPPRESSION_FAILED = fromString("ENABLE_NOISE_SUPPRESSION_FAILED")
         val DISABLE_NOISE_SUPPRESSION_FAILED = fromString("DISABLE_NOISE_SUPPRESSION_FAILED")
+        val RAISE_HAND_FAILED = fromString("RAISE_HAND_FAILED")
+        val LOWER_HAND_FAILED = fromString("LOWER_HAND_FAILED")
 
         private fun fromString(name: String): ErrorCode {
             return fromString(name, ErrorCode::class.java)

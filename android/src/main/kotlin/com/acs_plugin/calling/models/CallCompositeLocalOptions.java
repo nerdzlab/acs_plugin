@@ -36,6 +36,7 @@ public final class CallCompositeLocalOptions {
     private boolean cameraOn = false;
     private boolean microphoneOn = false;
     private boolean skipSetupScreen = false;
+    private boolean isChatEnabled = false;
     private CallCompositeAudioVideoMode audioVideoMode = CallCompositeAudioVideoMode.AUDIO_AND_VIDEO;
     private CallCompositeCaptionsOptions captionsOptions = null;
 
@@ -163,6 +164,25 @@ public final class CallCompositeLocalOptions {
         return this;
     }
 
+    /**
+     * Get the boolean value for call chat enabled state.
+     * @return The boolean that is currently set. False by default.
+     */
+    public boolean isChatEnabled() {
+        return this.isChatEnabled;
+    }
+
+    /**
+     * Set a boolean to enable or disable chat functionality.
+     * @param isChatEnabled The boolean value to enable or disable chat.
+     * @return The current {@link CallCompositeLocalOptions} object for Fluent use.
+     */
+    public CallCompositeLocalOptions setChatEnabled(
+            final boolean isChatEnabled
+    ) {
+        this.isChatEnabled = isChatEnabled;
+        return this;
+    }
 
     /**
      * Sets the Audio/Video Mode of the local call.

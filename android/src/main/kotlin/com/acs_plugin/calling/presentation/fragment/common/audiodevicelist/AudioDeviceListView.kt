@@ -4,8 +4,9 @@
 package com.acs_plugin.calling.presentation.fragment.common.audiodevicelist
 
 import android.content.Context
-import android.widget.RelativeLayout
+import android.widget.FrameLayout
 import android.widget.Switch
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -17,20 +18,19 @@ import com.acs_plugin.calling.redux.state.AudioState
 import com.acs_plugin.calling.redux.state.NoiseSuppressionStatus
 import com.acs_plugin.calling.utilities.BottomCellAdapter
 import com.acs_plugin.calling.utilities.BottomCellItem
-import com.acs_plugin.calling.utilities.implementation.CompositeDrawerDialog
 import com.acs_plugin.calling.utilities.isAndroidTV
-import com.microsoft.fluentui.drawer.DrawerDialog
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.microsoft.fluentui.R as fluentUiR
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class AudioDeviceListView(
     private val viewModel: AudioDeviceListViewModel,
     context: Context,
-) : RelativeLayout(context) {
+) : LinearLayoutCompat(context) {
 
     private var deviceTable: RecyclerView
-    private lateinit var audioDeviceDrawer: DrawerDialog
+    private lateinit var audioDeviceDialog: BottomSheetDialog
     private lateinit var bottomCellAdapter: BottomCellAdapter
     private var noiseSuppressionSwitch: Switch
 
@@ -41,7 +41,7 @@ internal class AudioDeviceListView(
     }
 
     fun start(viewLifecycleOwner: LifecycleOwner) {
-        initializeAudioDeviceDrawer()
+        initializeAudioDeviceDialog()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.audioStateFlow.collect {
                 updateSelectedAudioDevice(it)
@@ -70,24 +70,32 @@ internal class AudioDeviceListView(
     fun stop() {
         bottomCellAdapter.setBottomCellItems(mutableListOf())
         deviceTable.layoutManager = null
-        audioDeviceDrawer.dismiss()
-        audioDeviceDrawer.dismissDialog()
+        audioDeviceDialog.dismiss()
         this.removeAllViews()
     }
 
     private fun showAudioDeviceSelectionMenu() {
-        audioDeviceDrawer.show()
+        audioDeviceDialog.show()
     }
 
-    private fun initializeAudioDeviceDrawer() {
-        audioDeviceDrawer = CompositeDrawerDialog(
-            context,
-            DrawerDialog.BehaviorType.BOTTOM,
-            R.string.azure_communication_ui_calling_audio_device_drawer_accessibility_label,
-        )
-        audioDeviceDrawer.setContentView(this)
-        audioDeviceDrawer.setOnDismissListener {
-            viewModel.closeAudioDeviceSelectionMenu()
+    private fun initializeAudioDeviceDialog() {
+        audioDeviceDialog = BottomSheetDialog(context, R.style.RoundedBottomSheetDialog).apply {
+            setContentView(this@AudioDeviceListView)
+            setOnDismissListener {
+                viewModel.closeAudioDeviceSelectionMenu()
+            }
+
+            setOnShowListener { dialog ->
+                val bottomSheet = (dialog as BottomSheetDialog)
+                    .findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+                bottomSheet?.let {
+                    val behavior = BottomSheetBehavior.from(it)
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    behavior.skipCollapsed = true
+                    behavior.isDraggable = true
+                    it.layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
+                }
+            }
         }
 
         bottomCellAdapter = BottomCellAdapter()
@@ -122,7 +130,7 @@ internal class AudioDeviceListView(
                         isOnHold = false,
                         onClickAction = {
                             viewModel.switchAudioDevice(AudioDeviceSelectionStatus.RECEIVER_REQUESTED)
-                            audioDeviceDrawer.dismiss()
+                            audioDeviceDialog.dismiss()
                         }
                     )
                 )
@@ -144,7 +152,7 @@ internal class AudioDeviceListView(
                     isOnHold = false,
                     onClickAction = {
                         viewModel.switchAudioDevice(AudioDeviceSelectionStatus.SPEAKER_REQUESTED)
-                        audioDeviceDrawer.dismiss()
+                        audioDeviceDialog.dismiss()
                     }
                 )
             )
@@ -168,7 +176,7 @@ internal class AudioDeviceListView(
                         isOnHold = false,
                         onClickAction = {
                             viewModel.switchAudioDevice(AudioDeviceSelectionStatus.BLUETOOTH_SCO_REQUESTED)
-                            audioDeviceDrawer.dismiss()
+                            audioDeviceDialog.dismiss()
                         }
                     )
                 )
@@ -190,7 +198,7 @@ internal class AudioDeviceListView(
                     isOnHold = false,
                     onClickAction = {
                         viewModel.switchAudioDevice(AudioDeviceSelectionStatus.AUDIO_OFF_REQUESTED)
-                        audioDeviceDrawer.dismiss()
+                        audioDeviceDialog.dismiss()
                     }
                 )
             )

@@ -42,6 +42,7 @@ import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyErrorHead
 import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyHeaderView
 import com.acs_plugin.calling.presentation.fragment.calling.lobby.WaitingLobbyOverlayView
 import com.acs_plugin.calling.presentation.fragment.calling.localuser.LocalParticipantView
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.MoreActionsListView
 import com.acs_plugin.calling.presentation.fragment.calling.notification.ToastNotificationView
 import com.acs_plugin.calling.presentation.fragment.calling.notification.UpperMessageBarNotificationLayoutView
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridView
@@ -53,6 +54,8 @@ import com.acs_plugin.calling.utilities.convertDpToPx
 import com.acs_plugin.calling.utilities.hideKeyboard
 import com.acs_plugin.calling.utilities.isKeyboardOpen
 import com.acs_plugin.calling.utilities.isTablet
+import com.acs_plugin.extension.applyNavigationBarInsetPaddingBottom
+import com.acs_plugin.extension.applyStatusBarInsetMarginTop
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -100,6 +103,7 @@ internal class CallingFragment :
     private lateinit var accessibilityManager: AccessibilityManager
     private lateinit var wakeLock: PowerManager.WakeLock
     private lateinit var moreCallOptionsListView: MoreCallOptionsListView
+    private lateinit var moreActionsListView: MoreActionsListView
     private lateinit var lobbyHeaderView: LobbyHeaderView
     private lateinit var lobbyErrorHeaderView: LobbyErrorHeaderView
     private lateinit var captionsListView: CaptionsListView
@@ -115,6 +119,7 @@ internal class CallingFragment :
         viewModel.init(viewLifecycleOwner.lifecycleScope)
 
         callScreenLayout = view.findViewById(R.id.azure_communication_ui_calling_call_frame_layout)
+        callScreenLayout.applyStatusBarInsetMarginTop()
 
         confirmLeaveOverlayView =
             LeaveConfirmView(viewModel.confirmLeaveOverlayViewModel, this.requireContext())
@@ -125,6 +130,7 @@ internal class CallingFragment :
         )
 
         controlBarView = view.findViewById(R.id.azure_communication_ui_call_call_buttons)
+        controlBarView.applyNavigationBarInsetPaddingBottom()
         controlBarView.start(viewLifecycleOwner, viewModel.controlBarViewModel)
 
         participantGridView =
@@ -229,6 +235,9 @@ internal class CallingFragment :
         moreCallOptionsListView.layoutDirection =
             activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
         moreCallOptionsListView.start(viewLifecycleOwner)
+
+        moreActionsListView = MoreActionsListView(this.requireContext())
+        moreActionsListView.start(viewLifecycleOwner, viewModel.moreActionsListViewModel)
 
         captionsListView = CaptionsListView(
             context = this.requireContext(),
@@ -373,6 +382,7 @@ internal class CallingFragment :
         if (this::holdOverlay.isInitialized) holdOverlay.stop()
         if (this::errorInfoView.isInitialized) errorInfoView.stop()
         if (this::moreCallOptionsListView.isInitialized) moreCallOptionsListView.stop()
+        if (this::moreActionsListView.isInitialized) moreActionsListView.stop()
         if (this::upperMessageBarNotificationLayoutView.isInitialized) upperMessageBarNotificationLayoutView.stop()
         if (this::toastNotificationView.isInitialized) toastNotificationView.stop()
         if (this::captionsListView.isInitialized) captionsListView.stop()

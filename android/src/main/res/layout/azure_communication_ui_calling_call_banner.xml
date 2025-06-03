@@ -2,44 +2,44 @@
    Copyright (c) Microsoft Corporation. All rights reserved.
    Licensed under the MIT License.
   -->
-<com.acs_plugin.calling.presentation.fragment.calling.banner.BannerView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.acs_plugin.calling.presentation.fragment.calling.banner.BannerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/azure_communication_ui_call_banner"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/azure_communication_ui_calling_color_background"
+    android:background="@color/white"
     android:visibility="gone"
+    tools:visibility="visible"
+    android:elevation="@dimen/elevation_4dp"
     app:layout_constraintBottom_toTopOf="@+id/azure_communication_ui_call_floating_header"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    >
+    app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/azure_communication_ui_call_banner_text"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="7.5dp"
-        android:layout_marginEnd="54.5dp"
-        android:layout_marginBottom="9dp"
+        android:layout_marginHorizontal="@dimen/margin_12dp"
+        android:layout_marginVertical="@dimen/margin_8dp"
         android:gravity="top"
         android:lineSpacingExtra="2sp"
-        android:textColor="@color/azure_communication_ui_calling_color_on_background"
-        android:textSize="13sp"
+        style="@style/Text.CircularStdMedium.16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/azure_communication_ui_call_banner_close"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/azure_communication_ui_call_banner_close"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@null"
+        android:layout_width="@dimen/button_height_40dp"
+        android:layout_height="@dimen/button_height_40dp"
+        android:padding="@dimen/padding_8dp"
         android:src="@drawable/azure_communication_ui_calling_toggle_selector_dismiss"
+        app:tint="@color/purple"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
+
 </com.acs_plugin.calling.presentation.fragment.calling.banner.BannerView>

@@ -28,7 +28,7 @@ struct ParticipantGridCellView: View {
                     if let videoStreamId = displayedVideoStreamId,
                        let rendererViewInfo = getRendererViewInfo(for: videoStreamId),
                        viewModel.isVideoEnableForLocalUser {
-                        let zoomable = viewModel.videoViewModel?.videoStreamType == .screenSharing
+                        let zoomable = viewModel.videoViewModel?.videoStreamType == .screenSharing || viewModel.isWhiteBoard
                         ParticipantGridCellVideoView(
                             videoRendererViewInfo: rendererViewInfo,
                             rendererViewManager: rendererViewManager,
@@ -41,7 +41,8 @@ struct ParticipantGridCellView: View {
                             isMuted: $viewModel.isMuted,
                             isHandRaised: $viewModel.isHandRaised,
                             selectedReaction: $viewModel.selectedReaction,
-                            isPinned: $viewModel.isPinned
+                            isPinned: $viewModel.isPinned,
+                            isWhiteBoard: viewModel.isWhiteBoard
                         )
                         .id(videoStreamId)
                     } else {
@@ -85,7 +86,10 @@ struct ParticipantGridCellView: View {
         
         let remoteParticipantVideoViewId = RemoteParticipantVideoViewId(userIdentifier: viewModel.participantIdentifier,
                                                                         videoStreamIdentifier: videoStreamId)
-        return rendererViewManager?.getRemoteParticipantVideoRendererView(remoteParticipantVideoViewId)
+        return rendererViewManager?.getRemoteParticipantVideoRendererView(
+            remoteParticipantVideoViewId,
+            whiteBoardId: viewModel.isWhiteBoard ? viewModel.participantIdentifier : nil
+        )
     }
     
     private func updateParticipantViewData(for identifier: String) {
@@ -132,7 +136,8 @@ struct ParticipantGridCellView: View {
                         isHandRaised: $viewModel.isHandRaised,
                         isPinned: $viewModel.isPinned,
                         titleFont: AppFont.CircularStd.book.font(size: 13),
-                        mutedIconSize: 16
+                        mutedIconSize: 16,
+                        isWhiteBoard: viewModel.isWhiteBoard
                     )
                     .padding(.vertical, 2)
                     .opacity(viewModel.isHold ? 0.6 : 1)
@@ -163,6 +168,7 @@ struct ParticipantTitleView: View {
     @Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
     let titleFont: Font
     let mutedIconSize: CGFloat
+    let isWhiteBoard: Bool
     private var isEmpty: Bool {
         return !isMuted && displayName?.trimmingCharacters(in: .whitespaces).isEmpty == true
     }
@@ -186,7 +192,7 @@ struct ParticipantTitleView: View {
 #endif
         
         HStack(alignment: .center, spacing: Constants.hSpace, content: {
-            if isHandRaised {
+            if isHandRaised && !isWhiteBoard {
                 Text("✋")
                     .font(titleFont)
                     .lineLimit(1)
@@ -201,12 +207,12 @@ struct ParticipantTitleView: View {
                                             Constants.defaultFontScale)
                     .foregroundColor(Color(UIColor.compositeColor(.textPrimary)))
             }
-            if isMuted && !isHold {
+            if isMuted && !isHold && !isWhiteBoard {
                 Icon(name: .micOff, size: mutedIconSize, renderAsOriginal: false)
                     .accessibility(hidden: true)
             }
             
-            if isPinned {
+            if isPinned && !isWhiteBoard {
                 Icon(name: .pinInfo, size: mutedIconSize, renderAsOriginal: true)
                     .accessibility(hidden: true)
             }

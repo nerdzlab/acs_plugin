@@ -10,7 +10,9 @@ import com.acs_plugin.data.UserData
 import kotlinx.serialization.json.Json
 
 class UserDataHandler(
-    private val context: Context, private val channel: MethodChannel, private val onUserDataReceived: (UserData) -> Unit
+    private val context: Context,
+    private val channel: MethodChannel,
+    private val onUserDataReceived: (UserData) -> Unit
 ) : MethodHandler {
 
     var tokenRefresher: (((String?, Throwable?) -> Unit) -> Unit)? = null
@@ -50,9 +52,9 @@ class UserDataHandler(
             Constants.MethodChannels.SET_USER_DATA -> {
                 try {
                     val arguments = call.arguments as? Map<*, *>
-                    val token = arguments?.get("token") as? String
-                    val name = arguments?.get("name") as? String
-                    val userId = arguments?.get("userId") as? String
+                    val token = arguments?.get(Constants.Arguments.TOKEN) as? String
+                    val name = arguments?.get(Constants.Arguments.NAME) as? String
+                    val userId = arguments?.get(Constants.Arguments.USER_ID) as? String
 
                     if (token != null && name != null && userId != null) {
                         userData = UserData(token = token, name = name, userId = userId)
@@ -78,24 +80,29 @@ class UserDataHandler(
 
     private fun setupTokenRefresh() {
         tokenRefresher = { completionHandler ->
-            channel.invokeMethod(Constants.MethodChannels.GET_TOKEN, null, object : MethodChannel.Result {
-                override fun success(result: Any?) {
-                    when (result) {
-                        is String -> completionHandler(result, null)
-                        else -> {
-                            val error = Exception("Failed to fetch token")
-                            completionHandler(null, error)
+            channel.invokeMethod(
+                Constants.MethodChannels.GET_TOKEN,
+                null,
+                object : MethodChannel.Result {
+                    override fun success(result: Any?) {
+                        when (result) {
+                            is String -> completionHandler(result, null)
+                            else -> {
+                                val error = Exception("Failed to fetch token")
+                                completionHandler(null, error)
+                            }
                         }
                     }
-                }
 
-                override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
-                }
+                    override fun error(
+                        errorCode: String,
+                        errorMessage: String?,
+                        errorDetails: Any?
+                    ) {}
 
-                override fun notImplemented() {
-                }
+                    override fun notImplemented() {}
 
-            })
+                })
         }
     }
 }

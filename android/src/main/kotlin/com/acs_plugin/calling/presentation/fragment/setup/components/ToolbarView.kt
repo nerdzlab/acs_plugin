@@ -11,6 +11,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.acs_plugin.R
 import com.acs_plugin.calling.logger.Logger
 import com.acs_plugin.calling.models.CallCompositeLocalOptions
+import com.acs_plugin.extension.applyStatusBarInsetMarginTop
+import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.material.textview.MaterialTextView
 
 internal class ToolbarView : LinearLayout {
@@ -26,6 +28,7 @@ internal class ToolbarView : LinearLayout {
     override fun onFinishInflate() {
         super.onFinishInflate()
         navigationButton = findViewById(R.id.azure_communication_ui_navigation_button)
+        navigationButton.applyStatusBarInsetMarginTop()
         toolbarTitle = findViewById(R.id.azure_communication_ui_toolbar_title)
         toolbarSubtitle = findViewById(R.id.azure_communication_ui_toolbar_subtitle)
     }
@@ -38,7 +41,7 @@ internal class ToolbarView : LinearLayout {
         this.callCompositeLocalOptions = callCompositeLocalOptions
         this.logger = logger
         setActionBarTitleSubtitle()
-        navigationButton.setOnClickListener {
+        navigationButton.onSingleClickListener {
             exitComposite()
         }
     }

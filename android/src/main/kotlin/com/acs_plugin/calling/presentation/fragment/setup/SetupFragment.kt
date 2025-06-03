@@ -24,6 +24,7 @@ import com.acs_plugin.calling.presentation.fragment.setup.components.PreviewArea
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupControlBarView
 import com.acs_plugin.calling.presentation.fragment.setup.components.SetupParticipantAvatarView
 import com.acs_plugin.calling.presentation.fragment.setup.components.ToolbarView
+import com.acs_plugin.extension.applyNavigationBarInsetMarginBottomWithIME
 import kotlinx.coroutines.launch
 
 internal class SetupFragment :
@@ -48,7 +49,9 @@ internal class SetupFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewModel.init(viewLifecycleOwner.lifecycleScope)
+
         toolbarView = view.findViewById(R.id.azure_communication_setup_toolbar)
         toolbarView.start(
             activityViewModel.container.configuration.callCompositeLocalOptions,
@@ -58,6 +61,7 @@ internal class SetupFragment :
 
         setupJoinCallButtonHolderView =
             view.findViewById(R.id.azure_communication_ui_setup_join_call_holder)
+        setupJoinCallButtonHolderView.applyNavigationBarInsetMarginBottomWithIME()
         setupJoinCallButtonHolderView.start(
             viewLifecycleOwner,
             viewModel.joinCallButtonHolderViewModel
@@ -141,6 +145,7 @@ internal class SetupFragment :
     }
 
     private fun setupUserNameInput() {
+        userNameInput.applyNavigationBarInsetMarginBottomWithIME()
         userNameInput.apply {
             setText(viewModel.displayName.orEmpty())
             doOnTextChanged { text, _, _, _ -> viewModel.onUserNameChanged(text.toString().trim()) }

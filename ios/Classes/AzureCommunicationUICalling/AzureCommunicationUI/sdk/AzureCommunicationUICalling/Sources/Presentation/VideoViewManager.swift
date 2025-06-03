@@ -21,7 +21,8 @@ protocol RendererViewManager: AnyObject {
     var didRenderFirstFrame: ((CGSize) -> Void)? { get set }
 
     func getRemoteParticipantVideoRendererView
-    (_ videoViewId: RemoteParticipantVideoViewId) -> ParticipantRendererViewInfo?
+    (_ videoViewId: RemoteParticipantVideoViewId, whiteBoardId: String?
+    ) -> ParticipantRendererViewInfo?
     func getRemoteParticipantVideoRendererViewSize() -> CGSize?
     func updateDisplayedRemoteVideoStream(_ videoViewIdArray: [RemoteParticipantVideoViewId])
 }
@@ -98,8 +99,10 @@ class VideoViewManager: NSObject, RendererDelegate, RendererViewManager  {
 
     var didRenderFirstFrame: ((CGSize) -> Void)?
 
-    func getRemoteParticipantVideoRendererView(_ videoViewId: RemoteParticipantVideoViewId)
-                                                                -> ParticipantRendererViewInfo? {
+    func getRemoteParticipantVideoRendererView(
+        _ videoViewId: RemoteParticipantVideoViewId,
+        whiteBoardId: String?
+    ) -> ParticipantRendererViewInfo? {
         let videoStreamId = videoViewId.videoStreamIdentifier
         let userIdentifier = videoViewId.userIdentifier
         let cacheKey = generateCacheKey(userIdentifier: videoViewId.userIdentifier,
@@ -121,8 +124,10 @@ class VideoViewManager: NSObject, RendererDelegate, RendererViewManager  {
         }
 
         let wrappedVideoStream = videoStream.wrappedObject
+        let isWhiteBoard = whiteBoardId == userIdentifier
+                                                                    
         do {
-            let options = CreateViewOptions(scalingMode: videoStream.mediaStreamType == .screenSharing ? .fit : .crop)
+            let options = CreateViewOptions(scalingMode: videoStream.mediaStreamType == .screenSharing || isWhiteBoard ? .fit : .crop)
             let newRenderer: VideoStreamRenderer = try VideoStreamRenderer(remoteVideoStream: wrappedVideoStream)
             let newRendererView: RendererView = try newRenderer.createView(withOptions: options)
 

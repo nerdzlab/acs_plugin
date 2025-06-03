@@ -47,6 +47,7 @@
             android:layout_height="wrap_content"
             android:visibility="visible"
             app:fluentui_avatarSize="xxlarge"
+            app:fluentui_avatarBackgroundColor="@color/purple_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

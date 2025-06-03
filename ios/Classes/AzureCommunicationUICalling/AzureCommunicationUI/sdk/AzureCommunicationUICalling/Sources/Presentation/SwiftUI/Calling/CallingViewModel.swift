@@ -44,6 +44,7 @@ internal class CallingViewModel: ObservableObject {
     var onHoldOverlayViewModel: OnHoldOverlayViewModel!
     var shareMeetingLinkViewModel: ShareMeetingInfoActivityViewModel!
     let isRightToLeft: Bool
+    let whiteBoardId: String?
 
     var controlBarViewModel: ControlBarViewModel!
     var infoHeaderViewModel: InfoHeaderViewModel!
@@ -73,7 +74,8 @@ internal class CallingViewModel: ObservableObject {
          capabilitiesManager: CapabilitiesManager,
          callScreenOptions: CallScreenOptions,
          rendererViewManager: RendererViewManager,
-         isChatEnable: Bool
+         isChatEnable: Bool,
+         whiteBoardId: String?
     ) {
         self.store = store
         self.compositeViewModelFactory = compositeViewModelFactory
@@ -87,6 +89,7 @@ internal class CallingViewModel: ObservableObject {
         self.callScreenOptions = callScreenOptions
         self.isChatEnabled = isChatEnable
         self.shareMeetingLinkViewModel = compositeViewModelFactory.makeShareMeetingInfoActivityViewModel()
+        self.whiteBoardId = whiteBoardId
 
         let actionDispatch: ActionDispatch = store.dispatch
 
@@ -138,6 +141,7 @@ internal class CallingViewModel: ObservableObject {
         let isOutgoingCall = CallingViewModel.isOutgoingCallDialingInProgress(callType: callType,
                                                                               callingStatus: callingStatus)
         let isRemoteHold = store.state.callingState.status == .remoteHold
+        let isWhiteBoardPresenting = store.state.remoteParticipantsState.participantInfoList.contains(where: {$0.isWhiteBoard == true})
 
         isParticipantGridDisplayed = (isCallConnected || isOutgoingCall || isRemoteHold) &&
             CallingViewModel.hasRemoteParticipants(store.state.remoteParticipantsState.participantInfoList)
@@ -164,7 +168,9 @@ internal class CallingViewModel: ObservableObject {
             .makeParticipantOptionsViewModel(
                 localUserState: store.state.localUserState,
                 isDisplayed: store.state.navigationState.participantOptionsVisible,
-                dispatchAction: store.dispatch)
+                dispatchAction: store.dispatch,
+                isPinEnable: !isWhiteBoardPresenting
+            )
         
         layoutOptionsViewModel = compositeViewModelFactory
             .makeLayoutOptionsViewModel(
@@ -184,6 +190,10 @@ internal class CallingViewModel: ObservableObject {
         
         isScreenSharing = store.state.localUserState.shareScreenState.operation == .screenIsSharing
         
+        if (store.state.localUserState.meetingLayoutState.operation == .speaker && isWhiteBoardPresenting) {
+            store.dispatch(action: .localUserAction(.gridLayoutSelected))
+        }
+        
         meetingOptionsViewModel = compositeViewModelFactory.makeMeetingOptionsViewModel(
             localUserState: store.state.localUserState,
             localizationProvider: localizationProvider,
@@ -194,7 +204,8 @@ internal class CallingViewModel: ObservableObject {
                 store.dispatch(action: .localUserAction(.screenShareOffRequested))
             },
             onChat: {
-                print("On chat screen")
+                store.dispatch(action: .localUserAction(.showChat))
+                store.dispatch(action: .visibilityAction(.pipModeRequested))
             },
             onParticipants: {
                 store.dispatch(action: .showParticipants)
@@ -218,7 +229,9 @@ internal class CallingViewModel: ObservableObject {
             CallingViewModel.hasRemoteParticipants(store.state.remoteParticipantsState.participantInfoList),
             isDisplayed: store.state.navigationState.meetignOptionsVisible,
             isReactionEnable: callType == .roomsCall,
-            isRaiseHandAvailable: callingStatus == .connected
+            isRaiseHandAvailable: callingStatus == .connected,
+            isLayoutOptionsEnable: !isWhiteBoardPresenting,
+            isChatEnable: isChatEnable
         )
 
         controlBarViewModel = compositeViewModelFactory
@@ -318,17 +331,28 @@ internal class CallingViewModel: ObservableObject {
                                         isDisplayed: state.navigationState.participantsVisible)
         
         let selectedParticipent = state.remoteParticipantsState.participantInfoList.first(where: {$0.userIdentifier == state.navigationState.selectedParticipant?.userIdentifier})
+                
+        let isWhiteBoardPresenting = state.remoteParticipantsState.participantInfoList.contains(where: {$0.isWhiteBoard == true})
         
-        participantOptionsViewModel.update(localUserState: state.localUserState, isDisplayed: state.navigationState.participantOptionsVisible, participantInfoModel: selectedParticipent
+        participantOptionsViewModel.update(
+            localUserState: state.localUserState,
+            isDisplayed: state.navigationState.participantOptionsVisible,
+            participantInfoModel: selectedParticipent,
+            isPinEnable: !isWhiteBoardPresenting
         )
         
         isScreenSharing = state.localUserState.shareScreenState.operation == .screenIsSharing
+        
+        if (state.localUserState.meetingLayoutState.operation == .speaker && isWhiteBoardPresenting) {
+            store.dispatch(action: .localUserAction(.gridLayoutSelected))
+        }
         
         meetingOptionsViewModel.update(
             localUserState: state.localUserState,
             isDisplayed: state.navigationState.meetignOptionsVisible,
             isRemoteParticipantsPresent: isParticipantGridDisplayed,
-            isRaiseHandAvailable: state.callingState.status == .connected
+            isRaiseHandAvailable: state.callingState.status == .connected,
+            isLayoutOptionsEnable: !isWhiteBoardPresenting
         )
         
         if (!isParticipantGridDisplayed && state.localUserState.shareScreenState.operation == .screenIsSharing) {

@@ -40,12 +40,15 @@ internal struct DrawerParticipantView: View {
                 .padding(.leading, DrawerListConstants.textPaddingLeading)
                 .font(AppFont.CircularStd.book.font(size: 16))
             Spacer()
-            if item.isHold {
-                Text("On Hold")
-            } else {
-                Icon(name: item.isMuted ? .micOff : .micOn,
-                     size: DrawerListConstants.iconSize, renderAsOriginal: false)
-                .opacity(DrawerListConstants.micIconOpacity)
+            
+            if !item.isWhiteBoard {
+                if item.isHold {
+                    Text("On Hold")
+                } else {
+                    Icon(name: item.isMuted ? .micOff : .micOn,
+                         size: DrawerListConstants.iconSize, renderAsOriginal: false)
+                    .opacity(DrawerListConstants.micIconOpacity)
+                }
             }
         }
         .frame(maxWidth: .infinity)
@@ -54,15 +57,17 @@ internal struct DrawerParticipantView: View {
         .padding(.vertical, DrawerListConstants.participantOptionPaddingVertical)
         .accessibilityIdentifier(item.getCellAccessibilityLabel(with: participantViewData))
         .onTapGesture {
-            // Is this participant is set up to confirm, lets toggle that
-            if item.confirmTitle != nil && item.confirmAccept != nil && item.confirmDeny != nil {
-                isConfirming = true
-            } else {
-                // Else, we are going to just do the "accept()" action by default
-                guard let action = item.accept else {
-                    return
+            if !item.isWhiteBoard {
+                // Is this participant is set up to confirm, lets toggle that
+                if item.confirmTitle != nil && item.confirmAccept != nil && item.confirmDeny != nil {
+                    isConfirming = true
+                } else {
+                    // Else, we are going to just do the "accept()" action by default
+                    guard let action = item.accept else {
+                        return
+                    }
+                    action()
                 }
-                action()
             }
         }
         .fullScreenCover(isPresented: $isConfirming) {

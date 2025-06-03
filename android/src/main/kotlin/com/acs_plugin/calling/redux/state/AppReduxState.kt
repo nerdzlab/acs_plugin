@@ -35,9 +35,13 @@ internal class AppReduxState(
         participantMap = HashMap(),
         participantMapModifiedTimestamp = 0,
         dominantSpeakersInfo = emptyList(),
+        raisedHandsInfo = emptyList(),
         dominantSpeakersModifiedTimestamp = 0,
+        raisedHandsModifiedTimestamp = 0,
         lobbyErrorCode = null,
         totalParticipantCount = 0,
+        reactionInfo = emptyMap(),
+        reactionModifiedTimestamp = 0
     )
 
     override var localParticipantState: LocalUserState =
@@ -71,6 +75,7 @@ internal class AppReduxState(
                 ParticipantCapabilityType.UNMUTE_MICROPHONE
             ),
             currentCapabilitiesAreDefault = true,
+            raisedHandStatus = RaisedHandStatus.LOWER
         )
 
     override var permissionState: PermissionState =
@@ -181,7 +186,11 @@ internal class AppReduxState(
                 title = it.title,
                 drawableId = it.drawableId,
             )
-        } ?: emptyList()
+        } ?: emptyList(),
+        callScreenHeaderChatButtonsState = DefaultButtonState(
+            isEnabled = localOptions?.isChatEnabled,
+            isVisible = localOptions?.isChatEnabled
+        )
     )
 
     override var deviceConfigurationState = DeviceConfigurationState(

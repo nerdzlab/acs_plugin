@@ -18,6 +18,7 @@ extension Reducer where State == RemoteParticipantsState,
         var totalParticipantCount = remoteParticipantsState.totalParticipantCount
         var pinnedParticipantId = remoteParticipantsState.pinnedParticipantId
         var listOfDisabledVideoParticipants = remoteParticipantsState.listOfDisabledVideoParticipants
+        let whiteBoardId = remoteParticipantsState.whiteBoardId
         
         switch action {
         case .remoteParticipantsAction(.dominantSpeakersUpdated(speakers: let newSpeakers)):
@@ -25,11 +26,19 @@ extension Reducer where State == RemoteParticipantsState,
             dominantSpeakersModifiedTimestamp = Date()
         case .remoteParticipantsAction(.participantListUpdated(participants: let newParticipants)):
             lastUpdateTimeStamp = Date()
-            
-            // 🔍 1. Clear pinnedParticipantId, there is no such
+                        
             let currentIDs = Set(participantInfoList.map { $0.userIdentifier })
-            if let pinnedId = pinnedParticipantId, !currentIDs.contains(pinnedId) {
-                pinnedParticipantId = nil
+            
+            // Check if the new participants list includes the whiteboard participant.
+            // If so, pin the whiteboard participant by default.
+            if newParticipants.contains(where: { $0.userIdentifier == whiteBoardId }) {
+                pinnedParticipantId = remoteParticipantsState.whiteBoardId
+            } else {
+                // If the currently pinned participant is no longer in the list of current IDs,
+                // remove the pinned participantId.
+                if let pinnedId = pinnedParticipantId, !currentIDs.contains(pinnedId) {
+                    pinnedParticipantId = nil
+                }
             }
             
             // 🔍 2. Clear listOfDisabledVideoParticipants from not valid users
@@ -41,7 +50,8 @@ extension Reducer where State == RemoteParticipantsState,
                 updatedList: newParticipants,
                 currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
-                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
+                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants,
+                whiteBoardId: whiteBoardId
             )
             
         case .errorAction(.statusErrorAndCallReset):
@@ -67,7 +77,8 @@ extension Reducer where State == RemoteParticipantsState,
                 updatedList: participantInfoList,
                 currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
-                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
+                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants,
+                whiteBoardId: whiteBoardId
             )
             
         case .remoteParticipantsAction(.unpinParticipant(participantId: let participantId)):
@@ -78,7 +89,8 @@ extension Reducer where State == RemoteParticipantsState,
                 updatedList: participantInfoList,
                 currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
-                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
+                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants,
+                whiteBoardId: whiteBoardId
             )
             
         case .remoteParticipantsAction(.showParticipantVideo(participantId: let participantId)):
@@ -89,7 +101,8 @@ extension Reducer where State == RemoteParticipantsState,
                 updatedList: participantInfoList,
                 currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
-                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
+                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants,
+                whiteBoardId: whiteBoardId
             )
             
         case .remoteParticipantsAction(.hideParticipantVideo(participantId: let participantId)):
@@ -100,7 +113,8 @@ extension Reducer where State == RemoteParticipantsState,
                 updatedList: participantInfoList,
                 currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
-                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
+                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants,
+                whiteBoardId: whiteBoardId
             )
         case .remoteParticipantsAction(.resetParticipantReaction(let participantId)):
             lastUpdateTimeStamp = Date()
@@ -119,8 +133,10 @@ extension Reducer where State == RemoteParticipantsState,
                             isVideoOnForMe: participant.isVideoOnForMe,
                             avatarColor: participant.avatarColor,
                             isRemoteUser: participant.isRemoteUser,
+                            isWhiteBoard: participant.isWhiteBoard,
                             userIdentifier: participant.userIdentifier,
                             status: participant.status,
+                            
                             screenShareVideoStreamModel: participant.screenShareVideoStreamModel,
                             cameraVideoStreamModel: participant.cameraVideoStreamModel
                         )
@@ -131,7 +147,8 @@ extension Reducer where State == RemoteParticipantsState,
                 },
                 currentList: participantInfoList,
                 pinnedParticipantId: pinnedParticipantId,
-                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
+                listOfDisabledVideoParticipants: listOfDisabledVideoParticipants,
+                whiteBoardId: whiteBoardId
             )
             
         default:
@@ -144,7 +161,8 @@ extension Reducer where State == RemoteParticipantsState,
                                        lobbyError: lobbyError,
                                        totalParticipantCount: totalParticipantCount,
                                        pinnedParticipantId: pinnedParticipantId,
-                                       listOfDisabledVideoParticipants: listOfDisabledVideoParticipants
+                                       listOfDisabledVideoParticipants: listOfDisabledVideoParticipants,
+                                       whiteBoardId: whiteBoardId
         )
     }
 }
@@ -153,7 +171,8 @@ private func updateDerivedParticipantFields(
     updatedList: [ParticipantInfoModel],
     currentList: [ParticipantInfoModel],
     pinnedParticipantId: String?,
-    listOfDisabledVideoParticipants: Set<String>
+    listOfDisabledVideoParticipants: Set<String>,
+    whiteBoardId: String?
 ) -> [ParticipantInfoModel] {
     updatedList.map { participant in
         // Find existing participant in current list
@@ -175,6 +194,8 @@ private func updateDerivedParticipantFields(
         } else {
             selectedReaction = participant.selectedReaction
         }
+        
+        let isWhiteBoard = participant.userIdentifier == whiteBoardId
 
         return ParticipantInfoModel(
             displayName: participant.displayName,
@@ -186,6 +207,7 @@ private func updateDerivedParticipantFields(
             isVideoOnForMe: !listOfDisabledVideoParticipants.contains(participant.userIdentifier),
             avatarColor: avatarColor,
             isRemoteUser: participant.isRemoteUser,
+            isWhiteBoard: isWhiteBoard,
             userIdentifier: participant.userIdentifier,
             status: participant.status,
             screenShareVideoStreamModel: participant.screenShareVideoStreamModel,

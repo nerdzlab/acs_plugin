@@ -8,9 +8,6 @@
 import ReplayKit
 import OSLog
 
-import ReplayKit
-import OSLog
-
 let broadcastLogger = OSLog(subsystem: "logs_acs_plugin", category: "Broadcast")
 
 private enum Constants {

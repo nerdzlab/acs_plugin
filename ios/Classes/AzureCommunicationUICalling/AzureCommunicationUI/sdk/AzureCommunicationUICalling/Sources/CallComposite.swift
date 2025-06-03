@@ -604,7 +604,8 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
             skipSetupScreen: localOptions?.skipSetupScreen,
             callType: callConfiguration.compositeCallType,
             setupScreenOptions: localOptions?.setupScreenOptions,
-            callScreenOptions: localOptions?.callScreenOptions
+            callScreenOptions: localOptions?.callScreenOptions,
+            whiteBoardId: localOptions?.whiteBoardId
         )
         self.store = store
 

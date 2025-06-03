@@ -7,23 +7,26 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.accessibility.AccessibilityManager
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.LinearLayout
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.azure.android.communication.calling.ScalingMode
 import com.acs_plugin.R
 import com.acs_plugin.calling.presentation.VideoViewManager
+import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
 import com.acs_plugin.calling.presentation.manager.AvatarViewManager
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
 import com.acs_plugin.calling.utilities.isAndroidTV
+import com.acs_plugin.extension.onSingleClickListener
+import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.persona.AvatarSize
 import com.microsoft.fluentui.persona.AvatarView
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class LocalParticipantView : ConstraintLayout {
@@ -37,16 +40,21 @@ internal class LocalParticipantView : ConstraintLayout {
     private lateinit var localParticipantPip: ConstraintLayout
     private lateinit var localPipWrapper: ConstraintLayout
     private lateinit var localParticipantPipCameraHolder: ConstraintLayout
-    private lateinit var switchCameraButton: ImageView
+    private lateinit var switchCameraButton: AppCompatImageView
     private lateinit var pipSwitchCameraButton: ConstraintLayout
     private lateinit var avatarHolder: ConstraintLayout
     private lateinit var avatar: AvatarView
     private lateinit var pipAvatar: AvatarView
-    private lateinit var displayNameText: TextView
-    private lateinit var micImage: ImageView
+    private lateinit var displayNameText: MaterialTextView
+    private lateinit var micImage: AppCompatImageView
+    private lateinit var localParticipantNameLayer: LinearLayout
     private lateinit var dragTouchListener: DragTouchListener
     private lateinit var accessibilityManager: AccessibilityManager
     private lateinit var guideline: Guideline
+    private lateinit var raisedHandLabel: AppCompatImageView
+    private lateinit var pipRaisedHandLabel: AppCompatImageView
+    private lateinit var reactionOverlay: ReactionOverlayView
+    private lateinit var pipReactionOverlay: ReactionOverlayView
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -64,7 +72,6 @@ internal class LocalParticipantView : ConstraintLayout {
             findViewById(R.id.azure_communication_ui_call_local_pip_switch_camera_button)
         avatarHolder =
             findViewById(R.id.azure_communication_ui_call_local_avatarHolder)
-
         avatar =
             findViewById(R.id.azure_communication_ui_call_local_avatar)
         pipAvatar =
@@ -74,8 +81,16 @@ internal class LocalParticipantView : ConstraintLayout {
             findViewById(R.id.azure_communication_ui_call_local_display_name)
         micImage =
             findViewById(R.id.azure_communication_ui_call_local_mic_indicator)
-        switchCameraButton.setOnClickListener { viewModel.switchCamera() }
-        pipSwitchCameraButton.setOnClickListener { viewModel.switchCamera() }
+        localParticipantNameLayer =
+            findViewById(R.id.local_participant_layer)
+        raisedHandLabel = findViewById(R.id.azure_communication_ui_call_local_raise_hand_indicator)
+        pipRaisedHandLabel = findViewById(R.id.azure_communication_ui_call_local_pip_raised_hand_indicator)
+        reactionOverlay = findViewById(R.id.local_participant_reaction_overlay)
+        pipReactionOverlay = findViewById(R.id.local_participant_pip_reaction_overlay)
+
+        switchCameraButton.onSingleClickListener { viewModel.switchCamera() }
+        pipSwitchCameraButton.onSingleClickListener { viewModel.switchCamera() }
+
         dragTouchListener = DragTouchListener()
 
         if (isAndroidTV(context)) {
@@ -117,7 +132,7 @@ internal class LocalParticipantView : ConstraintLayout {
                 it?.let {
                     avatar.name = it
                     pipAvatar.name = it
-                    displayNameText.text = it
+                    displayNameText.text = "${it} (You)"
                     avatarViewManager.callCompositeLocalOptions?.participantViewData?.let { participantViewData ->
                         participantViewData.avatarBitmap?.let { image ->
                             avatar.avatarImageBitmap = image
@@ -130,7 +145,7 @@ internal class LocalParticipantView : ConstraintLayout {
                         participantViewData.displayName?.let { name ->
                             avatar.name = name
                             pipAvatar.name = name
-                            displayNameText.text = name
+                            displayNameText.text = "${name} (You)"
                         }
                     }
                 }
@@ -207,6 +222,29 @@ internal class LocalParticipantView : ConstraintLayout {
                 visibility = if (it) View.VISIBLE else View.GONE
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getUserNameLayerVisibilityFlow().collect {
+                localParticipantNameLayer.isVisible = it
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getDisplayRaisedHandFlowFlow().collect {
+                raisedHandLabel.isVisible = it
+                pipRaisedHandLabel.isVisible = it
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getReactionFlow().collect {
+                if (it.first == LocalParticipantViewMode.SELFIE_PIP) {
+                    pipReactionOverlay.show(it.second)
+                } else {
+                    reactionOverlay.show(it.second)
+                }
+            }
+        }
     }
 
     private fun setupAccessibility() {
@@ -220,6 +258,8 @@ internal class LocalParticipantView : ConstraintLayout {
         videoViewManager.updateLocalVideoRenderer(model.videoStreamID)
         localParticipantFullCameraHolder.removeAllViews()
         localParticipantPipCameraHolder.removeAllViews()
+
+        localParticipantNameLayer.setBackgroundResource(if (model.shouldDisplayVideo) R.drawable.bg_light_pink_rounder_r6 else 0)
 
         localParticipantPip.visibility =
             if (model.viewMode == LocalParticipantViewMode.SELFIE_PIP) View.VISIBLE else View.GONE
@@ -245,10 +285,12 @@ internal class LocalParticipantView : ConstraintLayout {
             videoStreamID,
             scalingMode
         )?.let { view ->
+            val isFullScreenMode = viewMode == LocalParticipantViewMode.FULL_SCREEN
+
             view.background = this.context.let {
                 ContextCompat.getDrawable(
                     it,
-                    R.drawable.azure_communication_ui_calling_corner_radius_rectangle_4dp
+                    if (isFullScreenMode) R.drawable.bg_rounded_r12 else R.drawable.bg_rounded_r8
                 )
             }
             videoHolder.addView(view, 0)

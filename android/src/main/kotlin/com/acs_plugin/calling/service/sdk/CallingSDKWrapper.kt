@@ -3,29 +3,13 @@
 
 package com.acs_plugin.calling.service.sdk
 
+/*  <CALL_START_TIME>
+import kotlinx.coroutines.flow.SharedFlow
+</CALL_START_TIME> */
+/*  <CALL_START_TIME>
+import java.util.Date
+</CALL_START_TIME> */
 import android.content.Context
-import com.azure.android.communication.calling.AcceptCallOptions
-import com.azure.android.communication.calling.Call
-import com.azure.android.communication.calling.CallAgent
-import com.azure.android.communication.calling.CallClient
-import com.azure.android.communication.calling.CallingCommunicationException
-import com.azure.android.communication.calling.CameraFacing
-import com.azure.android.communication.calling.CapabilitiesCallFeature
-import com.azure.android.communication.calling.DeviceManager
-import com.azure.android.communication.calling.Features
-import com.azure.android.communication.calling.GroupCallLocator
-import com.azure.android.communication.calling.HangUpOptions
-import com.azure.android.communication.calling.JoinCallOptions
-import com.azure.android.communication.calling.JoinMeetingLocator
-import com.azure.android.communication.calling.OutgoingAudioOptions
-import com.azure.android.communication.calling.OutgoingVideoOptions
-import com.azure.android.communication.calling.RoomCallLocator
-import com.azure.android.communication.calling.StartCallOptions
-import com.azure.android.communication.calling.StartCaptionsOptions
-import com.azure.android.communication.calling.TeamsCaptions
-import com.azure.android.communication.calling.TeamsMeetingIdLocator
-import com.azure.android.communication.calling.TeamsMeetingLinkLocator
-import com.azure.android.communication.calling.VideoDevicesUpdatedListener
 import com.acs_plugin.calling.CallCompositeException
 import com.acs_plugin.calling.configuration.CallConfiguration
 import com.acs_plugin.calling.configuration.CallType
@@ -34,6 +18,9 @@ import com.acs_plugin.calling.models.CallCompositeCaptionsOptions
 import com.acs_plugin.calling.models.CallCompositeLobbyErrorCode
 import com.acs_plugin.calling.models.ParticipantCapabilityType
 import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.models.ReactionMessage
+import com.acs_plugin.calling.models.ReactionPayload
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.calling.redux.state.AudioOperationalStatus
 import com.acs_plugin.calling.redux.state.AudioState
 import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
@@ -42,21 +29,42 @@ import com.acs_plugin.calling.redux.state.CameraState
 import com.acs_plugin.calling.redux.state.NoiseSuppressionStatus
 import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.calling.utilities.toJavaUtil
+import com.azure.android.communication.calling.AcceptCallOptions
 import com.azure.android.communication.calling.BackgroundBlurEffect
-import com.azure.android.communication.calling.LocalVideoEffectsFeature
+import com.azure.android.communication.calling.Call
+import com.azure.android.communication.calling.CallAgent
+import com.azure.android.communication.calling.CallClient
+import com.azure.android.communication.calling.CallingCommunicationException
+import com.azure.android.communication.calling.CameraFacing
+import com.azure.android.communication.calling.CapabilitiesCallFeature
+import com.azure.android.communication.calling.DataChannelPriority
+import com.azure.android.communication.calling.DataChannelReliability
+import com.azure.android.communication.calling.DataChannelSenderOptions
+import com.azure.android.communication.calling.DeviceManager
+import com.azure.android.communication.calling.Features
+import com.azure.android.communication.calling.GroupCallLocator
+import com.azure.android.communication.calling.HangUpOptions
+import com.azure.android.communication.calling.JoinCallOptions
+import com.azure.android.communication.calling.JoinMeetingLocator
 import com.azure.android.communication.calling.NoiseSuppressionMode
 import com.azure.android.communication.calling.OutgoingAudioFilters
+import com.azure.android.communication.calling.OutgoingAudioOptions
+import com.azure.android.communication.calling.OutgoingVideoOptions
+import com.azure.android.communication.calling.RaiseHandCallFeature
+import com.azure.android.communication.calling.RoomCallLocator
+import com.azure.android.communication.calling.StartCallOptions
+import com.azure.android.communication.calling.StartCaptionsOptions
+import com.azure.android.communication.calling.TeamsCaptions
+import com.azure.android.communication.calling.TeamsMeetingIdLocator
+import com.azure.android.communication.calling.TeamsMeetingLinkLocator
+import com.azure.android.communication.calling.VideoDevicesUpdatedListener
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-/*  <CALL_START_TIME>
 import kotlinx.coroutines.flow.SharedFlow
-</CALL_START_TIME> */
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.util.Collections
-/*  <CALL_START_TIME>
-import java.util.Date
-</CALL_START_TIME> */
 import java.util.concurrent.CompletableFuture
 import com.azure.android.communication.calling.LocalVideoStream as NativeLocalVideoStream
 
@@ -67,6 +75,7 @@ internal class CallingSDKWrapper(
     private val logger: Logger? = null,
     private val callingSDKInitializer: CallingSDKInitializer,
     private val compositeCaptionsOptions: CallCompositeCaptionsOptions? = null,
+    private val localUserIdentifier: String?,
     /* <END_CALL_FOR_ALL>
     private val isOnCallEndTerminateForAll: Boolean = false,
     </END_CALL_FOR_ALL> */
@@ -162,6 +171,12 @@ internal class CallingSDKWrapper(
 
     override fun getRemoteParticipantInfoModelSharedFlow(): Flow<Map<String, ParticipantInfoModel>> =
         callingSDKEventHandler.getRemoteParticipantInfoModelFlow()
+
+    override fun getRaisedHandParticipantsInfoSharedFlow(): SharedFlow<List<String>> =
+        callingSDKEventHandler.getRaisedHandParticipantsInfoFlow()
+
+    override fun getReactionParticipantsInfoSharedFlow(): SharedFlow<Map<String, ReactionPayload>> =
+        callingSDKEventHandler.getReactionParticipantsInfoFlow()
 
     override fun hold(): CompletableFuture<Void> {
         val completableFuture = CompletableFuture<Void>()
@@ -704,6 +719,61 @@ internal class CallingSDKWrapper(
             completableFuture.completeExceptionally(e)
         }
 
+        return completableFuture
+    }
+
+    override fun raiseHand(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            val raiseHandFeature: RaiseHandCallFeature = call.feature(Features.RAISED_HANDS)
+            raiseHandFeature.raiseHand()
+        } catch (e: Exception) {
+            completableFuture.completeExceptionally(e)
+        }
+
+        return completableFuture
+    }
+
+    override fun lowerHand(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            val raiseHandFeature: RaiseHandCallFeature = call.feature(Features.RAISED_HANDS)
+            raiseHandFeature.lowerHand()
+        } catch (e: Exception) {
+            completableFuture.completeExceptionally(e)
+        }
+
+        return completableFuture
+    }
+
+    override fun sendReaction(reactionType: ReactionType): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            val options = DataChannelSenderOptions().apply {
+                channelId = 1000
+                bitrateInKbps = 32
+                priority = DataChannelPriority.NORMAL
+                reliability = DataChannelReliability.LOSSY
+            }
+
+            val feature = call.feature(Features.DATA_CHANNEL)
+            val sender = feature.getDataChannelSender(options)
+
+            val localUserId = localUserIdentifier ?: "unknown"
+            val payload = ReactionPayload(reactionType)
+            val message = ReactionMessage(mapOf(localUserId to payload))
+
+            val json = Json.encodeToString(ReactionMessage.serializer(), message)
+            sender.sendMessage(json.toByteArray(Charsets.UTF_8))
+
+            completableFuture.complete(null)
+        } catch (e: Exception) {
+            logger?.error("Failed to send reaction via data channel", e)
+            completableFuture.completeExceptionally(e)
+        }
         return completableFuture
     }
     //endregion

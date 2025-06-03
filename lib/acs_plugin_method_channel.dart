@@ -37,6 +37,8 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   @override
   Future<void> initializeRoomCall({
     required String roomId,
+    required String callId,
+    required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
   }) async {
@@ -44,6 +46,8 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       'initializeRoomCall',
       {
         'roomId': roomId,
+        'callId': callId,
+        'whiteBoardId': whiteBoardId,
         'isChatEnable': isChatEnable,
         'isRejoin': isRejoin,
       },
@@ -52,14 +56,18 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> startTeamsMeetingCall({
+    required String callId,
     required String meetingLink,
+    required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
   }) async {
     await methodChannel.invokeMethod(
       'startTeamsMeetingCall',
       {
+        'callId': callId,
         'meetingLink': meetingLink,
+        'whiteBoardId': whiteBoardId,
         'isChatEnable': isChatEnable,
         'isRejoin': isRejoin,
       },
@@ -68,15 +76,17 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
 
   @override
   Future<void> startOneOnOneCall({
-    required String token,
-    required String participantId,
+    required String callId,
+    required String whiteBoardId,
+    required List<String> participanstId,
     required String userId,
   }) async {
     await methodChannel.invokeMethod(
       'startOneOnOneCall',
       {
-        'token': token,
-        'participantId': participantId,
+        'callId': callId,
+        'whiteBoardId': whiteBoardId,
+        'participantsId': participanstId,
         'userId': userId,
       },
     );
@@ -301,6 +311,41 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
       {
         'threadId': threadId,
       },
+    );
+
+    return result as bool;
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getInitialListThreads() async {
+    final result = await methodChannel.invokeMethod(
+      'getInitialListThreads',
+    );
+
+    if (result == null) return [];
+
+    // Cast each item in the result to Map<String, dynamic>
+    final List<dynamic> rawList = result as List<dynamic>;
+    return rawList.map((item) => Map<String, dynamic>.from(item)).toList();
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getNextThreads() async {
+    final result = await methodChannel.invokeMethod(
+      'getNextThreads',
+    );
+
+    if (result == null) return [];
+
+    // Cast each item in the result to Map<String, dynamic>
+    final List<dynamic> rawList = result as List<dynamic>;
+    return rawList.map((item) => Map<String, dynamic>.from(item)).toList();
+  }
+
+  @override
+  Future<bool> isMoreThreadsAvailable() async {
+    final result = await methodChannel.invokeMethod(
+      'isMoreThreadsAvailable',
     );
 
     return result as bool;

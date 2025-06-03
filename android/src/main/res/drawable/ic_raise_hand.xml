@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="27dp"
+    android:height="26dp"
+    android:viewportWidth="27"
+    android:viewportHeight="26">
+  <group>
+    <clip-path
+        android:pathData="M0.5,0h26v26h-26z"/>
+    <group>
+      <clip-path
+          android:pathData="M26.498,-0.004H0.498V25.996H26.498V-0.004Z"/>
+      <group>
+        <clip-path
+            android:pathData="M0.495,-0.008H26.495V25.992H0.495V-0.008Z"/>
+        <path
+            android:pathData="M14.018,11.82V2.658C14.018,1.628 13.175,0.764 12.145,0.781C11.145,0.799 10.337,1.617 10.337,2.622V11.779"
+            android:strokeWidth="1.5"
+            android:fillColor="#00000000"
+            android:strokeColor="#6048DE"
+            android:strokeLineCap="round"/>
+        <path
+            android:pathData="M6.675,11.82V7.67C6.675,6.884 6.035,6.244 5.244,6.244C4.457,6.244 3.817,6.884 3.817,7.67L3.818,18.757C4.213,24.458 7.709,25.227 11.078,25.227C13.869,25.227 16.375,23.842 17.611,21.629C17.77,21.373 18.2,20.696 18.71,19.895C19.434,18.759 20.091,17.742 20.552,17.019C21.174,16.048 21.836,15.103 22.541,14.19C22.716,13.964 22.858,13.784 22.929,13.707C23.137,13.481 23.274,13.198 23.315,12.894C23.461,11.802 22.169,11.021 21.128,11.381C20.99,11.429 20.859,11.496 20.742,11.583C20.17,12.004 18.517,13.713 17.873,14.84C17.871,14.842 17.87,14.844 17.869,14.847C17.706,15.125 17.277,15.006 17.274,14.683L17.274,14.656V5.665C17.274,4.752 16.527,3.986 15.615,4.002C14.729,4.017 14.013,4.742 14.013,5.632L14.019,11.82"
+            android:strokeWidth="1.5"
+            android:fillColor="#00000000"
+            android:strokeColor="#6048DE"
+            android:strokeLineCap="round"/>
+        <path
+            android:pathData="M10.337,11.779L10.328,4.91C10.328,3.936 9.566,3.111 8.592,3.083C7.58,3.053 6.692,3.867 6.692,4.872L6.674,11.82"
+            android:strokeWidth="1.5"
+            android:fillColor="#00000000"
+            android:strokeColor="#6048DE"
+            android:strokeLineCap="round"/>
+      </group>
+    </group>
+  </group>
+</vector>

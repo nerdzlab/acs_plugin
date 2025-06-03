@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="purple">#6048DE</color>
+    <color name="purple_blue">#5B3CFF</color>
     <color name="dark_purple">#3600B3</color>
     <color name="light_purple">#F5F3FF</color>
     <color name="text_primary">#393939</color>
@@ -10,7 +11,10 @@
     <color name="gray_background">#F5F5F5</color>
     <color name="success">#2EEE63</color>
     <color name="error">#DC2626</color>
+    <color name="yellow">#FAC565</color>
+    <color name="orange">#EC6E00</color>
     <color name="white">#FFFFFF</color>
 
+    <color name="white_op_40">#66FFFFFF</color>
     <color name="purple_op_60">#996048DE</color>
 </resources>

@@ -24,6 +24,7 @@ internal class ParticipantOptionsViewModel: ObservableObject {
         onUnpinUser: @escaping (ParticipantInfoModel) -> Void,
         onShowVieo: @escaping (ParticipantInfoModel) -> Void,
         onHideVideo: @escaping (ParticipantInfoModel) -> Void,
+        isPinEnable: Bool,
         isDisplayed: Bool) {
             
             self.localizationProvider = localizationProvider
@@ -36,7 +37,7 @@ internal class ParticipantOptionsViewModel: ObservableObject {
             let pinDrawer = DrawerListItemViewModel(title: (participantInfoModel?.isPinned ?? false) ? localizationProvider.getLocalizedString(.participantOptionsUnpin) : localizationProvider.getLocalizedString(.participantOptionsPin),
                                                     icon: (participantInfoModel?.isPinned ?? false) ? .pinIcon : .unpinIcon,
                                                     action: pinAction,
-                                                    isEnabled: true)
+                                                    isEnabled: isPinEnable)
             
             let videoDrawer = DrawerListItemViewModel(title: (participantInfoModel?.isVideoOnForMe ?? false) ? localizationProvider.getLocalizedString(.participantOptionsHideVideo) : localizationProvider.getLocalizedString(.participantOptionsShowVideo),
                                                       icon: (participantInfoModel?.isVideoOnForMe ?? false) ? .videoOn : .videoOff,
@@ -63,7 +64,7 @@ internal class ParticipantOptionsViewModel: ObservableObject {
         (participantInfoModel?.isVideoOnForMe ?? false) ?  self.onHideVideo(pim) : self.onShowVideo(pim)
     }
     
-    func update(localUserState: LocalUserState, isDisplayed: Bool, participantInfoModel: ParticipantInfoModel?) {
+    func update(localUserState: LocalUserState, isDisplayed: Bool, participantInfoModel: ParticipantInfoModel?, isPinEnable: Bool) {
         self.isDisplayed = isDisplayed
         
         guard let participantInfoModel = participantInfoModel else {
@@ -75,7 +76,7 @@ internal class ParticipantOptionsViewModel: ObservableObject {
         
         let pinDrawer = DrawerListItemViewModel(title: participantInfoModel.isPinned ? localizationProvider.getLocalizedString(.participantOptionsUnpin) : localizationProvider.getLocalizedString(.participantOptionsPin),
                                                 icon: participantInfoModel.isPinned ? .unpinIcon : .pinIcon, action: pinAction,
-                                                isEnabled: true)
+                                                isEnabled: isPinEnable)
         
         let videoDrawer = DrawerListItemViewModel(title: participantInfoModel.isVideoOnForMe ? localizationProvider.getLocalizedString(.participantOptionsHideVideo) : localizationProvider.getLocalizedString(.participantOptionsShowVideo),
                                                   icon: participantInfoModel.isVideoOnForMe ? .videoOff : .videoOn, action: videoAction,

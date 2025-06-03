@@ -1,5 +1,6 @@
 package com.acs_plugin
 
+
 object Constants {
 
     object MethodChannels {
@@ -18,14 +19,18 @@ object Constants {
         const val SEND_TYPING_INDICATOR = "sendTypingIndicator"
         const val IS_CHAT_HAS_MORE_MESSAGES = "isChatHasMoreMessages"
         const val GET_LIST_READ_RECEIPTS = "getListReadReceipts"
+        const val GET_PRELOADED_ACTION = "getPreloadedAction"
         const val SET_USER_DATA = "setUserData"
         const val GET_TOKEN = "getToken"
+        const val INITIALIZE_ROOM_CALL = "initializeRoomCall"
         const val GET_INITIAL_LIST_THREADS = "getInitialListThreads"
         const val IS_MORE_THREADS_AVAILABLE = "isMoreThreadsAvailable"
         const val GET_NEXT_THREADS = "getNextThreads"
     }
 
     object FlutterEvents {
+        const val ON_SHOW_CHAT = "onShowChat"
+        const val ON_USER_CALL_ENDED = "onUserCallEnded"
         const val ON_REAL_TIME_NOTIFICATION_CONNECTED = "onRealTimeNotificationConnected"
         const val ON_CHAT_MESSAGE_RECEIVED = "onChatMessageReceived"
         const val ON_TYPING_INDICATOR_RECEIVED = "onTypingIndicatorReceived"
@@ -47,6 +52,12 @@ object Constants {
     }
 
     object Arguments {
+        const val TOKEN = "token"
+        const val NAME = "name"
+        const val USER_ID = "userId"
+        const val ROOM_ID = "roomId"
+        const val IS_CHAT_ENABLED = "isChatEnable"
+        const val IS_REJOINED = "isRejoin"
         const val ENDPOINT = "endpoint"
         const val THREAD_ID = "threadId"
         const val CONTENT = "content"

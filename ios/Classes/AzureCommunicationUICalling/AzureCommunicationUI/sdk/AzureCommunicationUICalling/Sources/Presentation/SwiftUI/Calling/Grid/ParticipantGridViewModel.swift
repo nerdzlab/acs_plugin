@@ -23,6 +23,7 @@ class ParticipantGridViewModel: ObservableObject {
     private var appStatus: AppStatus = .foreground
     private(set) var participantsCellViewModelArr: [ParticipantGridCellViewModel] = []
     private var remoteParticipantsState: RemoteParticipantsState?
+    private let whiteBoardId: String?
     
     var previousSpeaker: ParticipantGridCellViewModel?
 
@@ -38,7 +39,9 @@ class ParticipantGridViewModel: ObservableObject {
          isIpadInterface: Bool,
          remoteParticipantsState: RemoteParticipantsState,
          callType: CompositeCallType,
-         rendererViewManager: RendererViewManager) {
+         rendererViewManager: RendererViewManager,
+         whiteBoardId: String
+    ) {
         self.compositeViewModelFactory = compositeViewModelFactory
         self.localizationProvider = localizationProvider
         self.accessibilityProvider = accessibilityProvider
@@ -46,6 +49,7 @@ class ParticipantGridViewModel: ObservableObject {
         self.callType = callType
         self.rendererViewManager = rendererViewManager
         self.remoteParticipantsState = remoteParticipantsState
+        self.whiteBoardId = whiteBoardId
     }
 
     func update(callingState: CallingState,
@@ -255,6 +259,7 @@ class ParticipantGridViewModel: ObservableObject {
                 isVideoOnForMe: isVideoOnForMe,
                 avatarColor: Color(UIColor.avatarColors.randomElement()!),
                 isRemoteUser: true,
+                isWhiteBoard: false,
                 userIdentifier: userIdentifier,
                 status: .connected,
                 screenShareVideoStreamModel: nil,

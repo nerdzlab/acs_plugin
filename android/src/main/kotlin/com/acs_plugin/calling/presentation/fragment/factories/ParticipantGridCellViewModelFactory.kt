@@ -18,7 +18,9 @@ internal class ParticipantGridCellViewModelFactory {
             participantInfoModel.isCameraDisabled,
             participantInfoModel.isMuted,
             participantInfoModel.isSpeaking,
+            participantInfoModel.isRaisedHand,
             participantInfoModel.modifiedTimestamp,
             participantInfoModel.participantStatus,
+            participantInfoModel.selectedReaction
         )
 }

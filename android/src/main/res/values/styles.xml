@@ -21,4 +21,21 @@
         <item name="backgroundTint">@color/setup_control_button_color_selector</item>
     </style>
 
+    <style name="RoundedBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/RoundedBottomSheetStyle</item>
+    </style>
+
+    <style name="RoundedBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_white_rounded_r12</item>
+        <item name="android:layout_margin">@dimen/margin_16dp</item>
+    </style>
+
+    <style name="TopRoundedBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/TopRoundedBottomSheetStyle</item>
+    </style>
+
+    <style name="TopRoundedBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_top_rounded_r12_white</item>
+    </style>
+
 </resources>

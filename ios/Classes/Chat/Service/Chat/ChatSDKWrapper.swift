@@ -18,6 +18,7 @@ class ChatSDKWrapper: NSObject {
     private var chatThreadClients: Set<ChatThreadClient> = []
     private var chatMessagePagedCollections: [String: PagedCollection<ChatMessage>] = [:]
     private var readReceiptPagedCollections: [String: PagedCollection<ChatMessageReadReceipt>] = [:]
+    private var threadsPagedCollection: PagedCollection<ChatThreadItem>?
     
     init(
         logger: Logger,
@@ -135,7 +136,6 @@ class ChatSDKWrapper: NSObject {
         }
     }
     
-    
     func getListOfParticipants(for threadId: String) async throws -> [ChatParticipant] {
         do {
             let participantsPageSize: Int32 = 200
@@ -197,7 +197,6 @@ class ChatSDKWrapper: NSObject {
             throw error
         }
     }
-    
     
     func sendMessage(
         threadId: String,
@@ -342,6 +341,67 @@ class ChatSDKWrapper: NSObject {
             }
         } catch {
             self.logger.error("Send Typing Indicator failed: \(error)")
+            throw error
+        }
+    }
+    
+    /// Gets the list of ChatThreads for the user.
+    func getInitialListThreads() async throws -> [ChatThreadItem] {
+        let listThreadsOptions = ListChatThreadsOptions(
+            maxPageSize: 20
+        )
+        
+        return try await safeAsync { completion in
+            self.chatClient?.listThreads(withOptions: listThreadsOptions) { result, httpResponse in
+                switch result {
+                case .success(let chatThreadResult):
+                    self.threadsPagedCollection = chatThreadResult
+                    completion(.success(chatThreadResult.items ?? []))
+                    
+                case .failure(let error):
+                    self.threadsPagedCollection = nil
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
+    func getNextThreads() async throws -> [ChatThreadItem] {
+        do {
+            guard let threadsPagedCollection = self.threadsPagedCollection else {
+                return try await self.getInitialListThreads()
+            }
+            
+            if threadsPagedCollection.isExhausted {
+                return []
+            }
+            
+            return try await safeAsync { completion in
+                threadsPagedCollection.nextPage { result in
+                    switch result {
+                    case .success(let threads):
+                        completion(.success(threads))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                }
+            }
+        } catch {
+            logger.error("Retrieve previous threads failed: \(error)")
+            throw error
+        }
+    }
+    
+    func isMoreThreadsAvailable() async throws -> Bool {
+        do {
+            guard let threadsPagedCollection = self.threadsPagedCollection else {
+                _ = try await self.getInitialListThreads()
+                return !(self.threadsPagedCollection?.isExhausted ?? false)
+            }
+            
+            return !(threadsPagedCollection.isExhausted)
+        } catch {
+            logger.error("Failed to get info about more threads: \(error)")
             throw error
         }
     }

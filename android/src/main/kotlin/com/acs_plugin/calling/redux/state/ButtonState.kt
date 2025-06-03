@@ -33,4 +33,6 @@ internal data class ButtonState(
 
     val callScreenCustomButtonsState: List<CustomButtonState> = emptyList(),
     val callScreenHeaderCustomButtonsState: List<CustomButtonState> = emptyList(),
+
+    val callScreenHeaderChatButtonsState: DefaultButtonState? = null
 )

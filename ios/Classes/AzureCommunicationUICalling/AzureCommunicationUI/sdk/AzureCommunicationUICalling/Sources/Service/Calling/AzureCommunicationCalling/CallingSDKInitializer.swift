@@ -55,14 +55,22 @@ internal class CallingSDKInitializer: NSObject {
         self.displayName = displayName
     }
 
-    func setupCallAgent() async throws -> CallAgent {
+    func setupCallAgent(isNeedRenewCallAgent: Bool) async throws -> CallAgent {
         //MTODO need to think about display name after call agent created
 //        self.callAgent = nil
+        
+        //перепідписатися на пушки спробувати
+        
+        if isNeedRenewCallAgent {
+            self.callAgent = nil
+        }
         
         if let existingCallAgent = self.callAgent {
                 logger.debug("Reusing call agent")
                 return existingCallAgent
         }
+        
+//        callAgent.
         
         
         let callClient = setupCallClient()
@@ -82,6 +90,11 @@ internal class CallingSDKInitializer: NSObject {
             )
             self.callAgent = callAgent
             callAgent.delegate = self
+            
+            if isNeedRenewCallAgent {
+                //need event to inform about call agent updating
+            }
+            
             return callAgent
         } catch {
             logger.error("It was not possible to create a call agent.")
@@ -93,7 +106,7 @@ internal class CallingSDKInitializer: NSObject {
                                   completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
         Task {
             do {
-                let callAgent = try await setupCallAgent()
+                let callAgent = try await setupCallAgent(isNeedRenewCallAgent: false)
                 try await callAgent.registerPushNotifications(
                     deviceToken: deviceRegistrationToken)
                 completionHandler?(.success(()))
@@ -107,7 +120,7 @@ internal class CallingSDKInitializer: NSObject {
     func unregisterPushNotifications(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
         Task {
             do {
-                let callAgent = try await setupCallAgent()
+                let callAgent = try await setupCallAgent(isNeedRenewCallAgent: false)
                 try await callAgent.unregisterPushNotification()
                 completionHandler?(.success(()))
             } catch {
@@ -190,7 +203,7 @@ internal class CallingSDKInitializer: NSObject {
                                              completionHandler: ((Result<Void, Error>) -> Void)?) {
         Task {
             do {
-                let callAgent = try await self.setupCallAgent()
+                let callAgent = try await self.setupCallAgent(isNeedRenewCallAgent: false)
                 try await callAgent.handlePush(notification: pushNotificationInfo)
                 completionHandler?(.success(()))
             } catch {
