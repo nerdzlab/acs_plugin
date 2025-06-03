@@ -15,7 +15,8 @@ enum class MoreActionType(
     RAISE_HAND(R.string.raise_hand, R.drawable.ic_raise_hand),
     LOWER_HAND(R.string.lower_hand, R.drawable.ic_raised_hand),
     CHANGE_VIEW(R.string.change_view, R.drawable.ic_grid_view),
-    SHARE_SCREEN(R.string.share_screen, R.drawable.ic_share);
+    SHARE_SCREEN(R.string.share_screen, R.drawable.ic_share),
+    STOP_SHARE_SCREEN(R.string.stop_sharing, R.drawable.ic_stop_sharing);
 
     fun mapToMoreActionItem(): MoreActionItem {
         return MoreActionItem(

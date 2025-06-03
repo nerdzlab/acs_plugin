@@ -104,4 +104,12 @@ internal sealed class LocalParticipantAction : Action {
     class SendReactionTriggered(val reactionType: ReactionType) : LocalParticipantAction()
     object SendReactionSucceeded : LocalParticipantAction()
     data class SendReactionFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class ShareScreenTriggered : LocalParticipantAction()
+    object ShareScreenSucceeded : LocalParticipantAction()
+    data class ShareScreenFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class StopShareScreenTriggered : LocalParticipantAction()
+    object StopShareScreenSucceeded : LocalParticipantAction()
+    data class StopShareScreenFailed(val error: CallCompositeError) : LocalParticipantAction()
 }

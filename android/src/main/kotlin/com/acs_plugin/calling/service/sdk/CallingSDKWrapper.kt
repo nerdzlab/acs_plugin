@@ -776,6 +776,30 @@ internal class CallingSDKWrapper(
         }
         return completableFuture
     }
+
+    override fun turnOnShareScreen(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            //TODO Add screen share logic
+        } catch (e: Exception) {
+            completableFuture.completeExceptionally(e)
+        }
+
+        return completableFuture
+    }
+
+    override fun turnOffShareScreen(): CompletableFuture<Void> {
+        val completableFuture = CompletableFuture<Void>()
+
+        try {
+            //TODO Add stop screen sharing logic
+        } catch (e: Exception) {
+            completableFuture.completeExceptionally(e)
+        }
+
+        return completableFuture
+    }
     //endregion
 
     private fun createCallAgent(): CompletableFuture<CallAgent> {

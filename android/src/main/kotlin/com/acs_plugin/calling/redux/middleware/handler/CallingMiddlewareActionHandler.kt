@@ -116,6 +116,8 @@ internal interface CallingMiddlewareActionHandler {
     fun raiseHand(store: Store<ReduxState>)
     fun lowerHand(store: Store<ReduxState>)
     fun sendReaction(reaction: ReactionType, store: Store<ReduxState>)
+    fun turnShareScreenOn(store: Store<ReduxState>)
+    fun turnShareScreenOff(store: Store<ReduxState>)
 }
 
 internal class CallingMiddlewareActionHandlerImpl(
@@ -1097,6 +1099,34 @@ internal class CallingMiddlewareActionHandlerImpl(
                 )
             } else {
                 store.dispatch(LocalParticipantAction.SendReactionSucceeded)
+            }
+        }
+    }
+
+    override fun turnShareScreenOn(store: Store<ReduxState>) {
+        callingService.turnOnShareScreen().whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.ShareScreenFailed(
+                        CallCompositeError(ErrorCode.ENABLE_SHARE_SCREEN_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.ShareScreenSucceeded)
+            }
+        }
+    }
+
+    override fun turnShareScreenOff(store: Store<ReduxState>) {
+        callingService.turnOffShareScreen().whenComplete { _, error ->
+            if (error != null) {
+                store.dispatch(
+                    LocalParticipantAction.StopShareScreenFailed(
+                        CallCompositeError(ErrorCode.DISABLE_SHARE_SCREEN_FAILED, error)
+                    )
+                )
+            } else {
+                store.dispatch(LocalParticipantAction.StopShareScreenSucceeded)
             }
         }
     }

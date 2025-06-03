@@ -14,6 +14,7 @@ import com.acs_plugin.calling.redux.state.CameraTransmissionStatus
 import com.acs_plugin.calling.redux.state.LocalUserState
 import com.acs_plugin.calling.redux.state.NoiseSuppressionStatus
 import com.acs_plugin.calling.redux.state.RaisedHandStatus
+import com.acs_plugin.calling.redux.state.ShareScreenStatus
 
 internal interface LocalParticipantStateReducer : Reducer<LocalUserState>
 
@@ -333,6 +334,29 @@ internal class LocalParticipantStateReducerImpl : LocalParticipantStateReducer {
                     reactionType = null
                 )
             }
+
+            is LocalParticipantAction.ShareScreenTriggered -> {
+                localUserState.copy(
+                    shareScreenStatus = ShareScreenStatus.ON
+                )
+            }
+            is LocalParticipantAction.ShareScreenFailed -> {
+                localUserState.copy(
+                    shareScreenStatus = ShareScreenStatus.OFF
+                )
+            }
+
+            is LocalParticipantAction.StopShareScreenTriggered -> {
+                localUserState.copy(
+                    shareScreenStatus = ShareScreenStatus.OFF
+                )
+            }
+            is LocalParticipantAction.StopShareScreenFailed -> {
+                localUserState.copy(
+                    shareScreenStatus = ShareScreenStatus.ON
+                )
+            }
+
             else -> localUserState
         }
     }

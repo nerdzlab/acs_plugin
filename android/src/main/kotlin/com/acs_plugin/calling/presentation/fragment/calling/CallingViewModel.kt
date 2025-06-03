@@ -237,6 +237,7 @@ internal class CallingViewModel(
             raisedHandStatus = state.localParticipantState.raisedHandStatus,
             navigationState = state.navigationState,
             buttonState = state.buttonState,
+            shareScreenStatus = state.localParticipantState.shareScreenStatus,
             displayParticipantList = { participantListViewModel.displayParticipantList() }
         )
 
@@ -461,7 +462,8 @@ internal class CallingViewModel(
             cameraState = state.localParticipantState.cameraState,
             raisedHandStatus = state.localParticipantState.raisedHandStatus,
             navigationState = state.navigationState,
-            buttonState = state.buttonState
+            buttonState = state.buttonState,
+            shareScreenStatus = state.localParticipantState.shareScreenStatus,
         )
     }
 
