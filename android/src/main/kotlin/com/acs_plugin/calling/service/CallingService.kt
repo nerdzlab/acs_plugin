@@ -265,6 +265,14 @@ internal class CallingService(
         return callingSdk.sendReaction(reactionType)
     }
 
+    fun turnOnShareScreen(): CompletableFuture<Void> {
+        return callingSdk.turnOnShareScreen()
+    }
+
+    fun turnOffShareScreen(): CompletableFuture<Void> {
+        return callingSdk.turnOffShareScreen()
+    }
+
     fun getCaptionsSupportedSpokenLanguagesSharedFlow(): SharedFlow<List<String>> {
         return callingSdk.getCaptionsSupportedSpokenLanguagesSharedFlow()
     }

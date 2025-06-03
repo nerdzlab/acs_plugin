@@ -21,7 +21,7 @@ ChatMessage _$ChatMessageFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ChatMessage {
   String get id => throw _privateConstructorUsedError;
-  String get sequenceId => throw _privateConstructorUsedError;
+  String? get sequenceId => throw _privateConstructorUsedError;
   String get version => throw _privateConstructorUsedError;
   ChatMessageType get type => throw _privateConstructorUsedError;
   String get createdOn => throw _privateConstructorUsedError;
@@ -53,7 +53,7 @@ abstract class $ChatMessageCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String sequenceId,
+      String? sequenceId,
       String version,
       ChatMessageType type,
       String createdOn,
@@ -88,7 +88,7 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
   @override
   $Res call({
     Object? id = null,
-    Object? sequenceId = null,
+    Object? sequenceId = freezed,
     Object? version = null,
     Object? type = null,
     Object? createdOn = null,
@@ -104,10 +104,10 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      sequenceId: null == sequenceId
+      sequenceId: freezed == sequenceId
           ? _value.sequenceId
           : sequenceId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       version: null == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -200,7 +200,7 @@ abstract class _$$ChatMessageImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      String sequenceId,
+      String? sequenceId,
       String version,
       ChatMessageType type,
       String createdOn,
@@ -236,7 +236,7 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? sequenceId = null,
+    Object? sequenceId = freezed,
     Object? version = null,
     Object? type = null,
     Object? createdOn = null,
@@ -252,10 +252,10 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      sequenceId: null == sequenceId
+      sequenceId: freezed == sequenceId
           ? _value.sequenceId
           : sequenceId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       version: null == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -301,7 +301,7 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
 class _$ChatMessageImpl implements _ChatMessage {
   const _$ChatMessageImpl(
       {required this.id,
-      required this.sequenceId,
+      this.sequenceId,
       required this.version,
       required this.type,
       required this.createdOn,
@@ -318,7 +318,7 @@ class _$ChatMessageImpl implements _ChatMessage {
   @override
   final String id;
   @override
-  final String sequenceId;
+  final String? sequenceId;
   @override
   final String version;
   @override
@@ -405,7 +405,7 @@ class _$ChatMessageImpl implements _ChatMessage {
 abstract class _ChatMessage implements ChatMessage {
   const factory _ChatMessage(
       {required final String id,
-      required final String sequenceId,
+      final String? sequenceId,
       required final String version,
       required final ChatMessageType type,
       required final String createdOn,
@@ -425,7 +425,7 @@ abstract class _ChatMessage implements ChatMessage {
   @override
   String get id;
   @override
-  String get sequenceId;
+  String? get sequenceId;
   @override
   String get version;
   @override

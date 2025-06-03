@@ -64,6 +64,8 @@ internal interface CallingSDK {
     fun raiseHand(): CompletableFuture<Void>
     fun lowerHand(): CompletableFuture<Void>
     fun sendReaction(reactionType: ReactionType): CompletableFuture<Void>
+    fun turnOnShareScreen(): CompletableFuture<Void>
+    fun turnOffShareScreen(): CompletableFuture<Void>
 
     // State.
     fun getLocalVideoStream(): CompletableFuture<LocalVideoStream>

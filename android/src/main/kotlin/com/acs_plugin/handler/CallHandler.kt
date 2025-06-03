@@ -45,11 +45,20 @@ class CallHandler(
                 try {
                     val args = call.arguments as? Map<*, *>
                     val roomId = args?.get(Constants.Arguments.ROOM_ID) as? String
+                    val callId = args?.get(Constants.Arguments.CALL_ID) as? String
+                    val whiteboardId = args?.get(Constants.Arguments.WHITEBOARD_ID) as? String
                     val isChatEnabled = args?.get(Constants.Arguments.IS_CHAT_ENABLED) as? Boolean
                     val isRejoined = args?.get(Constants.Arguments.IS_REJOINED) as? Boolean
 
-                    if (roomId != null) {
-                        initializeRoomCall(roomId, isChatEnabled.falseIfNull(), isRejoined.falseIfNull(), result)
+                    if (roomId != null && callId != null && whiteboardId != null) {
+                        initializeRoomCall(
+                            roomId = roomId,
+                            callId = callId,
+                            whiteboardId = whiteboardId,
+                            isChatEnabled = isChatEnabled.falseIfNull(),
+                            isRejoined = isRejoined.falseIfNull(),
+                            result = result
+                        )
                     } else {
                         result.error("INVALID_ARGUMENTS", "RoomId are required", null)
                     }
@@ -67,6 +76,8 @@ class CallHandler(
 
     private fun initializeRoomCall(
         roomId: String,
+        callId: String,
+        whiteboardId: String,
         isChatEnabled: Boolean,
         isRejoined: Boolean,
         result: MethodChannel.Result
@@ -85,6 +96,8 @@ class CallHandler(
         val communicationTokenCredential = CommunicationTokenCredential(communicationTokenRefreshOptions)
 
         val localOptions = CallCompositeLocalOptions().apply {
+            setCallId(callId)
+            setWhiteboardId(whiteboardId)
             setSkipSetupScreen(isRejoined)
             setChatEnabled(isChatEnabled)
         }

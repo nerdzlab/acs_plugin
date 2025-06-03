@@ -106,5 +106,7 @@ object Constants {
 
     object PageSize {
         const val SIZE_20 = 20
+        const val CALL_ID = "callId"
+        const val WHITEBOARD_ID = "whiteBoardId"
     }
 }

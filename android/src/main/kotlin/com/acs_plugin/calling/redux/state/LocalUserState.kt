@@ -64,6 +64,11 @@ internal enum class RaisedHandStatus {
     LOWER
 }
 
+internal enum class ShareScreenStatus {
+    ON,
+    OFF
+}
+
 internal data class CameraState(
     val operation: CameraOperationalStatus,
     val device: CameraDeviceSelectionStatus,
@@ -105,5 +110,6 @@ internal data class LocalUserState(
     val capabilities: Set<ParticipantCapabilityType> = emptySet(),
     val currentCapabilitiesAreDefault: Boolean = true,
     val raisedHandStatus: RaisedHandStatus,
-    val reactionType: ReactionType? = null
+    val reactionType: ReactionType? = null,
+    val shareScreenStatus: ShareScreenStatus
 )

@@ -7,7 +7,7 @@
     <string name="turn_off_audio" translatable="false">Turn off the audio</string>
     <string name="noise_suppression" translatable="false">Noise suppression</string>
     <string name="participant_list" translatable="false">Participants (%d)</string>
-    <string name="share_meeting_link" translatable="false">Share meeting link</string>
+    <string name="share_meeting_link_title" translatable="false">Share meeting link</string>
     <string name="chat" translatable="false">Chat</string>
     <string name="participants" translatable="false">Participants</string>
     <string name="turn_blur_off" translatable="false">Turn blur off</string>
@@ -16,9 +16,11 @@
     <string name="lower_hand" translatable="false">Lower hand</string>
     <string name="change_view" translatable="false">Change view</string>
     <string name="share_screen" translatable="false">Share screen</string>
+    <string name="stop_sharing" translatable="false">Stop sharing</string>
     <string name="emoji_heart" translatable="false">❤️</string>
     <string name="emoji_laugh" translatable="false">😂</string>
     <string name="emoji_surprised" translatable="false">😮</string>
     <string name="emoji_applause" translatable="false">👏</string>
     <string name="emoji_like" translatable="false">👍</string>
+    <string name="share_meeting_link" translatable="false">https://msteam.desktop.superbrains.nl/meeting?roomId=%s</string>
 </resources>

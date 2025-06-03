@@ -25,7 +25,7 @@
         android:gravity="center_vertical"
         android:drawablePadding="@dimen/padding_8dp"
         android:drawableStart="@drawable/ic_share"
-        android:text="@string/share_meeting_link"
+        android:text="@string/share_meeting_link_title"
         style="@style/Text.CircularStdBook.16sp" />
 
     <View

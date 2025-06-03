@@ -3,6 +3,7 @@
 
 package com.acs_plugin.calling.presentation.fragment.calling.participantlist
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
@@ -26,10 +27,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
+@SuppressLint("ViewConstructor")
 internal class ParticipantListView(
-    private val viewModel: ParticipantListViewModel,
     context: Context,
+    private val viewModel: ParticipantListViewModel,
     private val avatarViewManager: AvatarViewManager,
+    private val onShareMeetingLinkClicked: () -> Unit
 ) : RelativeLayout(context) {
     private var participantTable: RecyclerView
     private var participantTitle: MaterialTextView
@@ -47,7 +50,8 @@ internal class ParticipantListView(
         participantTitle = findViewById(R.id.participant_list_title)
         shareMeetingLink = findViewById(R.id.share_meeting_link_title)
         shareMeetingLink.onSingleClickListener {
-            //TODO implement share meeting link functionality
+            participantListDialog.dismiss()
+            onShareMeetingLinkClicked.invoke()
         }
     }
 

@@ -52,4 +52,5 @@ const _$ChatMessageTypeEnumMap = {
   ChatMessageType.participantAdded: 'participantAdded',
   ChatMessageType.participantRemoved: 'participantRemoved',
   ChatMessageType.custom: 'custom',
+  ChatMessageType.videoSessionStart: 'videoSessionStart',
 };

@@ -1,45 +1,7 @@
 ////
 ////  Copyright (c) Microsoft Corporation. All rights reserved.
 ////  Licensed under the MIT License.
-////
-//
-//import Foundation
-//import SwiftUI
-//import FluentUI
-//
-//internal struct ParticipantsListView: View {
-//    @ObservedObject var viewModel: ParticipantsListViewModel
-//    let avatarManager: AvatarViewManagerProtocol
-//    init(viewModel: ParticipantsListViewModel,
-//         avatarManager: AvatarViewManagerProtocol) {
-//        self.viewModel = viewModel
-//        self.avatarManager = avatarManager
-//    }
-//
-//    var body: some View {
-//#if DEBUG
-//        let _ = Self._printChanges()
-//#endif
-//
-//        var sections: [DrawerListSection] = []
-//
-//        // Include Lobby Participants if in VM
-//        if viewModel.lobbyParticipants.count > 0 {
-//            sections.append(DrawerListSection(
-//                header: viewModel.lobbyParticipantsTitle,
-//                items: viewModel.lobbyParticipants))
-//
-//        }
-//
-//        sections.append(DrawerListSection(
-//                header: viewModel.meetingParticipantsTitle,
-//                items: viewModel.meetingParticipants))
-//
-//        return DrawerListView(sections: sections,
-//                              withDivider: false,
-//                              avatarManager: avatarManager)
-//    }
-//}
+
 
 import Foundation
 import SwiftUI
@@ -113,7 +75,7 @@ internal struct ParticipantsListView: View {
             VStack(spacing: 0) {
                 DrawerTitleView(item: titleItem)
                 
-                if let share = viewModel.shareMeetingLink as? DrawerListItemViewModel {
+                if let share = viewModel.shareMeetingLink as? DrawerListItemViewModel, viewModel.isShareEnable {
                     DrawerListItemView(item: share)
                         .padding(.leading, 6)
                         .padding(.top, 10)

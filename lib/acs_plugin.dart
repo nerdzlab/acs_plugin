@@ -115,16 +115,10 @@ class AcsPlugin {
 
   // Start one on one call
   Future<void> startOneOnOneCall({
-    required String callId,
-    required String whiteBoardId,
     required List<String> participantsId,
-    required String userId,
   }) async {
     await AcsPluginPlatform.instance.startOneOnOneCall(
-      callId: callId,
-      whiteBoardId: whiteBoardId,
       participanstId: participantsId,
-      userId: userId,
     );
   }
 
@@ -133,11 +127,13 @@ class AcsPlugin {
     required String token,
     required String name,
     required String userId,
+    required String languageCode,
   }) async {
     await AcsPluginPlatform.instance.setUserData(
       token: token,
       name: name,
       userId: userId,
+      languageCode: languageCode,
     );
   }
 

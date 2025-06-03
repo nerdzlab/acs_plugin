@@ -38,8 +38,10 @@ internal class CallingViewModel(
     val avMode: CallCompositeAudioVideoMode,
     private val callType: CallType? = null,
     private val capabilitiesManager: CapabilitiesManager,
-) :
-    BaseViewModel(store) {
+) : BaseViewModel(store) {
+
+    private val _shareMeetingLinkMutableFlow = MutableStateFlow("")
+    var shareMeetingLinkMutableFlow = _shareMeetingLinkMutableFlow as StateFlow<String>
 
     private var isCaptionsVisibleMutableFlow = MutableStateFlow(false)
     // This is a flag to ensure that the call is started only once
@@ -89,6 +91,10 @@ internal class CallingViewModel(
         }
             // Default to always enabled
             ?: confirmLeaveOverlayViewModel.requestExitConfirmation()
+    }
+
+    fun onShareMeetingLinkClicked() {
+        _shareMeetingLinkMutableFlow.value = store.getCurrentState().callState.callId.orEmpty()
     }
 
     override fun init(coroutineScope: CoroutineScope) {
@@ -230,6 +236,8 @@ internal class CallingViewModel(
             cameraState = state.localParticipantState.cameraState,
             raisedHandStatus = state.localParticipantState.raisedHandStatus,
             navigationState = state.navigationState,
+            buttonState = state.buttonState,
+            shareScreenStatus = state.localParticipantState.shareScreenStatus,
             displayParticipantList = { participantListViewModel.displayParticipantList() }
         )
 
@@ -451,9 +459,11 @@ internal class CallingViewModel(
         isCaptionsMaximized = state.rttState.isMaximized
 
         moreActionsListViewModel.update(
-            state.localParticipantState.cameraState,
-            state.localParticipantState.raisedHandStatus,
-            state.navigationState
+            cameraState = state.localParticipantState.cameraState,
+            raisedHandStatus = state.localParticipantState.raisedHandStatus,
+            navigationState = state.navigationState,
+            buttonState = state.buttonState,
+            shareScreenStatus = state.localParticipantState.shareScreenStatus,
         )
     }
 

@@ -95,6 +95,12 @@ internal class CallingMiddlewareImpl(
                 is LocalParticipantAction.SendReactionTriggered -> {
                     callingMiddlewareActionHandler.sendReaction(action.reactionType, store)
                 }
+                is LocalParticipantAction.ShareScreenTriggered -> {
+                    callingMiddlewareActionHandler.turnShareScreenOn(store)
+                }
+                is LocalParticipantAction.StopShareScreenTriggered -> {
+                    callingMiddlewareActionHandler.turnShareScreenOff(store)
+                }
                 is CallingAction.HoldRequested -> {
                     callingMiddlewareActionHandler.hold(store)
                 }

@@ -32,6 +32,7 @@ enum CompositeIcon: String {
     case callClose = "call_close"
     case volumeOff = "ic_ios_volume_off"
     case dismiss = "ic_fluent_dismiss_16_regular"
+    case whiteClose = "white_close"
     case clock = "ic_fluent_clock_24_filled"
     case checkmark = "ic_fluent_checkmark_24_regular"
     case share = "ic_fluent_share_ios_24_regular"

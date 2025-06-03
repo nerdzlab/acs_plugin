@@ -29,7 +29,7 @@ internal class AppReduxState(
         )
     }
 
-    override var callState: CallingState = CallingState()
+    override var callState: CallingState = CallingState(callId = localOptions?.callId)
 
     override var remoteParticipantState: RemoteParticipantsState = RemoteParticipantsState(
         participantMap = HashMap(),
@@ -75,7 +75,8 @@ internal class AppReduxState(
                 ParticipantCapabilityType.UNMUTE_MICROPHONE
             ),
             currentCapabilitiesAreDefault = true,
-            raisedHandStatus = RaisedHandStatus.LOWER
+            raisedHandStatus = RaisedHandStatus.LOWER,
+            shareScreenStatus = ShareScreenStatus.OFF
         )
 
     override var permissionState: PermissionState =

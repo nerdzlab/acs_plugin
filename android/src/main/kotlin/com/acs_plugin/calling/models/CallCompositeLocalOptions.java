@@ -37,6 +37,8 @@ public final class CallCompositeLocalOptions {
     private boolean microphoneOn = false;
     private boolean skipSetupScreen = false;
     private boolean isChatEnabled = false;
+    private String callId = "";
+    private String whiteboardId = "";
     private CallCompositeAudioVideoMode audioVideoMode = CallCompositeAudioVideoMode.AUDIO_AND_VIDEO;
     private CallCompositeCaptionsOptions captionsOptions = null;
 
@@ -181,6 +183,43 @@ public final class CallCompositeLocalOptions {
             final boolean isChatEnabled
     ) {
         this.isChatEnabled = isChatEnabled;
+        return this;
+    }
+
+    /**
+     * Get the call ID.
+     * @return The call ID as a String.
+     */
+    public String getCallId() {
+        return callId;
+    }
+
+    /**
+     * Set the call ID.
+     *
+     * @param callId The call ID to set, as a String.
+     * @return The current {@link CallCompositeLocalOptions} object for Fluent use.
+     */
+    public CallCompositeLocalOptions setCallId(final String callId) {
+        this.callId = callId;
+        return this;
+    }
+
+    /**
+     * Get the whiteboard ID.
+     * @return The whiteboard ID as a String.
+     */
+    public String getWhiteboardId() {
+        return whiteboardId;
+    }
+
+    /**
+     * Set the whiteboard ID.
+     * @param whiteboardId The whiteboard ID to set, as a String.
+     * @return The current {@link CallCompositeLocalOptions} object for Fluent use.
+     */
+    public CallCompositeLocalOptions setWhiteboardId(final String whiteboardId) {
+        this.whiteboardId = whiteboardId;
         return this;
     }
 
