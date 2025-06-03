@@ -743,10 +743,9 @@ class ChatHandler(
     }
 
     private suspend fun handleResultSuccess(result: MethodChannel.Result, data: Any? = null) {
-        Log.v("ChatHandler", "Success result: $data")
         withContext(Dispatchers.Main) {
-            if (!isFinished(result))
-                result.success(data)
+            Log.v("ChatHandler", "Success result: $data")
+            result.success(data)
         }
     }
 }
