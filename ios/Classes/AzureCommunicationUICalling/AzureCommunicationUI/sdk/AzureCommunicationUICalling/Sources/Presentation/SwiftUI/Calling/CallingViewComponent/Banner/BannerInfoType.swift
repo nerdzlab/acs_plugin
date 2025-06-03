@@ -12,7 +12,7 @@ enum BannerInfoType: Equatable {
     case recordingStoppedStillTranscribing
     case recordingStopped
     case recordingAndTranscriptionStopped
-
+    
     var title: LocalizationKey {
         switch self {
         case .recordingAndTranscriptionStarted:
@@ -28,17 +28,15 @@ enum BannerInfoType: Equatable {
         case .recordingStoppedStillTranscribing:
             return .bannerTitleRecordingStoppedStillTranscribing
         case .recordingStopped:
-            return .bannerTitleRecordingStopped
+            return .bannerTitleRecordingStoppedStillTranscribing
         case .recordingAndTranscriptionStopped:
             return .bannerTitleRecordingAndTranscribingStopped
         }
     }
-
+    
     var body: LocalizationKey {
         switch self {
-        case .recordingAndTranscriptionStarted,
-             .recordingStarted,
-             .transcriptionStarted:
+        case .transcriptionStarted:
             return .bannerBodyConsent
         case .transcriptionStoppedStillRecording:
             return .bannerBodyRecording
@@ -46,40 +44,44 @@ enum BannerInfoType: Equatable {
             return .bannerBodyTranscriptionStopped
         case .recordingStoppedStillTranscribing:
             return .bannerBodyOnlyTranscribing
-        case .recordingStopped:
-            return .bannerBodyRecordingStopped
         case .recordingAndTranscriptionStopped:
             return .bannerBodyRecordingAndTranscriptionStopped
+        case .recordingAndTranscriptionStarted,
+                .recordingStarted,
+                .recordingStopped:
+            return .emptyString
         }
     }
-
+    
     var linkDisplay: LocalizationKey {
         switch self {
-        case .recordingAndTranscriptionStarted,
-             .recordingStarted,
-             .transcriptionStoppedStillRecording,
-             .transcriptionStarted,
-             .recordingStoppedStillTranscribing:
+        case .transcriptionStoppedStillRecording,
+                .transcriptionStarted:
             return .bannerDisplayLinkPrivacyPolicy
-        case .transcriptionStoppedAndSaved,
-             .recordingStopped,
-             .recordingAndTranscriptionStopped:
+        case .transcriptionStoppedAndSaved:
             return .bannerDisplayLinkLearnMore
+        case .recordingAndTranscriptionStarted,
+                .recordingStarted,
+                .recordingStoppedStillTranscribing,
+                .recordingStopped,
+                .recordingAndTranscriptionStopped:
+            return .emptyString
         }
     }
-
+    
     var link: String {
         switch self {
-        case .recordingAndTranscriptionStarted,
-             .recordingStarted,
-             .transcriptionStoppedStillRecording,
-             .transcriptionStarted,
-             .recordingStoppedStillTranscribing:
+        case .transcriptionStoppedStillRecording,
+                .transcriptionStarted:
             return StringConstants.privacyPolicyLink
-        case .transcriptionStoppedAndSaved,
-             .recordingStopped,
-             .recordingAndTranscriptionStopped:
+        case .transcriptionStoppedAndSaved:
             return StringConstants.learnMoreLink
+        case .recordingAndTranscriptionStarted,
+                .recordingStarted,
+                .recordingStoppedStillTranscribing,
+                .recordingStopped,
+                .recordingAndTranscriptionStopped:
+            return ""
         }
     }
 }

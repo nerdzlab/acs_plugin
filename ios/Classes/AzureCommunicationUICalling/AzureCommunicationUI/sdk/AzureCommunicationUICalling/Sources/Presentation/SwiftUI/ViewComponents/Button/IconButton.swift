@@ -12,7 +12,7 @@ struct IconButton: View {
     private var iconImageSize: CGFloat {
         switch viewModel.buttonType {
         case .dismissButton:
-            return 16
+            return 24
         case .roundedRectButton:
             return 24
         case .cameraSwitchButtonPip:

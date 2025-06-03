@@ -43,7 +43,13 @@ final class BroadcastExtensionHandler: MethodHandler {
     private let onSendEvent: (Event) -> Void
     
     private var client: Client!
-    private var broadcastExtensionData: BroadcastExtensionData?
+    
+    private var broadcastExtensionData: BroadcastExtensionData? {
+        didSet {
+            // Need to save this, to have access when app launch by call kit, to get access to shared UserDefaults by appGroup
+            UserDefaults.standard.setAppGroupIdentifier(broadcastExtensionData?.appGroupIdentifier)
+        }
+    }
     
     private var isRealDevice: Bool {
 #if targetEnvironment(simulator)

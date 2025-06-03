@@ -11,6 +11,7 @@ extension UserDefaults {
         static let userData = "userDataKey"
         static let chatEndpoint = "chatEndpoint"
         static let apnsToken = "APNSToken"
+        static let identifier = "identifier"
     }
 
     // MARK: - UserData
@@ -51,6 +52,16 @@ extension UserDefaults {
 
     public func getAPNSToken() -> String? {
         string(forKey: Keys.apnsToken)
+    }
+    
+    // MARK: - App Group Identifier
+    
+    public func setAppGroupIdentifier(_ identifier: String?) {
+        set(identifier, forKey: Keys.identifier)
+    }
+    
+    public func getAppGroupIdentifier() -> String? {
+        string(forKey: Keys.identifier)
     }
 }
 

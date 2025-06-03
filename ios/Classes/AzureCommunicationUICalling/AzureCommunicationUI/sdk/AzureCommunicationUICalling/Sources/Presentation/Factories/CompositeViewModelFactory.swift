@@ -505,7 +505,9 @@ extension CompositeViewModelFactory {
             dispatchAction(Action.showParticipantOptions(participant))
         },
                                   onShowShareSheetMeetingLink: showSharingViewAction,
-                                  avatarManager: avatarManager)
+                                  avatarManager: avatarManager,
+                                  callType: callType
+        )
     }
     
     func makeParticipantOptionsViewModel(

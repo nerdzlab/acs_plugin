@@ -38,6 +38,7 @@ struct CallingView: View {
     
     @Environment(\.horizontalSizeClass) var widthSizeClass: UserInterfaceSizeClass?
     @Environment(\.verticalSizeClass) var heightSizeClass: UserInterfaceSizeClass?
+    @Environment(\.safeAreaInsets) private var safeAreaInsets
     
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
     @State var debugInfoSourceView = UIView()
@@ -52,29 +53,39 @@ struct CallingView: View {
 #endif
         
         GeometryReader { geometry in
-            ZStack {
-                if getSizeClass() != .iphoneLandscapeScreenSize {
-                    portraitCallingView
-                } else {
-                    landscapeCallingView
+            VStack(spacing: 0) {
+                // Banner on top, full width, ignoring top safe area
+                bannerView
+                    .frame(maxWidth: .infinity)
+                    .ignoresSafeArea(edges: .top)
+
+                // Main content below banner, fills remaining space
+                ZStack {
+                    if getSizeClass() != .iphoneLandscapeScreenSize {
+                        portraitCallingView
+                    } else {
+                        landscapeCallingView
+                    }
+
+                    if viewModel.isScreenSharing {
+                        screenSharingIndicator
+                    }
+
+                    errorInfoView
+                    bottomDrawer
                 }
-                
-                if viewModel.isScreenSharing {
-                    screenSharingIndicator
-                }
-                
-                errorInfoView
-                bottomDrawer
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(width: geometry.size.width,
-                   height: geometry.size.height)
+            .ignoresSafeArea()
+            .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .environment(\.screenSizeClass, getSizeClass())
         .environment(\.appPhase, viewModel.appState)
         .edgesIgnoringSafeArea(safeAreaIgnoreArea)
         .onRotate { newOrientation in
             updateChildViewIfNeededWith(newOrientation: newOrientation)
-        }.onAppear {
+        }
+        .onAppear {
             resetOrientation()
         }
         .ignoresSafeArea(edges: .bottom)
@@ -150,7 +161,10 @@ struct CallingView: View {
         VStack(alignment: .center, spacing: 0) {
             containerView
                 .cornerRadius(12)
-                .padding(.all, 4)
+                .padding(.leading, 4)
+                .padding(.trailing, 4)
+                .padding(.bottom, 4)
+                .padding(.top, viewModel.bannerViewModel.isBannerDisplayed ? 4 : safeAreaInsets.top)
             ControlBarView(viewModel: viewModel.controlBarViewModel)
                 .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: -2)
         }
@@ -243,7 +257,8 @@ struct CallingView: View {
             let infoHeaderViewWidth = isIpad ? min(widthWithoutHorizontalPadding,
                                                    InfoHeaderViewConstants.maxWidth) : widthWithoutHorizontalPadding
             VStack(spacing: 0) {
-                bannerView
+                Spacer()
+                    .frame(height: 8)
                 HStack {
                     if isIpad {
                         Spacer()

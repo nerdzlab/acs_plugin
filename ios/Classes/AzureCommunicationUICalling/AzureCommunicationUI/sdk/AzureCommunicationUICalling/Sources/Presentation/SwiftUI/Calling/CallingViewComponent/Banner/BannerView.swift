@@ -7,6 +7,7 @@ import SwiftUI
 
 struct BannerView: View {
     @ObservedObject var viewModel: BannerViewModel
+    @Environment(\.safeAreaInsets) private var safeAreaInsets
 
     var body: some View {
 #if DEBUG
@@ -14,22 +15,22 @@ struct BannerView: View {
 #endif
         
         if viewModel.isBannerDisplayed {
-            HStack(alignment: .top) {
+            HStack(alignment: .center) {
                 BannerTextView(viewModel: viewModel.bannerTextViewModel)
-                    .padding([.top, .leading, .bottom])
+                    .padding([.leading])
                     .accessibilitySortPriority(2)
                 Spacer()
                 dismissButton
-                    .padding([.top, .trailing])
+                    .padding([.trailing])
                     .accessibilitySortPriority(1)
             }
-            .background(Color(StyleProvider.color.backgroundColor))
+            .background(viewModel.bannerBackgroundColor)
             .accessibilitySortPriority(2)
             .accessibilityIdentifier(AccessibilityIdentifier.bannerViewAccessibilityID.rawValue)
-            .padding(.bottom, 10)
+            .padding(.top, safeAreaInsets.top)
         } else {
             Spacer()
-                .frame(height: 8)
+                .frame(height: 0)
         }
     }
 
