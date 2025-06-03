@@ -54,7 +54,7 @@ class _CallScreenState extends State<CallScreen> {
   // Configuration constants - move to a config file in a real app
   String get _acsToken {
     if (_isSuperBrainsMode) {
-      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjg2N2E1ZGMwLWJjZGYtNGRjNy04NjBmLTNmYzMzZDJhM2ZlZV8wMDAwMDAyNy0zZmM4LTUxMGEtOTE4ZS1hZjNhMGQwMGFmMmUiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDg0MjM5OTYiLCJleHAiOjE3NDg1MTAzOTYsInJnbiI6Im5vIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiODY3YTVkYzAtYmNkZi00ZGM3LTg2MGYtM2ZjMzNkMmEzZmVlIiwicmVzb3VyY2VMb2NhdGlvbiI6Im5vcndheSIsImlhdCI6MTc0ODQyMzk5Nn0.VJINpao7lRMukLxn1SUcgHWXUsSj2_S5DhLzjaRik98wt9QKFHP2PjHGZSFdiZwOJglKyHxTjW0u87vkrKOtZyIGcaiARJWEHKBjk1cY3kZ4yUEt6Y_asHXUgmzmkXD1bFL5P0bIQjqSpubogTyACu7si1cZR9w9SCH1ldaJVuPhNKrJa-LmJCmr0LiCjlM9GvsNM7ibcoe6vuzSICJYRKqjTqi-ZGG10BRQAhaZmM9-1XY0SeIQs3E1VfLFZOEcb4Ml8PRFFw5eLkh8_6SpsS9jlH-BdqhBekqm5jH8jjF95Sab92fa12eNeAxaML75A0TjXLcclZeyU4hukfyn9g";
+      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjZkMTQxM2NmLTJkMjQtNDE5MS1hNTcwLTExZGE5MTZlODQyNV8wMDAwMDAyNy1iNjUwLWUxODQtNWI0Mi1hZDNhMGQwMDRkNjEiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDg5MzcwNzMiLCJleHAiOjE3NDkwMjM0NzMsInJnbiI6ImRlIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiNmQxNDEzY2YtMmQyNC00MTkxLWE1NzAtMTFkYTkxNmU4NDI1IiwicmVzb3VyY2VMb2NhdGlvbiI6Imdlcm1hbnkiLCJpYXQiOjE3NDg5MzcwNzN9.tNaH8pk2Gxii5pnIYmUmaqMZsJTh_njCZ_Ad9kGQ6kI2Ai-9nlVn9bUxNhly9m7-qv65-G9ovPVS1NP2Q2oZ5h7acWx1mBuALJZpetwbsCnZEAi_ET9nY13RGKPYhTmzIlyOSr1M1aD39BP0TVBEes2PvmQLPdf_kD-qAtOJvD8lfxN4edLHmfcB5QHyb2Lrys9o1GoIZiUsBZnit8nA33u07UND53YLV0d8syUVRvsGSl4Dc8yUzV1LrX1EcXRZR6EXHi07IFm9h68mQcULtrJI4CGqFgLmFltHXlTRBld_ejPR0WKtKJh6CCDLTXra-cCWoApPZken5RG0jMwF9Q";
     }
 
     // if (isRealDevice) {
@@ -69,7 +69,7 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   bool get _isSuperBrainsMode {
-    return false;
+    return true;
   }
 
   String get _whiteBoardId {
@@ -94,7 +94,7 @@ class _CallScreenState extends State<CallScreen> {
 
   String get _userId {
     if (_isSuperBrainsMode) {
-      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000027-3fc8-510a-918e-af3a0d00af2e";
+      return "8:acs:6d1413cf-2d24-4191-a570-11da916e8425_00000027-b650-e184-5b42-ad3a0d004d61";
     }
 
     // if (isRealDevice) {
@@ -106,7 +106,7 @@ class _CallScreenState extends State<CallScreen> {
 
   String get _otherUserId {
     if (_isSuperBrainsMode) {
-      return "8:acs:867a5dc0-bcdf-4dc7-860f-3fc33d2a3fee_00000027-3fbb-ad83-f4f3-ad3a0d00a6ac";
+      return "8:acs:6d1413cf-2d24-4191-a570-11da916e8425_00000027-b650-e160-28d2-493a0d005b28";
     }
 
     // if (isRealDevice) {

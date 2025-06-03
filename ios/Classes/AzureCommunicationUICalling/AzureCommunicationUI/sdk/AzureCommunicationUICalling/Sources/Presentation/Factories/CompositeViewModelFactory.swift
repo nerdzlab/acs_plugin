@@ -148,9 +148,10 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
     
     // MARK: ComponentViewModels
     func makeIconButtonViewModel(iconName: CompositeIcon,
-                                 buttonType: IconButtonViewModel.ButtonType = .controlButton,
+                                 buttonType: IconButtonViewModel.ButtonType,
                                  isDisabled: Bool,
                                  renderAsOriginal: Bool,
+                                 isVisible: Bool,
                                  action: @escaping (() -> Void)) -> IconButtonViewModel {
         IconButtonViewModel(iconName: iconName,
                             buttonType: buttonType,
@@ -159,18 +160,6 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                             action: action)
     }
     
-    func makeIconButtonViewModel(iconName: CompositeIcon,
-                                 buttonType: IconButtonViewModel.ButtonType = .controlButton,
-                                 isDisabled: Bool,
-                                 isVisible: Bool,
-                                 action: @escaping (() -> Void)) -> IconButtonViewModel {
-        IconButtonViewModel(iconName: iconName,
-                            buttonType: buttonType,
-                            isDisabled: isDisabled,
-                            isVisible: isVisible,
-                            renderAsOriginal: true,
-                            action: action)
-    }
     /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
     func makeIconButtonViewModel(icon: UIImage,
                                  buttonType: IconButtonViewModel.ButtonType = .controlButton,
