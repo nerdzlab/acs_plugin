@@ -3,7 +3,7 @@ package com.acs_plugin.chat.service.sdk.wrapper
 import com.acs_plugin.calling.service.sdk.ext.id
 
 
-internal sealed class CommunicationIdentifier(val id: String) {
+internal sealed class CommunicationIdentifier(val id: String?) {
     data class CommunicationUserIdentifier(val userId: String) : CommunicationIdentifier(userId)
     data class MicrosoftTeamsUserIdentifier(val userId: String, val isAnonymous: Boolean) :
         CommunicationIdentifier(userId)

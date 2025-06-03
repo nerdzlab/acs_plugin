@@ -1,6 +1,15 @@
 package com.acs_plugin.chat.service.sdk
 
 import android.content.Context
+import com.acs_plugin.chat.configuration.ChatConfiguration
+import com.acs_plugin.chat.logger.Logger
+import com.acs_plugin.chat.models.*
+import com.acs_plugin.chat.redux.state.ChatStatus
+import com.acs_plugin.chat.service.sdk.wrapper.ChatEventType
+import com.acs_plugin.chat.service.sdk.wrapper.CommunicationIdentifier
+import com.acs_plugin.chat.service.sdk.wrapper.SendChatMessageResult
+import com.acs_plugin.chat.service.sdk.wrapper.into
+import com.acs_plugin.chat.utilities.CoroutineContextProvider
 import com.azure.android.communication.chat.ChatClient
 import com.azure.android.communication.chat.ChatClientBuilder
 import com.azure.android.communication.chat.ChatThreadClient
@@ -9,33 +18,14 @@ import com.azure.android.communication.chat.models.ListChatMessagesOptions
 import com.azure.android.communication.chat.models.SendChatMessageOptions
 import com.azure.android.communication.chat.models.UpdateChatMessageOptions
 import com.azure.android.communication.common.CommunicationTokenCredential
-import com.acs_plugin.chat.configuration.ChatConfiguration
-import com.acs_plugin.chat.logger.Logger
-import com.acs_plugin.chat.models.RemoteParticipantInfoModel
-import com.acs_plugin.chat.models.RemoteParticipantsInfoModel
-import com.acs_plugin.chat.models.ChatEventModel
-import com.acs_plugin.chat.models.ChatThreadInfoModel
-import com.acs_plugin.chat.models.MessageInfoModel
-import com.acs_plugin.chat.models.MessagesPageModel
-import com.acs_plugin.chat.models.into
-import com.acs_plugin.chat.redux.state.ChatStatus
-import com.acs_plugin.chat.service.sdk.wrapper.ChatEventType
-import com.acs_plugin.chat.service.sdk.wrapper.CommunicationIdentifier
-import com.acs_plugin.chat.service.sdk.wrapper.SendChatMessageResult
-import com.acs_plugin.chat.service.sdk.wrapper.into
-import com.acs_plugin.chat.utilities.CoroutineContextProvider
 import com.azure.android.core.http.policy.UserAgentPolicy
 import com.azure.android.core.util.RequestContext
 import java9.util.concurrent.CompletableFuture
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.asCoroutineDispatcher
 import org.threeten.bp.OffsetDateTime
 import java.util.concurrent.Executors
 
@@ -72,7 +62,7 @@ internal class ChatSDKWrapper(
 
     private val options = ListChatMessagesOptions().apply { maxPageSize = PAGE_MESSAGES_SIZE }
     private var pagingContinuationToken: String? = null
-    private var adminUserId: String = ""
+    private var adminUserId: String? = ""
 
     @Volatile
     private var allPagesFetched: Boolean = false
@@ -109,7 +99,7 @@ internal class ChatSDKWrapper(
                 )
             )
 
-            adminUserId = threadClient.properties.createdByCommunicationIdentifier.into().id
+//            adminUserId = threadClient.properties.createdByCommunicationIdentifier.into().id
             chatStatusStateFlow.value = ChatStatus.INITIALIZED
             future.complete(null)
         } catch (ex: Exception) {
@@ -127,7 +117,7 @@ internal class ChatSDKWrapper(
         chatFetchNotificationHandler.stop()
     }
 
-    override fun getAdminUserId(): String {
+    override fun getAdminUserId(): String? {
         return adminUserId
     }
 
@@ -193,33 +183,33 @@ internal class ChatSDKWrapper(
     }
 
     override fun requestChatParticipants() {
-        coroutineScope.launch {
-            try {
-                val participants: MutableList<RemoteParticipantInfoModel> = mutableListOf()
-                threadClient.listParticipants().byPage().forEach { page ->
-                    page.elements.map {
-                        participants.add(
-                            RemoteParticipantInfoModel(
-                                userIdentifier = it.communicationIdentifier.into(),
-                                displayName = it.displayName,
-                                isLocalUser = it.communicationIdentifier.into().id == localParticipantIdentifier
-                            )
-                        )
-                    }
-                }
-                onChatEventReceived(
-                    infoModel = ChatEventModel(
-                        eventType = ChatEventType.PARTICIPANTS_ADDED,
-                        infoModel = RemoteParticipantsInfoModel(
-                            participants = participants
-                        ),
-                        eventReceivedOffsetDateTime = null
-                    )
-                )
-            } catch (ex: Exception) {
-                throw ex
-            }
-        }
+//        coroutineScope.launch {
+//            try {
+//                val participants: MutableList<RemoteParticipantInfoModel> = mutableListOf()
+//                threadClient.listParticipants().byPage().forEach { page ->
+//                    page.elements.map {
+//                        participants.add(
+//                            RemoteParticipantInfoModel(
+//                                userIdentifier = it.communicationIdentifier.into(),
+//                                displayName = it.displayName,
+//                                isLocalUser = it.communicationIdentifier.into().id == localParticipantIdentifier
+//                            )
+//                        )
+//                    }
+//                }
+//                onChatEventReceived(
+//                    infoModel = ChatEventModel(
+//                        eventType = ChatEventType.PARTICIPANTS_ADDED,
+//                        infoModel = RemoteParticipantsInfoModel(
+//                            participants = participants
+//                        ),
+//                        eventReceivedOffsetDateTime = null
+//                    )
+//                )
+//            } catch (ex: Exception) {
+//                throw ex
+//            }
+//        }
     }
 
     override fun sendTypingIndicator(): CompletableFuture<Void> {

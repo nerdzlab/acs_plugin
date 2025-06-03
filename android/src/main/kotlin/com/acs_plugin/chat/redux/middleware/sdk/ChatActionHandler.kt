@@ -3,11 +3,7 @@ package com.acs_plugin.chat.redux.middleware.sdk
 import com.acs_plugin.chat.models.ChatCompositeErrorCode
 import com.acs_plugin.chat.models.ChatCompositeErrorEvent
 import com.acs_plugin.chat.redux.Dispatch
-import com.acs_plugin.chat.redux.action.Action
-import com.acs_plugin.chat.redux.action.ChatAction
-import com.acs_plugin.chat.redux.action.ErrorAction
-import com.acs_plugin.chat.redux.action.NetworkAction
-import com.acs_plugin.chat.redux.action.ParticipantAction
+import com.acs_plugin.chat.redux.action.*
 import com.acs_plugin.chat.redux.state.NetworkStatus
 import com.acs_plugin.chat.redux.state.ReduxState
 import com.acs_plugin.chat.service.ChatService
@@ -189,7 +185,7 @@ internal class ChatActionHandler(private val chatService: ChatService) {
                     )
                 )
             } else {
-                dispatch.invoke(ParticipantAction.ParticipantToHideReceived(chatService.getAdminUserId()))
+                dispatch.invoke(ParticipantAction.ParticipantToHideReceived(chatService.getAdminUserId() ?: ""))
             }
         }
     }

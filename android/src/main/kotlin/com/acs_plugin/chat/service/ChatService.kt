@@ -8,7 +8,7 @@ import org.threeten.bp.OffsetDateTime
 internal class ChatService(private val chatSDK: ChatSDK) {
     fun initialize() = chatSDK.initialization()
     fun destroy() = chatSDK.destroy()
-    fun getAdminUserId() = chatSDK.getAdminUserId()
+    fun getAdminUserId(): String? = chatSDK.getAdminUserId()
     fun requestPreviousPage() = chatSDK.requestPreviousPage()
     fun requestChatParticipants() = chatSDK.requestChatParticipants()
 

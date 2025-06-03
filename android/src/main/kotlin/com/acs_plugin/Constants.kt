@@ -69,6 +69,7 @@ object Constants {
 
     object JsonKeys {
         const val ID = "id"
+        const val INITIATOR = "initiator"
         const val THREAD_ID = "threadId"
         const val SENDER = "sender"
         const val RECIPIENT = "recipient"

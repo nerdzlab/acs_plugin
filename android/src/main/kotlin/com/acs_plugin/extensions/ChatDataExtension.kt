@@ -5,193 +5,211 @@ import com.acs_plugin.Constants
 import com.acs_plugin.calling.service.sdk.ext.id
 import com.azure.android.communication.chat.models.*
 import com.azure.android.communication.common.CommunicationIdentifier
-import kotlinx.serialization.json.Json
 
 fun ChatThreadProperties.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.ID, id)
-        put(Constants.JsonKeys.TOPIC, topic)
-        put(Constants.JsonKeys.CREATED_ON, createdOn.toString())
-        put(Constants.JsonKeys.CREATED_BY, createdByCommunicationIdentifier.toJson())
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.ID] = id
+    map[Constants.JsonKeys.TOPIC] = topic
+    map[Constants.JsonKeys.CREATED_ON] = createdOn.toString()
+    map[Constants.JsonKeys.CREATED_BY] = gson.fromJson(createdByCommunicationIdentifier.toJson(), Map::class.java)
+    return gson.toJson(map)
 }
 
 fun CommunicationIdentifier.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.RAW_ID, rawId)
-        put(Constants.JsonKeys.KIND, "communicationUser")
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.RAW_ID] = rawId
+    map[Constants.JsonKeys.KIND] = "communicationUser"
+    return gson.toJson(map)
 }
 
 fun TypingIndicatorReceivedEvent.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.THREAD_ID, chatThreadId)
-        put(Constants.JsonKeys.SENDER, sender?.toJson())
-        put(Constants.JsonKeys.RECIPIENT, recipient?.toJson())
-        put(Constants.JsonKeys.VERSION, version)
-        receivedOn?.let { put(Constants.JsonKeys.RECEIVED_ON, it.toString()) }
-        senderDisplayName?.let { put(Constants.JsonKeys.SENDER_DISPLAY_NAME, it) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.THREAD_ID] = chatThreadId
+    map[Constants.JsonKeys.SENDER] = sender?.let { gson.fromJson(it.toJson(), Map::class.java) }
+    map[Constants.JsonKeys.RECIPIENT] = recipient?.let { gson.fromJson(it.toJson(), Map::class.java) }
+    map[Constants.JsonKeys.VERSION] = version
+    receivedOn?.let { map[Constants.JsonKeys.RECEIVED_ON] = it.toString() }
+    senderDisplayName?.let { map[Constants.JsonKeys.SENDER_DISPLAY_NAME] = it }
+    return gson.toJson(map)
 }
 
 fun ReadReceiptReceivedEvent.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.THREAD_ID, chatThreadId)
-        put(Constants.JsonKeys.SENDER, sender?.toJson())
-        put(Constants.JsonKeys.RECIPIENT, recipient?.toJson())
-        put(Constants.JsonKeys.CHAT_MESSAGE_ID, chatMessageId)
-        readOn?.let { put(Constants.JsonKeys.READ_ON, it.toString()) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.THREAD_ID] = chatThreadId
+    map[Constants.JsonKeys.SENDER] = sender?.let { gson.fromJson(it.toJson(), Map::class.java) }
+    map[Constants.JsonKeys.RECIPIENT] = recipient?.let { gson.fromJson(it.toJson(), Map::class.java) }
+    map[Constants.JsonKeys.CHAT_MESSAGE_ID] = chatMessageId
+    readOn?.let { map[Constants.JsonKeys.READ_ON] = it.toString() }
+    return gson.toJson(map)
 }
 
 fun ChatMessageEditedEvent.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.THREAD_ID, chatThreadId)
-        put(Constants.JsonKeys.SENDER, sender?.toJson())
-        put(Constants.JsonKeys.RECIPIENT, recipient?.toJson())
-        put(Constants.JsonKeys.ID, id)
-        put(Constants.JsonKeys.SENDER_DISPLAY_NAME, senderDisplayName ?: "")
-        put(Constants.JsonKeys.CREATED_ON, createdOn?.toString() ?: "")
-        put(Constants.JsonKeys.VERSION, version)
-        put(Constants.JsonKeys.TYPE, type.toString())
-        put(Constants.JsonKeys.MESSAGE, content)
-        editedOn?.let { put(Constants.JsonKeys.EDITED_ON, it.toString()) }
-        metadata?.let { put(Constants.JsonKeys.METADATA, it) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.THREAD_ID] = chatThreadId
+    map[Constants.JsonKeys.SENDER] = sender?.let { gson.fromJson(it.toJson(), Map::class.java) }
+    map[Constants.JsonKeys.RECIPIENT] = recipient?.let { gson.fromJson(it.toJson(), Map::class.java) }
+    map[Constants.JsonKeys.ID] = id
+    map[Constants.JsonKeys.SENDER_DISPLAY_NAME] = senderDisplayName ?: ""
+    map[Constants.JsonKeys.CREATED_ON] = createdOn?.toString() ?: ""
+    map[Constants.JsonKeys.VERSION] = version
+    map[Constants.JsonKeys.TYPE] = type.toString()
+    map[Constants.JsonKeys.MESSAGE] = content
+    editedOn?.let { map[Constants.JsonKeys.EDITED_ON] = it.toString() }
+    metadata?.let { map[Constants.JsonKeys.METADATA] = it }
+    return gson.toJson(map)
 }
 
 fun ChatMessageReceivedEvent.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.THREAD_ID, chatThreadId)
-        put(Constants.JsonKeys.ID, id)
-        put(Constants.JsonKeys.MESSAGE, content)
-        put(Constants.JsonKeys.VERSION, version)
-        sender?.let { put(Constants.JsonKeys.SENDER, it.toJson()) }
-        recipient?.let { put(Constants.JsonKeys.RECIPIENT, it.toJson()) }
-        senderDisplayName?.let { put(Constants.JsonKeys.SENDER_DISPLAY_NAME, it) }
-        createdOn?.let { put(Constants.JsonKeys.CREATED_ON, it.toString()) }
-        put(Constants.JsonKeys.TYPE, type.toString())
-        metadata?.let { put(Constants.JsonKeys.METADATA, it) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.THREAD_ID] = chatThreadId
+    map[Constants.JsonKeys.ID] = id
+    map[Constants.JsonKeys.MESSAGE] = content
+    map[Constants.JsonKeys.VERSION] = version
+    sender?.let { map[Constants.JsonKeys.SENDER] = gson.fromJson(it.toJson(), Map::class.java) }
+    recipient?.let { map[Constants.JsonKeys.RECIPIENT] = gson.fromJson(it.toJson(), Map::class.java) }
+    senderDisplayName?.let { map[Constants.JsonKeys.SENDER_DISPLAY_NAME] = it }
+    createdOn?.let { map[Constants.JsonKeys.CREATED_ON] = it.toString() }
+    map[Constants.JsonKeys.TYPE] = type.toString()
+    metadata?.let { map[Constants.JsonKeys.METADATA] = it }
+    return gson.toJson(map)
 }
 
 fun ChatMessageDeletedEvent.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.THREAD_ID, chatThreadId)
-        put(Constants.JsonKeys.SENDER, sender?.toJson())
-        put(Constants.JsonKeys.RECIPIENT, recipient?.toJson())
-        put(Constants.JsonKeys.ID, id)
-        put(Constants.JsonKeys.SENDER_DISPLAY_NAME, senderDisplayName ?: "")
-        put(Constants.JsonKeys.CREATED_ON, createdOn?.toString() ?: "")
-        put(Constants.JsonKeys.VERSION, version)
-        put(Constants.JsonKeys.TYPE, type.toString())
-        deletedOn?.let { put(Constants.JsonKeys.DELETED_ON, it.toString()) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.THREAD_ID] = chatThreadId
+    map[Constants.JsonKeys.SENDER] = sender?.let { gson.fromJson(it.toJson(), Map::class.java) }
+    map[Constants.JsonKeys.RECIPIENT] = recipient?.let { gson.fromJson(it.toJson(), Map::class.java) }
+    map[Constants.JsonKeys.ID] = id
+    map[Constants.JsonKeys.SENDER_DISPLAY_NAME] = senderDisplayName ?: ""
+    map[Constants.JsonKeys.CREATED_ON] = createdOn?.toString() ?: ""
+    map[Constants.JsonKeys.VERSION] = version
+    map[Constants.JsonKeys.TYPE] = type.toString()
+    deletedOn?.let { map[Constants.JsonKeys.DELETED_ON] = it.toString() }
+    return gson.toJson(map)
 }
 
 fun ChatThreadCreatedEvent.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.THREAD_ID, chatThreadId)
-        put(Constants.JsonKeys.VERSION, version)
-        createdOn?.let { put(Constants.JsonKeys.CREATED_ON, it.toString()) }
-        properties?.let { put(Constants.JsonKeys.PROPERTIES, it.toJson()) }
-        participants?.let { put(Constants.JsonKeys.PARTICIPANTS, it.map { participant -> participant.toJson() }) }
-        createdBy?.let { put(Constants.JsonKeys.CREATED_BY, it.toJson()) }
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.THREAD_ID] = chatThreadId
+    map[Constants.JsonKeys.VERSION] = version
+    createdOn?.let { map[Constants.JsonKeys.CREATED_ON] = it.toString() }
+    properties?.let { map[Constants.JsonKeys.PROPERTIES] = gson.fromJson(it.toJson(), Map::class.java) }
+    participants?.let {
+        map[Constants.JsonKeys.PARTICIPANTS] =
+            it.map { participant -> gson.fromJson(participant.toJson(), Map::class.java) }
     }
-    return Json.encodeToString(map)
+    createdBy?.let { map[Constants.JsonKeys.CREATED_BY] = gson.fromJson(it.toJson(), Map::class.java) }
+    return gson.toJson(map)
 }
 
 fun ChatThreadPropertiesUpdatedEvent.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.THREAD_ID, chatThreadId)
-        put(Constants.JsonKeys.VERSION, version)
-        updatedOn?.let { put(Constants.JsonKeys.UPDATED_ON, it.toString()) }
-        properties?.let { put(Constants.JsonKeys.PROPERTIES, it.toJson()) }
-        updatedBy?.let { put(Constants.JsonKeys.UPDATED_BY, it.toJson()) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.THREAD_ID] = chatThreadId
+    map[Constants.JsonKeys.VERSION] = version
+    updatedOn?.let { map[Constants.JsonKeys.UPDATED_ON] = it.toString() }
+    properties?.let { map[Constants.JsonKeys.PROPERTIES] = gson.fromJson(it.toJson(), Map::class.java) }
+    updatedBy?.let { map[Constants.JsonKeys.UPDATED_BY] = gson.fromJson(it.toJson(), Map::class.java) }
+    return gson.toJson(map)
 }
 
 fun ChatThreadDeletedEvent.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.THREAD_ID, chatThreadId)
-        put(Constants.JsonKeys.VERSION, version)
-        deletedOn?.let { put(Constants.JsonKeys.DELETED_ON, it.toString()) }
-        deletedBy?.let { put(Constants.JsonKeys.DELETED_BY, it.toJson()) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.THREAD_ID] = chatThreadId
+    map[Constants.JsonKeys.VERSION] = version
+    deletedOn?.let { map[Constants.JsonKeys.DELETED_ON] = it.toString() }
+    deletedBy?.let { map[Constants.JsonKeys.DELETED_BY] = gson.fromJson(it.toJson(), Map::class.java) }
+    return gson.toJson(map)
 }
 
 fun ParticipantsRemovedEvent.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.THREAD_ID, chatThreadId)
-        put(Constants.JsonKeys.VERSION, version)
-        removedOn?.let { put(Constants.JsonKeys.REMOVED_ON, it.toString()) }
-        put(Constants.JsonKeys.PARTICIPANTS_REMOVED, participantsRemoved?.map { it.toJson() })
-        removedBy?.let { put(Constants.JsonKeys.REMOVED_BY, it.toJson()) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.THREAD_ID] = chatThreadId
+    map[Constants.JsonKeys.VERSION] = version
+    removedOn?.let { map[Constants.JsonKeys.REMOVED_ON] = it.toString() }
+    map[Constants.JsonKeys.PARTICIPANTS_REMOVED] =
+        participantsRemoved?.map { gson.fromJson(it.toJson(), Map::class.java) }
+    removedBy?.let { map[Constants.JsonKeys.REMOVED_BY] = gson.fromJson(it.toJson(), Map::class.java) }
+    return gson.toJson(map)
 }
 
 fun ParticipantsAddedEvent.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.THREAD_ID, chatThreadId)
-        put(Constants.JsonKeys.VERSION, version)
-        addedOn?.let { put(Constants.JsonKeys.ADDED_ON, it.toString()) }
-        put(Constants.JsonKeys.PARTICIPANTS_ADDED, participantsAdded?.map { it.toJson() })
-        addedBy?.let { put(Constants.JsonKeys.ADDED_BY, it.toJson()) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.THREAD_ID] = chatThreadId
+    map[Constants.JsonKeys.VERSION] = version
+    addedOn?.let { map[Constants.JsonKeys.ADDED_ON] = it.toString() }
+    map[Constants.JsonKeys.PARTICIPANTS_ADDED] = participantsAdded?.map { gson.fromJson(it.toJson(), Map::class.java) }
+    addedBy?.let { map[Constants.JsonKeys.ADDED_BY] = gson.fromJson(it.toJson(), Map::class.java) }
+    return gson.toJson(map)
 }
 
 fun ChatMessageReadReceipt.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.SENDER, senderCommunicationIdentifier.toJson())
-        put(Constants.JsonKeys.CHAT_MESSAGE_ID, chatMessageId)
-        put(Constants.JsonKeys.READ_ON, readOn.toString())
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.SENDER] = gson.fromJson(senderCommunicationIdentifier.toJson(), Map::class.java)
+    map[Constants.JsonKeys.CHAT_MESSAGE_ID] = chatMessageId
+    map[Constants.JsonKeys.READ_ON] = readOn.toString()
+    return gson.toJson(map)
 }
 
 fun ChatParticipant.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.ID, communicationIdentifier.id())
-        displayName?.let { put(Constants.JsonKeys.DISPLAY_NAME, it) }
-        shareHistoryTime?.let { put(Constants.JsonKeys.SHARE_HISTORY_TIME, it.toString()) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.ID] = communicationIdentifier.id()
+    displayName?.let { map[Constants.JsonKeys.DISPLAY_NAME] = it }
+    shareHistoryTime?.let { map[Constants.JsonKeys.SHARE_HISTORY_TIME] = it.toString() }
+    return gson.toJson(map)
 }
 
 fun ChatMessage.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.ID, id)
-        put(Constants.JsonKeys.TYPE, type.toString())
-        put(Constants.JsonKeys.VERSION, version)
-        put(Constants.JsonKeys.CREATED_ON, createdOn.toString())
-        content?.let { put(Constants.JsonKeys.CONTENT, it) }
-        senderDisplayName?.let { put(Constants.JsonKeys.SENDER_DISPLAY_NAME, it) }
-        senderCommunicationIdentifier?.let { put(Constants.JsonKeys.SENDER, it.toJson()) }
-        deletedOn?.let { put(Constants.JsonKeys.DELETED_ON, it.toString()) }
-        editedOn?.let { put(Constants.JsonKeys.EDITED_ON, it.toString()) }
-        metadata?.let { put(Constants.JsonKeys.METADATA, it) }
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.ID] = id
+    map[Constants.JsonKeys.TYPE] = type.toString()
+    map[Constants.JsonKeys.VERSION] = version
+    map[Constants.JsonKeys.CREATED_ON] = createdOn.toString()
+    content?.let { map[Constants.JsonKeys.CONTENT] = gson.fromJson(it.toJson(), Map::class.java) }
+    senderDisplayName?.let { map[Constants.JsonKeys.SENDER_DISPLAY_NAME] = it }
+    senderCommunicationIdentifier?.let { map[Constants.JsonKeys.SENDER] = gson.fromJson(it.toJson(), Map::class.java) }
+    deletedOn?.let { map[Constants.JsonKeys.DELETED_ON] = it.toString() }
+    editedOn?.let { map[Constants.JsonKeys.EDITED_ON] = it.toString() }
+    metadata?.let { map[Constants.JsonKeys.METADATA] = gson.fromJson(gson.toJson(it), Map::class.java) }
+    return gson.toJson(map)
+}
+
+fun ChatMessageContent.toJson(): String {
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    message?.let { map[Constants.JsonKeys.MESSAGE] = it }
+    topic?.let { map[Constants.JsonKeys.TOPIC] = it }
+    participants?.let {
+        map[Constants.JsonKeys.PARTICIPANTS] =
+            it.map { participant -> gson.fromJson(participant.toJson(), Map::class.java) }
     }
-    return Json.encodeToString(map)
+    initiatorCommunicationIdentifier?.let {
+        map[Constants.JsonKeys.INITIATOR] = gson.fromJson(it.toJson(), Map::class.java)
+    }
+    return gson.toJson(map)
 }
 
 fun ChatThreadItem.toJson(): String {
-    val map = buildMap {
-        put(Constants.JsonKeys.ID, id)
-        put(Constants.JsonKeys.TOPIC, topic)
-        deletedOn?.let { put(Constants.JsonKeys.DELETED_ON, it.toString()) }
-        lastMessageReceivedOn?.let { put(Constants.JsonKeys.RECEIVED_ON, it.toString()) }
-    }
-    return Json.encodeToString(map)
+    val gson = com.google.gson.Gson()
+    val map = mutableMapOf<String, Any?>()
+    map[Constants.JsonKeys.ID] = id
+    map[Constants.JsonKeys.TOPIC] = topic
+    deletedOn?.let { map[Constants.JsonKeys.DELETED_ON] = it.toString() }
+    lastMessageReceivedOn?.let { map[Constants.JsonKeys.RECEIVED_ON] = it.toString() }
+    return gson.toJson(map)
 }
 

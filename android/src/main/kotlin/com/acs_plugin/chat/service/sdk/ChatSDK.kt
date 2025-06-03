@@ -14,7 +14,7 @@ import org.threeten.bp.OffsetDateTime
 internal interface ChatSDK {
     fun initialization(): CompletableFuture<Void>
     fun destroy()
-    fun getAdminUserId(): String
+    fun getAdminUserId(): String?
     fun requestPreviousPage()
     fun requestChatParticipants()
 

@@ -14,12 +14,12 @@ internal class ParticipantsReducerImpl : ParticipantsReducer {
             is ParticipantAction.ParticipantsAdded -> {
                 // TODO: sync logic with web and iOS to verify read receipt logic
                 state.copy(
-                    participants = state.participants + action.participants.associateBy { it.userIdentifier.id },
+                    participants = state.participants + action.participants.associateBy { it.userIdentifier.id ?: "" },
                     participantsReadReceiptMap = state.participantsReadReceiptMap +
                         action.participants.filter { it.userIdentifier.id != state.localParticipantInfoModel.userIdentifier }
                             .map {
                                 Pair(
-                                    it.userIdentifier.id,
+                                    it.userIdentifier.id ?: "",
                                     state.latestReadMessageTimestamp
                                 )
                             }
@@ -33,7 +33,7 @@ internal class ParticipantsReducerImpl : ParticipantsReducer {
                 // TODO: improve this logic
                 removedParticipants.forEach { id ->
                     participantTyping =
-                        participantTyping - participantTypingKeys.filter { it.contains(id) }
+                        participantTyping - participantTypingKeys.filter { it.contains(id ?: "") }
                 }
 
                 var updatedState = state
@@ -49,7 +49,7 @@ internal class ParticipantsReducerImpl : ParticipantsReducer {
                     participants = state.participants - removedParticipants,
                     participantTyping = participantTyping,
                     participantsReadReceiptMap =
-                    state.participantsReadReceiptMap - action.participants.map { it.userIdentifier.id }
+                    state.participantsReadReceiptMap - action.participants.map { it.userIdentifier.id  ?: ""}
                 )
             }
             is ParticipantAction.AddParticipantTyping -> {
@@ -62,7 +62,7 @@ internal class ParticipantsReducerImpl : ParticipantsReducer {
                     // if participant is already typing, remove and add with new timestamp
                     state.copy(
                         participantTyping = state.participantTyping -
-                            state.participantTyping.keys.filter { it.contains(id) } +
+                            state.participantTyping.keys.filter { it.contains(id ?: "") } +
                             Pair(
                                 id + action.infoModel.receivedOn,
                                 if (displayName.isNullOrEmpty()) "Unknown participant" else displayName
@@ -96,7 +96,7 @@ internal class ParticipantsReducerImpl : ParticipantsReducer {
                         participantsReadReceiptMap[it.key] = action.infoModel.receivedOn
                     }
                 }
-                participantsReadReceiptMap[action.infoModel.userIdentifier.id] =
+                participantsReadReceiptMap[action.infoModel.userIdentifier.id ?: ""] =
                     action.infoModel.receivedOn
                 val latestReadMessageTimestamp = participantsReadReceiptMap.values.min()
                 state.copy(
