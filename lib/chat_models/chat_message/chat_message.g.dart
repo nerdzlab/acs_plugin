@@ -9,7 +9,7 @@ part of 'chat_message.dart';
 _$ChatMessageImpl _$$ChatMessageImplFromJson(Map<String, dynamic> json) =>
     _$ChatMessageImpl(
       id: json['id'] as String,
-      sequenceId: json['sequenceId'] as String,
+      sequenceId: json['sequenceId'] as String?,
       version: json['version'] as String,
       type: $enumDecode(_$ChatMessageTypeEnumMap, json['type']),
       createdOn: json['createdOn'] as String,

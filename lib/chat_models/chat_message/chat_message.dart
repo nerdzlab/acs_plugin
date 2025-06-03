@@ -13,7 +13,7 @@ part 'chat_message.g.dart';
 class ChatMessage with _$ChatMessage {
   const factory ChatMessage({
     required String id,
-    required String sequenceId,
+    String? sequenceId,
     required String version,
     required ChatMessageType type,
     required String createdOn,
