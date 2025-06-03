@@ -625,7 +625,7 @@ extension CompositeViewModelFactory {
     //MTDOD need proper way to construct link
     func makeShareMeetingInfoActivityViewModel() -> ShareMeetingInfoActivityViewModel {
         ShareMeetingInfoActivityViewModel(accessibilityProvider: accessibilityProvider,
-                                          debugInfoManager: debugInfoManager, shareLink: "https://msteam.desktop.superbrains.nl/meeting?roomId=\(callConfiguration.callId ?? "")") {
+                                          debugInfoManager: debugInfoManager, shareLink: "https://msteam.desktop.superbrains.nl/meeting?roomId=\(localOptions?.callId ?? "")") {
             self.store.dispatch(action: .hideDrawer)
         }
     }
