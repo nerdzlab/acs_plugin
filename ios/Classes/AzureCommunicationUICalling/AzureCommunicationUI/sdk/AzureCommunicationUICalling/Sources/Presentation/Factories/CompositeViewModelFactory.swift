@@ -677,6 +677,8 @@ extension CompositeViewModelFactory {
     }
     
     func userTriggerEndCall() {
-        events.onUserCallEnded?()
+        if callType == .roomsCall || callType == .teamsMeeting {
+            events.onUserCallEnded?()
+        }
     }
 }
