@@ -95,7 +95,7 @@ class InfoHeaderViewModel: ObservableObject {
             .participantListAccessibilityLabel)
 
         dismissButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
-            iconName: .callClose,
+            iconName: .leftArrow,
             buttonType: .infoButton,
             isDisabled: false, renderAsOriginal: true) { [weak self] in
                 guard let self = self else {

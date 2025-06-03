@@ -211,4 +211,5 @@
 "AzureCommunicationUICalling.CallingView.Toast.FeaturesLost"="Call settings updated. Some features may not be available to you.";
 "AzureCommunicationUICalling.CallingView.Toast.FeaturesGained"="Call settings updated. Some additional actions may now be available to you.";
 "AzureCommunicationUICalling.EmptyString" = "";
+"AzureCommunicationUICalling.Incoming.Call" = "Inkomende oproep";
 

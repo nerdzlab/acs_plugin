@@ -251,4 +251,5 @@ enum LocalizationKey: String {
     case callingViewToastFeaturesLost = "AzureCommunicationUICalling.CallingView.Toast.FeaturesLost"
     case callingViewToastFeaturesGained = "AzureCommunicationUICalling.CallingView.Toast.FeaturesGained"
     case emptyString = "AzureCommunicationUICalling.EmptyString"
+    case incomingCall = "AzureCommunicationUICalling.Incoming.Call"
 }

@@ -175,10 +175,27 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             providerConfig.includesCallsInRecents = true
             providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
             
-            let callKitOptions = CallKitOptions(providerConfig: providerConfig,
-                                                isCallHoldSupported: true,
-                                                provideRemoteInfo: incomingCallRemoteInfo,
-                                                configureAudioSession: configureAudioSession)
+            guard
+                let appGroup = UserDefaults.standard.getAppGroupIdentifier(),
+                let userData = UserDefaults(suiteName: appGroup)?.loadUserData()
+            else {
+                return
+            }
+            
+            //Localization
+            let provider = LocalizationProvider(logger: DefaultLogger(category: "Calling"))
+            let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode))
+            provider.apply(localeConfig: localizationOptions)
+            
+            let callKitOptions = CallKitOptions(
+                providerConfig: providerConfig,
+                isCallHoldSupported: true,
+                provideRemoteInfo: { caller in
+                return self.incomingCallRemoteInfo(info: caller, cxHandleValue: provider.getLocalizedString(LocalizationKey.incomingCall))
+            },
+                configureAudioSession: configureAudioSession
+            )
+            
             CallComposite.reportIncomingCall(pushNotification: pushInfo,
                                              callKitOptions: callKitOptions) { result in
                 if case .success = result {
@@ -197,11 +214,16 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     private func getCallComposite(callKitOptions: CallKitOptions) ->  CallComposite? {
-        guard let userData = UserDefaults.standard.loadUserData() else { return nil }
-        
-        guard let credential = try? CommunicationTokenCredential(token: userData.token) else { return nil }
+        guard
+            let appGroup = UserDefaults.standard.getAppGroupIdentifier(),
+            let userData = UserDefaults(suiteName: appGroup)?.loadUserData(),
+            let credential = try? CommunicationTokenCredential(token: userData.token)
+        else {
+            return nil
+        }
         
         let callCompositeOptions = CallCompositeOptions(
+            localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
             enableMultitasking: true,
             enableSystemPictureInPictureWhenMultitasking: true,
             callKitOptions: callKitOptions,
@@ -246,8 +268,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
 //        return callKitOptions
 //    }
     
-    public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
-        let cxHandle = CXHandle(type: .generic, value: "Incoming call")
+    public func incomingCallRemoteInfo(info: Caller, cxHandleValue: String) -> CallKitRemoteInfo {
+        let cxHandle = CXHandle(type: .generic, value: cxHandleValue)
         var remoteInfoDisplayName = info.displayName
         
         if remoteInfoDisplayName.isEmpty {

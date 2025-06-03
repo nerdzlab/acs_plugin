@@ -127,11 +127,13 @@ class AcsPlugin {
     required String token,
     required String name,
     required String userId,
+    required String languageCode,
   }) async {
     await AcsPluginPlatform.instance.setUserData(
       token: token,
       name: name,
       userId: userId,
+      languageCode: languageCode,
     );
   }
 

@@ -49,6 +49,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     required String token,
     required String name,
     required String userId,
+    required String languageCode,
   }) {
     throw UnimplementedError('setUserData() has not been implemented.');
   }

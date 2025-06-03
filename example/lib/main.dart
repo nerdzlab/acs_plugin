@@ -286,6 +286,7 @@ class _CallScreenState extends State<CallScreen> {
         token: _acsToken,
         name: "Yra",
         userId: _userId,
+        languageCode: 'nl',
       );
       log('Set user data successfully');
       _shwoSnacBar('Set user data successfully');
