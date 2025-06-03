@@ -13,7 +13,7 @@ import com.acs_plugin.chat.service.sdk.wrapper.CommunicationIdentifier
 import com.acs_plugin.chat.service.sdk.wrapper.into
 import com.acs_plugin.data.Event
 import com.acs_plugin.data.UserData
-import com.acs_plugin.extensions.toJson
+import com.acs_plugin.extensions.toMap
 import com.azure.android.communication.chat.ChatClient
 import com.azure.android.communication.chat.ChatClientBuilder
 import com.azure.android.communication.chat.models.*
@@ -314,12 +314,12 @@ class ChatHandler(
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val credential =
-                        CommunicationTokenCredential(token)
+                        CommunicationTokenCredential("eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjZkMTQxM2NmLTJkMjQtNDE5MS1hNTcwLTExZGE5MTZlODQyNV8wMDAwMDAyNy1iNjUwLWUxODQtNWI0Mi1hZDNhMGQwMDRkNjEiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDg5NTAzNzQiLCJleHAiOjE3NDkwMzY3NzQsInJnbiI6ImRlIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiNmQxNDEzY2YtMmQyNC00MTkxLWE1NzAtMTFkYTkxNmU4NDI1IiwicmVzb3VyY2VMb2NhdGlvbiI6Imdlcm1hbnkiLCJpYXQiOjE3NDg5NTAzNzR9.DKkopEwK0HaEeJ_3QpIYtJHyWOuHHHKjqJo-mwqyz2DkmgSuHHMaYKGYwQRjToYx67YWMhks39U-8WnzEStis2p1L6ImBGfQIme6mvNO58ridkLfSfQubEf-PXfm9VzymKGcDJIQzV_W9QeWMUa25wv156q4fNo5FEwwiG1ZmM3RaoPqMuVFUm_OTukZf1bJsIr_nDKYKd7airSdhPMaxKSjzTE1A0JNGkCvdsIMXxJNylnXt5v79tTqyJXFm0Z1RoRGjcRLYt68kW2GjbB7JWeo-I5KQlu-0fN0zem3DTyS0cnbH18JB6GVwD2PjsbV2UlqM9XE9MVlW3SXbtEPcw")
 
                     chatClient = ChatClientBuilder().endpoint(endpoint).credential(credential).buildClient()
 
                     val identifier: CommunicationIdentifier =
-                        CommunicationIdentifier.CommunicationUserIdentifier(userData.userId)
+                        CommunicationIdentifier.CommunicationUserIdentifier("8:acs:6d1413cf-2d24-4191-a570-11da916e8425_00000027-b650-e184-5b42-ad3a0d004d61")
                     chatClient?.startRealtimeNotifications(context) {}
 
                     chatAdapter = ChatAdapterBuilder().endpoint(endpoint).identity(identifier).credential(credential)
@@ -462,7 +462,7 @@ class ChatHandler(
             try {
                 val chatThreadClient = chatClient?.getChatThreadClient(threadId)
                 val messages = chatThreadClient?.listMessages()
-                handleResultSuccess(result, messages?.map { it.toJson() })
+                handleResultSuccess(result, messages?.map { it.toMap() })
             } catch (e: Exception) {
                 handleResultError(result, "GET_INITIAL_MESSAGES_ERROR", e.message, null)
             }
@@ -473,7 +473,7 @@ class ChatHandler(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val properties = chatClient?.getChatThreadClient(threadId)?.properties
-                handleResultSuccess(result, properties?.toJson())
+                handleResultSuccess(result, properties?.toMap())
             } catch (e: Exception) {
                 handleResultError(result, "RETRIEVE_CHAT_THREAD_PROPERTIES_ERROR", e.message, null)
             }
@@ -496,7 +496,7 @@ class ChatHandler(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val participants = chatClient?.getChatThreadClient(threadId)?.listParticipants()
-                handleResultSuccess(result, participants?.map { it.toJson() })
+                handleResultSuccess(result, participants?.map { it.toMap() })
             } catch (e: Exception) {
                 handleResultError(result, "GET_LIST_OF_PARTICIPANTS_ERROR", e.message, null)
             }
@@ -535,7 +535,7 @@ class ChatHandler(
             try {
                 val chatThreadClient = chatClient?.getChatThreadClient(threadId)
                 val readReceipts = chatThreadClient?.listReadReceipts()
-                handleResultSuccess(result, readReceipts?.map { it.toJson() })
+                handleResultSuccess(result, readReceipts?.map { it.toMap() })
             } catch (e: Exception) {
                 handleResultError(result, "GET_LIST_READ_RECEIPTS_ERROR", e.message, null)
             }
@@ -548,7 +548,7 @@ class ChatHandler(
                 val chatThreadClient = chatClient?.getChatThreadClient(threadId)
                 val messages = chatThreadClient?.listMessages()
                 val lastMessage = messages?.firstOrNull()
-                handleResultSuccess(result, lastMessage?.toJson())
+                handleResultSuccess(result, lastMessage?.toMap())
             } catch (e: Exception) {
                 handleResultError(result, "GET_LAST_MESSAGE_ERROR", e.message, null)
             }
@@ -560,7 +560,7 @@ class ChatHandler(
             try {
                 val threads = chatClient?.listChatThreads()
                 threadsPagedIterable = threads
-                handleResultSuccess(result, threads?.map { it.toJson() })
+                handleResultSuccess(result, threads?.map { it.toMap() })
             } catch (e: Exception) {
                 handleResultError(result, "GET_INITIAL_LIST_THREADS_ERROR", e.message, null)
             }
@@ -589,7 +589,7 @@ class ChatHandler(
                     nextPageItems.add(iterator.next())
                 }
 
-                handleResultSuccess(result, nextPageItems.map { it.toJson() })
+                handleResultSuccess(result, nextPageItems.map { it.toMap() })
             } catch (e: Exception) {
                 handleResultError(result, "GET_NEXT_THREADS_ERROR", e.message, null)
             }
@@ -620,7 +620,7 @@ class ChatHandler(
                 onSendEvent(
                     Event(
                         name = Constants.FlutterEvents.ON_TYPING_INDICATOR_RECEIVED,
-                        payload = (payload as TypingIndicatorReceivedEvent).toJson()
+                        payload = (payload as TypingIndicatorReceivedEvent).toMap()
                     )
                 )
             }
@@ -629,7 +629,7 @@ class ChatHandler(
                 onSendEvent(
                     Event(
                         name = Constants.FlutterEvents.ON_READ_RECEIPT_RECEIVED,
-                        payload = (payload as ReadReceiptReceivedEvent).toJson()
+                        payload = (payload as ReadReceiptReceivedEvent).toMap()
                     )
                 )
             }
@@ -638,7 +638,7 @@ class ChatHandler(
                 onSendEvent(
                     Event(
                         name = Constants.FlutterEvents.ON_CHAT_MESSAGE_RECEIVED,
-                        payload = (payload as ChatMessageReceivedEvent).toJson()
+                        payload = (payload as ChatMessageReceivedEvent).toMap()
                     )
                 )
             }
@@ -647,7 +647,7 @@ class ChatHandler(
                 onSendEvent(
                     Event(
                         name = Constants.FlutterEvents.ON_CHAT_MESSAGE_EDITED,
-                        payload = (payload as ChatMessageEditedEvent).toJson()
+                        payload = (payload as ChatMessageEditedEvent).toMap()
                     )
                 )
             }
@@ -656,7 +656,7 @@ class ChatHandler(
                 onSendEvent(
                     Event(
                         name = Constants.FlutterEvents.ON_CHAT_MESSAGE_DELETED,
-                        payload = (payload as ChatMessageDeletedEvent).toJson()
+                        payload = (payload as ChatMessageDeletedEvent).toMap()
                     )
                 )
             }
@@ -665,7 +665,7 @@ class ChatHandler(
                 onSendEvent(
                     Event(
                         name = Constants.FlutterEvents.ON_CHAT_THREAD_CREATED,
-                        payload = (payload as ChatThreadCreatedEvent).toJson()
+                        payload = (payload as ChatThreadCreatedEvent).toMap()
                     )
                 )
             }
@@ -674,7 +674,7 @@ class ChatHandler(
                 onSendEvent(
                     Event(
                         name = Constants.FlutterEvents.ON_CHAT_THREAD_PROPERTIES_UPDATED,
-                        payload = (payload as ChatThreadPropertiesUpdatedEvent).toJson()
+                        payload = (payload as ChatThreadPropertiesUpdatedEvent).toMap()
                     )
                 )
             }
@@ -683,7 +683,7 @@ class ChatHandler(
                 onSendEvent(
                     Event(
                         name = Constants.FlutterEvents.ON_CHAT_THREAD_DELETED,
-                        payload = (payload as ChatThreadDeletedEvent).toJson()
+                        payload = (payload as ChatThreadDeletedEvent).toMap()
                     )
                 )
             }
@@ -692,7 +692,7 @@ class ChatHandler(
                 onSendEvent(
                     Event(
                         name = Constants.FlutterEvents.ON_PARTICIPANTS_ADDED,
-                        payload = (payload as ParticipantsAddedEvent).toJson()
+                        payload = (payload as ParticipantsAddedEvent).toMap()
                     )
                 )
             }
@@ -701,7 +701,7 @@ class ChatHandler(
                 onSendEvent(
                     Event(
                         name = Constants.FlutterEvents.ON_PARTICIPANTS_REMOVED,
-                        payload = (payload as ParticipantsRemovedEvent).toJson()
+                        payload = (payload as ParticipantsRemovedEvent).toMap()
                     )
                 )
             }

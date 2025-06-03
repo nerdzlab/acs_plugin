@@ -65,6 +65,8 @@ object Constants {
         const val TYPE = "type"
         const val METADATA = "metadata"
         const val MESSAGE_ID = "messageId"
+        const val CALL_ID = "callId"
+        const val WHITEBOARD_ID = "whiteboardId"
     }
 
     object JsonKeys {
