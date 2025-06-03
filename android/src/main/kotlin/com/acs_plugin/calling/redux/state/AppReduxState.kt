@@ -29,7 +29,10 @@ internal class AppReduxState(
         )
     }
 
-    override var callState: CallingState = CallingState(callId = localOptions?.callId)
+    override var callState: CallingState = CallingState(
+        callId = localOptions?.callId,
+        whiteboardId = localOptions?.whiteboardId
+    )
 
     override var remoteParticipantState: RemoteParticipantsState = RemoteParticipantsState(
         participantMap = HashMap(),

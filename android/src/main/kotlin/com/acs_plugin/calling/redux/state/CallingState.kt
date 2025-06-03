@@ -39,6 +39,7 @@ internal data class CallingState(
     val isDefaultParametersCallStarted: Boolean = false,
     val callEndReasonCode: Int? = null,
     val callEndReasonSubCode: Int? = null,
+    var whiteboardId: String? = null,
     /*  <CALL_START_TIME>
     val callStartTime: Date? = null,
     </CALL_START_TIME> */
