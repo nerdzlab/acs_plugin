@@ -20,6 +20,7 @@ import com.azure.android.communication.chat.ChatThreadClient
 import com.azure.android.communication.chat.models.*
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.core.rest.util.paging.PagedIterable
+import com.azure.android.core.util.RequestContext
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
@@ -34,11 +35,11 @@ class ChatHandler(
     private val onSendEvent: (Event) -> Unit
 ) : MethodHandler {
 
+    private var messages: PagedIterable<ChatMessage>? = null
     private var chatClient: ChatClient? = null
     private var chatAdapter: ChatAdapter? = null
 
     private val finishedResults = Collections.synchronizedSet(HashSet<MethodChannel.Result>())
-    private var threadsPagedIterable: PagedIterable<ChatThreadItem>? = null
 
     private val chatThreadClients = Collections.synchronizedMap(HashMap<String, ChatThreadClient>())
 
@@ -244,7 +245,7 @@ class ChatHandler(
                     return true
                 }
 
-                isChatHasMoreMessages(threadId, result)
+                isChatHasMoreMessages(result)
                 true
             }
 
@@ -450,9 +451,11 @@ class ChatHandler(
     private fun getInitialMessages(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = getChatThreadClient(threadId)
-                val messages = chatThreadClient?.listMessages()
-                handleResultSuccess(result, messages?.map { it.toMap() })
+                messages = getChatThreadClient(threadId)?.listMessages(
+                    ListChatMessagesOptions().apply { setMaxPageSize(20) },
+                    RequestContext.NONE
+                )
+                handleResultSuccess(result, messages?.toList()?.map { it.toMap() })
             } catch (e: Exception) {
                 handleResultError(result, "GET_INITIAL_MESSAGES_ERROR", e.message, null)
             }
@@ -473,9 +476,11 @@ class ChatHandler(
     private fun getPreviousMessages(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = getChatThreadClient(threadId)
-                val messages = chatThreadClient?.listMessages()
-                handleResultSuccess(result, messages?.map { it })
+                messages = getChatThreadClient(threadId)?.listMessages(
+                    ListChatMessagesOptions().apply { setMaxPageSize(20) },
+                    RequestContext.NONE
+                )
+                handleResultSuccess(result, messages?.toList()?.map { it.toMap() })
             } catch (e: Exception) {
                 handleResultError(result, "GET_PREVIOUS_MESSAGES_ERROR", e.message, null)
             }
@@ -493,27 +498,11 @@ class ChatHandler(
         }
     }
 
-    private fun isChatHasMoreMessages(threadId: String, result: MethodChannel.Result) {
+    private fun isChatHasMoreMessages(result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = getChatThreadClient(threadId)
-                val messageList = chatThreadClient?.listMessages()
-
-                // If we can get a non-null iterator, we can check for more messages
-                val iterator = messageList?.iterator()
-                var hasMoreMessages = false
-
-                // Check if there are messages and if we can move to the next page
-                if (iterator != null && iterator.hasNext()) {
-                    // Consume first page
-                    while (iterator.hasNext()) {
-                        iterator.next()
-                    }
-                    // Check if there's another page after this
-                    hasMoreMessages = iterator.hasNext()
-                }
-
-                handleResultSuccess(result, hasMoreMessages)
+                val iterator = messages?.iterator()
+                handleResultSuccess(result, iterator?.hasNext())
             } catch (e: Exception) {
                 handleResultError(result, "IS_CHAT_HAS_MORE_MESSAGES_ERROR", e.message, null)
             }
@@ -549,8 +538,6 @@ class ChatHandler(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val threads = chatClient?.listChatThreads()
-                threadsPagedIterable = threads
-                threadsPagedIterable
                 handleResultSuccess(
                     result,
                     threads?.byPage()?.flatMap { it.value.map { chatThreadItem -> chatThreadItem.toMap() } })
