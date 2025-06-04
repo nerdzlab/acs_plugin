@@ -175,24 +175,12 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             providerConfig.includesCallsInRecents = true
             providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
             
-            guard
-                let appGroup = UserDefaults.standard.getAppGroupIdentifier(),
-                let languageCode = UserDefaults(suiteName: appGroup)?.getLanguageCode()
-            else {
-                return
-            }
-            
-            //Localization
-            let provider = LocalizationProvider(logger: DefaultLogger(category: "Calling"))
-            let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: languageCode))
-            provider.apply(localeConfig: localizationOptions)
-            
             let callKitOptions = CallKitOptions(
                 providerConfig: providerConfig,
                 isCallHoldSupported: true,
                 provideRemoteInfo: { caller in
-                return self.incomingCallRemoteInfo(info: caller, cxHandleValue: provider.getLocalizedString(LocalizationKey.incomingCall))
-            },
+                    return self.incomingCallRemoteInfo(info: caller, callId: pushInfo.callId)
+                },
                 configureAudioSession: configureAudioSession
             )
             
@@ -251,23 +239,20 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted
     }
     
-//    private func getCallKitOptions() -> CallKitOptions {
-//        let cxHandle = CXHandle(type: .generic, value: "Outgoing call")
-//        let providerConfig = CXProviderConfiguration()
-//        providerConfig.supportsVideo = true
-//        providerConfig.maximumCallGroups = 1
-//        providerConfig.maximumCallsPerCallGroup = 1
-//        providerConfig.includesCallsInRecents = true
-//        providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
-//        let isCallHoldSupported = true
-//        let callKitOptions = CallKitOptions(providerConfig: providerConfig,
-//                                            isCallHoldSupported: isCallHoldSupported,
-//                                            provideRemoteInfo: incomingCallRemoteInfo,
-//                                            configureAudioSession: configureAudioSession)
-//        return callKitOptions
-//    }
-    
-    public func incomingCallRemoteInfo(info: Caller, cxHandleValue: String) -> CallKitRemoteInfo {
+    public func incomingCallRemoteInfo(info: Caller, callId: String) -> CallKitRemoteInfo {
+        let participantId = info.identifier.rawId
+        let displayName = info.displayName.isEmpty ? participantId : info.displayName
+        
+        let params = [
+            "callId": callId,
+            "participantId": participantId,
+            "displayName": displayName
+        ]
+        
+        let cxHandleValue = params
+            .map { "\($0.key)=\($0.value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")" }
+            .joined(separator: "&")
+        
         let cxHandle = CXHandle(type: .generic, value: cxHandleValue)
         var remoteInfoDisplayName = info.displayName
         
@@ -279,6 +264,22 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                                                   handle: cxHandle)
         return callKitRemoteInfo
     }
+    
+    //    private func getCallKitOptions() -> CallKitOptions {
+    //        let cxHandle = CXHandle(type: .generic, value: "Outgoing call")
+    //        let providerConfig = CXProviderConfiguration()
+    //        providerConfig.supportsVideo = true
+    //        providerConfig.maximumCallGroups = 1
+    //        providerConfig.maximumCallsPerCallGroup = 1
+    //        providerConfig.includesCallsInRecents = true
+    //        providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
+    //        let isCallHoldSupported = true
+    //        let callKitOptions = CallKitOptions(providerConfig: providerConfig,
+    //                                            isCallHoldSupported: isCallHoldSupported,
+    //                                            provideRemoteInfo: incomingCallRemoteInfo,
+    //                                            configureAudioSession: configureAudioSession)
+    //        return callKitOptions
+    //    }
     
     public func configureAudioSession() -> Error? {
         let audioSession = AVAudioSession.sharedInstance()
