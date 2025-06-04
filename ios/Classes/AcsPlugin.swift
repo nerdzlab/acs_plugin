@@ -180,7 +180,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
 
             //Localization
             let provider = LocalizationProvider(logger: DefaultLogger(category: "Calling"))
-            let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: "nl"))
+            let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: languageCode))
             provider.apply(localeConfig: localizationOptions)
             
             let callKitOptions = CallKitOptions(

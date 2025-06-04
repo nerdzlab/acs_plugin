@@ -42,9 +42,9 @@ public struct CallKitOptions {
     public init() {
         let providerConfig = CXProviderConfiguration()
         providerConfig.supportsVideo = true
-        providerConfig.maximumCallGroups = 1
-        providerConfig.maximumCallsPerCallGroup = 1
-        providerConfig.includesCallsInRecents = true
+        providerConfig.maximumCallGroups = 2
+        providerConfig.maximumCallsPerCallGroup = 5
+        providerConfig.includesCallsInRecents = false
         providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
         self.providerConfig = providerConfig
         self.isCallHoldSupported = true
