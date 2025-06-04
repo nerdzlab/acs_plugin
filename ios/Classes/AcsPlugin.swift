@@ -175,24 +175,22 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             providerConfig.includesCallsInRecents = true
             providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
             
-            guard
-                let appGroup = UserDefaults.standard.getAppGroupIdentifier(),
-                let languageCode = UserDefaults(suiteName: appGroup)?.getLanguageCode()
-            else {
-                return
-            }
+//            guard
+//                let appGroup = UserDefaults.standard.getAppGroupIdentifier(),
+//                let languageCode = UserDefaults(suiteName: appGroup)?.getLanguageCode()
+//            else {
+//                return
+//            }
             
             //Localization
             let provider = LocalizationProvider(logger: DefaultLogger(category: "Calling"))
-            let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: languageCode))
+            let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: "nl"))
             provider.apply(localeConfig: localizationOptions)
             
             let callKitOptions = CallKitOptions(
                 providerConfig: providerConfig,
                 isCallHoldSupported: true,
-                provideRemoteInfo: { caller in
-                return self.incomingCallRemoteInfo(info: caller, cxHandleValue: provider.getLocalizedString(LocalizationKey.incomingCall))
-            },
+                provideRemoteInfo: incomingCallRemoteInfo,
                 configureAudioSession: configureAudioSession
             )
             
@@ -267,8 +265,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
 //        return callKitOptions
 //    }
     
-    public func incomingCallRemoteInfo(info: Caller, cxHandleValue: String) -> CallKitRemoteInfo {
-        let cxHandle = CXHandle(type: .generic, value: cxHandleValue)
+    public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
+        let cxHandle = CXHandle(type: .generic, value: "Incoming call")
         var remoteInfoDisplayName = info.displayName
         
         if remoteInfoDisplayName.isEmpty {

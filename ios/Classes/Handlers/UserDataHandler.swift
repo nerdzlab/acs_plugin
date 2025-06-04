@@ -31,13 +31,11 @@ final class UserDataHandler: MethodHandler {
     private var userData: UserData? {
         didSet {
             guard let userData else { return }
+            UserDefaults.standard.saveUserData(userData)
+            onUserDataReceived(userData)
             
             guard let appGroup = UserDefaults.standard.getAppGroupIdentifier() else { return }
-            
-            UserDefaults.standard.saveUserData(userData)
             UserDefaults(suiteName: appGroup)?.setLanguageCode(userData.languageCode)
-            
-            onUserDataReceived(userData)
         }
     }
     
