@@ -16,6 +16,7 @@ import com.acs_plugin.data.UserData
 import com.acs_plugin.extensions.toMap
 import com.azure.android.communication.chat.ChatClient
 import com.azure.android.communication.chat.ChatClientBuilder
+import com.azure.android.communication.chat.ChatThreadClient
 import com.azure.android.communication.chat.models.*
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.core.rest.util.paging.PagedIterable
@@ -38,6 +39,8 @@ class ChatHandler(
 
     private val finishedResults = Collections.synchronizedSet(HashSet<MethodChannel.Result>())
     private var threadsPagedIterable: PagedIterable<ChatThreadItem>? = null
+
+    private val chatThreadClients = Collections.synchronizedMap(HashMap<String, ChatThreadClient>())
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
@@ -325,7 +328,7 @@ class ChatHandler(
     private fun initializeChatThread(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                chatClient?.getChatThreadClient(threadId)
+                getChatThreadClient(threadId)
                 handleResultSuccess(result)
             } catch (e: Exception) {
                 handleResultError(result, "CHAT_THREAD_INIT_ERROR", e.message, null)
@@ -340,7 +343,7 @@ class ChatHandler(
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = chatClient?.getChatThreadClient(threadId)
+                val chatThreadClient = getChatThreadClient(threadId)
                 chatThreadClient?.deleteMessage(messageId)
                 handleResultSuccess(result)
             } catch (e: Exception) {
@@ -360,7 +363,7 @@ class ChatHandler(
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = chatClient?.getChatThreadClient(threadId)
+                val chatThreadClient = getChatThreadClient(threadId)
                 chatThreadClient?.updateMessage(
                     messageId,
                     UpdateChatMessageOptions().apply {
@@ -385,7 +388,7 @@ class ChatHandler(
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = chatClient?.getChatThreadClient(threadId)
+                val chatThreadClient = getChatThreadClient(threadId)
                 val sendMessageResult = chatThreadClient?.sendMessage(SendChatMessageOptions().apply {
                     setContent(content)
                     setSenderDisplayName(senderDisplayName)
@@ -406,7 +409,7 @@ class ChatHandler(
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = chatClient?.getChatThreadClient(threadId)
+                val chatThreadClient = getChatThreadClient(threadId)
                 chatThreadClient?.sendReadReceipt(messageId)
                 handleResultSuccess(result)
             } catch (e: Exception) {
@@ -421,7 +424,7 @@ class ChatHandler(
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = chatClient?.getChatThreadClient(threadId)
+                val chatThreadClient = getChatThreadClient(threadId)
                 chatThreadClient?.sendTypingNotification()
                 handleResultSuccess(result)
             } catch (e: Exception) {
@@ -447,7 +450,7 @@ class ChatHandler(
     private fun getInitialMessages(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = chatClient?.getChatThreadClient(threadId)
+                val chatThreadClient = getChatThreadClient(threadId)
                 val messages = chatThreadClient?.listMessages()
                 handleResultSuccess(result, messages?.map { it.toMap() })
             } catch (e: Exception) {
@@ -459,7 +462,7 @@ class ChatHandler(
     private fun retrieveChatThreadProperties(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val properties = chatClient?.getChatThreadClient(threadId)?.properties
+                val properties = getChatThreadClient(threadId)?.properties
                 handleResultSuccess(result, properties?.toMap())
             } catch (e: Exception) {
                 handleResultError(result, "RETRIEVE_CHAT_THREAD_PROPERTIES_ERROR", e.message, null)
@@ -470,7 +473,7 @@ class ChatHandler(
     private fun getPreviousMessages(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = chatClient?.getChatThreadClient(threadId)
+                val chatThreadClient = getChatThreadClient(threadId)
                 val messages = chatThreadClient?.listMessages()
                 handleResultSuccess(result, messages?.map { it })
             } catch (e: Exception) {
@@ -482,7 +485,7 @@ class ChatHandler(
     private fun getListOfParticipants(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val participants = chatClient?.getChatThreadClient(threadId)?.listParticipants()
+                val participants = getChatThreadClient(threadId)?.listParticipants()
                 handleResultSuccess(result, participants?.map { it.toMap() })
             } catch (e: Exception) {
                 handleResultError(result, "GET_LIST_OF_PARTICIPANTS_ERROR", e.message, null)
@@ -493,7 +496,7 @@ class ChatHandler(
     private fun isChatHasMoreMessages(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = chatClient?.getChatThreadClient(threadId)
+                val chatThreadClient = getChatThreadClient(threadId)
                 val messageList = chatThreadClient?.listMessages()
 
                 // If we can get a non-null iterator, we can check for more messages
@@ -520,7 +523,7 @@ class ChatHandler(
     private fun getListReadReceipts(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = chatClient?.getChatThreadClient(threadId)
+                val chatThreadClient = getChatThreadClient(threadId)
                 val readReceipts = chatThreadClient?.listReadReceipts()
                 handleResultSuccess(result, readReceipts?.map { it.toMap() })
             } catch (e: Exception) {
@@ -532,7 +535,7 @@ class ChatHandler(
     private fun getLastMessage(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val chatThreadClient = chatClient?.getChatThreadClient(threadId)
+                val chatThreadClient = getChatThreadClient(threadId)
                 val messages = chatThreadClient?.listMessages()
                 val lastMessage = messages?.firstOrNull()
                 handleResultSuccess(result, lastMessage?.toMap())
@@ -547,6 +550,7 @@ class ChatHandler(
             try {
                 val threads = chatClient?.listChatThreads()
                 threadsPagedIterable = threads
+                threadsPagedIterable
                 handleResultSuccess(
                     result,
                     threads?.byPage()?.flatMap { it.value.map { chatThreadItem -> chatThreadItem.toMap() } })
@@ -737,6 +741,12 @@ class ChatHandler(
         withContext(Dispatchers.Main) {
             Log.v("ChatHandler", "Success result: $data")
             result.success(data)
+        }
+    }
+
+    private fun getChatThreadClient(threadId: String): ChatThreadClient? {
+        return chatThreadClients[threadId] ?: chatClient?.getChatThreadClient(threadId)?.also {
+            chatThreadClients[threadId] = it
         }
     }
 }
