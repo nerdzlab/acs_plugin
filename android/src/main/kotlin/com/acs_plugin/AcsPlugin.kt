@@ -78,7 +78,7 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private fun setupHandlers() {
         val userDataHandler = UserDataHandler(context, channel) {}
         val callHandler = CallHandler(context, activity)
-        val chatHandler = ChatHandler(context, userDataHandler.tokenRefresher) {
+        val chatHandler = ChatHandler(context) {
             FlutterEventDispatcher.sendEvent(it.name, it.payload)
         }
         handlers.addAll(

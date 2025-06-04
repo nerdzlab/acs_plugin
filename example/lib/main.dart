@@ -327,7 +327,7 @@ class _CallScreenState extends State<CallScreen> {
     try {
       final messages = await _acsPlugin.getInitialMessages(threadId: _threadId);
       log('Chat initialized successfully');
-      _shwoSnacBar('Chat messages successfully fetched');
+      _shwoSnacBar('Chat messages successfully fetched ${messages.length}');
     } on PlatformException catch (error) {
       log('Failed to get chat messages: ${error.toString()}');
       _shwoSnacBar('Failed to get chat messages: ${error.message}');

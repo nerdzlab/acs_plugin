@@ -31,7 +31,6 @@ import java.util.*
 
 class ChatHandler(
     private val context: Context,
-    private val tokenRefresher: (((String?, Throwable?) -> Unit) -> Unit)?,
     private val onSendEvent: (Event) -> Unit
 ) : MethodHandler {
 
@@ -301,37 +300,25 @@ class ChatHandler(
             return
         }
 
-        tokenRefresher?.invoke { token, error ->
-            if (error != null) {
-                handleResultError(result, "TOKEN_REFRESH_ERROR", error.message)
-                return@invoke
-            }
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val credential =
+                    CommunicationTokenCredential(userData.token)
 
-            if (token == null) {
-                handleResultError(result, "TOKEN_REFRESH_ERROR", "Token is null")
-                return@invoke
-            }
+                chatClient = ChatClientBuilder().endpoint(endpoint).credential(credential).buildClient()
 
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val credential =
-                        CommunicationTokenCredential(token)
+                val identifier: CommunicationIdentifier =
+                    CommunicationIdentifier.CommunicationUserIdentifier(userData.userId)
+                chatClient?.startRealtimeNotifications(context) {}
 
-                    chatClient = ChatClientBuilder().endpoint(endpoint).credential(credential).buildClient()
+                chatAdapter = ChatAdapterBuilder().endpoint(endpoint).identity(identifier).credential(credential)
+                    .displayName(userData.name).build()
 
-                    val identifier: CommunicationIdentifier =
-                        CommunicationIdentifier.CommunicationUserIdentifier(userData.userId)
-                    chatClient?.startRealtimeNotifications(context) {}
-
-                    chatAdapter = ChatAdapterBuilder().endpoint(endpoint).identity(identifier).credential(credential)
-                        .displayName(userData.name).build()
-
-                    chatAdapter?.connect(context)
-                    subscribeToChatEvents()
-                    handleResultSuccess(result)
-                } catch (e: Exception) {
-                    handleResultError(result, "CHAT_SETUP_ERROR", e.message, null)
-                }
+                chatAdapter?.connect(context)
+                subscribeToChatEvents()
+                handleResultSuccess(result)
+            } catch (e: Exception) {
+                handleResultError(result, "CHAT_SETUP_ERROR", e.message, null)
             }
         }
     }
