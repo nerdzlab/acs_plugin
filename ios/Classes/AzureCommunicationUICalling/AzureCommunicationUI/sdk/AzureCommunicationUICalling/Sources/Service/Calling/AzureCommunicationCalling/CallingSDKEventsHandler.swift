@@ -183,17 +183,26 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
     }
     
     private func addRemoteParticipants(
-        _ remoteParticipants: [AzureCommunicationCalling.RemoteParticipant]
+        _ remoteParticipants: [RemoteParticipant]
     ) {
         var remoteParticipantsInfoList = participantsInfoListSubject.value
-        
+
         for participant in remoteParticipants {
             let userIdentifier = participant.identifier.rawId
+
             if self.remoteParticipants.value(forKey: userIdentifier) == nil {
                 participant.delegate = remoteParticipantEventAdapter
                 self.remoteParticipants.append(forKey: userIdentifier, value: participant)
                 let infoModel = participant.toParticipantInfoModel()
                 remoteParticipantsInfoList.append(infoModel)
+            } else {
+                // Update existing participant and info model
+                self.remoteParticipants.append(forKey: userIdentifier, value: participant)
+                let updatedInfoModel = participant.toParticipantInfoModel()
+                
+                if let index = remoteParticipantsInfoList.firstIndex(where: { $0.userIdentifier == userIdentifier }) {
+                    remoteParticipantsInfoList[index] = updatedInfoModel
+                }
             }
         }
         
@@ -263,12 +272,12 @@ extension CallingSDKEventsHandler: CallDelegate,
     
     func dataChannelReceiver(_ dataChannelReceiver: DataChannelReceiver, didReceiveMessage args: PropertyChangedEventArgs) {
         guard let message = dataChannelReceiver.receiveMessage()else {
-                print("No data in message")
-                return
-            }
+            print("No data in message")
+            return
+        }
         
         let data = message.data
-                
+        
         do {
             let decoder = JSONDecoder()
             let reactionMessage = try decoder.decode(ReactionMessage.self, from: data)
@@ -372,12 +381,14 @@ extension CallingSDKEventsHandler: CallDelegate,
         logger.debug( "callInfoModel \(callInfoModel.status)")
         logger.debug( "remoteParticipants \(call.remoteParticipants.count)")
         callInfoSubject.send(callInfoModel)
+        
         if currentStatus == .connected || currentStatus == .connecting {
-            addRemoteParticipants(call.remoteParticipants)
+            self.addRemoteParticipants(call.remoteParticipants)
         }
         if currentStatus == .disconnected {
             call.delegate = nil
         }
+        
         self.previousCallingStatus = currentStatus
     }
     
