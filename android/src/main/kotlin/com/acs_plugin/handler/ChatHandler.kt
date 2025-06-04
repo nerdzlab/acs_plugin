@@ -19,7 +19,6 @@ import com.azure.android.communication.chat.ChatClientBuilder
 import com.azure.android.communication.chat.models.*
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.core.rest.util.paging.PagedIterable
-import com.azure.android.core.util.RequestContext
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
@@ -545,14 +544,12 @@ class ChatHandler(
 
     private fun getInitialListThreads(result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
-            val options = ListChatThreadsOptions().apply { setMaxPageSize(20) }
             try {
-                val threads = chatClient?.listChatThreads(
-                    options,
-                    RequestContext.NONE
-                )
+                val threads = chatClient?.listChatThreads()
                 threadsPagedIterable = threads
-                handleResultSuccess(result, threads?.map { it.toMap() })
+                handleResultSuccess(
+                    result,
+                    threads?.byPage()?.flatMap { it.value.map { chatThreadItem -> chatThreadItem.toMap() } })
             } catch (e: Exception) {
                 handleResultError(result, "GET_INITIAL_LIST_THREADS_ERROR", e.message, null)
             }
@@ -563,25 +560,26 @@ class ChatHandler(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // If we don't have a saved collection, get initial threads
-                if (threadsPagedIterable == null) {
-                    getInitialListThreads(result)
-                    return@launch
-                }
+//                if (threadsPagedIterable == null) {
+//                    getInitialListThreads(result)
+//                    return@launch
+//                }
+//
+//                // Get the iterator if we haven't already
+//                val iterator = threadsPagedIterable?.iterator()
+//
+//                if (iterator?.hasNext() == false) {
+//                    handleResultSuccess(result, emptyList<Map<String, Any>>())
+//                    return@launch
+//                }
+//
+//                val threadsPage = iterator?.next()
+//                // Map the threads to the same format as in getInitialListThreads
+//                val mappedThreads = threadsPage?.toMap()
+//
+//                handleResultSuccess(result, mappedThreads)
 
-                // Get the iterator if we haven't already
-                val iterator = threadsPagedIterable?.iterator()
-
-                if (iterator?.hasNext() == false) {
-                    handleResultSuccess(result)
-                    return@launch
-                }
-
-                val nextPageItems = mutableListOf<ChatThreadItem>()
-                while (iterator?.hasNext() == false && nextPageItems.size < Constants.PageSize.SIZE_20) {
-                    nextPageItems.add(iterator.next())
-                }
-
-                handleResultSuccess(result, nextPageItems.map { it.toMap() })
+                handleResultSuccess(result, emptyList<Map<String, Any>>())
             } catch (e: Exception) {
                 handleResultError(result, "GET_NEXT_THREADS_ERROR", e.message, null)
             }
@@ -591,13 +589,14 @@ class ChatHandler(
     private fun isMoreThreadsAvailable(result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                if (threadsPagedIterable == null) {
-                    handleResultSuccess(result, false)
-                    return@launch
-                }
-
-                val iterator = threadsPagedIterable?.iterator()
-                handleResultSuccess(result, iterator?.hasNext() ?: false)
+//                if (threadsPagedIterable == null) {
+//                    handleResultSuccess(result, false)
+//                    return@launch
+//                }
+//
+//                val iterator = threadsPagedIterable?.iterator()
+//                handleResultSuccess(result, iterator?.hasNext() ?: false)
+                handleResultSuccess(result, false)
             } catch (e: Exception) {
                 handleResultError(result, "IS_MORE_THREADS_AVAILABLE_ERROR", e.message, null)
             }
