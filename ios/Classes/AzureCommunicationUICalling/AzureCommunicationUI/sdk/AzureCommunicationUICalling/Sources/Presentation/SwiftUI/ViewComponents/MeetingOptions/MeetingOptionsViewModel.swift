@@ -30,7 +30,8 @@ internal class MeetingOptionsViewModel: ObservableObject {
     @Published private(set) var shareScreenViewModel: IconWithLabelButtonViewModel<ShareScreenButtonState>!
     @Published private(set) var layoutOptionsButtonViewModel: IconWithLabelButtonViewModel<LayoutOptionsButtonState>!
     
-    let isReactionEnable: Bool
+    @Published private(set) var isReactionEnable: Bool
+    
     var isDisplayed: Bool
     var isLayoutOptionsEnable: Bool
     
@@ -142,7 +143,7 @@ internal class MeetingOptionsViewModel: ObservableObject {
             })
     }
     
-    func update(localUserState: LocalUserState, isDisplayed: Bool, isRemoteParticipantsPresent: Bool, isRaiseHandAvailable: Bool, isLayoutOptionsEnable: Bool) {
+    func update(localUserState: LocalUserState, isDisplayed: Bool, isRemoteParticipantsPresent: Bool, isRaiseHandAvailable: Bool, isLayoutOptionsEnable: Bool, isReactionEnable: Bool) {
         self.isDisplayed = isDisplayed
         
         let previousState = raiseHandButtonViewModel.selectedButtonState
@@ -155,6 +156,8 @@ internal class MeetingOptionsViewModel: ObservableObject {
         } else {
             selectedState = (operation == .handIsLower ? .raiseHand : .lowerHand)
         }
+        
+        self.isReactionEnable = isReactionEnable
                 
         raiseHandButtonViewModel = IconWithLabelButtonViewModel(
             selectedButtonState: selectedState,

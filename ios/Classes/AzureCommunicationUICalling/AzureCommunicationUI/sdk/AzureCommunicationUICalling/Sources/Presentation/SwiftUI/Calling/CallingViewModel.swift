@@ -194,6 +194,29 @@ internal class CallingViewModel: ObservableObject {
             store.dispatch(action: .localUserAction(.gridLayoutSelected))
         }
         
+        let isRaiseHandAvailable: Bool = {
+            guard store.state.callingState.status == .connected else { return false }
+            switch callType {
+            case .oneToNOutgoing, .oneToOneIncoming:
+                return store.state.remoteParticipantsState.totalParticipantCount > 2
+            default:
+                return true
+            }
+        }()
+        
+        let isReactionEnable: Bool = {
+            guard store.state.callingState.status == .connected else { return false }
+
+            switch callType {
+            case .oneToNOutgoing, .oneToOneIncoming:
+                return store.state.remoteParticipantsState.totalParticipantCount > 2
+            case .roomsCall:
+                return true
+            default:
+                return false
+            }
+        }()
+        
         meetingOptionsViewModel = compositeViewModelFactory.makeMeetingOptionsViewModel(
             localUserState: store.state.localUserState,
             localizationProvider: localizationProvider,
@@ -228,8 +251,8 @@ internal class CallingViewModel: ObservableObject {
             isRemoteParticipantsPresent: (isCallConnected || isOutgoingCall || isRemoteHold) &&
             CallingViewModel.hasRemoteParticipants(store.state.remoteParticipantsState.participantInfoList),
             isDisplayed: store.state.navigationState.meetignOptionsVisible,
-            isReactionEnable: callType == .roomsCall,
-            isRaiseHandAvailable: callingStatus == .connected,
+            isReactionEnable: isReactionEnable,
+            isRaiseHandAvailable: isRaiseHandAvailable,
             isLayoutOptionsEnable: !isWhiteBoardPresenting,
             isChatEnable: isChatEnable
         )
@@ -347,12 +370,36 @@ internal class CallingViewModel: ObservableObject {
             store.dispatch(action: .localUserAction(.gridLayoutSelected))
         }
         
+        let isRaiseHandAvailable: Bool = {
+            guard state.callingState.status == .connected else { return false }
+            switch callType {
+            case .oneToNOutgoing, .oneToOneIncoming:
+                return state.remoteParticipantsState.totalParticipantCount > 2
+            default:
+                return true
+            }
+        }()
+        
+        let isReactionEnable: Bool = {
+            guard state.callingState.status == .connected else { return false }
+
+            switch callType {
+            case .oneToNOutgoing, .oneToOneIncoming:
+                return state.remoteParticipantsState.totalParticipantCount > 2
+            case .roomsCall:
+                return true
+            default:
+                return false
+            }
+        }()
+        
         meetingOptionsViewModel.update(
             localUserState: state.localUserState,
             isDisplayed: state.navigationState.meetignOptionsVisible,
             isRemoteParticipantsPresent: isParticipantGridDisplayed,
-            isRaiseHandAvailable: state.callingState.status == .connected,
-            isLayoutOptionsEnable: !isWhiteBoardPresenting
+            isRaiseHandAvailable: isRaiseHandAvailable,
+            isLayoutOptionsEnable: !isWhiteBoardPresenting,
+            isReactionEnable: isReactionEnable
         )
         
         if (!isParticipantGridDisplayed && state.localUserState.shareScreenState.operation == .screenIsSharing) {
