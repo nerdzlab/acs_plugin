@@ -81,7 +81,7 @@ struct IconButton: View {
     var buttonForegroundColor: Color {
         switch viewModel.buttonType {
         case .controlButton:
-            return .red
+            return Color(UIColor.compositeColor(.purpleBlue))
         case .dismissButton:
             return Color(StyleProvider.color.onBackground)
         default:
@@ -136,11 +136,12 @@ struct IconButton: View {
         if viewModel.isVisible {
             Group {
                 Button(action: viewModel.action) {
-                    icon // Unstyled image view
+                    icon
+                        .foregroundColor(viewModel.isDisabled ? buttonDisabledColor : buttonForegroundColor)// Unstyled image view
                 }
                 .disabled(viewModel.isDisabled)
                 .frame(width: width, height: height, alignment: viewModel.buttonType == .backNavigation ? .top : .center)
-                .background(buttonBackgroundColor) // Apply background if needed
+                .background(buttonBackgroundColor)
                 .clipShape(RoundedCornersShape(radius: shapeCornerRadius, corners: roundedCorners))
                 .accessibilityLabel(Text(viewModel.accessibilityLabel ?? ""))
                 .accessibilityValue(Text(viewModel.accessibilityValue ?? ""))

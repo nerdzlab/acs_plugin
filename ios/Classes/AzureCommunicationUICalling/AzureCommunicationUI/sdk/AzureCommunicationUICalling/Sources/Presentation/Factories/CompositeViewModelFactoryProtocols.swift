@@ -16,10 +16,6 @@ protocol CompositeViewModelFactoryProtocol {
                                  buttonType: IconButtonViewModel.ButtonType,
                                  isDisabled: Bool,
                                  renderAsOriginal: Bool,
-                                 action: @escaping (() -> Void)) -> IconButtonViewModel
-    func makeIconButtonViewModel(iconName: CompositeIcon,
-                                 buttonType: IconButtonViewModel.ButtonType,
-                                 isDisabled: Bool,
                                  isVisible: Bool,
                                  action: @escaping (() -> Void)) -> IconButtonViewModel
     /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */

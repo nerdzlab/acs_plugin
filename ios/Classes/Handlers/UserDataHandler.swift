@@ -34,7 +34,8 @@ final class UserDataHandler: MethodHandler {
             
             guard let appGroup = UserDefaults.standard.getAppGroupIdentifier() else { return }
             
-            UserDefaults(suiteName: appGroup)?.saveUserData(userData)
+            UserDefaults.standard.saveUserData(userData)
+            UserDefaults(suiteName: appGroup)?.setLanguageCode(userData.languageCode)
             
             onUserDataReceived(userData)
         }

@@ -13,6 +13,7 @@ const _$EventTypeEnumMap = {
   EventType.onCallUIClosed: 'onCallUIClosed',
   EventType.onPluginStarted: 'onPluginStarted',
   EventType.onUserCallEnded: 'onUserCallEnded',
+  EventType.onOneOnOneCallEnded: 'onOneOnOneCallEnded',
   EventType.onRealTimeNotificationConnected: 'onRealTimeNotificationConnected',
   EventType.onRealTimeNotificationDisconnected:
       'onRealTimeNotificationDisconnected',

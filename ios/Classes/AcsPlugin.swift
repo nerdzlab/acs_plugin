@@ -177,14 +177,14 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             
             guard
                 let appGroup = UserDefaults.standard.getAppGroupIdentifier(),
-                let userData = UserDefaults(suiteName: appGroup)?.loadUserData()
+                let languageCode = UserDefaults(suiteName: appGroup)?.getLanguageCode()
             else {
                 return
             }
             
             //Localization
             let provider = LocalizationProvider(logger: DefaultLogger(category: "Calling"))
-            let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode))
+            let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: languageCode))
             provider.apply(localeConfig: localizationOptions)
             
             let callKitOptions = CallKitOptions(
@@ -215,8 +215,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     
     private func getCallComposite(callKitOptions: CallKitOptions) ->  CallComposite? {
         guard
-            let appGroup = UserDefaults.standard.getAppGroupIdentifier(),
-            let userData = UserDefaults(suiteName: appGroup)?.loadUserData(),
+            let userData = UserDefaults.standard.loadUserData(),
             let credential = try? CommunicationTokenCredential(token: userData.token)
         else {
             return nil

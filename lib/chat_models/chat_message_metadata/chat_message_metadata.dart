@@ -9,6 +9,7 @@ class ChatMessageMetadata with _$ChatMessageMetadata {
   const factory ChatMessageMetadata({
     @JsonKey(name: 'repliedTo', readValue: readValueAndDecodeObject)
     RepliedTo? repliedTo,
+    @ChatMetadataTypeConverter() @JsonKey(name: 'type') ChatMetadataType? type,
     @JsonKey(name: 'emojes', readValue: readValueAndDecodeObject)
     Emojes? emojes,
     String? version,
@@ -54,4 +55,27 @@ class Emojes with _$Emojes {
   }) = _Emojes;
 
   factory Emojes.fromJson(Map<String, dynamic> json) => _$EmojesFromJson(json);
+}
+
+enum ChatMetadataType {
+  videoSessionStart,
+  defaultType,
+}
+
+class ChatMetadataTypeConverter
+    implements JsonConverter<ChatMetadataType, String?> {
+  const ChatMetadataTypeConverter();
+
+  @override
+  ChatMetadataType fromJson(String? value) {
+    switch (value) {
+      case 'videoSessionStart':
+        return ChatMetadataType.videoSessionStart;
+      default:
+        return ChatMetadataType.defaultType;
+    }
+  }
+
+  @override
+  String toJson(ChatMetadataType type) => type.name;
 }

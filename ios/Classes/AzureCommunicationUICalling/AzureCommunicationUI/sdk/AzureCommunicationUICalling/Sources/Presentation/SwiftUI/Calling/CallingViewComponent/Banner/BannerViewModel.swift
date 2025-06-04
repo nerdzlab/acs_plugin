@@ -24,7 +24,7 @@ class BannerViewModel: ObservableObject {
         self.dismissButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .whiteClose,
             buttonType: .dismissButton,
-            isDisabled: false, renderAsOriginal: true) { [weak self] in
+            isDisabled: false, renderAsOriginal: true, isVisible: true) { [weak self] in
                 guard let self = self else {
                     return
                 }

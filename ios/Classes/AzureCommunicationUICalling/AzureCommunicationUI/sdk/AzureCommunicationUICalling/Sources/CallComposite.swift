@@ -53,6 +53,8 @@ public class CallComposite {
         public var onPluginStarted: (() -> Void)?
         /// Closure on room call ended
         public var onUserCallEnded: (() -> Void)?
+        /// Closure on one on one call ended
+        public var onOneOnOneCallEnded: (() -> Void)?
         /* <CALL_START_TIME>
         /// Closure to call start time updated.
         public var onCallStartTimeUpdated: ((Date) -> Void)?

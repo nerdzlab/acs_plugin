@@ -13,6 +13,7 @@ _$ChatMessageMetadataImpl _$$ChatMessageMetadataImplFromJson(
           ? null
           : RepliedTo.fromJson(readValueAndDecodeObject(json, 'repliedTo')
               as Map<String, dynamic>),
+      type: const ChatMetadataTypeConverter().fromJson(json['type'] as String?),
       emojes: readValueAndDecodeObject(json, 'emojes') == null
           ? null
           : Emojes.fromJson(
@@ -29,11 +30,19 @@ Map<String, dynamic> _$$ChatMessageMetadataImplToJson(
         _$ChatMessageMetadataImpl instance) =>
     <String, dynamic>{
       'repliedTo': instance.repliedTo,
+      'type': _$JsonConverterToJson<String?, ChatMetadataType>(
+          instance.type, const ChatMetadataTypeConverter().toJson),
       'emojes': instance.emojes,
       'version': instance.version,
       'fileSharingMetadata': instance.attachments,
       'isEdited': instance.isEdited,
     };
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);
 
 _$AttachmentsImpl _$$AttachmentsImplFromJson(Map<String, dynamic> json) =>
     _$AttachmentsImpl(

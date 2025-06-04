@@ -74,7 +74,7 @@ class InfoHeaderViewModel: ObservableObject {
         self.participantListButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .showParticipant,
             buttonType: .infoButton,
-            isDisabled: false, renderAsOriginal: true) { [weak self] in
+            isDisabled: false, renderAsOriginal: true, isVisible: true) { [weak self] in
                 guard let self = self else {
                     return
                 }
@@ -84,7 +84,7 @@ class InfoHeaderViewModel: ObservableObject {
         self.chatButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .chatIcon,
             buttonType: .infoButton,
-            isDisabled: false, renderAsOriginal: true) { [weak self] in
+            isDisabled: false, renderAsOriginal: true, isVisible: true) { [weak self] in
                 guard let self = self else {
                     return
                 }
@@ -97,7 +97,7 @@ class InfoHeaderViewModel: ObservableObject {
         dismissButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .leftArrow,
             buttonType: .infoButton,
-            isDisabled: false, renderAsOriginal: true) { [weak self] in
+            isDisabled: false, renderAsOriginal: true, isVisible: true) { [weak self] in
                 guard let self = self else {
                     return
                 }

@@ -167,8 +167,8 @@ struct LocalVideoView: View {
                 ),
                 backgroundColor: Color(UIColor.compositeColor(.purpleBlue)),
                 isSpeaking: false,
-                avatarSize:  viewModel.isInPip ? 50 : viewType.avatarSize,
-                fontSize: viewModel.isInPip ? 24 : viewType.initialFontSize
+                avatarSize:  (viewModel.isInPip && viewType == .localVideofull) ? 50 : viewType.avatarSize,
+                fontSize: (viewModel.isInPip && viewType == .localVideofull) ? 24 : viewType.initialFontSize
             )
         }
     }
