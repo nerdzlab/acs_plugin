@@ -171,17 +171,13 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             
             let providerConfig = CXProviderConfiguration()
             providerConfig.supportsVideo = true
-            providerConfig.maximumCallGroups = 1
-            providerConfig.includesCallsInRecents = true
+            providerConfig.maximumCallGroups = 2
+            providerConfig.includesCallsInRecents = false
             providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
             
-//            guard
-//                let appGroup = UserDefaults.standard.getAppGroupIdentifier(),
-//                let languageCode = UserDefaults(suiteName: appGroup)?.getLanguageCode()
-//            else {
-//                return
-//            }
-            
+            let appGroup = UserDefaults.standard.getAppGroupIdentifier() ?? "group.superbrain"
+            let languageCode = UserDefaults(suiteName: appGroup)?.getLanguageCode() ?? "nl"
+
             //Localization
             let provider = LocalizationProvider(logger: DefaultLogger(category: "Calling"))
             let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: "nl"))
@@ -240,7 +236,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     func subscribeToEvents(callComposite: CallComposite) {
-        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
+        let localOptions = LocalOptions(cameraOn: false, microphoneOn: true)
         
         let callKitCallAccepted: (String) -> Void = { [weak callComposite] callId in
             callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: localOptions)

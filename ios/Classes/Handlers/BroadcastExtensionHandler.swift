@@ -47,7 +47,9 @@ final class BroadcastExtensionHandler: MethodHandler {
     private var broadcastExtensionData: BroadcastExtensionData? {
         didSet {
             // Need to save this, to have access when app launch by call kit, to get access to shared UserDefaults by appGroup
-            UserDefaults.standard.setAppGroupIdentifier(broadcastExtensionData?.appGroupIdentifier)
+            if broadcastExtensionData != nil {
+                UserDefaults.standard.setAppGroupIdentifier(broadcastExtensionData!.appGroupIdentifier)
+            }
         }
     }
     
