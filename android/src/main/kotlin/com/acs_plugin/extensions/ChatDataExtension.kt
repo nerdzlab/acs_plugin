@@ -2,7 +2,6 @@ package com.acs_plugin.extensions
 
 import android.R.attr.type
 import com.acs_plugin.Constants
-import com.acs_plugin.calling.service.sdk.ext.id
 import com.azure.android.communication.chat.models.*
 import com.azure.android.communication.common.CommunicationIdentifier
 
@@ -152,7 +151,7 @@ fun ChatMessageReadReceipt.toMap(): MutableMap<String, Any?> {
 
 fun ChatParticipant.toMap(): MutableMap<String, Any?> {
     val map = mutableMapOf<String, Any?>()
-    map[Constants.JsonKeys.ID] = communicationIdentifier.id()
+    map[Constants.JsonKeys.ID] = communicationIdentifier.toMap()
     displayName?.let { map[Constants.JsonKeys.DISPLAY_NAME] = it }
     shareHistoryTime?.let { map[Constants.JsonKeys.SHARE_HISTORY_TIME] = it.toString() }
     return map
