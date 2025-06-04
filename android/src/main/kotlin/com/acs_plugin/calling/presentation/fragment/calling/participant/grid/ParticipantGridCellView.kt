@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import com.acs_plugin.R
 import com.acs_plugin.calling.models.CallCompositeParticipantViewData
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellAvatarView
+import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellMoreView
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellVideoView
 import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
 import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
@@ -29,26 +30,44 @@ internal class ParticipantGridCellView(
     private val getVideoStreamCallback: (String, String) -> View?,
     private val getScreenShareVideoStreamRendererCallback: () -> VideoStreamRenderer?,
     private val getParticipantViewDataCallback: (participantID: String) -> CallCompositeParticipantViewData?,
+    private val getMoreViewCallback: () -> Unit
 ) : RelativeLayout(context) {
 
     private lateinit var avatarView: ParticipantGridCellAvatarView
     private lateinit var videoView: ParticipantGridCellVideoView
+    private lateinit var moreView: ParticipantGridCellMoreView
+
+    private var isMoreParticipantsCell = false
 
     init {
-        inflate(context, R.layout.azure_communication_ui_calling_participant_avatar_view, this)
-        inflate(context, R.layout.azure_communication_ui_calling_participant_video_view, this)
-        createVideoView()
-        createAvatarView()
+        isMoreParticipantsCell = participantViewModel.getParticipantUserIdentifier() == ParticipantGridCellMoreView.MORE_VIEW_ID
+
+        if (isMoreParticipantsCell) {
+            inflate(context, R.layout.participant_more_view, this)
+            createMoreView()
+        } else {
+            inflate(context, R.layout.azure_communication_ui_calling_participant_avatar_view, this)
+            inflate(context, R.layout.azure_communication_ui_calling_participant_video_view, this)
+            createVideoView()
+            createAvatarView()
+        }
     }
 
     fun getParticipantIdentifier() = participantViewModel.getParticipantUserIdentifier()
+    fun isPrimaryParticipant() = participantViewModel.getIsPrimaryParticipant()
 
     fun updateParticipantViewData() {
-        if (::avatarView.isInitialized) {
-            avatarView.updateParticipantViewData()
-        }
-        if (::videoView.isInitialized) {
-            videoView.updateParticipantViewData()
+        if (isMoreParticipantsCell) {
+            if (::avatarView.isInitialized) {
+                avatarView.updateParticipantViewData()
+            }
+            if (::videoView.isInitialized) {
+                videoView.updateParticipantViewData()
+            }
+        } else {
+            if (::moreView.isInitialized) {
+                moreView.updateMoreViewData()
+            }
         }
     }
 
@@ -138,6 +157,22 @@ internal class ParticipantGridCellView(
             getScreenShareVideoStreamRendererCallback,
             getParticipantViewDataCallback,
             participantReactionOverlay
+        )
+    }
+
+    private fun createMoreView() {
+        val moreViewContainerFrameLayout: FrameLayout =
+            findViewById(R.id.participant_more_view_container)
+
+        val participantMoreCountTextView: MaterialTextView =
+            findViewById(R.id.participant_more_count)
+
+        moreView = ParticipantGridCellMoreView(
+            lifecycleScope,
+            moreViewContainerFrameLayout,
+            participantMoreCountTextView,
+            participantViewModel,
+            getMoreViewCallback
         )
     }
 }

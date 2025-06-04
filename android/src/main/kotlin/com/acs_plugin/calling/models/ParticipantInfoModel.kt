@@ -29,4 +29,10 @@ internal data class ParticipantInfoModel(
     var modifiedTimestamp: Number,
     var isRaisedHand: Boolean = false,
     var selectedReaction: ReactionType? = null,
-)
+    var isWhiteboard: Boolean = false,
+    var isPinned: Boolean = false
+) {
+    fun isPrimaryParticipant(): Boolean {
+        return isWhiteboard || isPinned
+    }
+}

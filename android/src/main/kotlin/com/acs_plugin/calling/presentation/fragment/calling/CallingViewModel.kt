@@ -344,9 +344,17 @@ internal class CallingViewModel(
         }
 
         if (shouldUpdateRemoteParticipantsViewModels(state)) {
+            var updatedRemoteParticipantsForGridView = remoteParticipantsForGridView.mapValues { (id, participant) ->
+                participant.copy(
+                    isWhiteboard = id == state.callState.whiteboardId,
+                )
+            }
+
+            updatedRemoteParticipantsForGridView = updatedRemoteParticipantsForGridView + getMockParticipants()
+
             participantGridViewModel.update(
                 remoteParticipantsMapUpdatedTimestamp = state.remoteParticipantState.participantMapModifiedTimestamp,
-                remoteParticipantsMap = remoteParticipantsForGridView,
+                remoteParticipantsMap = updatedRemoteParticipantsForGridView,
                 dominantSpeakersInfo = state.remoteParticipantState.dominantSpeakersInfo,
                 raisedHandInfo = state.remoteParticipantState.raisedHandsInfo,
                 dominantSpeakersModifiedTimestamp = state.remoteParticipantState.dominantSpeakersModifiedTimestamp,
@@ -527,5 +535,28 @@ internal class CallingViewModel(
         return shouldDisplayLobbyOverlay(state) ||
             state.callState.callingStatus == CallingStatus.LOCAL_HOLD ||
             state.rttState.isMaximized
+    }
+
+    private fun getMockParticipants(): Map<String, ParticipantInfoModel> {
+        val participants = mutableMapOf<String, ParticipantInfoModel>()
+        repeat(7) { index ->
+            val id = "mock_participant_$index"
+            participants[id] = ParticipantInfoModel(
+                displayName = "User $index",
+                userIdentifier = id,
+                isMuted = false,
+                isCameraDisabled = false,
+                isSpeaking = false,
+                isTypingRtt = false,
+                participantStatus = null,
+                screenShareVideoStreamModel = null,
+                cameraVideoStreamModel = null,
+                modifiedTimestamp = System.currentTimeMillis() + 256,
+                isRaisedHand = false,
+                selectedReaction = null,
+//                isWhiteboard = index == 0
+            )
+        }
+        return participants
     }
 }

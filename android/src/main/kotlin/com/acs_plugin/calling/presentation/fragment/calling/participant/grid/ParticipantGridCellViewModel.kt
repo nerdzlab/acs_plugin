@@ -21,7 +21,8 @@ internal class ParticipantGridCellViewModel(
     isRaisedHand: Boolean,
     modifiedTimestamp: Number,
     participantStatus: ParticipantStatus?,
-    reactionType: ReactionType?
+    reactionType: ReactionType?,
+    isPrimaryParticipant: Boolean
 ) {
     private var isOnHoldStateFlow = MutableStateFlow(isOnHold(participantStatus))
     private var isCallingStateFlow = MutableStateFlow(isCalling(participantStatus))
@@ -42,9 +43,14 @@ internal class ParticipantGridCellViewModel(
 
     private var participantModifiedTimestamp = modifiedTimestamp
     private var participantUserIdentifier = userIdentifier
+    private var isPrimaryParticipant = isPrimaryParticipant
 
     fun getParticipantUserIdentifier(): String {
         return participantUserIdentifier
+    }
+
+    fun getIsPrimaryParticipant(): Boolean {
+        return isPrimaryParticipant
     }
 
     fun showCallingTextStateFlow(): StateFlow<Boolean> {

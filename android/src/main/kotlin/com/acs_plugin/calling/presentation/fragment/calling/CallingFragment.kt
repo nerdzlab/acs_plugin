@@ -140,7 +140,8 @@ internal class CallingFragment :
             videoViewManager,
             viewLifecycleOwner,
             this::switchFloatingHeader,
-            avatarViewManager
+            avatarViewManager,
+            this::displayParticipantList
         )
 
         connectingLobbyOverlay = view.findViewById(R.id.azure_communication_ui_call_connecting_lobby_overlay)

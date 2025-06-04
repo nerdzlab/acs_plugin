@@ -21,6 +21,7 @@ internal class ParticipantGridCellViewModelFactory {
             participantInfoModel.isRaisedHand,
             participantInfoModel.modifiedTimestamp,
             participantInfoModel.participantStatus,
-            participantInfoModel.selectedReaction
+            participantInfoModel.selectedReaction,
+            participantInfoModel.isPrimaryParticipant()
         )
 }

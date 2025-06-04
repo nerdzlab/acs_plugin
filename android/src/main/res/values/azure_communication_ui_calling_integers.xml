@@ -3,5 +3,5 @@
    Licensed under the MIT License.
   -->
 <resources>
-    <integer name="azure_communication_ui_calling_max_remote_participants">6</integer>
+    <integer name="azure_communication_ui_calling_max_remote_participants">8</integer>
 </resources>

@@ -175,8 +175,9 @@ internal class LocalParticipantViewModel(
             callingState == CallingStatus.CONNECTED
 
     private fun getLocalParticipantViewMode(numberOfRemoteParticipants: Int): LocalParticipantViewMode {
-        return if (numberOfRemoteParticipants > 0)
-            LocalParticipantViewMode.SELFIE_PIP else LocalParticipantViewMode.FULL_SCREEN
+//        return if (numberOfRemoteParticipants > 0)
+//            LocalParticipantViewMode.SELFIE_PIP else LocalParticipantViewMode.FULL_SCREEN
+        return LocalParticipantViewMode.SELFIE_PIP
     }
 
     internal data class VideoModel(

@@ -5,6 +5,7 @@ package com.acs_plugin.calling.presentation.fragment.calling.participant.grid
 
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ReactionPayload
+import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellMoreView.Companion.MORE_VIEW_ID
 import com.acs_plugin.calling.presentation.fragment.factories.ParticipantGridCellViewModelFactory
 import com.acs_plugin.calling.redux.state.CaptionsState
 import com.acs_plugin.calling.redux.state.CaptionsStatus
@@ -94,7 +95,6 @@ internal class ParticipantGridViewModel(
         reaction: Map<String, ReactionPayload>,
         reactionModifiedTimestamp: Number
     ) {
-
         isOverlayDisplayedFlow.value = isOverlayDisplayedOverGrid
         isVerticalStyleGridMutableFlow.value = shouldUseVerticalStyleGrid(deviceConfigurationState, rttState, captionsState)
 
@@ -109,6 +109,8 @@ internal class ParticipantGridViewModel(
 
         remoteParticipantStateModifiedTimeStamp = remoteParticipantsMapUpdatedTimestamp
         dominantSpeakersStateModifiedTimestamp = dominantSpeakersModifiedTimestamp
+        raisedHandStateModifiedTimestamp = raisedHandModifiedTimestamp
+        reactionStateModifiedTimestamp = reactionModifiedTimestamp
         this.visibilityStatus = visibilityStatus
 
         var remoteParticipantsMapSorted = updateRemoteParticipantsRaisedHand(remoteParticipantsMap, raisedHandInfo)
@@ -123,17 +125,78 @@ internal class ParticipantGridViewModel(
             }
         } else {
             remoteParticipantsMapSorted = mapOf(
-                Pair(
-                    participantSharingScreen,
-                    remoteParticipantsMap[participantSharingScreen]!!
-                )
+                participantSharingScreen to remoteParticipantsMap[participantSharingScreen]!!
             )
         }
 
-        updateRemoteParticipantsVideoStreams(remoteParticipantsMapSorted)
+        val whiteboardParticipant = remoteParticipantsMapSorted.values.find { it.isWhiteboard }
+        val pinnedParticipant = remoteParticipantsMapSorted.values.find { it.isPinned && whiteboardParticipant == null }
 
-        updateDisplayedParticipants(remoteParticipantsMapSorted.toMutableMap())
+        val primaryParticipant = whiteboardParticipant ?: pinnedParticipant
+
+        val displayedParticipants: MutableList<ParticipantInfoModel>
+
+        if (primaryParticipant != null) {
+            val others = remoteParticipantsMapSorted.filterKeys { it != primaryParticipant.userIdentifier }.values
+            val secondary = others.take(2)
+
+            displayedParticipants = mutableListOf(primaryParticipant)
+            displayedParticipants.addAll(secondary)
+
+            val remainingCount = others.count() - secondary.count()
+            if (remainingCount > 0) {
+                displayedParticipants.removeAt(2)
+                displayedParticipants.add(
+                    ParticipantInfoModel(
+                        displayName = "+$remainingCount",
+                        userIdentifier = MORE_VIEW_ID,
+                        isMuted = true,
+                        isCameraDisabled = true,
+                        isSpeaking = false,
+                        isTypingRtt = false,
+                        participantStatus = null,
+                        screenShareVideoStreamModel = null,
+                        cameraVideoStreamModel = null,
+                        modifiedTimestamp = System.currentTimeMillis(),
+                        isRaisedHand = false,
+                        selectedReaction = null
+                    )
+                )
+            }
+        } else {
+            val sorted = sortRemoteParticipants(remoteParticipantsMapSorted, dominantSpeakersInfo)
+            val participants = sorted.values.take(8).toMutableList()
+            val remainingCount = sorted.size - participants.size
+
+            if (remainingCount > 0) {
+                participants.removeAt(7)
+                participants.add(
+                    ParticipantInfoModel(
+                        displayName = "+$remainingCount",
+                        userIdentifier = MORE_VIEW_ID,
+                        isMuted = true,
+                        isCameraDisabled = true,
+                        isSpeaking = false,
+                        isTypingRtt = false,
+                        participantStatus = null,
+                        screenShareVideoStreamModel = null,
+                        cameraVideoStreamModel = null,
+                        modifiedTimestamp = System.currentTimeMillis(),
+                        isRaisedHand = false,
+                        selectedReaction = null
+                    )
+                )
+            }
+
+            displayedParticipants = participants
+        }
+
+        val displayedParticipantsMap = displayedParticipants.associateBy { it.userIdentifier }.toMutableMap()
+
+        updateRemoteParticipantsVideoStreams(displayedParticipantsMap)
+        updateDisplayedParticipants(displayedParticipantsMap)
     }
+
 
     private fun shouldUseVerticalStyleGrid(
         deviceConfigurationState: DeviceConfigurationState,
@@ -210,9 +273,7 @@ internal class ParticipantGridViewModel(
 
         remoteParticipantsMapSorted.forEach { (id, participantInfoModel) ->
             displayedRemoteParticipantsViewModelMap[id] =
-                participantGridCellViewModelFactory.ParticipantGridCellViewModel(
-                    participantInfoModel,
-                )
+                participantGridCellViewModelFactory.ParticipantGridCellViewModel(participantInfoModel)
         }
 
         if (remoteParticipantsMapSorted.isNotEmpty() || viewModelsToRemoveCount > 0) {
@@ -230,7 +291,7 @@ internal class ParticipantGridViewModel(
     ): Map<String, ParticipantInfoModel> {
 
         val dominantSpeakersOrder = mutableMapOf<String, Int>()
-        for (i in 0 until min(maxRemoteParticipantSize, dominantSpeakersInfo.count())) {
+        for (i in 0 until min(remoteParticipantsMap.size, dominantSpeakersInfo.count())) {
             dominantSpeakersOrder[dominantSpeakersInfo[i]] = i
         }
 
@@ -265,7 +326,7 @@ internal class ParticipantGridViewModel(
 
         return remoteParticipantsMap.toList()
             .sortedWith(comparator)
-            .take(getMaxRemoteParticipantsSize())
+//            .take(getMaxRemoteParticipantsSize())
             .toMap()
     }
 

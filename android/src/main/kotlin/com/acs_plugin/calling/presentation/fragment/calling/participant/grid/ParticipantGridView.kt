@@ -22,21 +22,18 @@ import com.acs_plugin.calling.presentation.manager.AvatarViewManager
 import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
 import kotlinx.coroutines.launch
 
+/**
+ * A grid view to display participants in a call.
+ *
+ * This view is responsible for:
+ * -  Displaying remote participants' video streams or avatar.
+ * -  Arranging participants in a grid layout.
+ * -  Handling participant state updates (e.g., mute/unmute, speaking status).
+ * -  Managing accessibility features for the participant grid.
+ */
 internal class ParticipantGridView : GridLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-
-    companion object {
-        private const val SINGLE_PARTICIPANT = 1
-        private const val TWO_PARTICIPANTS = 2
-        private const val THREE_PARTICIPANTS = 3
-        private const val FOUR_PARTICIPANTS = 4
-        private const val FIVE_PARTICIPANTS = 5
-        private const val SIX_PARTICIPANTS = 6
-        private const val SEVEN_PARTICIPANTS = 7
-        private const val EIGHT_PARTICIPANTS = 8
-        private const val NINE_PARTICIPANTS = 9
-    }
 
     private lateinit var showFloatingHeaderCallBack: () -> Unit
     private lateinit var videoViewManager: VideoViewManager
@@ -48,6 +45,7 @@ internal class ParticipantGridView : GridLayout {
     private lateinit var accessibilityManager: AccessibilityManager
     private lateinit var displayedRemoteParticipantsView: MutableList<ParticipantGridCellView>
     private lateinit var getParticipantViewDataCallback: (participantID: String) -> CallCompositeParticipantViewData?
+    private lateinit var getMoreParticipantViewCallback: () -> Unit
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -67,9 +65,10 @@ internal class ParticipantGridView : GridLayout {
         viewLifecycleOwner: LifecycleOwner,
         showFloatingHeader: () -> Unit,
         avatarViewManager: AvatarViewManager,
+        getMoreParticipantViewCallback: () -> Unit,
     ) {
         accessibilityManager =
-            context?.applicationContext?.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+            context.applicationContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
 
         if (accessibilityManager.isEnabled) {
             ViewCompat.setAccessibilityDelegate(
@@ -91,22 +90,20 @@ internal class ParticipantGridView : GridLayout {
         this.viewLifecycleOwner = viewLifecycleOwner
         this.participantGridViewModel = participantGridViewModel
         this.showFloatingHeaderCallBack = showFloatingHeader
+        this.getMoreParticipantViewCallback = getMoreParticipantViewCallback
         this.getVideoStreamCallback = { participantID: String, videoStreamID: String ->
-            this.videoViewManager.getRemoteVideoStreamRenderer(
-                participantID,
-                videoStreamID
-            )
+            this.videoViewManager.getRemoteVideoStreamRenderer(participantID, videoStreamID)
         }
 
         this.getScreenShareVideoStreamRendererCallback = {
             this.videoViewManager.getScreenShareVideoStreamRenderer()
         }
 
-        this.participantGridViewModel.setUpdateVideoStreamsCallback { users: List<Pair<String, String>> ->
+        this.participantGridViewModel.setUpdateVideoStreamsCallback { users ->
             this.videoViewManager.removeRemoteParticipantVideoRenderer(users)
         }
 
-        this.getParticipantViewDataCallback = { participantID: String ->
+        this.getParticipantViewDataCallback = { participantID ->
             avatarViewManager.getRemoteParticipantViewData(participantID)
         }
 
@@ -116,7 +113,7 @@ internal class ParticipantGridView : GridLayout {
                     if (::displayedRemoteParticipantsView.isInitialized && displayedRemoteParticipantsView.isNotEmpty()) {
                         displayedRemoteParticipantsView.forEach { displayedParticipant ->
                             val identifier = displayedParticipant.getParticipantIdentifier()
-                            if (remoteParticipantViewData.keys.contains(identifier)) {
+                            if (remoteParticipantViewData.containsKey(identifier)) {
                                 displayedParticipant.updateParticipantViewData()
                             }
                         }
@@ -126,65 +123,32 @@ internal class ParticipantGridView : GridLayout {
 
         viewLifecycleOwner.lifecycleScope.launch {
             participantGridViewModel.getRemoteParticipantsUpdateStateFlow().collect {
-                post {
-                    updateGrid(it)
-                }
+                post { updateGrid(it) }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             participantGridViewModel.getIsOverlayDisplayedFlow().collect {
-                if (it) {
-                    ViewCompat.setImportantForAccessibility(
-                        gridView,
-                        ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
-                    )
+                val importantForAccessibility = if (it) {
+                    ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
                 } else {
-                    ViewCompat.setImportantForAccessibility(
-                        gridView,
-                        ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES
-                    )
+                    ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES
                 }
+                ViewCompat.setImportantForAccessibility(gridView, importantForAccessibility)
             }
         }
 
-        addOnLayoutChangeListener(object : OnLayoutChangeListener {
-            override fun onLayoutChange(
-                v: View,
-                left: Int,
-                top: Int,
-                right: Int,
-                bottom: Int,
-                oldLeft: Int,
-                oldTop: Int,
-                oldRight: Int,
-                oldBottom: Int,
-            ) {
-                if (isLaidOut) {
-                    removeOnLayoutChangeListener(this)
-                    post {
-                        updateGrid(participantGridViewModel.getRemoteParticipantsUpdateStateFlow().value)
-                    }
-                }
-            }
-        })
-
-        addOnLayoutChangeListener { _, left, top, right, bottom,
-            oldLeft, oldTop, oldRight, oldBottom ->
-            if (left != oldLeft ||
-                right != oldRight ||
-                top != oldTop ||
-                bottom != oldBottom
-            ) {
-                // The playerView's bounds changed, update the source hint rect to
-                // reflect its new bounds.
+        addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            if (left != oldLeft || right != oldRight || top != oldTop || bottom != oldBottom) {
                 val sourceRectHint = Rect()
                 getGlobalVisibleRect(sourceRectHint)
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            participantGridViewModel.participantUpdated.events.collect { updateContentDescription() }
+            participantGridViewModel.participantUpdated.events.collect {
+                updateContentDescription()
+            }
         }
     }
 
@@ -192,217 +156,160 @@ internal class ParticipantGridView : GridLayout {
         removeAllViews()
     }
 
-    private fun updateGrid(
-        displayedRemoteParticipantsViewModel: List<ParticipantGridCellViewModel>,
-    ) {
+    private fun updateGrid(displayedRemoteParticipantsViewModel: List<ParticipantGridCellViewModel>) {
         videoViewManager.updateScalingForRemoteStream()
         removeAllViews()
         displayedRemoteParticipantsView = mutableListOf()
+
         displayedRemoteParticipantsViewModel.forEach {
-            val participantView = createParticipantGridCellView(this.context, it)
+            val participantView = ParticipantGridCellView(
+                context,
+                viewLifecycleOwner.lifecycleScope,
+                it,
+                showFloatingHeaderCallBack,
+                getVideoStreamCallback,
+                getScreenShareVideoStreamRendererCallback,
+                getParticipantViewDataCallback,
+                getMoreParticipantViewCallback
+            )
             displayedRemoteParticipantsView.add(participantView)
         }
 
-        setGridRowsColumns(displayedRemoteParticipantsViewModel.size)
-
-        displayParticipants(displayedRemoteParticipantsView)
+        applyLayout(displayedRemoteParticipantsView)
     }
 
     private fun updateContentDescription() {
         val muted = context.getString(R.string.azure_communication_ui_calling_view_participant_list_muted_accessibility_label)
         val unmuted = context.getString(R.string.azure_communication_ui_calling_view_participant_list_unmuted_accessibility_label)
 
-        val participants =
-            participantGridViewModel.getRemoteParticipantsUpdateStateFlow().value.joinToString {
-                val muteState = if (it.getIsMutedStateFlow().value) muted else unmuted
-                "${it.getDisplayNameStateFlow().value}, $muteState."
-            }
+        val participants = participantGridViewModel.getRemoteParticipantsUpdateStateFlow().value.joinToString {
+            val muteState = if (it.getIsMutedStateFlow().value) muted else unmuted
+            "${it.getDisplayNameStateFlow().value}, $muteState."
+        }
 
         gridView.contentDescription = if (participants.isNotEmpty())
             context.getString(R.string.azure_communication_ui_calling_view_call_with_accessibility_label, participants)
         else context.getString(R.string.azure_communication_ui_calling_view_info_header_waiting_for_others_to_join)
     }
 
-    private fun displayParticipants(
-        displayedRemoteParticipantsView: List<ParticipantGridCellView>,
-    ) {
-        when (displayedRemoteParticipantsView.size) {
-            SINGLE_PARTICIPANT, TWO_PARTICIPANTS, FOUR_PARTICIPANTS, SIX_PARTICIPANTS, NINE_PARTICIPANTS, -> {
-                displayedRemoteParticipantsView.forEach {
-                    addParticipantToGrid(
-                        participantGridCellView = it
-                    )
+    private fun applyLayout(participants: List<ParticipantGridCellView>) {
+        val primary = participants.firstOrNull { it.isPrimaryParticipant() }
+
+        if (primary != null) {
+            val secondaries = participants.filter { !it.isPrimaryParticipant() }
+
+            // Layout: 2 rows, 1 column for primary full-width
+            setGridRowsColumn(2, 1)
+
+            val totalHeight = height
+            val primaryHeight = (totalHeight * 0.7f).toInt()
+            val secondaryHeight = totalHeight - primaryHeight
+
+            // Add primary to first row, full width
+            addParticipantToGrid(
+                rowSpan = 1,
+                columnSpan = 1,
+                participantGridCellView = primary,
+                customHeight = primaryHeight
+            )
+
+            // Prepare bottom row for secondaries
+            val secondaryRow = GridLayout(context).apply {
+                layoutParams = LayoutParams().apply {
+                    width = this@ParticipantGridView.width
+                    height = secondaryHeight
                 }
+                rowCount = 1
+                columnCount = 2
+                orientation = HORIZONTAL
             }
-            THREE_PARTICIPANTS -> {
-                // for 3 first participant will take two cells
-                if (participantGridViewModel.isVerticalStyleGridFlow.value) {
+
+            secondaries.take(2).forEach { secondary ->
+                val params = LayoutParams().apply {
+                    width = this@ParticipantGridView.width / 2
+                    height = secondaryHeight
+                }
+                secondary.layoutParams = params
+                detachFromParentView(secondary)
+                secondaryRow.addView(secondary)
+            }
+
+            this.addView(secondaryRow)
+        } else {
+            when (participants.size) {
+                3 -> {
+                    setGridRowsColumn(2, 2)
+
+                    val firstRow = participants.subList(0, 2)
+                    val secondRow = participants[2]
+
+                    firstRow.forEach {
+                        addParticipantToGrid(
+                            rowSpan = 1,
+                            columnSpan = 1,
+                            participantGridCellView = it,
+                            customHeight = height / 2,
+                            customWidth = width / 2
+                        )
+                    }
+
                     addParticipantToGrid(
+                        rowSpan = 1,
                         columnSpan = 2,
-                        participantGridCellView = displayedRemoteParticipantsView[0]
-                    )
-                } else {
-                    addParticipantToGrid(
-                        rowSpan = 2,
-                        participantGridCellView = displayedRemoteParticipantsView[0]
+                        participantGridCellView = secondRow,
+                        customWidth = width,
+                        customHeight = height / 2
                     )
                 }
 
-                displayedRemoteParticipantsView.forEachIndexed { index, participantGridCellView ->
-                    if (index > 0) {
-                        addParticipantToGrid(
-                            participantGridCellView = participantGridCellView
-                        )
-                    }
-                }
-            }
-            FIVE_PARTICIPANTS -> {
-                // for 5 number of participants, first participant will take two cells only on phones (< 7inch)
-                if (isTabletScreen()) {
-                    if (participantGridViewModel.isVerticalStyleGridFlow.value) {
-                        addParticipantToGrid(
-                            columnSpan = 2,
-                            rowSpan = 3,
-                            participantGridCellView = displayedRemoteParticipantsView[0]
-                        )
+                5 -> {
+                    setGridRowsColumn(3, 2)
 
-                        displayedRemoteParticipantsView.forEachIndexed { index, participantGridCellView ->
-                            if (index > 0) {
-                                if (index == 3) {
-                                    addParticipantToGrid(
-                                        columnSpan = 2,
-                                        rowSpan = 3,
-                                        participantGridCellView = participantGridCellView
-                                    )
-                                } else {
-                                    addParticipantToGrid(
-                                        columnSpan = 2,
-                                        rowSpan = 2,
-                                        participantGridCellView = participantGridCellView
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        displayedRemoteParticipantsView.forEachIndexed { index, participantGridCellView ->
-                            if (index < 3) {
-                                addParticipantToGrid(
-                                    rowSpan = 2,
-                                    columnSpan = 2,
-                                    participantGridCellView = participantGridCellView
-                                )
-                            } else {
-                                addParticipantToGrid(
-                                    columnSpan = 3,
-                                    rowSpan = 2,
-                                    participantGridCellView = participantGridCellView
-                                )
-                            }
-                        }
-                    }
-                } else {
-                    if (participantGridViewModel.isVerticalStyleGridFlow.value) {
+                    participants.subList(0, 4).forEach {
                         addParticipantToGrid(
-                            columnSpan = 2,
-                            participantGridCellView = displayedRemoteParticipantsView[0]
-                        )
-                    } else {
-                        addParticipantToGrid(
-                            rowSpan = 2,
-                            participantGridCellView = displayedRemoteParticipantsView[0]
+                            rowSpan = 1,
+                            columnSpan = 1,
+                            participantGridCellView = it,
+                            customHeight = height / 3,
+                            customWidth = width / 2
                         )
                     }
 
-                    displayedRemoteParticipantsView.forEachIndexed { index, participantGridCellView ->
-                        if (index > 0) {
-                            addParticipantToGrid(
-                                participantGridCellView = participantGridCellView
-                            )
-                        }
-                    }
-                }
-            }
-            SEVEN_PARTICIPANTS -> {
-                if (participantGridViewModel.isVerticalStyleGridFlow.value) {
                     addParticipantToGrid(
-                        rowSpan = 4,
-                        participantGridCellView = displayedRemoteParticipantsView[0]
-                    )
-                    addParticipantToGrid(
-                        rowSpan = 3,
-                        participantGridCellView = displayedRemoteParticipantsView[1]
-                    )
-                    displayedRemoteParticipantsView.forEachIndexed { index, participantGridCellView ->
-                        if (index > 1) {
-                            if (index % 2 == 0) {
-                                addParticipantToGrid(
-                                    rowSpan = 3,
-                                    participantGridCellView = participantGridCellView
-                                )
-                            } else {
-                                addParticipantToGrid(
-                                    rowSpan = 4,
-                                    participantGridCellView = participantGridCellView
-                                )
-                            }
-                        }
-                    }
-                } else {
-                    displayedRemoteParticipantsView.forEachIndexed { index, participantGridCellView ->
-                        if (index < 4) {
-                            addParticipantToGrid(
-                                columnSpan = 3,
-                                participantGridCellView = participantGridCellView
-                            )
-                        } else {
-                            addParticipantToGrid(
-                                columnSpan = 4,
-                                participantGridCellView = participantGridCellView
-                            )
-                        }
-                    }
-                }
-            }
-            EIGHT_PARTICIPANTS -> {
-                if (participantGridViewModel.isVerticalStyleGridFlow.value) {
-                    displayedRemoteParticipantsView.forEachIndexed { index, participantGridCellView ->
-                        if (index < 2) {
-                            addParticipantToGrid(
-                                rowSpan = 2,
-                                columnSpan = 3,
-                                participantGridCellView = participantGridCellView
-                            )
-                        } else {
-                            addParticipantToGrid(
-                                rowSpan = 2,
-                                columnSpan = 2,
-                                participantGridCellView = participantGridCellView
-                            )
-                        }
-                    }
-                } else {
-                    addParticipantToGrid(
-                        rowSpan = 3,
+                        rowSpan = 1,
                         columnSpan = 2,
-                        participantGridCellView = displayedRemoteParticipantsView[0]
+                        participantGridCellView = participants[4],
+                        customHeight = height / 3,
+                        customWidth = width
                     )
+                }
 
-                    displayedRemoteParticipantsView.forEachIndexed { index, participantGridCellView ->
-                        if (index > 0) {
-                            if (index == 5) {
-                                addParticipantToGrid(
-                                    rowSpan = 3,
-                                    columnSpan = 2,
-                                    participantGridCellView = participantGridCellView
-                                )
-                            } else {
-                                addParticipantToGrid(
-                                    rowSpan = 2,
-                                    columnSpan = 2,
-                                    participantGridCellView = participantGridCellView
-                                )
-                            }
-                        }
+                7 -> {
+                    setGridRowsColumn(4, 2)
+
+                    participants.subList(0, 6).forEach {
+                        addParticipantToGrid(
+                            rowSpan = 1,
+                            columnSpan = 1,
+                            participantGridCellView = it,
+                            customHeight = height / 4,
+                            customWidth = width / 2
+                        )
+                    }
+
+                    addParticipantToGrid(
+                        rowSpan = 1,
+                        columnSpan = 2,
+                        participantGridCellView = participants[6],
+                        customHeight = height / 4,
+                        customWidth = width
+                    )
+                }
+
+                else -> {
+                    setGridRowsColumns(participants.size)
+                    participants.forEach {
+                        addParticipantToGrid(participantGridCellView = it)
                     }
                 }
             }
@@ -411,71 +318,13 @@ internal class ParticipantGridView : GridLayout {
 
     private fun setGridRowsColumns(size: Int) {
         when (size) {
-            1 -> {
-                setGridRowsColumn(rows = 1, columns = 1)
-            }
-            2 -> {
-                if (participantGridViewModel.isVerticalStyleGridFlow.value) {
-                    setGridRowsColumn(rows = 2, columns = 1)
-                } else {
-                    setGridRowsColumn(rows = 1, columns = 2)
-                }
-            }
-            3, 4 -> {
-                setGridRowsColumn(rows = 2, columns = 2)
-            } 6 -> {
-                if (participantGridViewModel.isVerticalStyleGridFlow.value) {
-                    setGridRowsColumn(rows = 3, columns = 2)
-                } else {
-                    setGridRowsColumn(rows = 2, columns = 3)
-                }
-            }
-            5 -> {
-                if (isTabletScreen()) {
-                    if (participantGridViewModel.isVerticalStyleGridFlow.value) {
-                        setGridRowsColumn(rows = 6, columns = 4)
-                    } else {
-                        setGridRowsColumn(rows = 4, columns = 6)
-                    }
-                } else {
-                    if (participantGridViewModel.isVerticalStyleGridFlow.value) {
-                        setGridRowsColumn(rows = 3, columns = 2)
-                    } else {
-                        setGridRowsColumn(rows = 2, columns = 3)
-                    }
-                }
-            }
-            7 -> {
-                if (participantGridViewModel.isVerticalStyleGridFlow.value) {
-                    setGridRowsColumn(rows = 12, columns = 2)
-                } else {
-                    setGridRowsColumn(rows = 2, columns = 12)
-                }
-            }
-            8 -> {
-                setGridRowsColumn(rows = 6, columns = 6)
-            } 9 -> {
-                setGridRowsColumn(rows = 3, columns = 3)
-            }
+            1 -> setGridRowsColumn(1, 1)
+            2 -> setGridRowsColumn(2, 1)
+            3, 4 -> setGridRowsColumn(2, 2)
+            5, 6 -> setGridRowsColumn(3, 2)
+            7, 8 -> setGridRowsColumn(4, 2)
+            else -> setGridRowsColumn(4, 2)
         }
-    }
-
-    private fun addParticipantToGrid(
-        columnSpan: Int = 1,
-        rowSpan: Int = 1,
-        participantGridCellView: ParticipantGridCellView,
-    ) {
-        val rowSpec = spec(UNDEFINED, rowSpan)
-        val columnSpec = spec(UNDEFINED, columnSpan)
-        val params = LayoutParams(rowSpec, columnSpec)
-
-        params.width = this.width / (this.columnCount / columnSpan)
-        params.height = this.height / (this.rowCount / rowSpan)
-        this.orientation = HORIZONTAL
-
-        participantGridCellView.layoutParams = params
-        detachFromParentView(participantGridCellView)
-        this.addView(participantGridCellView)
     }
 
     private fun setGridRowsColumn(rows: Int, columns: Int) {
@@ -483,27 +332,27 @@ internal class ParticipantGridView : GridLayout {
         this.columnCount = columns
     }
 
+    private fun addParticipantToGrid(
+        columnSpan: Int = 1,
+        rowSpan: Int = 1,
+        participantGridCellView: ParticipantGridCellView,
+        customWidth: Int? = null,
+        customHeight: Int? = null
+    ) {
+        val rowSpec = spec(UNDEFINED, rowSpan)
+        val columnSpec = spec(UNDEFINED, columnSpan)
+        val params = LayoutParams(rowSpec, columnSpec)
+
+        params.width = customWidth ?: width / columnCount
+        params.height = customHeight ?: height / rowCount
+
+        this.orientation = HORIZONTAL
+        participantGridCellView.layoutParams = params
+        detachFromParentView(participantGridCellView)
+        this.addView(participantGridCellView)
+    }
+
     private fun detachFromParentView(view: View?) {
-        if (view != null && view.parent != null) {
-            (view.parent as ViewGroup).removeView(view)
-        }
+        (view?.parent as? ViewGroup)?.removeView(view)
     }
-
-    private fun isTabletScreen(): Boolean {
-        return participantGridViewModel.getMaxRemoteParticipantsSize() == NINE_PARTICIPANTS
-    }
-
-    private fun createParticipantGridCellView(
-        context: Context,
-        participantGridCellViewModel: ParticipantGridCellViewModel,
-    ): ParticipantGridCellView =
-        ParticipantGridCellView(
-            context,
-            viewLifecycleOwner.lifecycleScope,
-            participantGridCellViewModel,
-            showFloatingHeaderCallBack,
-            getVideoStreamCallback,
-            getScreenShareVideoStreamRendererCallback,
-            getParticipantViewDataCallback
-        )
 }
