@@ -452,7 +452,7 @@ class ChatHandler(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 messages = getChatThreadClient(threadId)?.listMessages(
-                    ListChatMessagesOptions().apply { setMaxPageSize(20) },
+                    ListChatMessagesOptions().apply { setMaxPageSize(200) },
                     RequestContext.NONE
                 )
                 handleResultSuccess(result, messages?.toList()?.map { it.toMap() })
@@ -477,7 +477,7 @@ class ChatHandler(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 messages = getChatThreadClient(threadId)?.listMessages(
-                    ListChatMessagesOptions().apply { setMaxPageSize(20) },
+                    ListChatMessagesOptions().apply { setMaxPageSize(200) },
                     RequestContext.NONE
                 )
                 handleResultSuccess(result, messages?.toList()?.map { it.toMap() })
