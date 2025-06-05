@@ -92,6 +92,8 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
     required String name,
     required String userId,
     required String languageCode,
+    required String appToken,
+    required String baseUrl,
   }) async {
     await methodChannel.invokeMethod(
       'setUserData',
@@ -100,6 +102,8 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         'name': name,
         'userId': userId,
         'languageCode': languageCode,
+        'appToken': appToken,
+        'baseUrl': baseUrl,
       },
     );
   }

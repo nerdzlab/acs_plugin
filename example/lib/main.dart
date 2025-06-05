@@ -272,11 +272,12 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _setUserData() async {
     try {
       await _acsPlugin.setUserData(
-        token: _acsToken,
-        name: "Yra",
-        userId: _userId,
-        languageCode: 'nl',
-      );
+          token: _acsToken,
+          name: "Yra",
+          userId: _userId,
+          languageCode: 'nl',
+          appToken: "",
+          baseUrl: "");
       log('Set user data successfully');
       _shwoSnacBar('Set user data successfully');
     } on PlatformException catch (error) {

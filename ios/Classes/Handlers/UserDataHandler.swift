@@ -17,6 +17,8 @@ final class UserDataHandler: MethodHandler {
         let name: String
         let userId: String
         let languageCode: String
+        let appToken: String
+        let baseUrl: String
     }
     
     private enum Constants {
@@ -66,9 +68,11 @@ final class UserDataHandler: MethodHandler {
                let token = arguments["token"] as? String,
                let name = arguments["name"] as? String,
                let userId = arguments["userId"] as? String,
-               let languageCode = arguments["languageCode"] as? String
+               let languageCode = arguments["languageCode"] as? String,
+               let appToken = arguments["appToken"] as? String,
+               let baseUrl = arguments["baseUrl"] as? String
             {
-                self.userData = UserData(token: token, name: name, userId: userId, languageCode: languageCode)
+                self.userData = UserData(token: token, name: name, userId: userId, languageCode: languageCode, appToken: appToken, baseUrl: baseUrl)
                 
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, name and userId are required", details: nil))
