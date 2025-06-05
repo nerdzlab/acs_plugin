@@ -297,11 +297,14 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         let audioSession = AVAudioSession.sharedInstance()
         
         do {
-            // Configure the session category
-            try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
+            // Категорія для запису і відтворення (телефонний режим)
+            try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth, .defaultToSpeaker])
             
-            // Activate the audio session
+            // Активуємо аудіосесію
             try audioSession.setActive(true)
+            
+            // Якщо потрібно — явно перенаправляємо звук на динамік (можна коментувати, якщо не треба)
+            try audioSession.overrideOutputAudioPort(.speaker)
             
             return nil
         } catch {
