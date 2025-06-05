@@ -246,14 +246,35 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         return callKitRemoteInfo
     }
     
-    public func configureAudioSession() -> Error? {
+    //    public func configureAudioSession() -> Error? {
+    //        let audioSession = AVAudioSession.sharedInstance()
+    //        var configError: Error?
+    //        
+    //        do {
+    //            // Keeping default .playAndRecord without forcing speaker
+    //            try audioSession.setCategory(.playAndRecord)
+    //        } catch {
+    //            configError = error
+    //        }
+    //        
+    //        return configError
+    //    }
+    
+    private func configureAudioSession() -> Error? {
         let audioSession = AVAudioSession.sharedInstance()
         var configError: Error?
-        
         do {
-            // Keeping default .playAndRecord without forcing speaker
-            try audioSession.setCategory(.playAndRecord)
-        } catch {
+            let options: AVAudioSession.CategoryOptions = [.allowBluetooth,
+                                                           .duckOthers,
+                                                           .interruptSpokenAudioAndMixWithOthers,
+                                                           .allowBluetoothA2DP]
+            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: options)
+            try audioSession.setActive(true)
+            // Work around for failure to grab ownership of microphone on first try.
+            // Reproduced on phone 11/13/14. iOS 14, 15, 16
+            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: options)
+            try audioSession.setActive(true)
+        } catch let error {
             configError = error
         }
         
