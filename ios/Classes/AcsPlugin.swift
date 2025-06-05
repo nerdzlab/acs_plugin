@@ -171,17 +171,13 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             
             let providerConfig = CXProviderConfiguration()
             providerConfig.supportsVideo = true
-            providerConfig.maximumCallGroups = 1
-            providerConfig.includesCallsInRecents = true
+            providerConfig.maximumCallGroups = 2
+            providerConfig.includesCallsInRecents = false
             providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
             
-            guard
-                let appGroup = UserDefaults.standard.getAppGroupIdentifier(),
-                let languageCode = UserDefaults(suiteName: appGroup)?.getLanguageCode()
-            else {
-                return
-            }
-            
+            let appGroup = UserDefaults.standard.getAppGroupIdentifier() ?? "group.superbrain"
+            let languageCode = UserDefaults(suiteName: appGroup)?.getLanguageCode() ?? "nl"
+
             //Localization
             let provider = LocalizationProvider(logger: DefaultLogger(category: "Calling"))
             let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: languageCode))
@@ -190,9 +186,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             let callKitOptions = CallKitOptions(
                 providerConfig: providerConfig,
                 isCallHoldSupported: true,
-                provideRemoteInfo: { caller in
-                return self.incomingCallRemoteInfo(info: caller, cxHandleValue: provider.getLocalizedString(LocalizationKey.incomingCall))
-            },
+                provideRemoteInfo: incomingCallRemoteInfo,
                 configureAudioSession: configureAudioSession
             )
             
@@ -242,7 +236,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     func subscribeToEvents(callComposite: CallComposite) {
-        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
+        let localOptions = LocalOptions(cameraOn: false, microphoneOn: true)
         
         let callKitCallAccepted: (String) -> Void = { [weak callComposite] callId in
             callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: localOptions)
@@ -267,8 +261,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
 //        return callKitOptions
 //    }
     
-    public func incomingCallRemoteInfo(info: Caller, cxHandleValue: String) -> CallKitRemoteInfo {
-        let cxHandle = CXHandle(type: .generic, value: cxHandleValue)
+    public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
+        let cxHandle = CXHandle(type: .generic, value: "Incoming call")
         var remoteInfoDisplayName = info.displayName
         
         if remoteInfoDisplayName.isEmpty {
