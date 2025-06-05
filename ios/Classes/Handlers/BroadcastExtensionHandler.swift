@@ -37,8 +37,6 @@ final class BroadcastExtensionHandler: MethodHandler {
         }
     }
     
-    
-    private let channel: FlutterMethodChannel
     private let onGetllComposite: () -> CallComposite?
     private let onSendEvent: (Event) -> Void
     
@@ -62,11 +60,9 @@ final class BroadcastExtensionHandler: MethodHandler {
     }
 
     init(
-        channel: FlutterMethodChannel,
         onGetllComposite: @escaping () -> CallComposite?,
         onSendEvent: @escaping (Event) -> Void
     ) {
-        self.channel = channel
         self.onGetllComposite = onGetllComposite
         self.onSendEvent = onSendEvent
         self.startListenBroadcastEvents()

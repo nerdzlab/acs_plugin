@@ -39,7 +39,6 @@ final class UserDataHandler: MethodHandler {
         }
     }
     
-    private let channel: FlutterMethodChannel
     private let onSubscribeToCallCompositeEvents: (CallComposite) -> Void
     private let onUserDataReceived: (UserData) -> Void
     
@@ -52,11 +51,9 @@ final class UserDataHandler: MethodHandler {
     }
     
     init(
-        channel: FlutterMethodChannel,
         onSubscribeToCallCompositeEvents: @escaping (CallComposite) -> Void,
         onUserDataReceived: @escaping (UserData) -> Void
     ) {
-        self.channel = channel
         self.onSubscribeToCallCompositeEvents = onSubscribeToCallCompositeEvents
         self.onUserDataReceived = onUserDataReceived
         self.setupTokenRefresh()

@@ -67,7 +67,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         eventChannel.setStreamHandler(instance)
         instance.eventChannel = eventChannel
         
-        instance.setupHandlers(channel: channel)
+        instance.setupHandlers()
         
         shared.setupPushKit()
     }
@@ -87,9 +87,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         result(FlutterMethodNotImplemented)
     }
     
-    private func setupHandlers(channel: FlutterMethodChannel) {
+    private func setupHandlers() {
         callHandler = CallHandler(
-            channel: channel,
             onGetllComposite: { [weak self] in
                 self?.userDataHandler.getCallComposite()
             },
@@ -99,7 +98,6 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         )
         
         broadcastExtensionHandler = BroadcastExtensionHandler(
-            channel: channel,
             onGetllComposite: { [weak self] in
                 self?.userDataHandler.getCallComposite()
             },
@@ -109,7 +107,6 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         )
         
         userDataHandler = UserDataHandler(
-            channel: channel,
             onSubscribeToCallCompositeEvents: { [weak self] callComposite in
                 self?.callHandler.subscribeToEvents(callComposite: callComposite)
                 self?.broadcastExtensionHandler.subscribeToEvents(callComposite: callComposite)
@@ -127,7 +124,6 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         )
         
         chatHandler = ChatHandler(
-            channel: channel,
             onGetUserData: { [weak self] in
                 self?.userDataHandler.getUserData()
             },
@@ -197,6 +193,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                         if let callCamposite = self.userDataHandler.getCallComposite() {
                             callCamposite.handlePushNotification(pushNotification: pushInfo)
                         } else {
+                            AcsPlugin.shared.setupHandlers()
                             self.getCallComposite(callKitOptions: callKitOptions)?.handlePushNotification(pushNotification: pushInfo)
                         }
                     }
@@ -227,7 +224,9 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
         
         if (GlobalCompositeManager.callComposite == nil) {
-            subscribeToEvents(callComposite: callComposite)
+//            subscribeToEvents(callComposite: callComposite)
+            broadcastExtensionHandler.subscribeToEvents(callComposite: callComposite)
+            callHandler.subscribeToEvents(callComposite: callComposite)
         }
         
         GlobalCompositeManager.callComposite = callComposite

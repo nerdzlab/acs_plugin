@@ -27,7 +27,6 @@ final class CallHandler: MethodHandler {
         }
     }
     
-    private let channel: FlutterMethodChannel
     private let onGetllComposite: () -> CallComposite?
     private let onSendEvent: (Event) -> Void
     
@@ -40,11 +39,9 @@ final class CallHandler: MethodHandler {
     }
 
     init(
-        channel: FlutterMethodChannel,
         onGetllComposite: @escaping () -> CallComposite?,
         onSendEvent: @escaping (Event) -> Void
     ) {
-        self.channel = channel
         self.onGetllComposite = onGetllComposite
         self.onSendEvent = onSendEvent
     }
