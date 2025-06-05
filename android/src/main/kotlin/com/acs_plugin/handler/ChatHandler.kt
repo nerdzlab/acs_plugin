@@ -19,7 +19,6 @@ import com.azure.android.communication.chat.ChatClientBuilder
 import com.azure.android.communication.chat.ChatThreadClient
 import com.azure.android.communication.chat.models.*
 import com.azure.android.communication.common.CommunicationTokenCredential
-import com.azure.android.core.rest.util.paging.PagedIterable
 import com.azure.android.core.util.RequestContext
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -35,13 +34,15 @@ class ChatHandler(
     private val onSendEvent: (Event) -> Unit
 ) : MethodHandler {
 
-    private var messages: PagedIterable<ChatMessage>? = null
     private var chatClient: ChatClient? = null
     private var chatAdapter: ChatAdapter? = null
 
     private val finishedResults = Collections.synchronizedSet(HashSet<MethodChannel.Result>())
 
     private val chatThreadClients = Collections.synchronizedMap(HashMap<String, ChatThreadClient>())
+
+    private var pagingContinuationToken: String? = null
+    private var allPagesFetched = false
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
@@ -449,13 +450,38 @@ class ChatHandler(
     }
 
     private fun getInitialMessages(threadId: String, result: MethodChannel.Result) {
+        // Reset pagination state
+        pagingContinuationToken = null
+        allPagesFetched = false
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                messages = getChatThreadClient(threadId)?.listMessages(
-                    ListChatMessagesOptions().apply { setMaxPageSize(200) },
-                    RequestContext.NONE
-                )
-                handleResultSuccess(result, messages?.toList()?.map { it.toMap() })
+                val threadClient = getChatThreadClient(threadId)
+                var messages = emptyList<Map<String, Any?>>()
+                var throwable: Throwable? = null
+
+                try {
+                    val options = ListChatMessagesOptions().apply { setMaxPageSize(200) }
+                    val pagedIterable = threadClient?.listMessages(options, RequestContext.NONE)
+                    val pagedResponse = pagedIterable?.byPage(null) // Start from the beginning
+
+                    val response = pagedResponse?.iterator()?.next()
+                    response?.apply {
+                        if (continuationToken == null) {
+                            allPagesFetched = true
+                        }
+                        pagingContinuationToken = continuationToken
+                        messages = elements.map { it.toMap() }
+                    }
+                } catch (ex: Exception) {
+                    throwable = ex
+                }
+
+                if (throwable != null) {
+                    handleResultError(result, "GET_INITIAL_MESSAGES_ERROR", throwable.message, null)
+                } else {
+                    handleResultSuccess(result, messages)
+                }
             } catch (e: Exception) {
                 handleResultError(result, "GET_INITIAL_MESSAGES_ERROR", e.message, null)
             }
@@ -476,11 +502,34 @@ class ChatHandler(
     private fun getPreviousMessages(threadId: String, result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                messages = getChatThreadClient(threadId)?.listMessages(
-                    ListChatMessagesOptions().apply { setMaxPageSize(200) },
-                    RequestContext.NONE
-                )
-                handleResultSuccess(result, messages?.toList()?.map { it.toMap() })
+                val threadClient = getChatThreadClient(threadId)
+                var messages = emptyList<Map<String, Any?>>()
+                var throwable: Throwable? = null
+
+                if (!allPagesFetched) {
+                    try {
+                        val options = ListChatMessagesOptions().apply { setMaxPageSize(200) }
+                        val pagedIterable = threadClient?.listMessages(options, RequestContext.NONE)
+                        val pagedResponse = pagedIterable?.byPage(pagingContinuationToken)
+
+                        val response = pagedResponse?.iterator()?.next()
+                        response?.apply {
+                            if (continuationToken == null) {
+                                allPagesFetched = true
+                            }
+                            pagingContinuationToken = continuationToken
+                            messages = elements.map { it.toMap() }
+                        }
+                    } catch (ex: Exception) {
+                        throwable = ex
+                    }
+                }
+
+                if (throwable != null) {
+                    handleResultError(result, "GET_PREVIOUS_MESSAGES_ERROR", throwable.message, null)
+                } else {
+                    handleResultSuccess(result, messages)
+                }
             } catch (e: Exception) {
                 handleResultError(result, "GET_PREVIOUS_MESSAGES_ERROR", e.message, null)
             }
@@ -501,8 +550,7 @@ class ChatHandler(
     private fun isChatHasMoreMessages(result: MethodChannel.Result) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val iterator = messages?.iterator()
-                handleResultSuccess(result, iterator?.hasNext())
+                handleResultSuccess(result, !allPagesFetched)
             } catch (e: Exception) {
                 handleResultError(result, "IS_CHAT_HAS_MORE_MESSAGES_ERROR", e.message, null)
             }
