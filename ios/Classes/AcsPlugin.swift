@@ -67,7 +67,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         eventChannel.setStreamHandler(instance)
         instance.eventChannel = eventChannel
         
-        instance.setupHandlers(channel: channel)
+        instance.setupHandlers()
         
         shared.setupPushKit()
     }
@@ -87,35 +87,31 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         result(FlutterMethodNotImplemented)
     }
     
-    private func setupHandlers(channel: FlutterMethodChannel) {
+    private func setupHandlers() {
         callHandler = CallHandler(
-            channel: channel,
-            onGetllComposite: { [weak self] in
-                self?.userDataHandler.getCallComposite()
-            },
             onSendEvent: { [weak self] event in
                 self?.sendEvent(event)
             }
         )
         
         broadcastExtensionHandler = BroadcastExtensionHandler(
-            channel: channel,
-            onGetllComposite: { [weak self] in
-                self?.userDataHandler.getCallComposite()
-            },
             onSendEvent: { [weak self] event in
                 self?.sendEvent(event)
             }
         )
         
         userDataHandler = UserDataHandler(
-            channel: channel,
-            onSubscribeToCallCompositeEvents: { [weak self] callComposite in
-                self?.callHandler.subscribeToEvents(callComposite: callComposite)
-                self?.broadcastExtensionHandler.subscribeToEvents(callComposite: callComposite)
-            },
             onUserDataReceived: { [weak self] userData in
-                self?.userDataHandler?.getCallComposite()?.registerPushNotifications(deviceRegistrationToken: self?.voipToken ?? Data()) { result in
+                let callComposit = CallCompositeManager.shared.getCallComposite(onSubscribeToCallCompositeEvents: { callComposite in
+                    
+//                    CallManager.shared.subscribeToEvents(callComposite: callComposite, onSendEvent: { [weak self] event in
+//                        self?.sendEvent(event)
+//                    })
+                    self?.callHandler.subscribeToEvents(callComposite: callComposite)
+                    self?.broadcastExtensionHandler.subscribeToEvents(callComposite: callComposite)
+                })
+                
+                callComposit?.registerPushNotifications(deviceRegistrationToken: self?.voipToken ?? Data()) { result in
                     switch result {
                     case .success:
                         print("Successfully registered for VoIP push notifications.")
@@ -127,7 +123,6 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         )
         
         chatHandler = ChatHandler(
-            channel: channel,
             onGetUserData: { [weak self] in
                 self?.userDataHandler.getUserData()
             },
@@ -162,7 +157,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             os_log("calling demo app: app is in foreground")
             
             let pushNotificationInfo = PushNotification(data: payload.dictionaryPayload)
-            userDataHandler.getCallComposite()?.handlePushNotification(pushNotification: pushNotificationInfo)
+            CallCompositeManager.shared.getCallComposite()?.handlePushNotification(pushNotification: pushNotificationInfo)
             os_log("callId---------------------\(pushNotificationInfo.callId)")
         } else {
             os_log("calling demo app: app is not in foreground")
@@ -177,7 +172,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             
             let appGroup = UserDefaults.standard.getAppGroupIdentifier() ?? "group.superbrain"
             let languageCode = UserDefaults(suiteName: appGroup)?.getLanguageCode() ?? "nl"
-
+            
             //Localization
             let provider = LocalizationProvider(logger: DefaultLogger(category: "Calling"))
             let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: languageCode))
@@ -186,115 +181,36 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             let callKitOptions = CallKitOptions(
                 providerConfig: providerConfig,
                 isCallHoldSupported: true,
-                provideRemoteInfo: incomingCallRemoteInfo,
-                configureAudioSession: configureAudioSession
+                provideRemoteInfo: CallManager.shared.incomingCallRemoteInfo,
+                configureAudioSession: CallManager.shared.configureAudioSession
             )
             
             CallComposite.reportIncomingCall(pushNotification: pushInfo,
                                              callKitOptions: callKitOptions) { result in
                 if case .success = result {
                     DispatchQueue.global().async {
-                        if let callCamposite = self.userDataHandler.getCallComposite() {
-                            callCamposite.handlePushNotification(pushNotification: pushInfo)
-                        } else {
-                            self.getCallComposite(callKitOptions: callKitOptions)?.handlePushNotification(pushNotification: pushInfo)
-                        }
+                        AcsPlugin.shared.setupHandlers()
+//                        if let callCamposite = self.userDataHandler.getCallComposite() {
+//                            callCamposite.handlePushNotification(pushNotification: pushInfo)
+//                        } else {
+//                            CallManager.shared.getCallComposite(callKitOptions: callKitOptions, onSendEvent: { [weak self] event in
+//                                self?.sendEvent(event)
+//                            }
+//                            )?.handlePushNotification(pushNotification: pushInfo)
+//                        }
+                        CallCompositeManager.shared.getCallComposite(callKitOptions: callKitOptions, onSubscribeToCallCompositeEvents: { [weak self] callComposite in
+                            self?.callHandler.subscribeToEvents(callComposite: callComposite)
+                            self?.broadcastExtensionHandler.subscribeToEvents(callComposite: callComposite)
+//                            CallManager.shared.subscribeToEvents(callComposite: callComposite, onSendEvent: { [weak self] event in
+//                                self?.sendEvent(event)
+//                            })
+                        })
                     }
                 } else {
                     os_log("calling demo app: failed on reportIncomingCall")
                 }
             }
         }
-    }
-    
-    private func getCallComposite(callKitOptions: CallKitOptions) ->  CallComposite? {
-        guard
-            let userData = UserDefaults.standard.loadUserData(),
-            let credential = try? CommunicationTokenCredential(token: userData.token)
-        else {
-            return nil
-        }
-        
-        let callCompositeOptions = CallCompositeOptions(
-            localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
-            enableMultitasking: true,
-            enableSystemPictureInPictureWhenMultitasking: true,
-            callKitOptions: callKitOptions,
-            displayName: userData.name,
-            userId: CommunicationUserIdentifier(userData.userId)
-        )
-        
-        let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
-        
-        if (GlobalCompositeManager.callComposite == nil) {
-            subscribeToEvents(callComposite: callComposite)
-        }
-        
-        GlobalCompositeManager.callComposite = callComposite
-        
-        return callComposite
-    }
-    
-    func subscribeToEvents(callComposite: CallComposite) {
-        let localOptions = LocalOptions(cameraOn: false, microphoneOn: true)
-        
-        let callKitCallAccepted: (String) -> Void = { [weak callComposite] callId in
-            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: localOptions)
-        }
-        
-        callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted
-    }
-    
-//    private func getCallKitOptions() -> CallKitOptions {
-//        let cxHandle = CXHandle(type: .generic, value: "Outgoing call")
-//        let providerConfig = CXProviderConfiguration()
-//        providerConfig.supportsVideo = true
-//        providerConfig.maximumCallGroups = 1
-//        providerConfig.maximumCallsPerCallGroup = 1
-//        providerConfig.includesCallsInRecents = true
-//        providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
-//        let isCallHoldSupported = true
-//        let callKitOptions = CallKitOptions(providerConfig: providerConfig,
-//                                            isCallHoldSupported: isCallHoldSupported,
-//                                            provideRemoteInfo: incomingCallRemoteInfo,
-//                                            configureAudioSession: configureAudioSession)
-//        return callKitOptions
-//    }
-    
-    public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
-        let cxHandle = CXHandle(type: .generic, value: "Incoming call")
-        var remoteInfoDisplayName = info.displayName
-        
-        if remoteInfoDisplayName.isEmpty {
-            remoteInfoDisplayName = info.identifier.rawId
-        }
-        
-        let callKitRemoteInfo = CallKitRemoteInfo(displayName: remoteInfoDisplayName,
-                                                  handle: cxHandle)
-        return callKitRemoteInfo
-    }
-    
-    public func configureAudioSession() -> Error? {
-        let audioSession = AVAudioSession.sharedInstance()
-        var configError: Error?
-        
-        // Check the current audio output route
-        let currentRoute = audioSession.currentRoute
-        let isUsingSpeaker = currentRoute.outputs.contains { $0.portType == .builtInSpeaker }
-        let isUsingReceiver = currentRoute.outputs.contains { $0.portType == .builtInReceiver }
-        
-        // Only configure the session if necessary (e.g., when not on speaker/receiver)
-        if !isUsingSpeaker && !isUsingReceiver {
-            do {
-                // Keeping default .playAndRecord without forcing speaker
-                try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
-                try audioSession.setActive(true)
-            } catch {
-                configError = error
-            }
-        }
-        
-        return configError
     }
     
     public func saveLaunchedChatNotification(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {

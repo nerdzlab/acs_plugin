@@ -27,8 +27,6 @@ final class CallHandler: MethodHandler {
         }
     }
     
-    private let channel: FlutterMethodChannel
-    private let onGetllComposite: () -> CallComposite?
     private let onSendEvent: (Event) -> Void
     
     private var isRealDevice: Bool {
@@ -40,12 +38,8 @@ final class CallHandler: MethodHandler {
     }
 
     init(
-        channel: FlutterMethodChannel,
-        onGetllComposite: @escaping () -> CallComposite?,
         onSendEvent: @escaping (Event) -> Void
     ) {
-        self.channel = channel
-        self.onGetllComposite = onGetllComposite
         self.onSendEvent = onSendEvent
     }
 
@@ -135,7 +129,7 @@ final class CallHandler: MethodHandler {
             callId: callId
         )
         
-        onGetllComposite()?.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
+        CallCompositeManager.shared.getCallComposite()?.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
     }
     
     private func startTeamsMeetingCall(
@@ -155,7 +149,7 @@ final class CallHandler: MethodHandler {
             callId: callId
         )
         
-        onGetllComposite()?.launch(locator: .teamsMeeting(teamsLink: meetingLink), localOptions: localOptions)
+        CallCompositeManager.shared.getCallComposite()?.launch(locator: .teamsMeeting(teamsLink: meetingLink), localOptions: localOptions)
     }
     
     private func startOneOnOneCall(
@@ -171,23 +165,25 @@ final class CallHandler: MethodHandler {
         
         let participants = participantsId.map { CommunicationUserIdentifier($0) }
         
-        onGetllComposite()?.launch(
+        CallCompositeManager.shared.getCallComposite()?.launch(
             participants: participants,
             localOptions: localOptions
         )
     }
     
     private func returnToCall() {
-        guard let callComposit = onGetllComposite() else { return }
+        guard let callComposit = CallCompositeManager.shared.getCallComposite() else { return }
         
         callComposit.isHidden = false
     }
     
+    private func getCallLocalOptions(azureCallId: String) -> LocalOptions {
+        return LocalOptions(cameraOn: false, microphoneOn: true, azureCallId: azureCallId)
+    }
+    
     func subscribeToEvents(callComposite: CallComposite) {
-        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
-        
-        let callKitCallAccepted: (String) -> Void = { [weak callComposite] callId in
-            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: localOptions)
+        let callKitCallAccepted: (String) -> Void = { [weak callComposite, weak self] callId in
+            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: self?.getCallLocalOptions(azureCallId: callId))
         }
         
         callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted

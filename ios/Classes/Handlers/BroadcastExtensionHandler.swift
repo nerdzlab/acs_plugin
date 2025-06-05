@@ -37,11 +37,7 @@ final class BroadcastExtensionHandler: MethodHandler {
         }
     }
     
-    
-    private let channel: FlutterMethodChannel
-    private let onGetllComposite: () -> CallComposite?
     private let onSendEvent: (Event) -> Void
-    
     private var client: Client!
     
     private var broadcastExtensionData: BroadcastExtensionData? {
@@ -62,12 +58,8 @@ final class BroadcastExtensionHandler: MethodHandler {
     }
 
     init(
-        channel: FlutterMethodChannel,
-        onGetllComposite: @escaping () -> CallComposite?,
         onSendEvent: @escaping (Event) -> Void
     ) {
-        self.channel = channel
-        self.onGetllComposite = onGetllComposite
         self.onSendEvent = onSendEvent
         self.startListenBroadcastEvents()
     }
@@ -128,7 +120,7 @@ final class BroadcastExtensionHandler: MethodHandler {
             self.client.connect()
             self.listenBufferData()
             
-            guard let callComposite = self.onGetllComposite() else { return }
+            guard let callComposite = CallCompositeManager.shared.getCallComposite() else { return }
             
             Task {
                 await callComposite.startScreenSharing()
@@ -141,7 +133,7 @@ final class BroadcastExtensionHandler: MethodHandler {
             self.client.stop()
             self.onSendEvent(Event(name: Constants.FlutterEvents.onStopScreenShare))
             
-            guard let callComposite = self.onGetllComposite() else { return }
+            guard let callComposite = CallCompositeManager.shared.getCallComposite() else { return }
             
             Task {
                 await callComposite.stopScreenSharing()
@@ -169,7 +161,7 @@ final class BroadcastExtensionHandler: MethodHandler {
         client.onBufferReceived = { [weak self] data in
             self?.logger.debug("Received buffer data")
             
-            guard let callComposite = self?.onGetllComposite(), let buffer = data else {
+            guard let callComposite = CallCompositeManager.shared.getCallComposite(), let buffer = data else {
                 self?.logger.debug("callComposite or data is nil, ignore buffer data")
                 return
             }
