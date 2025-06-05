@@ -166,15 +166,28 @@ final class UserDataHandler: MethodHandler {
     
     private func setupTokenRefresh() {
         tokenRefresher = { [weak self] tokenCompletionHandler in
-            //            self?.channel.invokeMethod("getToken", arguments: nil, result: { result in
-            //                if let token = result as? String {
-            tokenCompletionHandler("token", nil)
-            //                } else {
-            //                    let error = NSError(domain: "TokenError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch token"])
-            //                    tokenCompletionHandler(nil, error)
-            //                }
-            //            }
-            //            )
+            NetworkHandler.fetchAzureToken { result in
+                switch result {
+                case .success(let token):
+                    debugPrint("✅ Token: \(token)")
+                    tokenCompletionHandler(token, nil)
+                    
+                    guard let userData = self?.userData else { return }
+                            
+                    self?.userData = UserData(
+                        token: token,
+                        name: userData.name,
+                        userId: userData.userId,
+                        languageCode: userData.languageCode,
+                        appToken: userData.token,
+                        baseUrl: userData.baseUrl
+                    )
+                    
+                case .failure(let error):
+                    debugPrint("❌ Error: \(error)")
+                    tokenCompletionHandler(nil, error)
+                }
+            }
         }
     }
 }

@@ -276,8 +276,9 @@ class _CallScreenState extends State<CallScreen> {
           name: "Yra",
           userId: _userId,
           languageCode: 'nl',
-          appToken: "",
-          baseUrl: "");
+          appToken:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA1YTI0NzdhLWRmODUtNGRiNy1iNzQ5LWYyMjQwNzAxOGIzZCIsIm9yZ2FuaXphdGlvbl9pZCI6IjY1NzU2ZTgzLTAwYjUtNDc1NS04M2EzLTAwZGQyYzFhYTY5MSIsImlzX29uYm9hcmRlZCI6dHJ1ZSwic3luY19wYXRpZW50X2RhdGEiOmZhbHNlLCJ2aWRlb19jYWxsX3Byb3ZpZGVyIjoiaG1zIiwiaHR0cHM6Ly9oYXN1cmEuaW8vand0L2NsYWltcyI6eyJ4LWhhc3VyYS1hbGxvd2VkLXJvbGVzIjpbInVzZXIiXSwieC1oYXN1cmEtZGVmYXVsdC1yb2xlIjoidXNlciIsIngtaGFzdXJhLXVzZXItaWQiOiIwNWEyNDc3YS1kZjg1LTRkYjctYjc0OS1mMjI0MDcwMThiM2QifSwicm9sZSI6InVzZXIiLCJhY2NvdW50X3R5cGUiOm51bGwsImlhdCI6MTc0OTEzMjExOSwiZXhwIjoxNzUxNzI0MTE5LCJzdWIiOiIwNWEyNDc3YS1kZjg1LTRkYjctYjc0OS1mMjI0MDcwMThiM2QifQ.75JB4Jr0Oebx5eF7nlJQxBu9Oe_BytEZ-LrF9vYKkDo",
+          baseUrl: "https://api-msteam.superbrains.nl/v1/graphql");
       log('Set user data successfully');
       _shwoSnacBar('Set user data successfully');
     } on PlatformException catch (error) {

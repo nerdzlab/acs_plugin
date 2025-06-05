@@ -7,6 +7,7 @@
 import Flutter
 import AzureCommunicationCalling
 import AzureCommunicationCommon
+import Foundation
 
 final class CallHandler: MethodHandler {
     private enum Constants {
