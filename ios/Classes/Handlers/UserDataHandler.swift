@@ -24,7 +24,7 @@ final class UserDataHandler: MethodHandler {
     private enum Constants {
         enum MethodChannels {
             static let setUserData = "setUserData"
-            static let getToken = "getToken"
+            static let unregisterPushNotifications = "unregisterPushNotifications"
         }
     }
     
@@ -43,6 +43,7 @@ final class UserDataHandler: MethodHandler {
     
     private let onSubscribeToCallCompositeEvents: (CallComposite) -> Void
     private let onUserDataReceived: (UserData) -> Void
+    private let unregisterPushNotifications: () -> Void
     
     private var isRealDevice: Bool {
 #if targetEnvironment(simulator)
@@ -54,10 +55,12 @@ final class UserDataHandler: MethodHandler {
     
     init(
         onSubscribeToCallCompositeEvents: @escaping (CallComposite) -> Void,
-        onUserDataReceived: @escaping (UserData) -> Void
+        onUserDataReceived: @escaping (UserData) -> Void,
+        unregisterPushNotifications: @escaping () -> Void
     ) {
         self.onSubscribeToCallCompositeEvents = onSubscribeToCallCompositeEvents
         self.onUserDataReceived = onUserDataReceived
+        self.unregisterPushNotifications = unregisterPushNotifications
         self.setupTokenRefresh()
     }
     
@@ -77,6 +80,11 @@ final class UserDataHandler: MethodHandler {
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, name and userId are required", details: nil))
             }
+            
+            return true
+            
+        case Constants.MethodChannels.unregisterPushNotifications:
+            unregisterPushNotifications()
             
             return true
             

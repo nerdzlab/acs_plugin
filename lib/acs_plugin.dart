@@ -186,6 +186,10 @@ class AcsPlugin {
     await AcsPluginPlatform.instance.disconnectChatService();
   }
 
+  Future<void> unregisterPushNotifications() async {
+    await AcsPluginPlatform.instance.unregisterPushNotifications();
+  }
+
 // Stream to listen for events
   Stream<Map<String, dynamic>> get eventStream {
     return AcsPluginPlatform.instance.eventStream;

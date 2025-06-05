@@ -157,6 +157,11 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
+  Future<void> unregisterPushNotifications() async {
+    await methodChannel.invokeMethod('unregisterPushNotifications');
+  }
+
+  @override
   Future<List<Map<String, dynamic>>> getInitialMessages({
     required String threadId,
   }) async {

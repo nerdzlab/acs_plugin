@@ -363,6 +363,10 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
+  Future<void> _unregisterPushNotifications() async {
+    _acsPlugin.unregisterPushNotifications();
+  }
+
   // Get info if chat has more messages
   Future<void> _isChatHasMoreMessages() async {
     try {
@@ -504,6 +508,13 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'Is more threads available',
                   onTap: _isMoreThreadsAvailable,
+                  icon: Icons.message,
+                ),
+              ]),
+              _buildButtonGrid([
+                ButtonConfig(
+                  label: 'Unregister voip push',
+                  onTap: _unregisterPushNotifications,
                   icon: Icons.message,
                 ),
               ]),

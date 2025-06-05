@@ -120,6 +120,16 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                         print("Failed to register for VoIP push notifications: \(error)")
                     }
                 }
+            },
+            unregisterPushNotifications: { [weak self] in
+                self?.userDataHandler.getCallComposite()?.unregisterPushNotifications() { result in
+                    switch result {
+                    case .success:
+                        print("Successfully unregistered for VoIP push notifications.")
+                    case .failure(let error):
+                        print("Failed to unregister for VoIP push notifications: \(error)")
+                    }
+                }
             }
         )
         
@@ -249,14 +259,14 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     //    public func configureAudioSession() -> Error? {
     //        let audioSession = AVAudioSession.sharedInstance()
     //        var configError: Error?
-    //        
+    //
     //        do {
     //            // Keeping default .playAndRecord without forcing speaker
     //            try audioSession.setCategory(.playAndRecord)
     //        } catch {
     //            configError = error
     //        }
-    //        
+    //
     //        return configError
     //    }
     

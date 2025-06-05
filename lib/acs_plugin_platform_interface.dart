@@ -85,6 +85,11 @@ abstract class AcsPluginPlatform extends PlatformInterface {
         'disconnectChatService() has not been implemented.');
   }
 
+  Future<void> unregisterPushNotifications() async {
+    throw UnimplementedError(
+        'unregisterPushNotifications() has not been implemented.');
+  }
+
   Future<List<Map<String, dynamic>>> getInitialMessages({
     required String threadId,
   }) async {
