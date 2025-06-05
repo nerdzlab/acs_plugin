@@ -1,6 +1,9 @@
 package com.acs_plugin.utils
 
 import io.flutter.plugin.common.EventChannel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object FlutterEventDispatcher {
 
@@ -17,6 +20,9 @@ object FlutterEventDispatcher {
     fun sendEvent(event: String, payload: Any? = null) {
         val eventMap = mutableMapOf<String, Any>("event" to event)
         payload?.let { eventMap["payload"] = it }
-        eventSink?.success(eventMap)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            eventSink?.success(eventMap)
+        }
     }
 }

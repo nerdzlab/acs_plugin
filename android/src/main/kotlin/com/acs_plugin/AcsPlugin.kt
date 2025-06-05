@@ -37,15 +37,6 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         channel.setMethodCallHandler(this)
 
         eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "acs_plugin_events")
-        eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
-            override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-                FlutterEventDispatcher.setEventSink(events)
-            }
-
-            override fun onCancel(arguments: Any?) {
-                FlutterEventDispatcher.clear()
-            }
-        })
     }
 
     // ActivityAware callbacks:
