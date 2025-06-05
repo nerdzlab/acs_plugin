@@ -120,15 +120,15 @@ final class UserDataHandler: MethodHandler {
     
     private func setupTokenRefresh() {
         tokenRefresher = { [weak self] tokenCompletionHandler in
-            self?.channel.invokeMethod("getToken", arguments: nil, result: { result in
-                if let token = result as? String {
-                    tokenCompletionHandler(token, nil)
-                } else {
-                    let error = NSError(domain: "TokenError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch token"])
-                    tokenCompletionHandler(nil, error)
-                }
-            }
-            )
+//            self?.channel.invokeMethod("getToken", arguments: nil, result: { result in
+//                if let token = result as? String {
+                    tokenCompletionHandler("token", nil)
+//                } else {
+//                    let error = NSError(domain: "TokenError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch token"])
+//                    tokenCompletionHandler(nil, error)
+//                }
+//            }
+//            )
         }
     }
 }
