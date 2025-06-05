@@ -44,7 +44,7 @@ public class CallComposite {
         /// Closure to execute when participant has left a call inside Call Composite
         public var onRemoteParticipantLeft: (([CommunicationIdentifier]) -> Void)?
         /// Closure to show shat
-        public var onShowUserChat: (() -> Void)?
+        public var onShowUserChat: ((_ azureCorrelationId: String?) -> Void)?
         /// Closure to start screen share
         public var onStartScreenSharing: (() -> Void)?
         /// Closure to stop screen share

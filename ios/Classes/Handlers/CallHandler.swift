@@ -181,16 +181,22 @@ final class CallHandler: MethodHandler {
     }
     
     func subscribeToEvents(callComposite: CallComposite) {
-        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
+        func getLocalOptions(azureCorrelationId: String?) -> LocalOptions {
+            return LocalOptions(cameraOn: false, isChatEnable: true, microphoneOn: true, azureCorrelationId: azureCorrelationId)
+        }
         
         let callKitCallAccepted: (String) -> Void = { [weak callComposite] callId in
-            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: localOptions)
+            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: getLocalOptions(azureCorrelationId: callId))
         }
         
         callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted
         
-        let showChatEvent: () -> Void = { [weak self] in
-            self?.onSendEvent(Event(name: Constants.FlutterEvents.onShowChat))
+        let showChatEvent: (String?) -> Void = { [weak self] azureCorrelationId in
+            if azureCorrelationId != nil {
+                self?.onSendEvent(Event(name: Constants.FlutterEvents.onShowChat, payload: ["azureCorrelationId": azureCorrelationId]))
+            } else {
+                self?.onSendEvent(Event(name: Constants.FlutterEvents.onShowChat))
+            }
         }
         
         callComposite.events.onShowUserChat = showChatEvent

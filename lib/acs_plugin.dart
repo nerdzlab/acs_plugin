@@ -32,7 +32,7 @@ class AcsPlugin {
 
   VoidCallback? onStopScreenShare;
   VoidCallback? onStartScreenShare;
-  VoidCallback? onShowChat;
+  Function(String?)? onShowChat;
   VoidCallback? onCallUIClosed;
   VoidCallback? onPluginStarted;
   VoidCallback? onUserCallEnded;
@@ -198,8 +198,13 @@ class AcsPlugin {
         onStartScreenShare?.call();
         break;
       case EventType.onShowChat:
+        if (event.payload != null) {
+          final azureCorrelationId = event.payload["azureCorrelationId"];
+          onShowChat?.call(azureCorrelationId);
+        } else {
+          onShowChat?.call(null);
+        }
         log("Show chat triggered");
-        onShowChat?.call();
         break;
       case EventType.onCallUIClosed:
         log("Call UI closed");

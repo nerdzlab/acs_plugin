@@ -53,15 +53,7 @@ class _CallScreenState extends State<CallScreen> {
 
   // Configuration constants - move to a config file in a real app
   String get _acsToken {
-    if (_isSuperBrainsMode) {
-      return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjZkMTQxM2NmLTJkMjQtNDE5MS1hNTcwLTExZGE5MTZlODQyNV8wMDAwMDAyNy1iNjUwLWUxODQtNWI0Mi1hZDNhMGQwMDRkNjEiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDkwMjMxOTgiLCJleHAiOjE3NDkxMDk1OTgsInJnbiI6ImRlIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiNmQxNDEzY2YtMmQyNC00MTkxLWE1NzAtMTFkYTkxNmU4NDI1IiwicmVzb3VyY2VMb2NhdGlvbiI6Imdlcm1hbnkiLCJpYXQiOjE3NDkwMjMxOTh9.tVDNonWEP-YedwYWCiPQ6OCsF2HsFwKglmo3HxrjqaWBH1jR411IV9_nQgqKpcxfwdPwh1nPi1GIiwY3-8XyQVD2DAMsYr7CapYzC-C1iqnU53WnJR-JeDsUFpm4s2NEQ5140ejqc9BD0AHPpEJm6fS5OrCHekggadZaR3VBQrCSo1gFtgBCfvXxTts-Fwr74UDNeugKF2rmkktoUb3LI6LasUi4PAwJiZgpq1WBGbsq7Nee_eRcd4fpHFxjLm759iHmDMg-GLIdJndUEzMe7eeIZY-sHxAO41FqBT92tUuf23kClQO8HYNe0d-t_elkIwPZm9l1Bn0vFpvGjdq1Yg";
-    }
-
-    // if (isRealDevice) {
-    // return Constants.userOneToken;
-    // } else {
     return Constants.userOneToken;
-    // }
   }
 
   String get _chatToken {
@@ -93,15 +85,7 @@ class _CallScreenState extends State<CallScreen> {
   static const String _teemsMeetingLink = Constants.teemsMeetingLink;
 
   String get _userId {
-    if (_isSuperBrainsMode) {
-      return "8:acs:6d1413cf-2d24-4191-a570-11da916e8425_00000027-b650-e184-5b42-ad3a0d004d61";
-    }
-
-    // if (isRealDevice) {
-    // return Constants.userOneId;
-    // } else {
     return Constants.userOneId;
-    // }
   }
 
   String get _otherUserId {
@@ -153,9 +137,10 @@ class _CallScreenState extends State<CallScreen> {
       ..onStartScreenShare = () {
         log("Screen sharing started");
       }
-      ..onShowChat = () {
-        log("Show chat triggered");
-        _shwoSnacBar("Show chat");
+      ..onShowChat = (azureCorrelationId) {
+        log("Show chat triggered for azureCorrelationId ${azureCorrelationId}");
+        _shwoSnacBar(
+            "Show chat triggered for azureCorrelationId ${azureCorrelationId}");
       }
       ..onPluginStarted = () {
         log("Plugin started");

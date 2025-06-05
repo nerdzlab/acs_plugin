@@ -118,17 +118,59 @@ final class UserDataHandler: MethodHandler {
         return userData
     }
     
+    private func getCallKitOptions() -> CallKitOptions {
+        let cxHandle = CXHandle(type: .generic, value: "Outgoing call")
+        let providerConfig = CXProviderConfiguration()
+        providerConfig.supportsVideo = true
+        providerConfig.maximumCallGroups = 2
+        providerConfig.includesCallsInRecents = false
+        providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
+        let isCallHoldSupported = true
+        let callKitOptions = CallKitOptions(providerConfig: providerConfig,
+                                            isCallHoldSupported: isCallHoldSupported,
+                                            provideRemoteInfo: incomingCallRemoteInfo,
+                                            configureAudioSession: configureAudioSession)
+        return callKitOptions
+    }
+    
+    public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
+        let cxHandle = CXHandle(type: .generic, value: "Incoming call")
+        var remoteInfoDisplayName = info.displayName
+        
+        if remoteInfoDisplayName.isEmpty {
+            remoteInfoDisplayName = info.identifier.rawId
+        }
+        
+        let callKitRemoteInfo = CallKitRemoteInfo(displayName: remoteInfoDisplayName,
+                                                  handle: cxHandle)
+        return callKitRemoteInfo
+    }
+    
+    private func configureAudioSession() -> Error? {
+        let audioSession = AVAudioSession.sharedInstance()
+        var configError: Error?
+        
+        do {
+            // Keeping default .playAndRecord without forcing speaker
+            try audioSession.setCategory(.playAndRecord)
+        } catch {
+            configError = error
+        }
+        
+        return configError
+    }
+    
     private func setupTokenRefresh() {
         tokenRefresher = { [weak self] tokenCompletionHandler in
-//            self?.channel.invokeMethod("getToken", arguments: nil, result: { result in
-//                if let token = result as? String {
-                    tokenCompletionHandler("token", nil)
-//                } else {
-//                    let error = NSError(domain: "TokenError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch token"])
-//                    tokenCompletionHandler(nil, error)
-//                }
-//            }
-//            )
+            //            self?.channel.invokeMethod("getToken", arguments: nil, result: { result in
+            //                if let token = result as? String {
+            tokenCompletionHandler("token", nil)
+            //                } else {
+            //                    let error = NSError(domain: "TokenError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch token"])
+            //                    tokenCompletionHandler(nil, error)
+            //                }
+            //            }
+            //            )
         }
     }
 }

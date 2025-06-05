@@ -45,6 +45,7 @@ internal class CallingViewModel: ObservableObject {
     var shareMeetingLinkViewModel: ShareMeetingInfoActivityViewModel!
     let isRightToLeft: Bool
     let whiteBoardId: String?
+    var azureCorrelationId: String?
 
     var controlBarViewModel: ControlBarViewModel!
     var infoHeaderViewModel: InfoHeaderViewModel!
@@ -75,7 +76,8 @@ internal class CallingViewModel: ObservableObject {
          callScreenOptions: CallScreenOptions,
          rendererViewManager: RendererViewManager,
          isChatEnable: Bool,
-         whiteBoardId: String?
+         whiteBoardId: String?,
+         azureCorrelationId: String?
     ) {
         self.store = store
         self.compositeViewModelFactory = compositeViewModelFactory
@@ -90,6 +92,7 @@ internal class CallingViewModel: ObservableObject {
         self.isChatEnabled = isChatEnable
         self.shareMeetingLinkViewModel = compositeViewModelFactory.makeShareMeetingInfoActivityViewModel()
         self.whiteBoardId = whiteBoardId
+        self.azureCorrelationId = azureCorrelationId
 
         let actionDispatch: ActionDispatch = store.dispatch
 
@@ -227,7 +230,7 @@ internal class CallingViewModel: ObservableObject {
                 store.dispatch(action: .localUserAction(.screenShareOffRequested))
             },
             onChat: {
-                store.dispatch(action: .localUserAction(.showChat))
+                store.dispatch(action: .localUserAction(.showChat(azureCorrelationId: azureCorrelationId)))
                 store.dispatch(action: .visibilityAction(.pipModeRequested))
             },
             onParticipants: {
