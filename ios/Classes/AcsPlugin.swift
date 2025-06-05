@@ -270,27 +270,43 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     //        return configError
     //    }
     
+//    public func configureAudioSession() -> Error? {
+//        let audioSession = AVAudioSession.sharedInstance()
+//        var configError: Error?
+//        
+//        // Check the current audio output route
+//        let currentRoute = audioSession.currentRoute
+//        let isUsingSpeaker = currentRoute.outputs.contains { $0.portType == .builtInSpeaker }
+//        let isUsingReceiver = currentRoute.outputs.contains { $0.portType == .builtInReceiver }
+//        
+//        // Only configure the session if necessary (e.g., when not on speaker/receiver)
+//        if !isUsingSpeaker && !isUsingReceiver {
+//            do {
+//                // Keeping default .playAndRecord without forcing speaker
+//                try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
+//                try audioSession.setActive(true)
+//            } catch {
+//                configError = error
+//            }
+//        }
+//        
+//        return configError
+//    }
+    
     public func configureAudioSession() -> Error? {
         let audioSession = AVAudioSession.sharedInstance()
-        var configError: Error?
         
-        // Check the current audio output route
-        let currentRoute = audioSession.currentRoute
-        let isUsingSpeaker = currentRoute.outputs.contains { $0.portType == .builtInSpeaker }
-        let isUsingReceiver = currentRoute.outputs.contains { $0.portType == .builtInReceiver }
-        
-        // Only configure the session if necessary (e.g., when not on speaker/receiver)
-        if !isUsingSpeaker && !isUsingReceiver {
-            do {
-                // Keeping default .playAndRecord without forcing speaker
-                try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
-                try audioSession.setActive(true)
-            } catch {
-                configError = error
-            }
+        do {
+            // Configure the session category
+            try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
+            
+            // Activate the audio session
+            try audioSession.setActive(true)
+            
+            return nil
+        } catch {
+            return error
         }
-        
-        return configError
     }
 
     
