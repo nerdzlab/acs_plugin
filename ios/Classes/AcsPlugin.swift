@@ -129,7 +129,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             onSendEvent: { [weak self] event in
                 self?.sendEvent(event)
             },
-            tokenRefresher: userDataHandler.tokenRefresher
+            tokenRefresher: CallCompositeManager.shared.tokenRefresher
         )
         
         handlers = [callHandler, userDataHandler, broadcastExtensionHandler, chatHandler]

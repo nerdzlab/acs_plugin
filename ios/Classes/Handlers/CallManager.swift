@@ -142,23 +142,30 @@ final class CallCompositeManager {
     
     static let shared = CallCompositeManager()
     
+    init() {
+        setupTokenRefresh()
+    }
+    
     var tokenRefresher: ((@escaping (String?, Error?) -> Void) -> Void)?
+    
+    private func setupTokenRefresh() {
+            tokenRefresher = { [weak self] tokenCompletionHandler in
+//                self?.channel.invokeMethod("getToken", arguments: nil, result: { result in
+//                    if let token = result as? String {
+//                        tokenCompletionHandler(token, nil)
+//                    } else {
+//                        let error = NSError(domain: "TokenError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch token"])
+//                        tokenCompletionHandler(nil, error)
+//                    }
+//                }
+//                )
+            }
+        }
     
     @discardableResult
     func getCallComposite(callKitOptions: CallKitOptions? = nil, onSubscribeToCallCompositeEvents: ((CallComposite) -> Void)? = nil) ->  CallComposite? {
         guard let userData = UserDefaults.standard.loadUserData() else { return nil }
         
-        tokenRefresher = { [weak self] tokenCompletionHandler in
-////            self?.channel.invokeMethod("getToken", arguments: nil, result: { result in
-//                if let token = result as? String {
-//                    tokenCompletionHandler(token, nil)
-//                } else {
-//                    let error = NSError(domain: "TokenError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch token"])
-//                    tokenCompletionHandler(nil, error)
-//                }
-//            }
-//            )
-        }
         
         let refreshOptions = CommunicationTokenRefreshOptions(
             initialToken: userData.token,
