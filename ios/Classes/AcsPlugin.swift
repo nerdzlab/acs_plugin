@@ -270,26 +270,50 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     //        return configError
     //    }
     
-    private func configureAudioSession() -> Error? {
+    public func configureAudioSession() -> Error? {
         let audioSession = AVAudioSession.sharedInstance()
         var configError: Error?
-        do {
-            let options: AVAudioSession.CategoryOptions = [.allowBluetooth,
-                                                           .duckOthers,
-                                                           .interruptSpokenAudioAndMixWithOthers,
-                                                           .allowBluetoothA2DP]
-            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: options)
-            try audioSession.setActive(true)
-            // Work around for failure to grab ownership of microphone on first try.
-            // Reproduced on phone 11/13/14. iOS 14, 15, 16
-            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: options)
-            try audioSession.setActive(true)
-        } catch let error {
-            configError = error
+        
+        // Check the current audio output route
+        let currentRoute = audioSession.currentRoute
+        let isUsingSpeaker = currentRoute.outputs.contains { $0.portType == .builtInSpeaker }
+        let isUsingReceiver = currentRoute.outputs.contains { $0.portType == .builtInReceiver }
+        
+        // Only configure the session if necessary (e.g., when not on speaker/receiver)
+        if !isUsingSpeaker && !isUsingReceiver {
+            do {
+                // Keeping default .playAndRecord without forcing speaker
+                try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
+                try audioSession.setActive(true)
+            } catch {
+                configError = error
+            }
         }
         
         return configError
     }
+
+    
+//    private func configureAudioSession() -> Error? {
+//        let audioSession = AVAudioSession.sharedInstance()
+//        var configError: Error?
+//        do {
+//            let options: AVAudioSession.CategoryOptions = [.allowBluetooth,
+//                                                           .duckOthers,
+//                                                           .interruptSpokenAudioAndMixWithOthers,
+//                                                           .allowBluetoothA2DP]
+//            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: options)
+//            try audioSession.setActive(true)
+//            // Work around for failure to grab ownership of microphone on first try.
+//            // Reproduced on phone 11/13/14. iOS 14, 15, 16
+//            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: options)
+//            try audioSession.setActive(true)
+//        } catch let error {
+//            configError = error
+//        }
+//        
+//        return configError
+//    }
     
     public func saveLaunchedChatNotification(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
         preloadedAction = PreloadedAction(type: .chatNotification, chatPushNotificationReceivedEvent: pushNotificationReceivedEvent)
