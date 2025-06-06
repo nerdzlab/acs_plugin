@@ -7,6 +7,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -30,7 +31,8 @@ internal class ParticipantGridCellView(
     private val getVideoStreamCallback: (String, String) -> View?,
     private val getScreenShareVideoStreamRendererCallback: () -> VideoStreamRenderer?,
     private val getParticipantViewDataCallback: (participantID: String) -> CallCompositeParticipantViewData?,
-    private val getMoreViewCallback: () -> Unit
+    private val getMoreViewCallback: () -> Unit,
+    private val showParticipantMenuCallback: (participantID: String) -> Unit?
 ) : RelativeLayout(context) {
 
     private lateinit var avatarView: ParticipantGridCellAvatarView
@@ -78,6 +80,9 @@ internal class ParticipantGridCellView(
         val participantAvatarSpeakingIndicator: FrameLayout =
             findViewById(R.id.azure_communication_ui_participant_view_avatar_is_speaking_frame)
 
+        val displayNameAndMicIndicatorViewContainer: LinearLayout =
+            findViewById(R.id.participant_info_layer)
+
         val participantAvatarContainer: ConstraintLayout =
             findViewById(R.id.azure_communication_ui_participant_avatar_view_container)
 
@@ -103,6 +108,7 @@ internal class ParticipantGridCellView(
             avatarControl,
             participantAvatarSpeakingIndicator,
             participantAvatarContainer,
+            displayNameAndMicIndicatorViewContainer,
             displayNameAudioTextView,
             micIndicatorAudioImageView,
             raiseHandIndicatorAudioImageView,
@@ -112,7 +118,8 @@ internal class ParticipantGridCellView(
             onHoldTextView,
             context,
             lifecycleScope,
-            avatarReactionOverlay
+            avatarReactionOverlay,
+            showParticipantMenuCallback
         )
     }
 
@@ -156,7 +163,8 @@ internal class ParticipantGridCellView(
             showFloatingHeaderCallBack,
             getScreenShareVideoStreamRendererCallback,
             getParticipantViewDataCallback,
-            participantReactionOverlay
+            participantReactionOverlay,
+            showParticipantMenuCallback
         )
     }
 

@@ -5,7 +5,6 @@ package com.acs_plugin.calling.presentation.fragment.calling.participant.grid
 
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ReactionPayload
-import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellMoreView.Companion.MORE_VIEW_ID
 import com.acs_plugin.calling.presentation.fragment.factories.ParticipantGridCellViewModelFactory
 import com.acs_plugin.calling.redux.state.CaptionsState
 import com.acs_plugin.calling.redux.state.CaptionsStatus
@@ -45,16 +44,20 @@ internal class ParticipantGridViewModel(
 
     val participantUpdated: EventFlow = mutableParticipantUpdated
 
+    private lateinit var displayParticipantMenuCallback: (userIdentifier: String) -> Unit
+
     fun init(
         rttState: RttState,
         isOverlayDisplayedOverGrid: Boolean,
         deviceConfigurationState: DeviceConfigurationState,
         captionsState: CaptionsState,
+        displayParticipantMenuCallback: (userIdentifier: String) -> Unit
     ) {
         isOverlayDisplayedFlow = MutableStateFlow(isOverlayDisplayedOverGrid)
         isVerticalStyleGridMutableFlow = MutableStateFlow(
             shouldUseVerticalStyleGrid(deviceConfigurationState, rttState, captionsState)
         )
+        this.displayParticipantMenuCallback = displayParticipantMenuCallback
     }
 
     fun clear() {
@@ -146,22 +149,7 @@ internal class ParticipantGridViewModel(
             val remainingCount = others.count() - secondary.count()
             if (remainingCount > 0) {
                 displayedParticipants.removeAt(2)
-                displayedParticipants.add(
-                    ParticipantInfoModel(
-                        displayName = "+$remainingCount",
-                        userIdentifier = MORE_VIEW_ID,
-                        isMuted = true,
-                        isCameraDisabled = true,
-                        isSpeaking = false,
-                        isTypingRtt = false,
-                        participantStatus = null,
-                        screenShareVideoStreamModel = null,
-                        cameraVideoStreamModel = null,
-                        modifiedTimestamp = System.currentTimeMillis(),
-                        isRaisedHand = false,
-                        selectedReaction = null
-                    )
-                )
+                displayedParticipants.add(ParticipantInfoModel.createMoreParticipantInfoModel(remainingCount))
             }
         } else {
             val sorted = sortRemoteParticipants(remoteParticipantsMapSorted, dominantSpeakersInfo)
@@ -170,22 +158,7 @@ internal class ParticipantGridViewModel(
 
             if (remainingCount > 0) {
                 participants.removeAt(7)
-                participants.add(
-                    ParticipantInfoModel(
-                        displayName = "+$remainingCount",
-                        userIdentifier = MORE_VIEW_ID,
-                        isMuted = true,
-                        isCameraDisabled = true,
-                        isSpeaking = false,
-                        isTypingRtt = false,
-                        participantStatus = null,
-                        screenShareVideoStreamModel = null,
-                        cameraVideoStreamModel = null,
-                        modifiedTimestamp = System.currentTimeMillis(),
-                        isRaisedHand = false,
-                        selectedReaction = null
-                    )
-                )
+                participants.add(ParticipantInfoModel.createMoreParticipantInfoModel(remainingCount))
             }
 
             displayedParticipants = participants
@@ -197,6 +170,9 @@ internal class ParticipantGridViewModel(
         updateDisplayedParticipants(displayedParticipantsMap)
     }
 
+    fun onParticipantMenuClicked(userIdentifier: String) {
+        displayParticipantMenuCallback(userIdentifier)
+    }
 
     private fun shouldUseVerticalStyleGrid(
         deviceConfigurationState: DeviceConfigurationState,

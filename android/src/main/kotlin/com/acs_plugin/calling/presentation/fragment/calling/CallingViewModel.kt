@@ -3,6 +3,7 @@
 
 package com.acs_plugin.calling.presentation.fragment.calling
 
+import android.util.Log
 import com.acs_plugin.calling.configuration.CallType
 import com.acs_plugin.calling.models.CallCompositeAudioVideoMode
 import com.acs_plugin.calling.models.CallCompositeCallScreenOptions
@@ -11,11 +12,13 @@ import com.acs_plugin.calling.models.ParticipantCapabilityType
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ParticipantStatus
 import com.acs_plugin.calling.presentation.fragment.BaseViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.participant.menu.data.ParticipantMenuType
 import com.acs_plugin.calling.presentation.fragment.factories.CallingViewModelFactory
 import com.acs_plugin.calling.presentation.manager.CapabilitiesManager
 import com.acs_plugin.calling.presentation.manager.NetworkManager
 import com.acs_plugin.calling.redux.Store
 import com.acs_plugin.calling.redux.action.CallingAction
+import com.acs_plugin.calling.redux.action.ParticipantAction
 import com.acs_plugin.calling.redux.action.RttAction
 import com.acs_plugin.calling.redux.state.CallingStatus
 import com.acs_plugin.calling.redux.state.CaptionsStatus
@@ -47,6 +50,9 @@ internal class CallingViewModel(
     // This is a flag to ensure that the call is started only once
     // This is to avoid a lag between updating isDefaultParametersCallStarted
     private var callStartRequested = false
+
+    private var isWhiteboardEnabled = false
+    private var pinnedUserIdentifier: String? = null
 
     val moreCallOptionsListViewModel = callingViewModelProvider.moreCallOptionsListViewModel
     val participantGridViewModel = callingViewModelProvider.participantGridViewModel
@@ -150,10 +156,6 @@ internal class CallingViewModel(
             isOverlayDisplayedOverGrid(state),
         )
 
-        participantMenuViewModel.init(
-            state.localParticipantState.capabilities,
-        )
-
         participantListViewModel.init(
             state.remoteParticipantState.participantMap,
             state.localParticipantState,
@@ -161,7 +163,7 @@ internal class CallingViewModel(
                 state.localParticipantState.capabilities,
                 state.visibilityState
             ),
-            participantMenuViewModel::displayParticipantMenu,
+            displayParticipantMenuCallback = { id, _ -> openParticipantMenu(id) },
             state.remoteParticipantState.totalParticipantCount,
         )
 
@@ -182,6 +184,7 @@ internal class CallingViewModel(
             isOverlayDisplayedOverGrid(state),
             state.deviceConfigurationState,
             state.captionsState,
+            displayParticipantMenuCallback = { id -> openParticipantMenu(id) }
         )
 
         lobbyHeaderViewModel.init(
@@ -346,11 +349,14 @@ internal class CallingViewModel(
         if (shouldUpdateRemoteParticipantsViewModels(state)) {
             var updatedRemoteParticipantsForGridView = remoteParticipantsForGridView.mapValues { (id, participant) ->
                 participant.copy(
+                    isPinned = id == pinnedUserIdentifier,
                     isWhiteboard = id == state.callState.whiteboardId,
                 )
             }
 
-            updatedRemoteParticipantsForGridView = updatedRemoteParticipantsForGridView + getMockParticipants()
+            isWhiteboardEnabled = updatedRemoteParticipantsForGridView.keys.contains(state.callState.whiteboardId)
+
+            updatedRemoteParticipantsForGridView = updatedRemoteParticipantsForGridView + getMockParticipants() //TODO: Remove this after testing
 
             participantGridViewModel.update(
                 remoteParticipantsMapUpdatedTimestamp = state.remoteParticipantState.participantMapModifiedTimestamp,
@@ -403,10 +409,6 @@ internal class CallingViewModel(
 
             toastNotificationViewModel.update(
                 state.toastNotificationState
-            )
-
-            participantMenuViewModel.update(
-                state.localParticipantState.capabilities,
             )
 
             participantListViewModel.update(
@@ -528,6 +530,37 @@ internal class CallingViewModel(
         dispatchAction(RttAction.UpdateMaximized(false))
     }
 
+    fun onParticipantMenuClicked(id: String, type: ParticipantMenuType) {
+        val currentState = store.getCurrentState()
+        val currentParticipants = currentState.remoteParticipantState.participantMap
+
+        // Find the participant and update their info
+        var updatedParticipantInfo = currentParticipants[id]?.let { participantInfo ->
+            when (type) {
+                ParticipantMenuType.PIN -> {
+                    this.pinnedUserIdentifier = id
+                    participantInfo.copy(isPinned = true)
+                }
+                ParticipantMenuType.UNPIN -> {
+                    this.pinnedUserIdentifier = null
+                    participantInfo.copy(isPinned = false)
+                }
+                ParticipantMenuType.HIDE_VIDEO -> participantInfo.copy(isVideoTurnOffForMe = true)
+                ParticipantMenuType.SHOW_VIDEO -> participantInfo.copy(isVideoTurnOffForMe = false)
+            }
+        }
+
+        if (updatedParticipantInfo != null) {
+            // Create the updated map of participants
+            val updatedMap = currentParticipants.toMutableMap()
+            updatedMap[updatedParticipantInfo.userIdentifier] = updatedParticipantInfo.copy(modifiedTimestamp = System.currentTimeMillis())
+            // Dispatch the action with the updated participant map
+            dispatchAction(ParticipantAction.ListUpdated(updatedMap))
+        } else {
+            Log.e("CallingViewModel", "Participant with ID $id not found for menu action $type")
+        }
+    }
+
     private fun shouldDisplayLobbyOverlay(state: ReduxState) =
         state.callState.callingStatus == CallingStatus.IN_LOBBY
 
@@ -537,6 +570,15 @@ internal class CallingViewModel(
             state.rttState.isMaximized
     }
 
+    private fun openParticipantMenu(id: String) {
+        val state = store.getCurrentState()
+        val isWhiteboardEnabled = state.remoteParticipantState.participantMap.keys.contains(state.callState.whiteboardId)
+        state.remoteParticipantState.participantMap[id]?.let { participantInfoModel ->
+            participantMenuViewModel.displayParticipantMenu(isWhiteboardEnabled, participantInfoModel)
+        }
+    }
+
+    //TODO: Remove this after testing
     private fun getMockParticipants(): Map<String, ParticipantInfoModel> {
         val participants = mutableMapOf<String, ParticipantInfoModel>()
         repeat(7) { index ->

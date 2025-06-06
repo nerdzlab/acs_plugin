@@ -17,7 +17,6 @@
         android:gravity="center"
         android:visibility="visible">
 
-        <!-- Example Emoji -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/emoji_like"
             android:layout_width="0dp"

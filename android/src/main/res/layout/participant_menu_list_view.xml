@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/participant_menu_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="@dimen/padding_16dp"
+    android:paddingHorizontal="@dimen/padding_8dp"
+    android:orientation="vertical"
+    android:background="@drawable/bg_white_rounded_r12">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/participant_name_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:layout_marginHorizontal="@dimen/margin_24dp"
+        android:layout_gravity="center"
+        tools:text="James Bond"
+        style="@style/Text.CircularStdBold.20sp" />
+
+    <LinearLayout
+        android:id="@+id/participant_menu_list_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:orientation="vertical" />
+
+</LinearLayout>

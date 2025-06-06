@@ -1,46 +1,31 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
 package com.acs_plugin.calling.presentation.fragment.calling.participant.menu
 
-import com.acs_plugin.calling.models.ParticipantCapabilityType
-import com.acs_plugin.calling.presentation.manager.CapabilitiesManager
-import com.acs_plugin.calling.redux.action.Action
-import com.acs_plugin.calling.redux.action.ParticipantAction
+import com.acs_plugin.calling.models.ParticipantInfoModel
+import com.acs_plugin.calling.presentation.fragment.calling.participant.menu.data.ParticipantMenuItem
+import com.acs_plugin.calling.presentation.fragment.calling.participant.menu.data.ParticipantMenuType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-internal class ParticipantMenuViewModel(
-    private val dispatch: (Action) -> Unit,
-    private val capabilitiesManager: CapabilitiesManager,
-) {
+internal class ParticipantMenuViewModel() {
+
     private val displayMenuStateFlow = MutableStateFlow(false)
-    private var userIdentifier: String? = null
-    private val muteParticipantEnabledMutableFlow = MutableStateFlow(false)
-    private val remoteParticipantEnabledMutableFlow = MutableStateFlow(false)
-
     val displayMenuFlow = displayMenuStateFlow.asStateFlow()
-    var displayName: String? = null
-    val muteParticipantEnabledFlow = muteParticipantEnabledMutableFlow.asStateFlow()
-    val remoteParticipantEnabledFlow = remoteParticipantEnabledMutableFlow.asStateFlow()
 
-    fun init(capabilities: Set<ParticipantCapabilityType>) {
-        update(capabilities)
-    }
+    private val participantNameStateFlow = MutableStateFlow("")
+    val participantNameFlow = participantNameStateFlow.asStateFlow()
 
-    fun update(capabilities: Set<ParticipantCapabilityType>) {
-        remoteParticipantEnabledMutableFlow.value = capabilitiesManager.hasCapability(
-            capabilities,
-            ParticipantCapabilityType.REMOVE_PARTICIPANT,
-        )
-    }
+    private val participantMenuItemsStateFlow = MutableStateFlow(emptyList<ParticipantMenuItem>())
+    val participantMenuItemsFlow = participantMenuItemsStateFlow.asStateFlow()
+
+    var userIdentifier: String? = null
 
     fun displayParticipantMenu(
-        userIdentifier: String,
-        displayName: String?
+        isWhiteboardEnabled: Boolean,
+        participant: ParticipantInfoModel
     ) {
-        this.userIdentifier = userIdentifier
-        this.displayName = displayName
+        this.userIdentifier = participant.userIdentifier
+        participantNameStateFlow.value = participant.displayName
+        participantMenuItemsStateFlow.value = generateParticipantMenuItems(isWhiteboardEnabled, participant)
         displayMenuStateFlow.value = true
     }
 
@@ -48,14 +33,21 @@ internal class ParticipantMenuViewModel(
         displayMenuStateFlow.value = false
     }
 
-    fun muteParticipant() {
-        close()
-    }
-
-    fun removeParticipant() {
-        userIdentifier?.let {
-            dispatch(ParticipantAction.Remove(it))
+    private fun generateParticipantMenuItems(
+        isWhiteboardEnabled: Boolean,
+        participant: ParticipantInfoModel
+    ): List<ParticipantMenuItem> {
+        return buildList {
+            if (participant.isPinned) {
+                add(ParticipantMenuType.UNPIN.mapToParticipantMenuItem().apply { isEnabled = !isWhiteboardEnabled })
+            } else {
+                add(ParticipantMenuType.PIN.mapToParticipantMenuItem().apply { isEnabled = !isWhiteboardEnabled })
+            }
+            if (participant.isVideoTurnOffForMe) {
+                add(ParticipantMenuType.SHOW_VIDEO.mapToParticipantMenuItem().apply { isEnabled = participant.cameraVideoStreamModel != null })
+            } else {
+                add(ParticipantMenuType.HIDE_VIDEO.mapToParticipantMenuItem().apply { isEnabled = participant.cameraVideoStreamModel != null })
+            }
         }
-        close()
     }
 }

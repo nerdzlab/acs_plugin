@@ -16,34 +16,25 @@
         android:layout_margin="@dimen/margin_4dp"
         android:background="@drawable/bg_light_pink_rounded_r12">
 
-        <LinearLayout
+        <include layout="@layout/azure_communication_ui_calling_participant_avatar" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/azure_communication_ui_calling_participant_audio_view_on_hold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:ellipsize="end"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:maxLines="1"
+            android:layout_marginTop="@dimen/margin_16dp"
+            android:text="@string/azure_communication_ui_calling_remote_participant_on_hold"
+            style="@style/Text.CircularStdBook.16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <include layout="@layout/azure_communication_ui_calling_participant_avatar" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/azure_communication_ui_calling_participant_audio_view_on_hold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:visibility="gone"
-                tools:visibility="visible"
-                android:maxLines="1"
-                android:layout_marginTop="@dimen/margin_10dp"
-                android:text="@string/azure_communication_ui_calling_remote_participant_on_hold"
-                style="@style/Text.CircularStdBook.16sp" />
-
-        </LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/azure_communication_ui_participant_view_avatar" />
 
         <LinearLayout
-            android:id="@+id/participant_layer"
+            android:id="@+id/participant_info_layer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_8dp"

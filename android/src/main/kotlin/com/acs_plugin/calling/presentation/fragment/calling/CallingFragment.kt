@@ -121,20 +121,16 @@ internal class CallingFragment :
         callScreenLayout = view.findViewById(R.id.azure_communication_ui_calling_call_frame_layout)
         callScreenLayout.applyStatusBarInsetMarginTop()
 
-        confirmLeaveOverlayView =
-            LeaveConfirmView(viewModel.confirmLeaveOverlayViewModel, this.requireContext())
-        confirmLeaveOverlayView.layoutDirection =
-            activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
-        confirmLeaveOverlayView.start(
-            viewLifecycleOwner
-        )
+        confirmLeaveOverlayView = LeaveConfirmView(viewModel.confirmLeaveOverlayViewModel, this.requireContext())
+        confirmLeaveOverlayView.layoutDirection = activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
+        confirmLeaveOverlayView.start(viewLifecycleOwner)
 
         controlBarView = view.findViewById(R.id.azure_communication_ui_call_call_buttons)
         controlBarView.applyNavigationBarInsetPaddingBottom()
         controlBarView.start(viewLifecycleOwner, viewModel.controlBarViewModel)
 
-        participantGridView =
-            view.findViewById(R.id.azure_communication_ui_call_participant_container)
+        participantGridView = view.findViewById(R.id.azure_communication_ui_call_participant_container)
+        participantGridView.setOnClickListener { switchFloatingHeader() }
         participantGridView.start(
             viewModel.participantGridViewModel,
             videoViewManager,
@@ -158,17 +154,18 @@ internal class CallingFragment :
             viewLifecycleOwner,
             viewModel.localParticipantViewModel,
             videoViewManager,
-            avatarViewManager,
+            avatarViewManager
         )
 
-        accessibilityManager =
-            context?.applicationContext?.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+        accessibilityManager = context?.applicationContext?.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+
         infoHeaderView = view.findViewById(R.id.azure_communication_ui_call_floating_header)
         infoHeaderView.start(
             viewLifecycleOwner,
             viewModel.floatingHeaderViewModel,
-            this::displayParticipantList,
+            this::displayParticipantList
         )
+
         lobbyHeaderView = view.findViewById(R.id.azure_communication_ui_calling_lobby_header)
         lobbyHeaderView.start(
             viewLifecycleOwner,
@@ -185,19 +182,17 @@ internal class CallingFragment :
         upperMessageBarNotificationLayoutView = view.findViewById(R.id.azure_communication_ui_calling_upper_message_bar_notifications_layout)
         upperMessageBarNotificationLayoutView.start(
             viewLifecycleOwner,
-            viewModel.upperMessageBarNotificationLayoutViewModel,
+            viewModel.upperMessageBarNotificationLayoutViewModel
         )
 
         toastNotificationView = view.findViewById(R.id.azure_communication_ui_calling_toast_notification)
         toastNotificationView.start(
             viewLifecycleOwner,
-            viewModel.toastNotificationViewModel,
+            viewModel.toastNotificationViewModel
         )
 
-        audioDeviceListView =
-            AudioDeviceListView(viewModel.audioDeviceListViewModel, this.requireContext())
-        audioDeviceListView.layoutDirection =
-            activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
+        audioDeviceListView = AudioDeviceListView(viewModel.audioDeviceListViewModel, this.requireContext())
+        audioDeviceListView.layoutDirection = activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
         audioDeviceListView.start(viewLifecycleOwner)
 
         participantListView = ParticipantListView(
@@ -207,26 +202,20 @@ internal class CallingFragment :
         ) {
             viewModel.onShareMeetingLinkClicked()
         }
-        participantListView.layoutDirection =
-            activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
+        participantListView.layoutDirection = activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
         participantListView.start(viewLifecycleOwner)
 
         participantMenuView = ParticipantMenuView(
             this.requireContext(),
-            viewModel.participantMenuViewModel,
+            viewModel.participantMenuViewModel
         )
-        participantMenuView.layoutDirection =
-            activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
-        participantMenuView.start(viewLifecycleOwner)
+        participantMenuView.start(viewLifecycleOwner) { id, type -> viewModel.onParticipantMenuClicked(id, type) }
 
         bannerView = view.findViewById(R.id.azure_communication_ui_call_banner)
         bannerView.start(
             viewModel.bannerViewModel,
-            viewLifecycleOwner,
+            viewLifecycleOwner
         )
-        participantGridView.setOnClickListener {
-            switchFloatingHeader()
-        }
 
         errorInfoView = ErrorInfoView(view)
         errorInfoView.start(viewLifecycleOwner, viewModel.errorInfoViewModel)
@@ -235,8 +224,7 @@ internal class CallingFragment :
             this.requireContext(),
             viewModel.moreCallOptionsListViewModel
         )
-        moreCallOptionsListView.layoutDirection =
-            activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
+        moreCallOptionsListView.layoutDirection = activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
         moreCallOptionsListView.start(viewLifecycleOwner)
 
         moreActionsListView = MoreActionsListView(this.requireContext())
@@ -246,8 +234,7 @@ internal class CallingFragment :
             context = this.requireContext(),
             viewModel = viewModel.captionsListViewModel,
         )
-        captionsListView.layoutDirection =
-            activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
+        captionsListView.layoutDirection = activity?.window?.decorView?.layoutDirection ?: View.LAYOUT_DIRECTION_LOCALE
         captionsListView.start(viewLifecycleOwner)
 
         captionsLanguageSelectionListView = CaptionsLanguageSelectionListView(
@@ -321,12 +308,9 @@ internal class CallingFragment :
 
     override fun onResume() {
         super.onResume()
-        sensorManager =
-            context?.applicationContext?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        powerManager =
-            context?.applicationContext?.getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock =
-            powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, javaClass.name)
+        sensorManager = context?.applicationContext?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        powerManager = context?.applicationContext?.getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, javaClass.name)
 
         sensorManager.registerListener(
             this,
@@ -357,9 +341,7 @@ internal class CallingFragment :
             }
         }
 
-        captionsTopAnchor.post {
-            calculateAndSetCaptionsLayoutMaxHeight()
-        }
+        captionsTopAnchor.post { calculateAndSetCaptionsLayoutMaxHeight() }
     }
 
     override fun onPause() {

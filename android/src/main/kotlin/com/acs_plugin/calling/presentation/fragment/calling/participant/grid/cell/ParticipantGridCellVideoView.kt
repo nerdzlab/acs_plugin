@@ -23,6 +23,7 @@ import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.scr
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.screenshare.ScreenShareZoomFrameLayout
 import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
 import com.acs_plugin.calling.service.sdk.VideoStreamRenderer
+import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.util.isVisible
 import kotlinx.coroutines.launch
@@ -42,13 +43,18 @@ internal class ParticipantGridCellVideoView(
     private val showFloatingHeaderCallBack: () -> Unit,
     private val getScreenShareVideoStreamRendererCallback: () -> VideoStreamRenderer?,
     private val getParticipantViewDataCallback: (participantID: String) -> CallCompositeParticipantViewData?,
-    private val reactionOverlayView: ReactionOverlayView
+    private val reactionOverlayView: ReactionOverlayView,
+    private val showParticipantMenuCallback: (participantID: String) -> Unit?
 ) {
     private var videoStream: View? = null
     private var screenShareZoomFrameLayout: ScreenShareZoomFrameLayout? = null
     private var lastParticipantViewData: CallCompositeParticipantViewData? = null
 
     init {
+        displayNameAndMicIndicatorViewContainer.onSingleClickListener {
+            showParticipantMenuCallback(participantViewModel.getParticipantUserIdentifier())
+        }
+
         lifecycleScope.launch {
             participantViewModel.getDisplayNameStateFlow().collect {
                 lastParticipantViewData = null

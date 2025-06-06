@@ -65,7 +65,7 @@ internal class ParticipantGridView : GridLayout {
         viewLifecycleOwner: LifecycleOwner,
         showFloatingHeader: () -> Unit,
         avatarViewManager: AvatarViewManager,
-        getMoreParticipantViewCallback: () -> Unit,
+        getMoreParticipantViewCallback: () -> Unit
     ) {
         accessibilityManager =
             context.applicationContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
@@ -170,7 +170,8 @@ internal class ParticipantGridView : GridLayout {
                 getVideoStreamCallback,
                 getScreenShareVideoStreamRendererCallback,
                 getParticipantViewDataCallback,
-                getMoreParticipantViewCallback
+                getMoreParticipantViewCallback,
+                participantGridViewModel::onParticipantMenuClicked
             )
             displayedRemoteParticipantsView.add(participantView)
         }

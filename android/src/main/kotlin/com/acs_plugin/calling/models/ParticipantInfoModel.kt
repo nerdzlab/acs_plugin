@@ -4,6 +4,7 @@
 package com.acs_plugin.calling.models
 
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
+import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellMoreView.Companion.MORE_VIEW_ID
 
 internal enum class ParticipantStatus {
     IDLE,
@@ -30,9 +31,31 @@ internal data class ParticipantInfoModel(
     var isRaisedHand: Boolean = false,
     var selectedReaction: ReactionType? = null,
     var isWhiteboard: Boolean = false,
-    var isPinned: Boolean = false
+    var isPinned: Boolean = false,
+    var isVideoTurnOffForMe: Boolean = false
 ) {
+
     fun isPrimaryParticipant(): Boolean {
         return isWhiteboard || isPinned
+    }
+
+    companion object {
+
+        fun createMoreParticipantInfoModel(remainingCount: Int): ParticipantInfoModel {
+            return ParticipantInfoModel(
+                displayName = "+$remainingCount",
+                userIdentifier = MORE_VIEW_ID,
+                isMuted = true,
+                isCameraDisabled = true,
+                isSpeaking = false,
+                isTypingRtt = false,
+                participantStatus = null,
+                screenShareVideoStreamModel = null,
+                cameraVideoStreamModel = null,
+                modifiedTimestamp = System.currentTimeMillis(),
+                isRaisedHand = false,
+                selectedReaction = null
+            )
+        }
     }
 }

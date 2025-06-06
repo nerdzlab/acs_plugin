@@ -4,6 +4,7 @@
 package com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell
 
 import android.content.Context
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.View.INVISIBLE
@@ -16,6 +17,7 @@ import com.acs_plugin.R
 import com.acs_plugin.calling.models.CallCompositeParticipantViewData
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridCellViewModel
 import com.acs_plugin.calling.presentation.fragment.calling.reactionoverlay.ReactionOverlayView
+import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.material.textview.MaterialTextView
 import com.microsoft.fluentui.persona.AvatarView
 import com.microsoft.fluentui.util.isVisible
@@ -25,6 +27,7 @@ internal class ParticipantGridCellAvatarView(
     private val avatarView: AvatarView,
     private val participantAvatarSpeakingFrameLayout: FrameLayout,
     private val participantContainer: ConstraintLayout,
+    displayNameAndMicIndicatorViewContainer: View,
     private val displayNameAudioTextView: MaterialTextView,
     private val micIndicatorAudioImageView: AppCompatImageView,
     private val raiseHandIndicatorAudioImageView: AppCompatImageView,
@@ -34,11 +37,16 @@ internal class ParticipantGridCellAvatarView(
     private val onHoldTextView: MaterialTextView,
     private val context: Context,
     lifecycleScope: LifecycleCoroutineScope,
-    private val reactionOverlayView: ReactionOverlayView
+    private val reactionOverlayView: ReactionOverlayView,
+    private val showParticipantMenuCallback: (participantID: String) -> Unit?
 ) {
     private var lastParticipantViewData: CallCompositeParticipantViewData? = null
 
     init {
+        displayNameAndMicIndicatorViewContainer.onSingleClickListener {
+            showParticipantMenuCallback(participantViewModel.getParticipantUserIdentifier())
+        }
+
         lifecycleScope.launch {
             participantViewModel.getDisplayNameStateFlow().collect {
                 lastParticipantViewData = null

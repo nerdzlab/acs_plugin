@@ -22,7 +22,8 @@ internal class ParticipantGridCellViewModel(
     modifiedTimestamp: Number,
     participantStatus: ParticipantStatus?,
     reactionType: ReactionType?,
-    isPrimaryParticipant: Boolean
+    isPrimaryParticipant: Boolean,
+    isVideoTurnOffForMe: Boolean
 ) {
     private var isOnHoldStateFlow = MutableStateFlow(isOnHold(participantStatus))
     private var isCallingStateFlow = MutableStateFlow(isCalling(participantStatus))
@@ -38,6 +39,7 @@ internal class ParticipantGridCellViewModel(
             createVideoViewModel(screenShareVideoStreamModel),
             isOnHoldStateFlow.value,
             isCameraDisabled,
+            isVideoTurnOffForMe
         )
     )
 
@@ -108,7 +110,8 @@ internal class ParticipantGridCellViewModel(
             createVideoViewModel(participant.cameraVideoStreamModel),
             createVideoViewModel(participant.screenShareVideoStreamModel),
             this.isOnHoldStateFlow.value,
-            participant.isCameraDisabled
+            participant.isCameraDisabled,
+            participant.isVideoTurnOffForMe
         )
 
         this.isSpeakingStateFlow.value = (participant.isSpeaking && !participant.isMuted && !participant.isRaisedHand) ||
@@ -133,9 +136,11 @@ internal class ParticipantGridCellViewModel(
         cameraVideoStreamModel: VideoViewModel?,
         screenShareVideoStreamModel: VideoViewModel?,
         isOnHold: Boolean,
-        isCameraDisabled: Boolean
+        isCameraDisabled: Boolean,
+        isVideoTurnOffForMe: Boolean
     ): VideoViewModel? {
         if (isOnHold) return null
+        if (isVideoTurnOffForMe) return null
         if (screenShareVideoStreamModel != null) return screenShareVideoStreamModel
         if (isCameraDisabled) return null
         if (cameraVideoStreamModel != null) return cameraVideoStreamModel

@@ -3,139 +3,97 @@
 
 package com.acs_plugin.calling.presentation.fragment.calling.participant.menu
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.view.accessibility.AccessibilityManager
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.acs_plugin.R
-import com.acs_plugin.calling.utilities.BottomCellAdapter
-import com.acs_plugin.calling.utilities.BottomCellItem
-import com.acs_plugin.calling.utilities.BottomCellItemType
-import com.acs_plugin.calling.utilities.implementation.CompositeDrawerDialog
-import com.microsoft.fluentui.drawer.DrawerDialog
-import kotlinx.coroutines.flow.collect
+import com.acs_plugin.calling.presentation.fragment.calling.participant.menu.data.ParticipantMenuType
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
+@SuppressLint("ViewConstructor")
 internal class ParticipantMenuView(
     context: Context,
     private val viewModel: ParticipantMenuViewModel,
 ) : RelativeLayout(context) {
-    private var participantTable: RecyclerView
 
-    private lateinit var menuDrawer: DrawerDialog
-    private lateinit var bottomCellAdapter: BottomCellAdapter
-    private lateinit var accessibilityManager: AccessibilityManager
+    private var participantNameTextView: MaterialTextView
+    private var participantMenuContainer: LinearLayout
+    private lateinit var menuDialog: BottomSheetDialog
 
     init {
-        inflate(context, R.layout.azure_communication_ui_calling_listview, this)
-        participantTable = findViewById(R.id.bottom_drawer_table)
-        this.setBackgroundResource(R.color.azure_communication_ui_calling_color_bottom_drawer_background)
+        inflate(context, R.layout.participant_menu_list_view, this)
+        participantNameTextView = findViewById(R.id.participant_name_text_view)
+        participantMenuContainer = findViewById(R.id.participant_menu_list_container)
     }
 
-    fun start(viewLifecycleOwner: LifecycleOwner) {
-        initializeDrawer()
+    fun start(
+        viewLifecycleOwner: LifecycleOwner,
+        onParticipantMenuClicked: (String, ParticipantMenuType) -> Unit
+    ) {
+        initializeMenuDialog()
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.displayMenuFlow.collect {
                 if (it) {
-                    show()
+                    menuDialog.show()
                 } else {
-                    if (menuDrawer.isShowing) {
-                        menuDrawer.dismissDialog()
+                    if (menuDialog.isShowing) {
+                        menuDialog.dismiss()
                     }
                 }
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.muteParticipantEnabledFlow.collect {
-                refreshDrawerItems()
+            viewModel.participantNameFlow.collect {
+                participantNameTextView.text = it
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.remoteParticipantEnabledFlow.collect {
-                refreshDrawerItems()
+            viewModel.participantMenuItemsFlow.collect {
+                participantMenuContainer.removeAllViews()
+                it.forEach { item ->
+                    val menuView = ParticipantMenuItemView(context)
+                    menuView.setAction(item) { menuType ->
+                        menuDialog.dismiss()
+                        viewModel.userIdentifier?.let { id -> onParticipantMenuClicked(id, menuType) }
+                    }
+                    participantMenuContainer.addView(menuView)
+                }
             }
         }
     }
 
     fun stop() {
-        // during screen rotation, destroy, the drawer should be displayed if open
-        // to remove memory leak, on activity destroy dialog is dismissed
-        // this setOnDismissListener(null) helps to not call view model state change during orientation
-        menuDrawer.setOnDismissListener(null)
-        bottomCellAdapter.setBottomCellItems(mutableListOf())
-        participantTable.layoutManager = null
-        menuDrawer.dismiss()
-        menuDrawer.dismissDialog()
+        menuDialog.dismiss()
         this.removeAllViews()
     }
 
-    private fun initializeDrawer() {
-        accessibilityManager =
-            context?.applicationContext?.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+    private fun initializeMenuDialog() {
+        menuDialog = BottomSheetDialog(context, R.style.RoundedBottomSheetDialog).apply {
+            setContentView(this@ParticipantMenuView)
+            setOnDismissListener {
+                viewModel.close()
+            }
 
-        bottomCellAdapter = BottomCellAdapter()
-        participantTable.adapter = bottomCellAdapter
-        participantTable.layoutManager = LinearLayoutManager(context)
-
-        menuDrawer = CompositeDrawerDialog(
-            context,
-            DrawerDialog.BehaviorType.BOTTOM,
-            R.string.azure_communication_ui_calling_view_participant_list_accessibility_label,
-        )
-        menuDrawer.setOnDismissListener {
-            viewModel.close()
+            setOnShowListener { dialog ->
+                val bottomSheet = (dialog as BottomSheetDialog)
+                    .findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+                bottomSheet?.let {
+                    val behavior = BottomSheetBehavior.from(it)
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    behavior.skipCollapsed = true
+                    behavior.isDraggable = true
+                    it.layoutParams.height = WRAP_CONTENT
+                }
+            }
         }
-        menuDrawer.setContentView(this)
-    }
-
-    private fun show() {
-        if (!menuDrawer.isShowing) {
-            bottomCellAdapter.setBottomCellItems(getBottomCellItems())
-            bottomCellAdapter.notifyDataSetChanged()
-            menuDrawer.show()
-        }
-    }
-
-    private fun refreshDrawerItems() {
-        if (menuDrawer.isShowing) {
-            bottomCellAdapter.setBottomCellItems(getBottomCellItems())
-            bottomCellAdapter.notifyDataSetChanged()
-        }
-    }
-
-    private fun getBottomCellItems(): List<BottomCellItem> {
-        val removeParticipantContentDescription: String =
-            context.getString(R.string.azure_communication_ui_calling_view_participant_menu_remove_accessibility_label) +
-                if (viewModel.remoteParticipantEnabledFlow.value) "" else ", " +
-                    context.getString(R.string.azure_communication_ui_calling_view_participant_list_unmuted_accessibility_label)
-
-        val bottomCellItems = mutableListOf(
-            // Leave title
-            BottomCellItem(
-                icon = null,
-                title = viewModel.displayName ?: "",
-                isOnHold = false,
-                itemType = BottomCellItemType.BottomMenuCenteredTitle,
-            ),
-            BottomCellItem(
-                icon = ContextCompat.getDrawable(
-                    context,
-                    R.drawable.azure_communication_ui_calling_ic_fluent_person_delete_24_regular
-                ),
-                title = context.getString(R.string.azure_communication_ui_calling_view_participant_menu_remove),
-                contentDescription = removeParticipantContentDescription,
-                isOnHold = false,
-                isEnabled = viewModel.remoteParticipantEnabledFlow.value,
-                onClickAction = {
-                    viewModel.removeParticipant()
-                },
-            )
-        )
-
-        return bottomCellItems
     }
 }
