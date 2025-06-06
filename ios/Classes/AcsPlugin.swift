@@ -199,10 +199,10 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             CallComposite.reportIncomingCall(pushNotification: pushInfo,
                                              callKitOptions: callKitOptions) { result in
                 if case .success = result {
-                    if let callCamposite = self.userDataHandler.getCallComposite() {
-                        callCamposite.handlePushNotification(pushNotification: pushInfo)
-                    } else {
-                        DispatchQueue.global().async {
+                    DispatchQueue.global().async {
+                        if let callCamposite = self.userDataHandler.getCallComposite() {
+                            callCamposite.handlePushNotification(pushNotification: pushInfo)
+                        } else {
                             AcsPlugin.shared.setupHandlers()
                             self.getCallComposite(callKitOptions: callKitOptions)?
                                 .handlePushNotification(pushNotification: pushInfo)
@@ -227,6 +227,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
             enableMultitasking: true,
             enableSystemPictureInPictureWhenMultitasking: true,
+            callKitOptions: callKitOptions,
             displayName: userData.name,
             userId: CommunicationUserIdentifier(userData.userId)
         )
