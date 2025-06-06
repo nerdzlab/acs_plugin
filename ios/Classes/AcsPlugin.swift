@@ -199,18 +199,12 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             CallComposite.reportIncomingCall(pushNotification: pushInfo,
                                              callKitOptions: callKitOptions) { result in
                 if case .success = result {
-                    DispatchQueue.global().async {
-                        if let callCamposite = self.userDataHandler.getCallComposite() {
-                            callCamposite.handlePushNotification(pushNotification: pushInfo)
-                        } else {
-                            AcsPlugin.shared.setupHandlers()
-                            let delayedCallComposite = self.getCallComposite(callKitOptions: callKitOptions)
-                            
-                            // Delay the push notification handling by 2 seconds
-                            DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
-                                delayedCallComposite?.handlePushNotification(pushNotification: pushInfo)
-                            }
-                        }
+                    if let callCamposite = self.userDataHandler.getCallComposite() {
+                        callCamposite.handlePushNotification(pushNotification: pushInfo)
+                    } else {
+                        AcsPlugin.shared.setupHandlers()
+                        self.getCallComposite(callKitOptions: callKitOptions)?
+                            .handlePushNotification(pushNotification: pushInfo)
                     }
                 } else {
                     os_log("calling demo app: failed on reportIncomingCall")
