@@ -243,8 +243,8 @@ internal class CallingSDKInitializer: NSObject {
         incomingCall = nil
     }
     
-    func showChat() {
-        events.onShowUserChat?()
+    func showChat(azureCorrelationId: String?) {
+        events.onShowUserChat?(azureCorrelationId)
     }
     
     func requestScreenSharing() {

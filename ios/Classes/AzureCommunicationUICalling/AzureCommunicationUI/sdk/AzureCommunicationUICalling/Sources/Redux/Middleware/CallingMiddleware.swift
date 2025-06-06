@@ -121,8 +121,8 @@ private func handleLocalUserAction(_ action: LocalUserAction,
         actionHandler.requestScreenSharingStream(state: getState(), dispatch: dispatch)
     case .screenShareOffRequested:
         actionHandler.requestStopScreenSharingStream(state: getState(), dispatch: dispatch)
-    case .showChat:
-        actionHandler.showChat()
+    case .showChat(let azureCorrelationId):
+        actionHandler.showChat(azureCorrelationId: azureCorrelationId)
         
     case .cameraOnSucceeded,
             .cameraOnFailed,

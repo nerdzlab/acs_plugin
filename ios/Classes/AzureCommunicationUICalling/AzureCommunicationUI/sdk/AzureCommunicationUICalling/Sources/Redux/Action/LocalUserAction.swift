@@ -78,7 +78,7 @@ enum LocalUserAction: Equatable {
     case setCapabilities(capabilities: Set<ParticipantCapabilityType>)
     case onCapabilitiesChanged(event: CapabilitiesChangedEvent)
     
-    case showChat
+    case showChat(azureCorrelationId: String?)
 
     static func == (lhs: LocalUserAction, rhs: LocalUserAction) -> Bool {
 

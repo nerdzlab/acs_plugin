@@ -17,12 +17,14 @@ final class UserDataHandler: MethodHandler {
         let name: String
         let userId: String
         let languageCode: String
+        let appToken: String
+        let baseUrl: String
     }
     
     private enum Constants {
         enum MethodChannels {
             static let setUserData = "setUserData"
-            static let getToken = "getToken"
+            static let unregisterPushNotifications = "unregisterPushNotifications"
         }
     }
     
@@ -39,9 +41,9 @@ final class UserDataHandler: MethodHandler {
         }
     }
     
-    private let channel: FlutterMethodChannel
     private let onSubscribeToCallCompositeEvents: (CallComposite) -> Void
     private let onUserDataReceived: (UserData) -> Void
+    private let unregisterPushNotifications: () -> Void
     
     private var isRealDevice: Bool {
 #if targetEnvironment(simulator)
@@ -52,13 +54,13 @@ final class UserDataHandler: MethodHandler {
     }
     
     init(
-        channel: FlutterMethodChannel,
         onSubscribeToCallCompositeEvents: @escaping (CallComposite) -> Void,
-        onUserDataReceived: @escaping (UserData) -> Void
+        onUserDataReceived: @escaping (UserData) -> Void,
+        unregisterPushNotifications: @escaping () -> Void
     ) {
-        self.channel = channel
         self.onSubscribeToCallCompositeEvents = onSubscribeToCallCompositeEvents
         self.onUserDataReceived = onUserDataReceived
+        self.unregisterPushNotifications = unregisterPushNotifications
         self.setupTokenRefresh()
     }
     
@@ -69,13 +71,20 @@ final class UserDataHandler: MethodHandler {
                let token = arguments["token"] as? String,
                let name = arguments["name"] as? String,
                let userId = arguments["userId"] as? String,
-               let languageCode = arguments["languageCode"] as? String
+               let languageCode = arguments["languageCode"] as? String,
+               let appToken = arguments["appToken"] as? String,
+               let baseUrl = arguments["baseUrl"] as? String
             {
-                self.userData = UserData(token: token, name: name, userId: userId, languageCode: languageCode)
+                self.userData = UserData(token: token, name: name, userId: userId, languageCode: languageCode, appToken: appToken, baseUrl: baseUrl)
                 
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, name and userId are required", details: nil))
             }
+            
+            return true
+            
+        case Constants.MethodChannels.unregisterPushNotifications:
+            unregisterPushNotifications()
             
             return true
             
@@ -123,15 +132,28 @@ final class UserDataHandler: MethodHandler {
     
     private func setupTokenRefresh() {
         tokenRefresher = { [weak self] tokenCompletionHandler in
-            self?.channel.invokeMethod("getToken", arguments: nil, result: { result in
-                if let token = result as? String {
+            NetworkHandler.fetchAzureToken { result in
+                switch result {
+                case .success(let token):
+                    debugPrint("✅ Token: \(token)")
                     tokenCompletionHandler(token, nil)
-                } else {
-                    let error = NSError(domain: "TokenError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch token"])
+                    
+                    guard let userData = self?.userData else { return }
+                            
+                    self?.userData = UserData(
+                        token: token,
+                        name: userData.name,
+                        userId: userData.userId,
+                        languageCode: userData.languageCode,
+                        appToken: userData.token,
+                        baseUrl: userData.baseUrl
+                    )
+                    
+                case .failure(let error):
+                    debugPrint("❌ Error: \(error)")
                     tokenCompletionHandler(nil, error)
                 }
             }
-            )
         }
     }
 }

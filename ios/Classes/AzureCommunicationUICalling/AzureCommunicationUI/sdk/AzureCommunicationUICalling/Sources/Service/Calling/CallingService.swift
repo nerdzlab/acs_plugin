@@ -86,7 +86,7 @@ protocol CallingServiceProtocol {
     func requestScreenSharingStream()
     func requestStopScreenSharingStream()
     func stopScreenSharing() async throws
-    func showChat()
+    func showChat(azureCorrelationId: String?)
 }
 
 class CallingService: NSObject, CallingServiceProtocol {
@@ -297,7 +297,7 @@ class CallingService: NSObject, CallingServiceProtocol {
         try await callingSDKWrapper.stopScreenSharingStream()
     }
     
-    func showChat() {
-        callingSDKWrapper.showChat()
+    func showChat(azureCorrelationId: String?) {
+        callingSDKWrapper.showChat(azureCorrelationId: azureCorrelationId)
     }
 }

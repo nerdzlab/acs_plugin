@@ -67,7 +67,7 @@ struct CallingView: View {
                         landscapeCallingView
                     }
 
-                    if viewModel.isScreenSharing {
+                    if viewModel.isScreenSharing && !viewModel.isInPip {
                         screenSharingIndicator
                     }
 

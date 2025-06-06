@@ -7,6 +7,7 @@
 import Flutter
 import AzureCommunicationCalling
 import AzureCommunicationCommon
+import Foundation
 
 final class CallHandler: MethodHandler {
     private enum Constants {
@@ -27,7 +28,6 @@ final class CallHandler: MethodHandler {
         }
     }
     
-    private let channel: FlutterMethodChannel
     private let onGetllComposite: () -> CallComposite?
     private let onSendEvent: (Event) -> Void
     
@@ -40,11 +40,9 @@ final class CallHandler: MethodHandler {
     }
 
     init(
-        channel: FlutterMethodChannel,
         onGetllComposite: @escaping () -> CallComposite?,
         onSendEvent: @escaping (Event) -> Void
     ) {
-        self.channel = channel
         self.onGetllComposite = onGetllComposite
         self.onSendEvent = onSendEvent
     }
@@ -163,7 +161,7 @@ final class CallHandler: MethodHandler {
         result: @escaping FlutterResult
     ) {
         let localOptions = LocalOptions(
-            cameraOn: false,
+            cameraOn: true,
             isChatEnable: true,
             microphoneOn: true,
             skipSetupScreen: true
@@ -184,16 +182,22 @@ final class CallHandler: MethodHandler {
     }
     
     func subscribeToEvents(callComposite: CallComposite) {
-        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
+        func getLocalOptions(azureCorrelationId: String?) -> LocalOptions {
+            return LocalOptions(cameraOn: true, isChatEnable: true, microphoneOn: true, azureCorrelationId: azureCorrelationId)
+        }
         
         let callKitCallAccepted: (String) -> Void = { [weak callComposite] callId in
-            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: localOptions)
+            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: getLocalOptions(azureCorrelationId: callId))
         }
         
         callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted
         
-        let showChatEvent: () -> Void = { [weak self] in
-            self?.onSendEvent(Event(name: Constants.FlutterEvents.onShowChat))
+        let showChatEvent: (String?) -> Void = { [weak self] azureCorrelationId in
+            if azureCorrelationId != nil {
+                self?.onSendEvent(Event(name: Constants.FlutterEvents.onShowChat, payload: ["azureCorrelationId": azureCorrelationId]))
+            } else {
+                self?.onSendEvent(Event(name: Constants.FlutterEvents.onShowChat))
+            }
         }
         
         callComposite.events.onShowUserChat = showChatEvent

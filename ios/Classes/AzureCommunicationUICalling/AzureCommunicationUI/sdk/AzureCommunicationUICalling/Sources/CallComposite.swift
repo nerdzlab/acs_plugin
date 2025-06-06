@@ -5,8 +5,8 @@
 
 import AzureCommunicationCommon
 /* <SDK_CX_PROVIDER_SUPPORT>
-import AzureCommunicationCalling
-</SDK_CX_PROVIDER_SUPPORT> */
+ import AzureCommunicationCalling
+ </SDK_CX_PROVIDER_SUPPORT> */
 
 import UIKit
 import SwiftUI
@@ -14,8 +14,8 @@ import FluentUI
 import AVKit
 import Combine
 /* <SDK_CX_PROVIDER_SUPPORT>
-import CallKit
-</SDK_CX_PROVIDER_SUPPORT> */
+ import CallKit
+ </SDK_CX_PROVIDER_SUPPORT> */
 
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
@@ -44,7 +44,7 @@ public class CallComposite {
         /// Closure to execute when participant has left a call inside Call Composite
         public var onRemoteParticipantLeft: (([CommunicationIdentifier]) -> Void)?
         /// Closure to show shat
-        public var onShowUserChat: (() -> Void)?
+        public var onShowUserChat: ((_ azureCorrelationId: String?) -> Void)?
         /// Closure to start screen share
         public var onStartScreenSharing: (() -> Void)?
         /// Closure to stop screen share
@@ -56,27 +56,27 @@ public class CallComposite {
         /// Closure on one on one call ended
         public var onOneOnOneCallEnded: (() -> Void)?
         /* <CALL_START_TIME>
-        /// Closure to call start time updated.
-        public var onCallStartTimeUpdated: ((Date) -> Void)?
-        </CALL_START_TIME> */
+         /// Closure to call start time updated.
+         public var onCallStartTimeUpdated: ((Date) -> Void)?
+         </CALL_START_TIME> */
     }
-
+    
     /// The events handler for Call Composite
     public let events: Events
-
+    
     private let themeOptions: ThemeOptions?
     private let localizationOptions: LocalizationOptions?
     private let enableMultitasking: Bool
     private let enableSystemPipWhenMultitasking: Bool
     private let setupViewOrientationOptions: OrientationOptions?
     private let callingViewOrientationOptions: OrientationOptions?
-
+    
     // Internal dependencies
     private var logger: Logger = DefaultLogger(category: "Calling")
     private var accessibilityProvider: AccessibilityProviderProtocol = AccessibilityProvider()
     private var localizationProvider: LocalizationProviderProtocol
     private var orientationProvider: OrientationProvider
-
+    
     private var store: Store<AppState, Action>?
     private var errorManager: ErrorManagerProtocol?
     private var exitManager: ExitManagerProtocol?
@@ -92,11 +92,11 @@ public class CallComposite {
     private var updatableOptionsManager: UpdatableOptionsManagerProtocol?
     private var callHistoryService: CallHistoryService?
     private lazy var callHistoryRepository = CallHistoryRepository(logger: logger,
-        userDefaults: UserDefaults.standard)
+                                                                   userDefaults: UserDefaults.standard)
     private var leaveCallConfirmationMode: LeaveCallConfirmationMode = .alwaysEnabled
     private var setupScreenOptions: SetupScreenOptions?
     private var callScreenOptions: CallScreenOptions?
-
+    
     private var viewFactory: CompositeViewFactoryProtocol?
     private var viewController: UIViewController?
     private var pipViewController: UIViewController?
@@ -123,9 +123,9 @@ public class CallComposite {
     
     public var displayName: String?
     /* <CALL_START_TIME>
-    private var callStartTimeInternal: Date?
-    </CALL_START_TIME> */
-
+     private var callStartTimeInternal: Date?
+     </CALL_START_TIME> */
+    
     /// Get debug information for the Call Composite.
     public var debugInfo: DebugInfo {
         let localDebugInfoManager = debugInfoManager ?? createDebugInfoManager()
@@ -135,7 +135,7 @@ public class CallComposite {
     public var localUserId: String? {
         return userId?.rawId
     }
-
+    
     /// Get call state for the Call Composite.
     public var callState: CallState {
         return store?.state.callingState.status.toCallCompositeCallState() ?? CallState.none
@@ -154,7 +154,7 @@ public class CallComposite {
     public func sendVideoBuffer(sampleBuffer: CMSampleBuffer) {
         callingSDKWrapper?.captureOutput(sampleBuffer: sampleBuffer, sampleBufferType: .video, error: nil)
     }
-
+    
     /// Create an instance of CallComposite with options.
     /// - Parameter options: The CallCompositeOptions used to configure the experience.
     @available(*, deprecated, message: "Use init with CommunicationTokenCredential instead.")
@@ -171,7 +171,7 @@ public class CallComposite {
         callingViewOrientationOptions = options?.callingScreenOrientation
         orientationProvider = OrientationProvider()
         leaveCallConfirmationMode =
-               options?.callScreenOptions?.controlBarOptions?.leaveCallConfirmationMode ?? .alwaysEnabled
+        options?.callScreenOptions?.controlBarOptions?.leaveCallConfirmationMode ?? .alwaysEnabled
         setupScreenOptions = options?.setupScreenOptions
         callScreenOptions = options?.callScreenOptions
         callKitOptions = options?.callKitOptions
@@ -180,7 +180,7 @@ public class CallComposite {
             self.disableInternalPushForIncomingCall = disableInternalPushForIncomingCall
         }
     }
-
+    
     /// Create an instance of CallComposite with options.
     /// - Parameter credential: The CommunicationTokenCredential used for call.
     /// - Parameter options: The CallCompositeOptions used to configure the experience.
@@ -198,7 +198,7 @@ public class CallComposite {
         callingViewOrientationOptions = options?.callingScreenOrientation
         orientationProvider = OrientationProvider()
         leaveCallConfirmationMode =
-               options?.callScreenOptions?.controlBarOptions?.leaveCallConfirmationMode ?? .alwaysEnabled
+        options?.callScreenOptions?.controlBarOptions?.leaveCallConfirmationMode ?? .alwaysEnabled
         setupScreenOptions = options?.setupScreenOptions
         callScreenOptions = options?.callScreenOptions
         callKitOptions = options?.callKitOptions
@@ -207,7 +207,7 @@ public class CallComposite {
             self.disableInternalPushForIncomingCall = disableInternalPushForIncomingCall
         }
     }
-
+    
     /// Dismiss call composite. If call is in progress, user will leave a call.
     public func dismiss() {
         logger.debug( "CallComposite dismiss")
@@ -222,150 +222,150 @@ public class CallComposite {
             exitManagerCache?.onDismissed()
         }
     }
-
+    
     /* <SDK_CX_PROVIDER_SUPPORT>
      /// Get CXProvider
      public static func getCXProvider() -> CXProvider? {
-         return CallClient.getCXProviderInstance()
+     return CallClient.getCXProviderInstance()
      }
-    </SDK_CX_PROVIDER_SUPPORT> */
-
+     </SDK_CX_PROVIDER_SUPPORT> */
+    
     /// Handle push notification to receive incoming call notification.
     /// - Parameter pushNotification: The push notification received.
     /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
     ///                               a `Void` or an `Error`.
-     public func handlePushNotification(pushNotification: PushNotification,
-                                        completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-         guard self.credential != nil else {
-             completionHandler?(.failure(CommunicationTokenCredentialError.communicationTokenCredentialNotSet))
-             return
-         }
-         getCallingSDKInitializer().handlePushNotification(pushNotification: pushNotification,
-                                                           completionHandler: completionHandler)
-     }
-
-     /// Report incoming call to notify CallKit when in background mode.
-     /// On success you can wake up application.
-     /// - Parameter pushNotification: The push notification received.
-     /// - Parameter callKitOptions: The CallKitOptions used to configure the incoming call.
-     /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
-     ///                               a `Void` or an `Error`.
-     public static func reportIncomingCall(pushNotification: PushNotification,
-                                           callKitOptions: CallKitOptions,
-                                           completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-         CallingSDKInitializer.reportIncomingCall(pushNotification: pushNotification,
-                                                            callKitOptions: callKitOptions,
-                                                            completionHandler: completionHandler)
-     }
-
-     /// Register device token to receive Azure Notification Hubs push notifications.
-     /// - Parameter deviceRegistrationToken: The device registration token.
-     /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
-     public func registerPushNotifications(deviceRegistrationToken: Data,
-                                           completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-         guard self.credential != nil else {
-             completionHandler?(.failure(CommunicationTokenCredentialError.communicationTokenCredentialNotSet))
-             return
-         }
-         getCallingSDKInitializer().registerPushNotification(deviceRegistrationToken:
-                                                                    deviceRegistrationToken,
-                                                                  completionHandler: completionHandler)
-     }
-
-     /// Unregister Azure Notification Hubs push notifications
-     /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
-     public func unregisterPushNotifications(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-         guard self.credential != nil else {
-             completionHandler?(.failure(CommunicationTokenCredentialError.communicationTokenCredentialNotSet))
-             return
-         }
-         getCallingSDKInitializer().unregisterPushNotifications(completionHandler: completionHandler)
-     }
-
-     /// Accept incoming call
-     /// - Parameter incomingCallId: The incoming call id.
-     /// - Parameter callKitRemoteInfo: The CallKitRemoteInfo used to set the CallKit information for the outgoing call.
-     /// - Parameter localOptions: LocalOptions used to set the user participants information for the call.
-     ///                            This is data is not sent up to ACS.
-     public func accept(incomingCallId: String,
-                        callKitRemoteInfo: CallKitRemoteInfo? = nil,
-                        localOptions: LocalOptions? = nil) {
-         self.callKitRemoteInfo = callKitRemoteInfo
-         let callConfiguration = CallConfiguration(locator: nil,
-                                               participants: nil,
-                                               callId: incomingCallId)
-         self.callConfiguration = callConfiguration
-         launch(callConfiguration, localOptions: localOptions)
-     }
-
-     /// Reject incoming call
-     /// - Parameter incomingCallId: The incoming call id.
-     /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
-     public func reject(incomingCallId: String,
-                        completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-         guard self.credential != nil else {
-             completionHandler?(.failure(CommunicationTokenCredentialError.communicationTokenCredentialNotSet))
-             return
-         }
-        getCallingSDKInitializer().reject(incomingCallId: incomingCallId, completionHandler: completionHandler)
-     }
-
-     /// Hold  call
-     /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
-     ///                                a `Void` or an `Error`.
-     public func hold(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-         guard let callingSDKWrapper = callingSDKWrapper else {
-             completionHandler?(.failure((CallError.callIsNotInProgress)))
+    public func handlePushNotification(pushNotification: PushNotification,
+                                       completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+        guard self.credential != nil else {
+            completionHandler?(.failure(CommunicationTokenCredentialError.communicationTokenCredentialNotSet))
             return
-         }
-         Task {
-             do {
-                 try await callingSDKWrapper.holdCall()
-                 completionHandler?(.success(()))
-             } catch {
-                 completionHandler?(.failure(error))
-             }
-         }
-     }
-
-     /// Resume  call
-     /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
-     ///                                a `Void` or an `Error`.
-     public func resume(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
-         guard let callingSDKWrapper = callingSDKWrapper else {
-             completionHandler?(.failure((CallError.callIsNotInProgress)))
-            return
-         }
-         Task {
-             do {
-                 try await callingSDKWrapper.resumeCall()
-                 completionHandler?(.success(()))
-             } catch {
-                 completionHandler?(.failure(error))
-             }
-         }
-     }
-
-    /* <CALL_START_TIME>
-    /// Get call start time
-    public func callStartTime() -> Date? {
-        guard let callingSDKWrapper = callingSDKWrapper else {
-           return nil
         }
-        return callingSDKWrapper.callStartTime()
+        getCallingSDKInitializer().handlePushNotification(pushNotification: pushNotification,
+                                                          completionHandler: completionHandler)
     }
-    </CALL_START_TIME> */
-
+    
+    /// Report incoming call to notify CallKit when in background mode.
+    /// On success you can wake up application.
+    /// - Parameter pushNotification: The push notification received.
+    /// - Parameter callKitOptions: The CallKitOptions used to configure the incoming call.
+    /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
+    ///                               a `Void` or an `Error`.
+    public static func reportIncomingCall(pushNotification: PushNotification,
+                                          callKitOptions: CallKitOptions,
+                                          completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+        CallingSDKInitializer.reportIncomingCall(pushNotification: pushNotification,
+                                                 callKitOptions: callKitOptions,
+                                                 completionHandler: completionHandler)
+    }
+    
+    /// Register device token to receive Azure Notification Hubs push notifications.
+    /// - Parameter deviceRegistrationToken: The device registration token.
+    /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
+    public func registerPushNotifications(deviceRegistrationToken: Data,
+                                          completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+        guard self.credential != nil else {
+            completionHandler?(.failure(CommunicationTokenCredentialError.communicationTokenCredentialNotSet))
+            return
+        }
+        getCallingSDKInitializer().registerPushNotification(deviceRegistrationToken:
+                                                                deviceRegistrationToken,
+                                                            completionHandler: completionHandler)
+    }
+    
+    /// Unregister Azure Notification Hubs push notifications
+    /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
+    public func unregisterPushNotifications(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+        guard self.credential != nil else {
+            completionHandler?(.failure(CommunicationTokenCredentialError.communicationTokenCredentialNotSet))
+            return
+        }
+        getCallingSDKInitializer().unregisterPushNotifications(completionHandler: completionHandler)
+    }
+    
+    /// Accept incoming call
+    /// - Parameter incomingCallId: The incoming call id.
+    /// - Parameter callKitRemoteInfo: The CallKitRemoteInfo used to set the CallKit information for the outgoing call.
+    /// - Parameter localOptions: LocalOptions used to set the user participants information for the call.
+    ///                            This is data is not sent up to ACS.
+    public func accept(incomingCallId: String,
+                       callKitRemoteInfo: CallKitRemoteInfo? = nil,
+                       localOptions: LocalOptions? = nil) {
+        self.callKitRemoteInfo = callKitRemoteInfo
+        let callConfiguration = CallConfiguration(locator: nil,
+                                                  participants: nil,
+                                                  callId: incomingCallId)
+        self.callConfiguration = callConfiguration
+        launch(callConfiguration, localOptions: localOptions)
+    }
+    
+    /// Reject incoming call
+    /// - Parameter incomingCallId: The incoming call id.
+    /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
+    public func reject(incomingCallId: String,
+                       completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+        guard self.credential != nil else {
+            completionHandler?(.failure(CommunicationTokenCredentialError.communicationTokenCredentialNotSet))
+            return
+        }
+        getCallingSDKInitializer().reject(incomingCallId: incomingCallId, completionHandler: completionHandler)
+    }
+    
+    /// Hold  call
+    /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
+    ///                                a `Void` or an `Error`.
+    public func hold(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+        guard let callingSDKWrapper = callingSDKWrapper else {
+            completionHandler?(.failure((CallError.callIsNotInProgress)))
+            return
+        }
+        Task {
+            do {
+                try await callingSDKWrapper.holdCall()
+                completionHandler?(.success(()))
+            } catch {
+                completionHandler?(.failure(error))
+            }
+        }
+    }
+    
+    /// Resume  call
+    /// - Parameter completionHandler: The completion handler that receives `Result` enum value with either
+    ///                                a `Void` or an `Error`.
+    public func resume(completionHandler: ((Result<Void, Error>) -> Void)? = nil) {
+        guard let callingSDKWrapper = callingSDKWrapper else {
+            completionHandler?(.failure((CallError.callIsNotInProgress)))
+            return
+        }
+        Task {
+            do {
+                try await callingSDKWrapper.resumeCall()
+                completionHandler?(.success(()))
+            } catch {
+                completionHandler?(.failure(error))
+            }
+        }
+    }
+    
+    /* <CALL_START_TIME>
+     /// Get call start time
+     public func callStartTime() -> Date? {
+     guard let callingSDKWrapper = callingSDKWrapper else {
+     return nil
+     }
+     return callingSDKWrapper.callStartTime()
+     }
+     </CALL_START_TIME> */
+    
     convenience init(withOptions options: CallCompositeOptions? = nil,
                      callingSDKWrapperProtocol: CallingSDKWrapperProtocol? = nil) {
         self.init(withOptions: options)
         self.customCallingSdkWrapper = callingSDKWrapperProtocol
     }
-
+    
     deinit {
         logger.debug("CallComposite Call Composite deallocated")
     }
-
+    
     private func launch(_ callConfiguration: CallConfiguration,
                         localOptions: LocalOptions?) {
         logger.debug("CallComposite launch composite experience")
@@ -378,22 +378,22 @@ public class CallComposite {
             withCallingSDKWrapper: self.customCallingSdkWrapper
         )
         self.viewFactory = viewFactory
-
+        
         setupColorTheming()
         setupLocalization(with: localizationProvider)
-
+        
         guard let store = self.store else {
             fatalError("CallComposite Construction of dependencies failed")
         }
-
+        
         store.$state
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 self?.receive(state)
             }.store(in: &cancellables)
-
+        
         let viewController = makeToolkitHostingController(router: NavigationRouter(store: store, logger: logger),
-            viewFactory: viewFactory)
+                                                          viewFactory: viewFactory)
         self.viewController = viewController
         present(viewController)
         UIApplication.shared.isIdleTimerDisabled = true
@@ -404,7 +404,7 @@ public class CallComposite {
         }
         compositeUILaunched = true
     }
-
+    
     /// Start Call Composite experience with joining a Teams meeting.
     /// - Parameter remoteOptions: RemoteOptions used to send to ACS to locate the call.
     /// - Parameter localOptions: LocalOptions used to set the user participants information for the call.
@@ -416,14 +416,14 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
     public func launch(remoteOptions: RemoteOptions,
                        localOptions: LocalOptions? = nil) {
         let configuration = CallConfiguration(locator: remoteOptions.locator,
-                                                  participants: nil,
-                                                  callId: nil)
+                                              participants: nil,
+                                              callId: nil)
         self.credential = remoteOptions.credential
         self.displayName = remoteOptions.displayName
         self.callConfiguration = configuration
         launch(configuration, localOptions: localOptions)
     }
-
+    
     /// Start Call Composite experience with joining an existing call.
     /// - Parameter locator: Join existing call.
     /// - Parameter callKitRemoteInfo: CallKitRemoteInfo used to set the
@@ -440,7 +440,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
         self.callConfiguration = configuration
         launch(configuration, localOptions: localOptions)
     }
-
+    
     /// Start Call Composite experience with dialing participants.
     /// - Parameter participants: participants to dial.
     /// - Parameter callKitRemoteInfo: CallKitRemoteInfo used to set the
@@ -457,7 +457,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
         self.callConfiguration = configuration
         launch(configuration, localOptions: localOptions)
     }
-
+    
     /// Start Call Composite experience with call accepted from CallKit.
     /// - Parameter callIdAcceptedFromCallKit: call id accepted from CallKit.
     /// - Parameter callKitRemoteInfo: CallKitRemoteInfo used to set the
@@ -475,14 +475,18 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
                                               callId: callIdAcceptedFromCallKit)
         self.callConfiguration = configuration
         let acceptedCallLocalOptions = LocalOptions(participantViewData: localOptions?.participantViewData,
-                                                   setupScreenViewData: localOptions?.setupScreenViewData,
-                                                   cameraOn: false,
-                                                   microphoneOn: false,
-                                                   skipSetupScreen: true,
-                                                   audioVideoMode: localOptions?.audioVideoMode ?? .audioAndVideo)
+                                                    setupScreenViewData: localOptions?.setupScreenViewData,
+                                                    cameraOn: localOptions?.cameraOn,
+                                                    isChatEnable: localOptions?.isChatEnabled,
+                                                    microphoneOn: localOptions?.microphoneOn,
+                                                    skipSetupScreen: true,
+                                                    audioVideoMode: localOptions?.audioVideoMode ?? .audioAndVideo,
+                                                    callId: localOptions?.callId,
+                                                    azureCorrelationId: localOptions?.azureCorrelationId
+        )
         launch(configuration, localOptions: acceptedCallLocalOptions)
     }
-
+    
     /// Set ParticipantViewData to be displayed for the remote participant. This is data is not sent up to ACS.
     /// - Parameters:
     ///   - remoteParticipantViewData: ParticipantViewData used to set the participant's information for the call.
@@ -500,8 +504,8 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
                           for: identifier,
                           completionHandler: completionHandler)
     }
-
-    /// Native SDK do not follow call state change order for End and Accept 
+    
+    /// Native SDK do not follow call state change order for End and Accept
     /// Any state can be received first:  disconnected for existing call or connected for newly accepted call
     /// Notify once UI is closed by disconnected state before notifying for new call accept
     private func onCallAdded(callId: String) {
@@ -512,7 +516,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
             }
         }
     }
-
+    
     /// On incoming call accepted by callkit
     /// It is possible that composite is in existing call, then on previous call disconnect this function will be called
     /// CompositeUILaunched will be set to false once existing call is disconnected
@@ -528,7 +532,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
             incomingCallAcceptedByCallKitCallId = nil
         }
     }
-
+    
     /// Display Call Composite if it was hidden by user going Back in navigation while on the call.
     private func displayCallCompositeIfWasHidden() {
         guard let store = self.store, let viewFactory = self.viewFactory else {
@@ -542,15 +546,15 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
         self.pipViewController?.dismissSelf()
         self.pipViewController = nil
         self.viewController?.dismissSelf()
-
+        
         let viewController = makeToolkitHostingController(
             router: NavigationRouter(store: store, logger: logger), viewFactory: viewFactory)
         self.viewController = viewController
         present(viewController)
-
+        
         self.pipManager?.reset()
     }
-
+    
     /// Controls if CallComposite UI is hidder. If CallComosite is created with enableSystemPipWhenMultitasking
     /// set to true, then setting isHidden to true will start syspem Picture-in-Picture view.
     public var isHidden: Bool {
@@ -572,7 +576,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
             }
         }
     }
-
+    
     private func hide() {
         self.viewController?.dismissSelf()
         self.viewController = nil
@@ -596,7 +600,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
             callKitRemoteInfo: callKitRemoteInfo,
             callingSDKInitializer: getCallingSDKInitializer())
         self.callingSDKWrapper = callingSdkWrapper
-
+        
         let store = Store.constructStore(
             logger: logger,
             callingService: CallingService(logger: logger, callingSDKWrapper: callingSdkWrapper),
@@ -610,7 +614,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
             whiteBoardId: localOptions?.whiteBoardId
         )
         self.store = store
-
+        
         // Construct managers
         let avatarViewManager = AvatarViewManager(
             store: store,
@@ -621,7 +625,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
         let audioSessionManager = AudioSessionManager(store: store,
                                                       logger: logger,
                                                       isCallKitEnabled: callKitOptions != nil)
-
+        
         self.errorManager = CompositeErrorManager(store: store, callCompositeEventsHandler: callCompositeEventsHandler)
         self.callStateManager = CallStateManager(store: store, callCompositeEventsHandler: callCompositeEventsHandler)
         self.exitManager = CompositeExitManager(store: store, callCompositeEventsHandler: callCompositeEventsHandler)
@@ -647,7 +651,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
             self.pipManager = createPipManager(store)
         }
         self.callHistoryService = CallHistoryService(store: store, callHistoryRepository: self.callHistoryRepository)
-
+        
         let captionsViewManager = CaptionsViewManager(
             store: store,
             callingSDKWrapper: callingSdkWrapper
@@ -682,17 +686,17 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
             )
         )
     }
-
+    
     private func createDebugInfoManager(callingSDKWrapper: CallingSDKWrapperProtocol) -> DebugInfoManagerProtocol {
-       return DebugInfoManager(callHistoryRepository: self.callHistoryRepository,
-                               getLogFiles: { return callingSDKWrapper.getLogFiles() })
+        return DebugInfoManager(callHistoryRepository: self.callHistoryRepository,
+                                getLogFiles: { return callingSDKWrapper.getLogFiles() })
     }
-
+    
     private func createDebugInfoManager() -> DebugInfoManagerProtocol {
         return DebugInfoManager(callHistoryRepository: self.callHistoryRepository,
                                 getLogFiles: { return [] })
     }
-
+    
     private func cleanUpManagers() {
         self.errorManager = nil
         self.callStateManager = nil
@@ -709,13 +713,13 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
         self.callingSDKWrapper = nil
         self.updatableOptionsManager = nil
     }
-
+    
     private func disposeSDKWrappers() {
         self.callingSDKEventsHandler = nil
         self.callingSDKWrapper?.dispose()
         self.callingSDKWrapper = nil
     }
-
+    
     private func present(_ viewController: UIViewController) {
         store?.dispatch(action: .visibilityAction(.showNormalEntered))
         Task { @MainActor in
@@ -727,7 +731,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
             topViewController.present(viewController, animated: true, completion: nil)
         }
     }
-
+    
     private func setupColorTheming() {
         let colorProvider = ColorThemeProvider(themeOptions: themeOptions)
         StyleProvider.color = colorProvider
@@ -737,13 +741,13 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
             }
         }
     }
-
+    
     private func setupLocalization(with provider: LocalizationProviderProtocol) {
         if let localizationOptions = localizationOptions {
             provider.apply(localeConfig: localizationOptions)
         }
     }
-
+    
     private func isCompositePresentable() -> Bool {
         guard let keyWindow = UIWindow.keyWindow else {
             return false
@@ -751,7 +755,7 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
         let hasCallComposite = keyWindow.hasViewController(ofKind: ContainerUIHostingController.self)
         return !hasCallComposite
     }
-
+    
     private func getCallingSDKInitializer() -> CallingSDKInitializer {
         if let callingSDKInitializer = callingSDKInitializer {
             return callingSDKInitializer
@@ -788,22 +792,22 @@ extension CallComposite {
                 self?.receive(state)
             }.store(in: &cancellables)
     }
-
+    
     private func receive(_ state: AppState) {
         if state.visibilityState.currentStatus == .hideRequested {
             store?.dispatch(action: .visibilityAction(.hideEntered))
             hide()
         }
         /* <CALL_START_TIME>
-        if let onCallStartTimeUpdated = events.onCallStartTimeUpdated,
-           let newCallStartTime = state.callingState.callStartTime,
-           callStartTimeInternal != newCallStartTime {
-            self.callStartTimeInternal = newCallStartTime
-            onCallStartTimeUpdated(newCallStartTime)
-        }
-        </CALL_START_TIME> */
+         if let onCallStartTimeUpdated = events.onCallStartTimeUpdated,
+         let newCallStartTime = state.callingState.callStartTime,
+         callStartTimeInternal != newCallStartTime {
+         self.callStartTimeInternal = newCallStartTime
+         onCallStartTimeUpdated(newCallStartTime)
+         }
+         </CALL_START_TIME> */
     }
-
+    
     private func makeToolkitHostingController(router: NavigationRouter,
                                               viewFactory: CompositeViewFactoryProtocol)
     -> ContainerUIHostingController {
@@ -822,7 +826,7 @@ extension CallComposite {
                                                                         callComposite: self,
                                                                         isRightToLeft: isRightToLeft)
         containerUIHostingController.modalPresentationStyle = .fullScreen
-
+        
         router.setDismissComposite { [weak containerUIHostingController, weak self] in
             self?.logger.debug( "CallComposite setDismissComposite")
             self?.disposeSDKWrappers()
@@ -848,38 +852,38 @@ extension CallComposite {
                 self?.notifyOnCallKitCallAccepted()
             }
         }
-
+        
         return containerUIHostingController
     }
-
+    
     private func createPipManager(_ store: Store<AppState, Action>) -> PipManager? {
-
+        
         return PipManager(store: store, logger: logger,
-
+                          
                           onRequirePipContentView: {
             guard let store = self.store, let viewFactory = self.viewFactory else {
                 return nil
             }
-
+            
             let viewController = self.makeToolkitHostingController(
-            router: NavigationRouter(store: store, logger: self.logger),
-            viewFactory: viewFactory)
+                router: NavigationRouter(store: store, logger: self.logger),
+                viewFactory: viewFactory)
             self.pipViewController = viewController
             return viewController.view
         },
-                                     onRequirePipPlaceholderView: {
+                          onRequirePipPlaceholderView: {
             return self.viewController?.view
         },
-                                     onPipStarted: {
+                          onPipStarted: {
             self.viewController?.dismissSelf(animated: false)
             self.viewController = nil
             self.events.onPictureInPictureChanged?(true)
         },
-                                     onPipStoped: {
+                          onPipStoped: {
             self.pipViewController?.dismissSelf()
             self.displayCallCompositeIfWasHidden()
         },
-                                     onPipStartFailed: {
+                          onPipStartFailed: {
             self.viewController?.dismissSelf()
             self.viewController = nil
         })
