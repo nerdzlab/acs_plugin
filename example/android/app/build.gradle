@@ -3,6 +3,7 @@ plugins {
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    id "org.jetbrains.kotlin.plugin.serialization"
 }
 
 android {
@@ -81,7 +82,7 @@ dependencies {
     androidTestImplementation "androidx.test:rules:$androidx_test_rules_version"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$jetbrains_kotlinx_coroutines_test_version"
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation("dev.chrisbanes.insetter:insetter:0.6.1")
 }

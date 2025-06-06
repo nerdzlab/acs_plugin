@@ -36,6 +36,7 @@ class AcsPlugin {
   VoidCallback? onCallUIClosed;
   VoidCallback? onPluginStarted;
   VoidCallback? onUserCallEnded;
+  VoidCallback? onOneOnOneCallEnded;
   VoidCallback? onRealTimeNotificationConnected;
   VoidCallback? onRealTimeNotificationDisconnected;
 
@@ -115,16 +116,10 @@ class AcsPlugin {
 
   // Start one on one call
   Future<void> startOneOnOneCall({
-    required String callId,
-    required String whiteBoardId,
     required List<String> participantsId,
-    required String userId,
   }) async {
     await AcsPluginPlatform.instance.startOneOnOneCall(
-      callId: callId,
-      whiteBoardId: whiteBoardId,
       participanstId: participantsId,
-      userId: userId,
     );
   }
 
@@ -133,11 +128,13 @@ class AcsPlugin {
     required String token,
     required String name,
     required String userId,
+    required String languageCode,
   }) async {
     await AcsPluginPlatform.instance.setUserData(
       token: token,
       name: name,
       userId: userId,
+      languageCode: languageCode,
     );
   }
 
@@ -215,6 +212,10 @@ class AcsPlugin {
       case EventType.onUserCallEnded:
         log("User call ended");
         onUserCallEnded?.call();
+        break;
+      case EventType.onOneOnOneCallEnded:
+        log("User one on one call ended");
+        onOneOnOneCallEnded?.call();
         break;
       case EventType.onRealTimeNotificationConnected:
         log("Real-time notification connected");

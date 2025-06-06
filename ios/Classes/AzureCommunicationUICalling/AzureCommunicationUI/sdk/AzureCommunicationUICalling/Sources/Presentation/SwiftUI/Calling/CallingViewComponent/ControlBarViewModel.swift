@@ -84,6 +84,7 @@ class ControlBarViewModel: ObservableObject {
             iconName: .videoOff,
             buttonType: .controlButton,
             isDisabled: isCameraDisabled(),
+            renderAsOriginal: false,
             isVisible: isCameraVisible()) { [weak self] in
                 guard let self = self else {
                     return
@@ -99,6 +100,7 @@ class ControlBarViewModel: ObservableObject {
             iconName: .micOff,
             buttonType: .controlButton,
             isDisabled: isMicDisabled(),
+            renderAsOriginal: false,
             isVisible: isMicVisible()) { [weak self] in
                 guard let self = self else {
                     return
@@ -114,6 +116,7 @@ class ControlBarViewModel: ObservableObject {
             iconName: .speakerFilled,
             buttonType: .controlButton,
             isDisabled: false,
+            renderAsOriginal: false,
             isVisible: isAudioDeviceVisible()) { [weak self] in
                 guard let self = self else {
                     return
@@ -131,6 +134,7 @@ class ControlBarViewModel: ObservableObject {
             iconName: .endCall,
             buttonType: .roundedRectButton,
             isDisabled: false,
+            renderAsOriginal: true,
             isVisible: true) { [weak self] in
                 guard let self = self else {
                     return
@@ -146,6 +150,7 @@ class ControlBarViewModel: ObservableObject {
             iconName: .more,
             buttonType: .controlButton,
             isDisabled: false,
+            renderAsOriginal: false,
             isVisible: isMoreButtonVisible()) { [weak self] in
                 guard let self = self else {
                     return

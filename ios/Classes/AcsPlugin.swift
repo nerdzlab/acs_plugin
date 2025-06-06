@@ -171,14 +171,25 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             
             let providerConfig = CXProviderConfiguration()
             providerConfig.supportsVideo = true
-            providerConfig.maximumCallGroups = 1
-            providerConfig.includesCallsInRecents = true
+            providerConfig.maximumCallGroups = 2
+            providerConfig.includesCallsInRecents = false
             providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
             
-            let callKitOptions = CallKitOptions(providerConfig: providerConfig,
-                                                isCallHoldSupported: true,
-                                                provideRemoteInfo: incomingCallRemoteInfo,
-                                                configureAudioSession: configureAudioSession)
+            let appGroup = UserDefaults.standard.getAppGroupIdentifier() ?? "group.superbrain"
+            let languageCode = UserDefaults(suiteName: appGroup)?.getLanguageCode() ?? "nl"
+
+            //Localization
+            let provider = LocalizationProvider(logger: DefaultLogger(category: "Calling"))
+            let localizationOptions = LocalizationOptions(locale: Locale.resolveLocale(from: languageCode))
+            provider.apply(localeConfig: localizationOptions)
+            
+            let callKitOptions = CallKitOptions(
+                providerConfig: providerConfig,
+                isCallHoldSupported: true,
+                provideRemoteInfo: incomingCallRemoteInfo,
+                configureAudioSession: configureAudioSession
+            )
+            
             CallComposite.reportIncomingCall(pushNotification: pushInfo,
                                              callKitOptions: callKitOptions) { result in
                 if case .success = result {
@@ -197,11 +208,15 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     private func getCallComposite(callKitOptions: CallKitOptions) ->  CallComposite? {
-        guard let userData = UserDefaults.standard.loadUserData() else { return nil }
-        
-        guard let credential = try? CommunicationTokenCredential(token: userData.token) else { return nil }
+        guard
+            let userData = UserDefaults.standard.loadUserData(),
+            let credential = try? CommunicationTokenCredential(token: userData.token)
+        else {
+            return nil
+        }
         
         let callCompositeOptions = CallCompositeOptions(
+            localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
             enableMultitasking: true,
             enableSystemPictureInPictureWhenMultitasking: true,
             callKitOptions: callKitOptions,
@@ -221,7 +236,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     func subscribeToEvents(callComposite: CallComposite) {
-        let localOptions = LocalOptions(cameraOn: true, microphoneOn: true)
+        let localOptions = LocalOptions(cameraOn: false, microphoneOn: true)
         
         let callKitCallAccepted: (String) -> Void = { [weak callComposite] callId in
             callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: localOptions)

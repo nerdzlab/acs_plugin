@@ -15,6 +15,7 @@ final class CallHandler: MethodHandler {
             static let onCallUIClosed = "onCallUIClosed"
             static let onPluginStarted = "onPluginStarted"
             static let onUserCallEnded = "onUserCallEnded"
+            static let onOneOnOneCallEnded = "onOneOnOneCallEnded"
         }
         
         enum MethodChannels {
@@ -78,16 +79,10 @@ final class CallHandler: MethodHandler {
             
         case Constants.MethodChannels.startOneOnOneCall:
             if let arguments = call.arguments as? [String: Any],
-               let callId = arguments["callId"] as? String,
-               let whiteBoardId = arguments["whiteBoardId"] as? String,
-               let participantsId = arguments["participantsId"] as? [String],
-               let userId = arguments["userId"] as? String
+               let participantsId = arguments["participantsId"] as? [String]
             {
                 startOneOnOneCall(
-                    callId: callId,
                     participantsId: participantsId,
-                    whiteBoardId: whiteBoardId,
-                    userId: userId,
                     result: result
                 )
             } else {
@@ -164,18 +159,14 @@ final class CallHandler: MethodHandler {
     }
     
     private func startOneOnOneCall(
-        callId: String,
         participantsId: [String],
-        whiteBoardId: String,
-        userId: String,
         result: @escaping FlutterResult
     ) {
         let localOptions = LocalOptions(
             cameraOn: false,
+            isChatEnable: true,
             microphoneOn: true,
-            skipSetupScreen: true,
-            whiteBoardId: whiteBoardId,
-            callId: callId
+            skipSetupScreen: true
         )
         
         let participants = participantsId.map { CommunicationUserIdentifier($0) }
@@ -224,5 +215,11 @@ final class CallHandler: MethodHandler {
         }
         
         callComposite.events.onUserCallEnded = onUserCallEnded
+        
+        let onOneOnOneCallEnded: () -> Void = { [weak self] in
+            self?.onSendEvent(Event(name: Constants.FlutterEvents.onOneOnOneCallEnded))
+        }
+        
+        callComposite.events.onOneOnOneCallEnded = onOneOnOneCallEnded
     }
 }

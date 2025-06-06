@@ -1,7 +1,7 @@
 package com.acs_plugin.data
 
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.InternalSerializationApi
 
 @OptIn(InternalSerializationApi::class)
 @Serializable

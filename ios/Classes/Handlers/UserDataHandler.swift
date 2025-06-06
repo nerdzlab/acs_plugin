@@ -16,6 +16,7 @@ final class UserDataHandler: MethodHandler {
         let token: String
         let name: String
         let userId: String
+        let languageCode: String
     }
     
     private enum Constants {
@@ -30,10 +31,11 @@ final class UserDataHandler: MethodHandler {
     private var userData: UserData? {
         didSet {
             guard let userData else { return }
-            
             UserDefaults.standard.saveUserData(userData)
-            
             onUserDataReceived(userData)
+            
+            guard let appGroup = UserDefaults.standard.getAppGroupIdentifier() else { return }
+            UserDefaults(suiteName: appGroup)?.setLanguageCode(userData.languageCode)
         }
     }
     
@@ -66,9 +68,10 @@ final class UserDataHandler: MethodHandler {
             if let arguments = call.arguments as? [String: Any],
                let token = arguments["token"] as? String,
                let name = arguments["name"] as? String,
-               let userId = arguments["userId"] as? String
+               let userId = arguments["userId"] as? String,
+               let languageCode = arguments["languageCode"] as? String
             {
-                self.userData = UserData(token: token, name: name, userId: userId)
+                self.userData = UserData(token: token, name: name, userId: userId, languageCode: languageCode)
                 
             } else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, name and userId are required", details: nil))
@@ -95,6 +98,7 @@ final class UserDataHandler: MethodHandler {
         guard let credential = try? CommunicationTokenCredential(withOptions: refreshOptions) else { return nil }
         
         let callCompositeOptions = CallCompositeOptions(
+            localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
             enableMultitasking: true,
             enableSystemPictureInPictureWhenMultitasking: true,
             callKitOptions: isRealDevice ? CallKitOptions() : nil,

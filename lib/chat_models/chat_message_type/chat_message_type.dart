@@ -14,4 +14,6 @@ enum ChatMessageType {
   participantRemoved,
   @JsonValue('custom')
   custom,
+  @JsonValue('videoSessionStart')
+  videoSessionStart,
 }

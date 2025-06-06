@@ -24,7 +24,7 @@ public struct LocalizationOptions {
     public init(locale: Locale,
                 localizableFilename: String = "Localizable",
                 layoutDirection: LayoutDirection = .leftToRight) {
-        self.languageCode = locale.collatorIdentifier ?? "en"
+        self.languageCode = locale.collatorIdentifier ?? "nl-NL"
         self.localizableFilename = localizableFilename
         self.layoutDirection = layoutDirection
     }

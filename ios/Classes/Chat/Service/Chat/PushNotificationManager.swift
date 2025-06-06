@@ -56,7 +56,8 @@ final class BackgroundChatManager {
     }
     
     private func createChatClient() {
-        guard let endpoint = UserDefaults.standard.getChatEndpoint(),
+        guard
+              let endpoint = UserDefaults.standard.getChatEndpoint(),
               let userData = UserDefaults.standard.loadUserData() else {
             return
         }

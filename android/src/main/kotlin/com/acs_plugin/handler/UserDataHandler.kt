@@ -2,11 +2,11 @@ package com.acs_plugin.handler
 
 import android.content.Context
 import android.content.SharedPreferences
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
 import androidx.core.content.edit
 import com.acs_plugin.Constants
 import com.acs_plugin.data.UserData
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
 import kotlinx.serialization.json.Json
 
 class UserDataHandler(
@@ -14,8 +14,6 @@ class UserDataHandler(
     private val channel: MethodChannel,
     private val onUserDataReceived: (UserData) -> Unit
 ) : MethodHandler {
-
-    var tokenRefresher: (((String?, Throwable?) -> Unit) -> Unit)? = null
 
     private var userData: UserData? = null
         set(value) {
@@ -31,7 +29,6 @@ class UserDataHandler(
     }
 
     init {
-        setupTokenRefresh()
         loadSavedUserData()
     }
 
@@ -75,33 +72,6 @@ class UserDataHandler(
         }
     }
 
+
     fun getUserData(): UserData? = userData
-
-    private fun setupTokenRefresh() {
-        tokenRefresher = { completionHandler ->
-            channel.invokeMethod(
-                Constants.MethodChannels.GET_TOKEN,
-                null,
-                object : MethodChannel.Result {
-                    override fun success(result: Any?) {
-                        when (result) {
-                            is String -> completionHandler(result, null)
-                            else -> {
-                                val error = Exception("Failed to fetch token")
-                                completionHandler(null, error)
-                            }
-                        }
-                    }
-
-                    override fun error(
-                        errorCode: String,
-                        errorMessage: String?,
-                        errorDetails: Any?
-                    ) {}
-
-                    override fun notImplemented() {}
-
-                })
-        }
-    }
 }

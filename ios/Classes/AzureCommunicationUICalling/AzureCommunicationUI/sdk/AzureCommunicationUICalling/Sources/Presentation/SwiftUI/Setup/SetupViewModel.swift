@@ -103,7 +103,7 @@ class SetupViewModel: ObservableObject {
             iconName: .callClose,
             buttonType: .backNavigation,
             isDisabled: false,
-            renderAsOriginal: true) { [weak self] in
+            renderAsOriginal: true, isVisible: true) { [weak self] in
                 guard let self = self else {
                     return
                 }

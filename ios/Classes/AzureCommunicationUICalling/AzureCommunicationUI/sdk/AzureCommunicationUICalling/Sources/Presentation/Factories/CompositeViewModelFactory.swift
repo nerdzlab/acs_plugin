@@ -148,9 +148,10 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
     
     // MARK: ComponentViewModels
     func makeIconButtonViewModel(iconName: CompositeIcon,
-                                 buttonType: IconButtonViewModel.ButtonType = .controlButton,
+                                 buttonType: IconButtonViewModel.ButtonType,
                                  isDisabled: Bool,
                                  renderAsOriginal: Bool,
+                                 isVisible: Bool,
                                  action: @escaping (() -> Void)) -> IconButtonViewModel {
         IconButtonViewModel(iconName: iconName,
                             buttonType: buttonType,
@@ -159,18 +160,6 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                             action: action)
     }
     
-    func makeIconButtonViewModel(iconName: CompositeIcon,
-                                 buttonType: IconButtonViewModel.ButtonType = .controlButton,
-                                 isDisabled: Bool,
-                                 isVisible: Bool,
-                                 action: @escaping (() -> Void)) -> IconButtonViewModel {
-        IconButtonViewModel(iconName: iconName,
-                            buttonType: buttonType,
-                            isDisabled: isDisabled,
-                            isVisible: isVisible,
-                            renderAsOriginal: true,
-                            action: action)
-    }
     /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
     func makeIconButtonViewModel(icon: UIImage,
                                  buttonType: IconButtonViewModel.ButtonType = .controlButton,
@@ -505,7 +494,9 @@ extension CompositeViewModelFactory {
             dispatchAction(Action.showParticipantOptions(participant))
         },
                                   onShowShareSheetMeetingLink: showSharingViewAction,
-                                  avatarManager: avatarManager)
+                                  avatarManager: avatarManager,
+                                  callType: callType
+        )
     }
     
     func makeParticipantOptionsViewModel(
@@ -634,7 +625,7 @@ extension CompositeViewModelFactory {
     //MTDOD need proper way to construct link
     func makeShareMeetingInfoActivityViewModel() -> ShareMeetingInfoActivityViewModel {
         ShareMeetingInfoActivityViewModel(accessibilityProvider: accessibilityProvider,
-                                          debugInfoManager: debugInfoManager, shareLink: "https://msteam.desktop.superbrains.nl/meeting?roomId=\(callConfiguration.callId ?? "")") {
+                                          debugInfoManager: debugInfoManager, shareLink: "https://msteam.desktop.superbrains.nl/meeting?roomId=\(localOptions?.callId ?? "")") {
             self.store.dispatch(action: .hideDrawer)
         }
     }
@@ -675,6 +666,10 @@ extension CompositeViewModelFactory {
     }
     
     func userTriggerEndCall() {
-        events.onUserCallEnded?()
+        if callType == .roomsCall || callType == .teamsMeeting {
+            events.onUserCallEnded?()
+        } else {
+            events.onOneOnOneCallEnded?()
+        }
     }
 }

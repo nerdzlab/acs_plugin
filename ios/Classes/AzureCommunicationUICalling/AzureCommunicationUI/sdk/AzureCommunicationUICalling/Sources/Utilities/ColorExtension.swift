@@ -21,6 +21,7 @@ enum CompositeColor: String {
     case violet = "violet"
     case orange = "orange"
     case blue = "blue"
+    case green = "green"
 }
 
 extension UIColor {

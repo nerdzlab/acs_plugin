@@ -21,6 +21,11 @@ class ParticipantsListViewModel: ObservableObject {
     private let onUserClicked: (ParticipantInfoModel) -> Void
     private let onShowShareSheetMeetingLink: () -> Void
     private let avatarManager: AvatarViewManagerProtocol
+    private let callType: CompositeCallType
+    
+    var isShareEnable: Bool {
+        return callType == .roomsCall || callType == .teamsMeeting
+    }
     
     var isDisplayed: Bool
     var lastUpdateTimeStamp = Date()
@@ -32,7 +37,8 @@ class ParticipantsListViewModel: ObservableObject {
          localizationProvider: LocalizationProviderProtocol,
          onUserClicked: @escaping (ParticipantInfoModel) -> Void,
          onShowShareSheetMeetingLink: @escaping () -> Void,
-         avatarManager: AvatarViewManagerProtocol
+         avatarManager: AvatarViewManagerProtocol,
+         callType: CompositeCallType
     ) {
         self.compositeViewModelFactory = compositeViewModelFactory
         self.dispatch = dispatchAction
@@ -42,6 +48,7 @@ class ParticipantsListViewModel: ObservableObject {
         self.onUserClicked = onUserClicked
         self.avatarManager = avatarManager
         self.onShowShareSheetMeetingLink = onShowShareSheetMeetingLink
+        self.callType = callType
     }
     
     func update(localUserState: LocalUserState,

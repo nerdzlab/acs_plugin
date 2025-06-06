@@ -10,6 +10,7 @@ enum EventType {
   onCallUIClosed,
   onPluginStarted,
   onUserCallEnded,
+  onOneOnOneCallEnded,
   onRealTimeNotificationConnected,
   onRealTimeNotificationDisconnected,
   onChatMessageReceived,
