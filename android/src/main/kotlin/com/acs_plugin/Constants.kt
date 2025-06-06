@@ -23,6 +23,7 @@ object Constants {
         const val SET_USER_DATA = "setUserData"
         const val GET_TOKEN = "getToken"
         const val INITIALIZE_ROOM_CALL = "initializeRoomCall"
+        const val START_TEAMS_MEETING_CALL = "startTeamsMeetingCall"
         const val GET_INITIAL_LIST_THREADS = "getInitialListThreads"
         const val IS_MORE_THREADS_AVAILABLE = "isMoreThreadsAvailable"
         const val GET_NEXT_THREADS = "getNextThreads"
@@ -66,7 +67,8 @@ object Constants {
         const val METADATA = "metadata"
         const val MESSAGE_ID = "messageId"
         const val CALL_ID = "callId"
-        const val WHITEBOARD_ID = "whiteboardId"
+        const val WHITEBOARD_ID = "whiteBoardId"
+        const val MEETING_LINK = "meetingLink"
     }
 
     object JsonKeys {

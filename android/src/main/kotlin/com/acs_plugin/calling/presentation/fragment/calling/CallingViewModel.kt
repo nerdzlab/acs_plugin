@@ -157,6 +157,7 @@ internal class CallingViewModel(
         )
 
         participantListViewModel.init(
+            callType,
             state.remoteParticipantState.participantMap,
             state.localParticipantState,
             shouldShowLobby(
@@ -164,7 +165,7 @@ internal class CallingViewModel(
                 state.visibilityState
             ),
             displayParticipantMenuCallback = { id, _ -> openParticipantMenu(id) },
-            state.remoteParticipantState.totalParticipantCount,
+            state.remoteParticipantState.totalParticipantCount
         )
 
         waitingLobbyOverlayViewModel.init(shouldDisplayLobbyOverlay(state))
@@ -177,6 +178,7 @@ internal class CallingViewModel(
             state.localParticipantState.audioState,
             state.localParticipantState.initialCallJoinState,
         )
+
         holdOverlayViewModel.init(state.callState.callingStatus, state.audioSessionState.audioFocusStatus)
 
         participantGridViewModel.init(
@@ -236,11 +238,13 @@ internal class CallingViewModel(
         isCaptionsMaximized = state.rttState.isMaximized
 
         moreActionsListViewModel.init(
+            callType = callType,
             cameraState = state.localParticipantState.cameraState,
             raisedHandStatus = state.localParticipantState.raisedHandStatus,
             navigationState = state.navigationState,
             buttonState = state.buttonState,
             shareScreenStatus = state.localParticipantState.shareScreenStatus,
+            participantsCount = state.remoteParticipantState.totalParticipantCount,
             displayParticipantList = { participantListViewModel.displayParticipantList() }
         )
 
@@ -410,6 +414,7 @@ internal class CallingViewModel(
             )
 
             participantListViewModel.update(
+                callType,
                 state.remoteParticipantState.participantMap,
                 state.localParticipantState,
                 state.visibilityState,
@@ -467,11 +472,13 @@ internal class CallingViewModel(
         isCaptionsMaximized = state.rttState.isMaximized
 
         moreActionsListViewModel.update(
+            callType = callType,
             cameraState = state.localParticipantState.cameraState,
             raisedHandStatus = state.localParticipantState.raisedHandStatus,
             navigationState = state.navigationState,
             buttonState = state.buttonState,
             shareScreenStatus = state.localParticipantState.shareScreenStatus,
+            participantsCount = state.remoteParticipantState.totalParticipantCount
         )
     }
 

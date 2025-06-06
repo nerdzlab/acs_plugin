@@ -3,6 +3,7 @@
 
 package com.acs_plugin.calling.presentation.fragment.calling.participantlist
 
+import com.acs_plugin.calling.configuration.CallType
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ParticipantStatus
 import com.acs_plugin.calling.redux.action.Action
@@ -23,13 +24,19 @@ internal class ParticipantListViewModel(
 
     val participantListContentStateFlow: StateFlow<ParticipantListContent> get() = participantListContentMutableStateFlow
 
+    private lateinit var sharingMeetingLinkVisibilityMutableStateFlow: MutableStateFlow<Boolean>
+    val sharingMeetingLinkVisibilityStateFlow: StateFlow<Boolean> get() = sharingMeetingLinkVisibilityMutableStateFlow
+
     fun init(
+        callType: CallType?,
         participantMap: Map<String, ParticipantInfoModel>,
         localUserState: LocalUserState,
         canShowLobby: Boolean,
         displayParticipantMenuCallback: (userIdentifier: String, displayName: String?) -> Unit,
         totalParticipantCountExceptHidden: Int,
     ) {
+        sharingMeetingLinkVisibilityMutableStateFlow = MutableStateFlow(callType != CallType.TEAMS_MEETING)
+
         val remoteParticipantList: List<ParticipantListCellModel> =
             participantMap.values.map {
                 getRemoteParticipantListCellModel(it)
@@ -47,12 +54,15 @@ internal class ParticipantListViewModel(
     }
 
     fun update(
+        callType: CallType?,
         participantMap: Map<String, ParticipantInfoModel>,
         localUserState: LocalUserState,
         visibilityState: VisibilityState,
         canShowLobby: Boolean,
         totalParticipantCountExceptHidden: Int,
     ) {
+        sharingMeetingLinkVisibilityMutableStateFlow.value = callType != CallType.TEAMS_MEETING
+
         val remoteParticipantList: MutableList<ParticipantListCellModel> =
             participantMap.values.map {
                 getRemoteParticipantListCellModel(it)
