@@ -105,7 +105,7 @@ internal class MoreActionsListViewModel(
             if (shareScreenStatus == ShareScreenStatus.ON) {
                 add(MoreActionType.STOP_SHARE_SCREEN.mapToMoreActionItem())
             } else {
-                add(MoreActionType.SHARE_SCREEN.mapToMoreActionItem())
+                add(MoreActionType.SHARE_SCREEN.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
             }
         }
     }

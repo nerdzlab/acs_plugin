@@ -356,8 +356,6 @@ internal class CallingViewModel(
 
             isWhiteboardEnabled = updatedRemoteParticipantsForGridView.keys.contains(state.callState.whiteboardId)
 
-            updatedRemoteParticipantsForGridView = updatedRemoteParticipantsForGridView + getMockParticipants() //TODO: Remove this after testing
-
             participantGridViewModel.update(
                 remoteParticipantsMapUpdatedTimestamp = state.remoteParticipantState.participantMapModifiedTimestamp,
                 remoteParticipantsMap = updatedRemoteParticipantsForGridView,
@@ -572,33 +570,8 @@ internal class CallingViewModel(
 
     private fun openParticipantMenu(id: String) {
         val state = store.getCurrentState()
-        val isWhiteboardEnabled = state.remoteParticipantState.participantMap.keys.contains(state.callState.whiteboardId)
         state.remoteParticipantState.participantMap[id]?.let { participantInfoModel ->
             participantMenuViewModel.displayParticipantMenu(isWhiteboardEnabled, participantInfoModel)
         }
-    }
-
-    //TODO: Remove this after testing
-    private fun getMockParticipants(): Map<String, ParticipantInfoModel> {
-        val participants = mutableMapOf<String, ParticipantInfoModel>()
-        repeat(7) { index ->
-            val id = "mock_participant_$index"
-            participants[id] = ParticipantInfoModel(
-                displayName = "User $index",
-                userIdentifier = id,
-                isMuted = false,
-                isCameraDisabled = false,
-                isSpeaking = false,
-                isTypingRtt = false,
-                participantStatus = null,
-                screenShareVideoStreamModel = null,
-                cameraVideoStreamModel = null,
-                modifiedTimestamp = System.currentTimeMillis() + 256,
-                isRaisedHand = false,
-                selectedReaction = null,
-//                isWhiteboard = index == 0
-            )
-        }
-        return participants
     }
 }

@@ -300,9 +300,9 @@ internal class ParticipantGridViewModel(
             }
         }
 
-        return remoteParticipantsMap.toList()
+        return remoteParticipantsMap
+            .toList()
             .sortedWith(comparator)
-//            .take(getMaxRemoteParticipantsSize())
             .toMap()
     }
 
