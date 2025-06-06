@@ -110,7 +110,7 @@ final class UserDataHandler: MethodHandler {
             localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
             enableMultitasking: true,
             enableSystemPictureInPictureWhenMultitasking: true,
-            callKitOptions: isRealDevice ? getCallKitOptions() : nil,
+            callKitOptions: isRealDevice ? CallKitOptions() : nil,
             displayName: userData.name,
             userId: CommunicationUserIdentifier(userData.userId)
         )
@@ -128,48 +128,6 @@ final class UserDataHandler: MethodHandler {
     
     func getUserData() -> UserData? {
         return userData
-    }
-    
-    private func getCallKitOptions() -> CallKitOptions {
-        let cxHandle = CXHandle(type: .generic, value: "Outgoing call")
-        let providerConfig = CXProviderConfiguration()
-        providerConfig.supportsVideo = true
-        providerConfig.maximumCallGroups = 2
-        providerConfig.includesCallsInRecents = false
-        providerConfig.supportedHandleTypes = [.phoneNumber, .generic]
-        let isCallHoldSupported = true
-        let callKitOptions = CallKitOptions(providerConfig: providerConfig,
-                                            isCallHoldSupported: isCallHoldSupported,
-                                            provideRemoteInfo: incomingCallRemoteInfo,
-                                            configureAudioSession: configureAudioSession)
-        return callKitOptions
-    }
-    
-    public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
-        let cxHandle = CXHandle(type: .generic, value: "Incoming call")
-        var remoteInfoDisplayName = info.displayName
-        
-        if remoteInfoDisplayName.isEmpty {
-            remoteInfoDisplayName = info.identifier.rawId
-        }
-        
-        let callKitRemoteInfo = CallKitRemoteInfo(displayName: remoteInfoDisplayName,
-                                                  handle: cxHandle)
-        return callKitRemoteInfo
-    }
-    
-    private func configureAudioSession() -> Error? {
-        let audioSession = AVAudioSession.sharedInstance()
-        var configError: Error?
-        
-        do {
-            // Keeping default .playAndRecord without forcing speaker
-            try audioSession.setCategory(.playAndRecord)
-        } catch {
-            configError = error
-        }
-        
-        return configError
     }
     
     private func setupTokenRefresh() {
