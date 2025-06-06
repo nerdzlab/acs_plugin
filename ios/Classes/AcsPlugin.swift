@@ -294,22 +294,23 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
 //    }
     
     public func configureAudioSession() -> Error? {
-        let audioSession = AVAudioSession.sharedInstance()
-        
-        do {
-            // Категорія для запису і відтворення (телефонний режим)
-            try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth, .defaultToSpeaker])
-            
-            // Активуємо аудіосесію
-            try audioSession.setActive(true)
-            
-            // Якщо потрібно — явно перенаправляємо звук на динамік (можна коментувати, якщо не треба)
-            try audioSession.overrideOutputAudioPort(.speaker)
-            
-            return nil
-        } catch {
-            return error
-        }
+        return nil
+//        let audioSession = AVAudioSession.sharedInstance()
+//        
+//        do {
+//            // Категорія для запису і відтворення (телефонний режим)
+//            try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth, .defaultToSpeaker])
+//            
+//            // Активуємо аудіосесію
+//            try audioSession.setActive(true)
+//            
+//            // Якщо потрібно — явно перенаправляємо звук на динамік (можна коментувати, якщо не треба)
+//            try audioSession.overrideOutputAudioPort(.speaker)
+//            
+//            return nil
+//        } catch {
+//            return error
+//        }
     }
 
     
