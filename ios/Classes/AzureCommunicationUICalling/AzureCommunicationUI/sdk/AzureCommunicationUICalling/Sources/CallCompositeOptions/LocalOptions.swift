@@ -56,7 +56,7 @@ public struct LocalOptions {
     public init(participantViewData: ParticipantViewData? = nil,
                 setupScreenViewData: SetupScreenViewData? = nil,
                 cameraOn: Bool? = false,
-                isChatEnable: Bool? = false,
+                isChatEnable: Bool? = true,
                 microphoneOn: Bool? = false,
                 skipSetupScreen: Bool? = false,
                 audioVideoMode: CallCompositeAudioVideoMode = .audioAndVideo,

@@ -137,7 +137,7 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                              capabilitiesManager: self.capabilitiesManager,
                                              callScreenOptions: callScreenOptions ?? CallScreenOptions(),
                                              rendererViewManager: rendererViewManager,
-                                             isChatEnable: localOptions?.isChatEnabled ?? false,
+                                             isChatEnable: localOptions?.isChatEnabled ?? true,
                                              whiteBoardId: localOptions?.whiteBoardId,
                                              azureCorrelationId: localOptions?.azureCorrelationId)
             self.setupViewModel = nil
