@@ -110,7 +110,7 @@ final class UserDataHandler: MethodHandler {
             localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
             enableMultitasking: true,
             enableSystemPictureInPictureWhenMultitasking: true,
-            callKitOptions: isRealDevice ? CallKitOptions() : nil,
+            callKitOptions: isRealDevice ? getCallKitOptions() : nil,
             displayName: userData.name,
             userId: CommunicationUserIdentifier(userData.userId)
         )

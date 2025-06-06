@@ -195,6 +195,15 @@ class CallingSDKEventsHandler: NSObject, CallingSDKEventsHandling {
                 self.remoteParticipants.append(forKey: userIdentifier, value: participant)
                 let infoModel = participant.toParticipantInfoModel()
                 remoteParticipantsInfoList.append(infoModel)
+            } else {
+                // Update existing participant and info model
+                self.remoteParticipants.append(forKey: userIdentifier, value: participant)
+                let updatedInfoModel = participant.toParticipantInfoModel()
+                participant.delegate = remoteParticipantEventAdapter
+                
+                if let index = remoteParticipantsInfoList.firstIndex(where: { $0.userIdentifier == userIdentifier }) {
+                    remoteParticipantsInfoList[index] = updatedInfoModel
+                }
             }
         }
         
