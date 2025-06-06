@@ -227,7 +227,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
             enableMultitasking: true,
             enableSystemPictureInPictureWhenMultitasking: true,
-            callKitOptions: callKitOptions,
+            callKitOptions: CallKitOptions(),
             displayName: userData.name,
             userId: CommunicationUserIdentifier(userData.userId)
         )
