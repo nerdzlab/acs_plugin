@@ -204,7 +204,12 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                             callCamposite.handlePushNotification(pushNotification: pushInfo)
                         } else {
                             AcsPlugin.shared.setupHandlers()
-                            self.getCallComposite(callKitOptions: callKitOptions)?.handlePushNotification(pushNotification: pushInfo)
+                            let delayedCallComposite = self.getCallComposite(callKitOptions: callKitOptions)
+                            
+                            // Delay the push notification handling by 2 seconds
+                            DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
+                                delayedCallComposite?.handlePushNotification(pushNotification: pushInfo)
+                            }
                         }
                     }
                 } else {
@@ -226,7 +231,6 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
             enableMultitasking: true,
             enableSystemPictureInPictureWhenMultitasking: true,
-            callKitOptions: callKitOptions,
             displayName: userData.name,
             userId: CommunicationUserIdentifier(userData.userId)
         )
