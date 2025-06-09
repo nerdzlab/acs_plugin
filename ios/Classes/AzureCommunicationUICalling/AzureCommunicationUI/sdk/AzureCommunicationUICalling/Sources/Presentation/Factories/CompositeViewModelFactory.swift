@@ -137,8 +137,9 @@ class CompositeViewModelFactory: CompositeViewModelFactoryProtocol {
                                              capabilitiesManager: self.capabilitiesManager,
                                              callScreenOptions: callScreenOptions ?? CallScreenOptions(),
                                              rendererViewManager: rendererViewManager,
-                                             isChatEnable: localOptions?.isChatEnabled ?? false,
-                                             whiteBoardId: localOptions?.whiteBoardId)
+                                             isChatEnable: localOptions?.isChatEnabled ?? true,
+                                             whiteBoardId: localOptions?.whiteBoardId,
+                                             azureCorrelationId: localOptions?.azureCorrelationId)
             self.setupViewModel = nil
             self.callingViewModel = viewModel
             return viewModel
@@ -432,7 +433,8 @@ extension CompositeViewModelFactory {
                             /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
                             
                             buttonViewDataState: buttonViewDataState,
-                            controlHeaderViewData: controlHeaderViewData
+                            controlHeaderViewData: controlHeaderViewData,
+                            azureCorrelationId: localOptions?.azureCorrelationId
                             /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
         )
     }

@@ -107,7 +107,7 @@ protocol CallingSDKWrapperProtocol {
     func unMuteCall() async throws
     func enableNoiseSuppression()
     func disableNoiseSuppression()
-    func showChat()
+    func showChat(azureCorrelationId: String?)
     func captureOutput(sampleBuffer: CMSampleBuffer, sampleBufferType: RPSampleBufferType, error: Error?)
 }
 

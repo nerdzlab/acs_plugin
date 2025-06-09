@@ -19,8 +19,8 @@ class ChatMessageEditedEvent with _$ChatMessageEditedEvent {
     required String senderDisplayName,
     required String createdOn,
     required String version,
-    required ChatMessageType type,
     required String message,
+    ChatMessageType? type,
     String? editedOn,
     @JsonKey(name: 'metadata', readValue: readValueObject)
     ChatMessageMetadata? metadata,

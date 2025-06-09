@@ -20,6 +20,8 @@ public struct LocalOptions {
     let whiteBoardId: String?
     
     let callId: String?
+    
+    let azureCorrelationId: String?
 
     ///  The CameraOn is used when we skip the setup screen
 
@@ -54,7 +56,7 @@ public struct LocalOptions {
     public init(participantViewData: ParticipantViewData? = nil,
                 setupScreenViewData: SetupScreenViewData? = nil,
                 cameraOn: Bool? = false,
-                isChatEnable: Bool? = false,
+                isChatEnable: Bool? = true,
                 microphoneOn: Bool? = false,
                 skipSetupScreen: Bool? = false,
                 audioVideoMode: CallCompositeAudioVideoMode = .audioAndVideo,
@@ -62,7 +64,8 @@ public struct LocalOptions {
                 setupScreenOptions: SetupScreenOptions? = nil,
                 callScreenOptions: CallScreenOptions? = nil,
                 whiteBoardId: String? = nil,
-                callId: String? = nil
+                callId: String? = nil,
+                azureCorrelationId: String? = nil
     ) {
         self.participantViewData = participantViewData
         self.setupScreenViewData = setupScreenViewData
@@ -76,6 +79,7 @@ public struct LocalOptions {
         self.isChatEnabled = isChatEnable
         self.whiteBoardId = whiteBoardId
         self.callId = callId
+        self.azureCorrelationId = azureCorrelationId
     }
 
     /// Determines the actual state of the camera

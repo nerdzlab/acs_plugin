@@ -161,9 +161,10 @@ class _CallScreenState extends State<CallScreen> {
       ..onStartScreenShare = () {
         log("Screen sharing started");
       }
-      ..onShowChat = () {
-        log("Show chat triggered");
-        _shwoSnacBar("Show chat");
+      ..onShowChat = (azureCorrelationId) {
+        log("Show chat triggered for azureCorrelationId ${azureCorrelationId}");
+        _shwoSnacBar(
+            "Show chat triggered for azureCorrelationId ${azureCorrelationId}");
       }
       ..onPluginStarted = () {
         log("Plugin started");
@@ -299,6 +300,8 @@ class _CallScreenState extends State<CallScreen> {
         name: _userName,
         userId: _userId,
         languageCode: 'nl',
+        appToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA1YTI0NzdhLWRmODUtNGRiNy1iNzQ5LWYyMjQwNzAxOGIzZCIsIm9yZ2FuaXphdGlvbl9pZCI6IjY1NzU2ZTgzLTAwYjUtNDc1NS04M2EzLTAwZGQyYzFhYTY5MSIsImlzX29uYm9hcmRlZCI6dHJ1ZSwic3luY19wYXRpZW50X2RhdGEiOmZhbHNlLCJ2aWRlb19jYWxsX3Byb3ZpZGVyIjoiaG1zIiwiaHR0cHM6Ly9oYXN1cmEuaW8vand0L2NsYWltcyI6eyJ4LWhhc3VyYS1hbGxvd2VkLXJvbGVzIjpbInVzZXIiXSwieC1oYXN1cmEtZGVmYXVsdC1yb2xlIjoidXNlciIsIngtaGFzdXJhLXVzZXItaWQiOiIwNWEyNDc3YS1kZjg1LTRkYjctYjc0OS1mMjI0MDcwMThiM2QifSwicm9sZSI6InVzZXIiLCJhY2NvdW50X3R5cGUiOm51bGwsImlhdCI6MTc0OTEzMjExOSwiZXhwIjoxNzUxNzI0MTE5LCJzdWIiOiIwNWEyNDc3YS1kZjg1LTRkYjctYjc0OS1mMjI0MDcwMThiM2QifQ.75JB4Jr0Oebx5eF7nlJQxBu9Oe_BytEZ-LrF9vYKkDo",
+        baseUrl: "https://api-msteam.superbrains.nl/v1/graphql"
       );
       log('Set user data successfully');
       _shwoSnacBar('Set user data successfully');
@@ -382,6 +385,10 @@ class _CallScreenState extends State<CallScreen> {
       log('Failed to disconnected chat: ${error.message}');
       _shwoSnacBar('Failed to disconnected chat: ${error.message}');
     }
+  }
+
+  Future<void> _unregisterPushNotifications() async {
+    _acsPlugin.unregisterPushNotifications();
   }
 
   // Get info if chat has more messages
@@ -525,6 +532,13 @@ class _CallScreenState extends State<CallScreen> {
                 ButtonConfig(
                   label: 'Is more threads available',
                   onTap: _isMoreThreadsAvailable,
+                  icon: Icons.message,
+                ),
+              ]),
+              _buildButtonGrid([
+                ButtonConfig(
+                  label: 'Unregister voip push',
+                  onTap: _unregisterPushNotifications,
                   icon: Icons.message,
                 ),
               ]),

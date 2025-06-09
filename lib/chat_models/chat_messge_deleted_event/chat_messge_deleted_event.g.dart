@@ -22,7 +22,7 @@ _$ChatMessageDeletedEventImpl _$$ChatMessageDeletedEventImplFromJson(
       senderDisplayName: json['senderDisplayName'] as String,
       createdOn: json['createdOn'] as String,
       version: json['version'] as String,
-      type: $enumDecode(_$ChatMessageTypeEnumMap, json['type']),
+      type: $enumDecodeNullable(_$ChatMessageTypeEnumMap, json['type']),
       deletedOn: json['deletedOn'] as String?,
       metadata: json['metadata'] as Map<String, dynamic>?,
     );
@@ -37,7 +37,7 @@ Map<String, dynamic> _$$ChatMessageDeletedEventImplToJson(
       'senderDisplayName': instance.senderDisplayName,
       'createdOn': instance.createdOn,
       'version': instance.version,
-      'type': _$ChatMessageTypeEnumMap[instance.type]!,
+      'type': _$ChatMessageTypeEnumMap[instance.type],
       'deletedOn': instance.deletedOn,
       'metadata': instance.metadata,
     };

@@ -59,7 +59,6 @@ final class ChatHandler: MethodHandler {
         }
     }
         
-    private let channel: FlutterMethodChannel
     private let onGetUserData: () -> UserDataHandler.UserData?
     private let onSendEvent: (Event) -> Void
     private let tokenRefresher: ((@escaping (String?, Error?) -> Void) -> Void)?
@@ -78,12 +77,10 @@ final class ChatHandler: MethodHandler {
     }
     
     init(
-        channel: FlutterMethodChannel,
         onGetUserData: @escaping () -> UserDataHandler.UserData?,
         onSendEvent: @escaping (Event) -> Void,
         tokenRefresher: ((@escaping (String?, Error?) -> Void) -> Void)?
     ) {
-        self.channel = channel
         self.onGetUserData = onGetUserData
         self.onSendEvent = onSendEvent
         self.tokenRefresher = tokenRefresher

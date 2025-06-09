@@ -92,6 +92,8 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
     required String name,
     required String userId,
     required String languageCode,
+    required String appToken,
+    required String baseUrl,
   }) async {
     await methodChannel.invokeMethod(
       'setUserData',
@@ -100,6 +102,8 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         'name': name,
         'userId': userId,
         'languageCode': languageCode,
+        'appToken': appToken,
+        'baseUrl': baseUrl,
       },
     );
   }
@@ -150,6 +154,11 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   @override
   Future<void> disconnectChatService() async {
     await methodChannel.invokeMethod('disconnectChatService');
+  }
+
+  @override
+  Future<void> unregisterPushNotifications() async {
+    await methodChannel.invokeMethod('unregisterPushNotifications');
   }
 
   @override

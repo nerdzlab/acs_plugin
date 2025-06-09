@@ -882,8 +882,8 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
         call.liveOutgoingAudioFilters.noiseSuppressionMode = .off
     }
     
-    func showChat() {
-        callingSDKInitializer.showChat()
+    func showChat(azureCorrelationId: String?) {
+        callingSDKInitializer.showChat(azureCorrelationId: azureCorrelationId)
     }
 }
 

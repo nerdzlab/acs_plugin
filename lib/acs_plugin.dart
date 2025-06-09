@@ -32,7 +32,7 @@ class AcsPlugin {
 
   VoidCallback? onStopScreenShare;
   VoidCallback? onStartScreenShare;
-  VoidCallback? onShowChat;
+  Function(String?)? onShowChat;
   VoidCallback? onCallUIClosed;
   VoidCallback? onPluginStarted;
   VoidCallback? onUserCallEnded;
@@ -129,12 +129,16 @@ class AcsPlugin {
     required String name,
     required String userId,
     required String languageCode,
+    required String appToken,
+    required String baseUrl,
   }) async {
     await AcsPluginPlatform.instance.setUserData(
       token: token,
       name: name,
       userId: userId,
       languageCode: languageCode,
+      appToken: appToken,
+      baseUrl: baseUrl,
     );
   }
 
@@ -182,6 +186,10 @@ class AcsPlugin {
     await AcsPluginPlatform.instance.disconnectChatService();
   }
 
+  Future<void> unregisterPushNotifications() async {
+    await AcsPluginPlatform.instance.unregisterPushNotifications();
+  }
+
 // Stream to listen for events
   Stream<Map<String, dynamic>> get eventStream {
     return AcsPluginPlatform.instance.eventStream;
@@ -198,8 +206,13 @@ class AcsPlugin {
         onStartScreenShare?.call();
         break;
       case EventType.onShowChat:
+        if (event.payload != null) {
+          final azureCorrelationId = event.payload["azureCorrelationId"];
+          onShowChat?.call(azureCorrelationId);
+        } else {
+          onShowChat?.call(null);
+        }
         log("Show chat triggered");
-        onShowChat?.call();
         break;
       case EventType.onCallUIClosed:
         log("Call UI closed");

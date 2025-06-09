@@ -170,7 +170,7 @@ protocol CallingMiddlewareHandling {
         dispatch: @escaping ActionDispatch
     ) -> Task<Void, Never>
     
-    func showChat()
+    func showChat(azureCorrelationId: String?)
 }
 
 // swiftlint:disable type_body_length
@@ -870,8 +870,8 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
         }
     }
     
-    func showChat() {
-        callingService.showChat()
+    func showChat(azureCorrelationId: String?) {
+        callingService.showChat(azureCorrelationId: azureCorrelationId)
     }
 }
 

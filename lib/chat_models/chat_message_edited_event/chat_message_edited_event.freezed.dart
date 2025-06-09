@@ -30,8 +30,8 @@ mixin _$ChatMessageEditedEvent {
   String get senderDisplayName => throw _privateConstructorUsedError;
   String get createdOn => throw _privateConstructorUsedError;
   String get version => throw _privateConstructorUsedError;
-  ChatMessageType get type => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
+  ChatMessageType? get type => throw _privateConstructorUsedError;
   String? get editedOn => throw _privateConstructorUsedError;
   @JsonKey(name: 'metadata', readValue: readValueObject)
   ChatMessageMetadata? get metadata => throw _privateConstructorUsedError;
@@ -62,8 +62,8 @@ abstract class $ChatMessageEditedEventCopyWith<$Res> {
       String senderDisplayName,
       String createdOn,
       String version,
-      ChatMessageType type,
       String message,
+      ChatMessageType? type,
       String? editedOn,
       @JsonKey(name: 'metadata', readValue: readValueObject)
       ChatMessageMetadata? metadata});
@@ -96,8 +96,8 @@ class _$ChatMessageEditedEventCopyWithImpl<$Res,
     Object? senderDisplayName = null,
     Object? createdOn = null,
     Object? version = null,
-    Object? type = null,
     Object? message = null,
+    Object? type = freezed,
     Object? editedOn = freezed,
     Object? metadata = freezed,
   }) {
@@ -130,14 +130,14 @@ class _$ChatMessageEditedEventCopyWithImpl<$Res,
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
               as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as ChatMessageType,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as ChatMessageType?,
       editedOn: freezed == editedOn
           ? _value.editedOn
           : editedOn // ignore: cast_nullable_to_non_nullable
@@ -211,8 +211,8 @@ abstract class _$$ChatMessageEditedEventImplCopyWith<$Res>
       String senderDisplayName,
       String createdOn,
       String version,
-      ChatMessageType type,
       String message,
+      ChatMessageType? type,
       String? editedOn,
       @JsonKey(name: 'metadata', readValue: readValueObject)
       ChatMessageMetadata? metadata});
@@ -247,8 +247,8 @@ class __$$ChatMessageEditedEventImplCopyWithImpl<$Res>
     Object? senderDisplayName = null,
     Object? createdOn = null,
     Object? version = null,
-    Object? type = null,
     Object? message = null,
+    Object? type = freezed,
     Object? editedOn = freezed,
     Object? metadata = freezed,
   }) {
@@ -281,14 +281,14 @@ class __$$ChatMessageEditedEventImplCopyWithImpl<$Res>
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
               as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as ChatMessageType,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as ChatMessageType?,
       editedOn: freezed == editedOn
           ? _value.editedOn
           : editedOn // ignore: cast_nullable_to_non_nullable
@@ -312,8 +312,8 @@ class _$ChatMessageEditedEventImpl implements _ChatMessageEditedEvent {
       required this.senderDisplayName,
       required this.createdOn,
       required this.version,
-      required this.type,
       required this.message,
+      this.type,
       this.editedOn,
       @JsonKey(name: 'metadata', readValue: readValueObject) this.metadata});
 
@@ -337,9 +337,9 @@ class _$ChatMessageEditedEventImpl implements _ChatMessageEditedEvent {
   @override
   final String version;
   @override
-  final ChatMessageType type;
-  @override
   final String message;
+  @override
+  final ChatMessageType? type;
   @override
   final String? editedOn;
   @override
@@ -348,7 +348,7 @@ class _$ChatMessageEditedEventImpl implements _ChatMessageEditedEvent {
 
   @override
   String toString() {
-    return 'ChatMessageEditedEvent(threadId: $threadId, sender: $sender, recipient: $recipient, id: $id, senderDisplayName: $senderDisplayName, createdOn: $createdOn, version: $version, type: $type, message: $message, editedOn: $editedOn, metadata: $metadata)';
+    return 'ChatMessageEditedEvent(threadId: $threadId, sender: $sender, recipient: $recipient, id: $id, senderDisplayName: $senderDisplayName, createdOn: $createdOn, version: $version, message: $message, type: $type, editedOn: $editedOn, metadata: $metadata)';
   }
 
   @override
@@ -367,8 +367,8 @@ class _$ChatMessageEditedEventImpl implements _ChatMessageEditedEvent {
             (identical(other.createdOn, createdOn) ||
                 other.createdOn == createdOn) &&
             (identical(other.version, version) || other.version == version) &&
-            (identical(other.type, type) || other.type == type) &&
             (identical(other.message, message) || other.message == message) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.editedOn, editedOn) ||
                 other.editedOn == editedOn) &&
             (identical(other.metadata, metadata) ||
@@ -378,7 +378,7 @@ class _$ChatMessageEditedEventImpl implements _ChatMessageEditedEvent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, threadId, sender, recipient, id,
-      senderDisplayName, createdOn, version, type, message, editedOn, metadata);
+      senderDisplayName, createdOn, version, message, type, editedOn, metadata);
 
   /// Create a copy of ChatMessageEditedEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -408,8 +408,8 @@ abstract class _ChatMessageEditedEvent implements ChatMessageEditedEvent {
       required final String senderDisplayName,
       required final String createdOn,
       required final String version,
-      required final ChatMessageType type,
       required final String message,
+      final ChatMessageType? type,
       final String? editedOn,
       @JsonKey(name: 'metadata', readValue: readValueObject)
       final ChatMessageMetadata? metadata}) = _$ChatMessageEditedEventImpl;
@@ -434,9 +434,9 @@ abstract class _ChatMessageEditedEvent implements ChatMessageEditedEvent {
   @override
   String get version;
   @override
-  ChatMessageType get type;
-  @override
   String get message;
+  @override
+  ChatMessageType? get type;
   @override
   String? get editedOn;
   @override

@@ -37,6 +37,7 @@ class InfoHeaderViewModel: ObservableObject {
 
     var isPad = false
     let isChatEnable: Bool
+    var azureCorrelationId: String?
 
     init(compositeViewModelFactory: CompositeViewModelFactoryProtocol,
          logger: Logger,
@@ -51,7 +52,8 @@ class InfoHeaderViewModel: ObservableObject {
          /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
 
          buttonViewDataState: ButtonViewDataState,
-         controlHeaderViewData: CallScreenHeaderViewData?
+         controlHeaderViewData: CallScreenHeaderViewData?,
+         azureCorrelationId: String?
          /* </CALL_SCREEN_HEADER_CUSTOM_BUTTONS> */
     ) {
         /* <CALL_SCREEN_HEADER_CUSTOM_BUTTONS:0> */
@@ -70,6 +72,7 @@ class InfoHeaderViewModel: ObservableObject {
         self.enableMultitasking = enableMultitasking
         self.enableSystemPipWhenMultitasking = enableSystemPipWhenMultitasking
         self.isChatEnable = isChatEnable
+        self.azureCorrelationId = azureCorrelationId
         
         self.participantListButtonViewModel = compositeViewModelFactory.makeIconButtonViewModel(
             iconName: .showParticipant,
@@ -137,7 +140,7 @@ class InfoHeaderViewModel: ObservableObject {
     
     func showChatButtonTapped() {
         logger.debug("Chat button tapped")
-        dispatch(.localUserAction(.showChat))
+        dispatch(.localUserAction(.showChat(azureCorrelationId: azureCorrelationId)))
         dispatch(.visibilityAction(.pipModeRequested))
     }
 

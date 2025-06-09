@@ -50,6 +50,8 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     required String name,
     required String userId,
     required String languageCode,
+    required String appToken,
+    required String baseUrl,
   }) {
     throw UnimplementedError('setUserData() has not been implemented.');
   }
@@ -81,6 +83,11 @@ abstract class AcsPluginPlatform extends PlatformInterface {
   Future<void> disconnectChatService() async {
     throw UnimplementedError(
         'disconnectChatService() has not been implemented.');
+  }
+
+  Future<void> unregisterPushNotifications() async {
+    throw UnimplementedError(
+        'unregisterPushNotifications() has not been implemented.');
   }
 
   Future<List<Map<String, dynamic>>> getInitialMessages({
