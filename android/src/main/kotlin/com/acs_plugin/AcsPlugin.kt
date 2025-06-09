@@ -44,11 +44,11 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     // ActivityAware callbacks:
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
+        setupHandlers()
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             val token = task.result
             handlers.forEach { it.onFirebaseTokenReceived(token) }
         }
-        setupHandlers()
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
