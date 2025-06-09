@@ -562,7 +562,7 @@ class ChatHandler(
             try {
                 val chatThreadClient = getChatThreadClient(threadId)
                 val readReceipts = chatThreadClient?.listReadReceipts()
-                handleResultSuccess(result, readReceipts?.map { it.toMap() })
+                handleResultSuccess(result, readReceipts?.byPage()?.firstOrNull()?.value?.map { it.toMap() })
             } catch (e: Exception) {
                 handleResultError(result, "GET_LIST_READ_RECEIPTS_ERROR", e.message, null)
             }
