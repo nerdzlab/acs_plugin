@@ -30,7 +30,7 @@ mixin _$ChatMessageDeletedEvent {
   String get senderDisplayName => throw _privateConstructorUsedError;
   String get createdOn => throw _privateConstructorUsedError;
   String get version => throw _privateConstructorUsedError;
-  ChatMessageType get type => throw _privateConstructorUsedError;
+  ChatMessageType? get type => throw _privateConstructorUsedError;
   String? get deletedOn => throw _privateConstructorUsedError;
   Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
 
@@ -60,7 +60,7 @@ abstract class $ChatMessageDeletedEventCopyWith<$Res> {
       String senderDisplayName,
       String createdOn,
       String version,
-      ChatMessageType type,
+      ChatMessageType? type,
       String? deletedOn,
       Map<String, dynamic>? metadata});
 
@@ -91,7 +91,7 @@ class _$ChatMessageDeletedEventCopyWithImpl<$Res,
     Object? senderDisplayName = null,
     Object? createdOn = null,
     Object? version = null,
-    Object? type = null,
+    Object? type = freezed,
     Object? deletedOn = freezed,
     Object? metadata = freezed,
   }) {
@@ -124,10 +124,10 @@ class _$ChatMessageDeletedEventCopyWithImpl<$Res,
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
               as String,
-      type: null == type
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as ChatMessageType,
+              as ChatMessageType?,
       deletedOn: freezed == deletedOn
           ? _value.deletedOn
           : deletedOn // ignore: cast_nullable_to_non_nullable
@@ -187,7 +187,7 @@ abstract class _$$ChatMessageDeletedEventImplCopyWith<$Res>
       String senderDisplayName,
       String createdOn,
       String version,
-      ChatMessageType type,
+      ChatMessageType? type,
       String? deletedOn,
       Map<String, dynamic>? metadata});
 
@@ -219,7 +219,7 @@ class __$$ChatMessageDeletedEventImplCopyWithImpl<$Res>
     Object? senderDisplayName = null,
     Object? createdOn = null,
     Object? version = null,
-    Object? type = null,
+    Object? type = freezed,
     Object? deletedOn = freezed,
     Object? metadata = freezed,
   }) {
@@ -252,10 +252,10 @@ class __$$ChatMessageDeletedEventImplCopyWithImpl<$Res>
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
               as String,
-      type: null == type
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as ChatMessageType,
+              as ChatMessageType?,
       deletedOn: freezed == deletedOn
           ? _value.deletedOn
           : deletedOn // ignore: cast_nullable_to_non_nullable
@@ -279,7 +279,7 @@ class _$ChatMessageDeletedEventImpl implements _ChatMessageDeletedEvent {
       required this.senderDisplayName,
       required this.createdOn,
       required this.version,
-      required this.type,
+      this.type,
       this.deletedOn,
       final Map<String, dynamic>? metadata})
       : _metadata = metadata;
@@ -304,7 +304,7 @@ class _$ChatMessageDeletedEventImpl implements _ChatMessageDeletedEvent {
   @override
   final String version;
   @override
-  final ChatMessageType type;
+  final ChatMessageType? type;
   @override
   final String? deletedOn;
   final Map<String, dynamic>? _metadata;
@@ -387,7 +387,7 @@ abstract class _ChatMessageDeletedEvent implements ChatMessageDeletedEvent {
       required final String senderDisplayName,
       required final String createdOn,
       required final String version,
-      required final ChatMessageType type,
+      final ChatMessageType? type,
       final String? deletedOn,
       final Map<String, dynamic>? metadata}) = _$ChatMessageDeletedEventImpl;
 
@@ -411,7 +411,7 @@ abstract class _ChatMessageDeletedEvent implements ChatMessageDeletedEvent {
   @override
   String get version;
   @override
-  ChatMessageType get type;
+  ChatMessageType? get type;
   @override
   String? get deletedOn;
   @override

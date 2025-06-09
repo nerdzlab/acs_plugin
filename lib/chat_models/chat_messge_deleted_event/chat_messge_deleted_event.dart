@@ -18,7 +18,7 @@ class ChatMessageDeletedEvent with _$ChatMessageDeletedEvent {
     required String senderDisplayName,
     required String createdOn,
     required String version,
-    required ChatMessageType type,
+    ChatMessageType? type,
     String? deletedOn,
     Map<String, dynamic>? metadata,
   }) = _ChatMessageDeletedEvent;
