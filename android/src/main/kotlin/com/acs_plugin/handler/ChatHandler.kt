@@ -307,12 +307,12 @@ class ChatHandler(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val credential =
-                    CommunicationTokenCredential("eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjZkMTQxM2NmLTJkMjQtNDE5MS1hNTcwLTExZGE5MTZlODQyNV8wMDAwMDAyNy1iNjUwLWUxODQtNWI0Mi1hZDNhMGQwMDRkNjEiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDk0NjY1NjIiLCJleHAiOjE3NDk1NTI5NjIsInJnbiI6ImRlIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiNmQxNDEzY2YtMmQyNC00MTkxLWE1NzAtMTFkYTkxNmU4NDI1IiwicmVzb3VyY2VMb2NhdGlvbiI6Imdlcm1hbnkiLCJpYXQiOjE3NDk0NjY1NjJ9.Mv8jZc6sZl2h741c63VR31jAVpP9UbZUY6T87sBavI3VZSEIy8FyzJ8TBr0hagQNmVPMBbyQWpCdVsnkJpdrkW49mZMimkcvgk4W0bYUpOOf4BP4B30SNXpxdGDmpz3p3Bq7OMe6WEkpTa4d4ssHk4Vj5Q82KC98akeDDCWKibQms-3Tr8DUtupuRufCZ99AU6ZdEQR9H5zbXbKmjya9xfxwK32tslOAau6z2-DAHh7tSVWryXaCIyCnEUx_uCgiTqf25i7BMMzhptAebdyV20a_wcGhWc36UPs_TDGxdKma_w_OIh4EpxuZfrPxjt_-JpRJC8-LWrxWTyzROBl8AA")
+                    CommunicationTokenCredential(userData.token)
 
                 chatClient = ChatClientBuilder().endpoint(endpoint).credential(credential).buildClient()
 
                 val identifier: CommunicationIdentifier =
-                    CommunicationIdentifier.CommunicationUserIdentifier("8:acs:6d1413cf-2d24-4191-a570-11da916e8425_00000027-b650-e184-5b42-ad3a0d004d61")
+                    CommunicationIdentifier.CommunicationUserIdentifier(userData.userId)
                 chatClient?.startRealtimeNotifications(context) {}
 
                 chatAdapter = ChatAdapterBuilder().endpoint(endpoint).identity(identifier).credential(credential)
