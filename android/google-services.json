@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "685004906770",
+    "project_id": "superbrains-dev",
+    "storage_bucket": "superbrains-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685004906770:android:86c459c5cee592b63b53cb",
+        "android_client_info": {
+          "package_name": "com.acs_plugin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzoTSfklQfggM1Y8Aw1xzGzyY0Wgvz89I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685004906770:android:fd3531c7849785473b53cb",
+        "android_client_info": {
+          "package_name": "com.superbrain.user.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzoTSfklQfggM1Y8Aw1xzGzyY0Wgvz89I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,12 +11,16 @@ import com.acs_plugin.calling.models.CallCompositeLocalOptions
 import com.acs_plugin.calling.models.CallCompositeRoomLocator
 import com.acs_plugin.data.UserData
 import com.acs_plugin.extension.falseIfNull
+import com.azure.android.communication.calling.CallAgent
+import com.azure.android.communication.calling.CallAgentOptions
+import com.azure.android.communication.calling.CallClient
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.communication.common.CommunicationTokenRefreshOptions
 import com.azure.android.communication.common.CommunicationUserIdentifier
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.serialization.json.Json
+
 
 class CallHandler(
     private val context: Context,
@@ -38,6 +42,11 @@ class CallHandler(
                 }
             }
         }
+
+    override fun onFirebaseTokenReceived(token: String) {
+        super.onFirebaseTokenReceived(token)
+        createCallAgent(token)
+    }
 
     override fun handle(call: MethodCall, result: MethodChannel.Result): Boolean {
         return when (call.method) {
@@ -61,6 +70,28 @@ class CallHandler(
                         )
                     } else {
                         result.error("INVALID_ARGUMENTS", "RoomId are required", null)
+                    }
+
+                    true
+                } catch (e: Exception) {
+                    result.error("ERROR", e.message, null)
+                    true
+                }
+            }
+
+
+            Constants.MethodChannels.START_ONE_ON_ONE_CALL -> {
+                try {
+                    val args = call.arguments as? Map<*, *>
+                    val participantsId = args?.get(Constants.Arguments.PARTICIPANTS_ID) as? List<String>
+
+                    if (participantsId != null) {
+                        startOneOnOneCall(
+                            participantsId = participantsId,
+                            result = result
+                        )
+                    } else {
+                        result.error("INVALID_ARGUMENTS", "Token, participantId and userId are required", null)
                     }
 
                     true
@@ -112,5 +143,49 @@ class CallHandler(
 
         callComposite.launch(this.activity, locator, localOptions)
         result.success(null)
+    }
+
+    private fun createCallAgent(userToken: String): CallAgent? {
+        val callClient = CallClient()
+        val tokenCredential = CommunicationTokenCredential(userToken)
+        val callAgentOptions = CallAgentOptions()
+        val callAgent = callClient.createCallAgent(context, tokenCredential, callAgentOptions).get()
+        callAgent.registerPushNotification(userToken).get()
+        return callAgent
+    }
+
+    private fun startOneOnOneCall(
+        participantsId: List<String>,
+        result: MethodChannel.Result
+    ) {
+        if (activity == null) {
+            result.error("NO_ACTIVITY", "Plugin not attached to an Activity", null)
+            return
+        }
+
+        if (userData == null) {
+            result.error("NO_USER_DATA", "User data not available", null)
+            return
+        }
+
+        val communicationTokenRefreshOptions = CommunicationTokenRefreshOptions({ userData?.token }, true)
+        val communicationTokenCredential = CommunicationTokenCredential(communicationTokenRefreshOptions)
+
+        val participants = participantsId.map { CommunicationUserIdentifier(it) }
+
+        val callComposite: CallComposite = CallCompositeBuilder()
+            .applicationContext(this.context)
+            .credential(communicationTokenCredential)
+            .displayName(userData?.name)
+            .userId(CommunicationUserIdentifier(userData?.userId))
+            .build()
+
+        val callCompositeLocalOptions = CallCompositeLocalOptions()
+        participants.firstOrNull()?.let { remoteParticipant ->
+            callComposite.launch(activity, participants, callCompositeLocalOptions)
+            result.success(null)
+        } ?: run {
+            result.error("NO_PARTICIPANTS", "No participants provided", null)
+        }
     }
 }

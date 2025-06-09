@@ -7,6 +7,7 @@ import com.acs_plugin.handler.ChatHandler
 import com.acs_plugin.handler.MethodHandler
 import com.acs_plugin.handler.UserDataHandler
 import com.acs_plugin.utils.FlutterEventDispatcher
+import com.google.firebase.messaging.FirebaseMessaging
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -15,6 +16,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+
 
 /** AcsPlugin */
 class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
@@ -42,6 +44,10 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     // ActivityAware callbacks:
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            val token = task.result
+            handlers.forEach { it.onFirebaseTokenReceived(token) }
+        }
         setupHandlers()
     }
 
