@@ -110,4 +110,9 @@ object Constants {
         const val SHARE_HISTORY_TIME = "shareHistoryTime"
         const val CONTENT = "content"
     }
+
+    object IntentDataKeys {
+        const val HANDLE_INCOMING_CALL_PUSH = "HANDLE_INCOMING_CALL_PUSH"
+        const val CLEAR_PUSH_NOTIFICATION = "CLEAR_PUSH_NOTIFICATION"
+    }
 }

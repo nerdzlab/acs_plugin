@@ -1,14 +1,13 @@
-package com.acs_plugin
+package com.acs_plugin.service
 
-import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.acs_plugin.Constants
 import com.acs_plugin.calling.models.CallCompositePushNotification
 import com.acs_plugin.calling.models.CallCompositePushNotificationEventType
 import com.acs_plugin.data.enum.OneOnOneCallingAction
-import com.acs_plugin.utils.IntentHelper
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -23,9 +22,9 @@ class FBMessagingService : FirebaseMessagingService() {
                 pushNotificationInfo.eventType == CallCompositePushNotificationEventType.INCOMING_GROUP_CALL
             ) {
                 wakeAppIfScreenOff()
-                sendIntent(IntentHelper.HANDLE_INCOMING_CALL_PUSH, remoteMessage)
+                sendIntent(Constants.IntentDataKeys.HANDLE_INCOMING_CALL_PUSH, remoteMessage)
             } else {
-                sendIntent(IntentHelper.CLEAR_PUSH_NOTIFICATION, remoteMessage)
+                sendIntent(Constants.IntentDataKeys.CLEAR_PUSH_NOTIFICATION, remoteMessage)
             }
         }
     }
@@ -39,7 +38,7 @@ class FBMessagingService : FirebaseMessagingService() {
     }
 
     private fun wakeAppIfScreenOff() {
-        val pm = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val pm = applicationContext.getSystemService(POWER_SERVICE) as PowerManager
         val screenIsOn = pm.isInteractive // check if screen is on
 
         if (!screenIsOn) {

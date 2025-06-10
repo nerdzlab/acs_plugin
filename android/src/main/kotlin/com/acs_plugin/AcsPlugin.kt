@@ -15,7 +15,6 @@ import com.acs_plugin.handler.MethodHandler
 import com.acs_plugin.handler.UserDataHandler
 import com.acs_plugin.utils.CallCompositeManager
 import com.acs_plugin.utils.FlutterEventDispatcher
-import com.acs_plugin.utils.SettingsFeatures
 import com.google.firebase.messaging.RemoteMessage
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -94,7 +93,6 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     // ActivityAware callbacks:
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
-        SettingsFeatures.initialize(context)
         setupHandlers()
         LocalBroadcastManager
             .getInstance(activity!!)

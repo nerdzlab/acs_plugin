@@ -1,11 +1,15 @@
-package com.acs_plugin
+package com.acs_plugin.ui
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.acs_plugin.Constants
+import com.acs_plugin.R
 import com.acs_plugin.data.enum.OneOnOneCallingAction
 
 class IncomingCallActivity : AppCompatActivity() {
@@ -17,34 +21,32 @@ class IncomingCallActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_incoming_call)
+
+        val notificationManager = NotificationManagerCompat.from(this)
+        notificationManager.cancel(1)
+
         window.addFlags(
             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                     or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                     or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         )
+
+        intent.getStringExtra("DISPLAY_NAME")?.let {
+             findViewById<TextView>(R.id.profile_name).text = it
+        }
+
         findViewById<ImageButton>(R.id.accept).setOnClickListener {
             val intent = Intent("acs_chat_intent")
             intent.putExtra(Constants.Arguments.ACTION_TYPE, OneOnOneCallingAction.ACCEPT)
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
-//                val application = application as CallLauncherApplication
-//                val acsIdentityToken = sharedPreference.getString(CACHED_TOKEN, "")
-//                val displayName = sharedPreference.getString(CACHED_USER_NAME, "")
-//                application.getCallCompositeManager(context).acceptIncomingCall(this@IncomingCallActivity, acsIdentityToken!!, displayName!!)
-//                finish()
+            finish()
         }
         findViewById<ImageButton>(R.id.decline).setOnClickListener {
             val intent = Intent("acs_chat_intent")
             intent.putExtra(Constants.Arguments.ACTION_TYPE, OneOnOneCallingAction.DECLINE)
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
-//                val application = application as CallLauncherApplication
-//                application.getCallCompositeManager(context).declineIncomingCall()
-//                finish()
+            finish()
         }
-
-        intent.getStringExtra(DISPLAY_NAME)?.let {
-//                profileName.text = it
-        }
-
         supportActionBar?.hide()
     }
 }

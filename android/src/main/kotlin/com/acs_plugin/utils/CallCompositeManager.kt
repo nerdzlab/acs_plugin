@@ -7,19 +7,16 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.acs_plugin.IncomingCallActivity
+import com.acs_plugin.ui.IncomingCallActivity
 import com.acs_plugin.R
 import com.acs_plugin.calling.CallComposite
 import com.acs_plugin.calling.CallCompositeBuilder
@@ -29,283 +26,40 @@ import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.communication.common.CommunicationTokenRefreshOptions
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.*
+import androidx.core.net.toUri
 
 class CallCompositeManager(private val context: Context) {
     val callCompositeCallStateStateFlow = MutableStateFlow("")
     private var callComposite: CallComposite? = null
     private var incomingCallId: String? = null
-    private var callScreenHeaderOptions: CallCompositeCallScreenHeaderViewData? = null
-    private var remoteParticipantsCount = 0
 
-//    init {
-//        try {
-//            AndroidThreeTen.init(context.applicationContext)
-//        } catch (e: java.lang.IllegalStateException) {
-//            // AndroidThreeTen is already initialized
-//            // Ignore this exception
-//            Log.d("CallCompositeManager", "AndroidThreeTen already initialized", e)
-//        }
-//    }
-
-    fun launch(
-        applicationContext: Context,
-        identity: String,
-        acsToken: String,
-        displayName: String,
-        groupId: UUID?,
-        roomId: String?,
-        meetingId: String?,
-        participantMris: String?,
-    ) {
-
-
-        createCallCompositeAndSubscribeToEvents(
-            applicationContext,
-            acsToken,
-            displayName,
-            identity,
-        )
-
-        val localOptions = getLocalOptions(applicationContext)
-
-        val participants = participantMris?.split(",")
-        if (!participants.isNullOrEmpty()) {
-            if (localOptions == null) {
-                callComposite?.launch(applicationContext, participants.map { CommunicationIdentifier.fromRawId(it) })
-            } else {
-                callComposite?.launch(
-                    applicationContext,
-                    participants.map { CommunicationIdentifier.fromRawId(it) },
-                    localOptions
-                )
-            }
-        } else {
-            val useDeprecatedLaunch = false
-            val remoteOptions = getRemoteOptions(
-                acsToken,
-                groupId,
-                roomId,
-                displayName,
-            )
-            val locator = getLocator(
-                groupId,
-                roomId,
-            )
-
-            if (localOptions == null) {
-                if (useDeprecatedLaunch) {
-                    callComposite?.launch(applicationContext, remoteOptions)
-                } else {
-                    callComposite?.launch(applicationContext, locator)
-                }
-            } else {
-                if (useDeprecatedLaunch) {
-                    callComposite?.launch(applicationContext, remoteOptions, localOptions)
-                } else {
-                    callComposite?.launch(applicationContext, locator, localOptions)
-                }
-            }
+    private fun getLocalOptions(): CallCompositeLocalOptions {
+        val localOptions = CallCompositeLocalOptions().apply {
+            setCameraOn(true)
+            setMicrophoneOn(true)
+            setSkipSetupScreen(true)
         }
+
+        return localOptions
     }
 
-    private fun getRemoteOptions(
-        acsToken: String,
-        groupId: UUID?,
-        roomId: String?,
-        displayName: String,
-    ): CallCompositeRemoteOptions {
-        val communicationTokenRefreshOptions =
-            CommunicationTokenRefreshOptions({ acsToken }, true)
-        val communicationTokenCredential =
-            CommunicationTokenCredential(communicationTokenRefreshOptions)
-
-        val locator: CallCompositeJoinLocator =
-            when {
-                groupId != null -> CallCompositeGroupCallLocator(groupId)
-                roomId != null -> CallCompositeRoomLocator(roomId)
-                else -> throw IllegalArgumentException("Cannot launch call composite with provided arguments.")
-            }
-
-        return CallCompositeRemoteOptions(locator, communicationTokenCredential, displayName)
-    }
-
-    private fun getLocator(
-        groupId: UUID?,
-        roomId: String?,
-    ): CallCompositeJoinLocator {
-        val locator: CallCompositeJoinLocator =
-            when {
-                groupId != null -> CallCompositeGroupCallLocator(groupId)
-                roomId != null -> CallCompositeRoomLocator(roomId)
-                else -> throw IllegalArgumentException("Cannot launch call composite with provided arguments.")
-            }
-
-        return locator
-    }
-
-    private fun getLocalOptions(context: Context): CallCompositeLocalOptions? {
-        val localOptions = CallCompositeLocalOptions()
-        var isAnythingChanged = false
-
-        val renderedDisplayName = true
-        var avatarImageBitmap: Bitmap? = null
-
-
-        if (true) {
-            val participantViewData = CallCompositeParticipantViewData()
-            if (renderedDisplayName != null)
-                participantViewData.setDisplayName("renderedDisplayName")
-            if (avatarImageBitmap != null)
-                participantViewData.setAvatarBitmap(avatarImageBitmap)
-
-            localOptions.setParticipantViewData(participantViewData)
-            isAnythingChanged = true
-        }
-
-        SettingsFeatures.getTitle()?.let { title ->
-            if (title.isNotEmpty()) {
-                val setupScreenViewData = CallCompositeSetupScreenViewData().setTitle(title)
-                SettingsFeatures.getSubtitle()?.let { subTitle ->
-                    if (subTitle.isNotEmpty()) {
-                        setupScreenViewData.setSubtitle(subTitle)
-                    }
-                }
-
-                localOptions.setSetupScreenViewData(setupScreenViewData)
-                isAnythingChanged = true
-            }
-        }
-        SettingsFeatures.getSkipSetupScreenFeatureOption()?.let {
-            localOptions.setSkipSetupScreen(it)
-            isAnythingChanged = true
-        }
-        SettingsFeatures.getAudioOnlyByDefaultOption()?.let {
-            localOptions.setAudioVideoMode(
-                if (it) {
-                    CallCompositeAudioVideoMode.AUDIO_ONLY
-                } else {
-                    CallCompositeAudioVideoMode.AUDIO_AND_VIDEO
-                },
-            )
-            isAnythingChanged = true
-        }
-        SettingsFeatures.getCameraOnByDefaultOption()?.let {
-            localOptions.setCameraOn(it)
-            isAnythingChanged = true
-        }
-        SettingsFeatures.getMicOnByDefaultOption()?.let {
-            localOptions.setMicrophoneOn(it)
-            isAnythingChanged = true
-        }
-
-        val autoStartCaptions = SettingsFeatures.getAutoStartCaptionsEnabled()
-        val defaultSpokenLanguage = SettingsFeatures.getCaptionsDefaultSpokenLanguage()
-
-        if (autoStartCaptions != null || defaultSpokenLanguage?.isNotEmpty() == true) {
-            val captionsViewData =
-                CallCompositeCaptionsOptions()
-
-            autoStartCaptions.let {
-                if (it == true) {
-                    captionsViewData.setCaptionsOn(true)
-                }
-            }
-
-            defaultSpokenLanguage.let {
-                captionsViewData.setSpokenLanguage(it)
-            }
-
-            localOptions.setCaptionsOptions(captionsViewData)
-            isAnythingChanged = true
-        }
-
-        callScreenOptions().let {
-            localOptions.callScreenOptions = it
-            isAnythingChanged = true
-        }
-
-        setupScreenOptions()?.let {
-            localOptions.setupScreenOptions = it
-            isAnythingChanged = true
-        }
-
-
-
-        return if (isAnythingChanged) localOptions else null
-    }
-
-    private fun subscribeToEvents(
-        context: Context,
-        callComposite: CallComposite,
-    ) {
-
-
-        val callStateEventHandler: ((CallCompositeCallStateChangedEvent) -> Unit) = {
-            callCompositeCallStateStateFlow.value = it.code.toString()
-            var callStartTime: Date? = null
-
-            toast(context, "Call State: ${it.code}. start time: $callStartTime ")
-        }
-
-        callComposite.addOnCallStateChangedEventHandler(callStateEventHandler)
-
-        callComposite.addOnUserReportedEventHandler {
-            toast(context, "onUserReportedEvent: ${it.userMessage}")
-        }
-//        callComposite.addOnUserReportedEventHandler(UserReportedIssueHandler(context.applicationContext as Application))
-
+    private fun subscribeToEvents(callComposite: CallComposite) {
         val onDismissedEventHandler: ((CallCompositeDismissedEvent) -> Unit) = {
-            remoteParticipantsCount = 0
-            toast(
-                context,
-                "onDismissed: errorCode: ${it.errorCode}, cause: ${it.cause?.message}"
-            )
+            log("onDismissed: errorCode: ${it.errorCode}, cause: ${it.cause?.message}")
         }
         callComposite.addOnDismissedEventHandler(onDismissedEventHandler)
 
-        callComposite.addOnRemoteParticipantLeftEventHandler { event ->
-            toast(context, "Remote participant removed: ${event.identifiers.count()}")
-//            event.identifiers.forEach {
-//                Log.d(CallLauncherActivity.TAG, "Remote participant removed: ${it.rawId}")
-//            }
-        }
-
-        callComposite.addOnPictureInPictureChangedEventHandler {
-            toast(context, "isInPictureInPicture: " + it.isInPictureInPicture)
-        }
-
-        callComposite.addOnRemoteParticipantJoinedEventHandler { event ->
-            toast(context, message = "Joined ${event.identifiers.count()} remote participants")
-//            event.identifiers.forEach {
-//                Log.d(CallLauncherActivity.TAG, "Remote participant joined: ${it.rawId}")
-//            }
-            remoteParticipantsCount += event.identifiers.count()
-            val titleUpdateCount = SettingsFeatures.getCallScreenInformationTitleUpdateParticipantCount()
-            if (titleUpdateCount != 0 && titleUpdateCount <= remoteParticipantsCount) {
-                callScreenHeaderOptions?.let {
-                    it.title = "Custom Call Screen Header: $remoteParticipantsCount participants"
-                }
-            }
-            val subtitleUpdateCount = SettingsFeatures.getCallScreenInformationSubtitleUpdateParticipantCount()
-            if (subtitleUpdateCount != 0 && subtitleUpdateCount <= remoteParticipantsCount) {
-                callScreenHeaderOptions?.let {
-                    it.subtitle = "Custom Call Screen Header: $remoteParticipantsCount participants"
-                }
-            }
-        }
-
         callComposite.addOnAudioSelectionChangedEventHandler { event ->
-            toast(context, message = "Audio selection changed to ${event.audioSelectionMode}")
+            log(message = "Audio selection changed to ${event.audioSelectionMode}")
         }
 
         callComposite.addOnIncomingCallEventHandler {
-            toast(context, "Incoming call. ${it.callId}")
+            log("Incoming call. ${it.callId}")
             onIncomingCall(it)
         }
 
         callComposite.addOnIncomingCallCancelledEventHandler {
-            toast(context, "Incoming call cancelled. ${it.callId}")
+            log("Incoming call cancelled. ${it.callId}")
             onIncomingCallCancelled(it)
         }
 
@@ -321,20 +75,11 @@ class CallCompositeManager(private val context: Context) {
         callComposite?.bringToForeground(context)
     }
 
-    fun getCallHistory(context: Context, acsToken: String, displayName: String): List<CallCompositeCallHistoryRecord>? {
-        createCallCompositeAndSubscribeToEvents(context, acsToken, displayName)
-        return callComposite?.getDebugInfo(context)?.callHistoryRecords
-    }
-
     fun acceptIncomingCall(applicationContext: Context, acsToken: String, displayName: String) {
         hideIncomingCallNotification()
         createCallCompositeAndSubscribeToEvents(applicationContext, acsToken, displayName)
-        val localOptions = getLocalOptions(applicationContext)
-        if (localOptions == null) {
-            callComposite?.accept(applicationContext, incomingCallId)
-        } else {
-            callComposite?.accept(applicationContext, incomingCallId, localOptions)
-        }
+        val localOptions = getLocalOptions()
+        callComposite?.accept(applicationContext, incomingCallId, localOptions)
     }
 
     fun declineIncomingCall() {
@@ -367,7 +112,7 @@ class CallCompositeManager(private val context: Context) {
             displayName
         )
         if (callComposite?.callState == CallCompositeCallStateCode.CONNECTED) {
-            toast(applicationContext, "Incoming call ignored as there is already an active call.")
+            log("Incoming call ignored as there is already an active call.")
             return
         }
         callComposite?.handlePushNotification(CallCompositePushNotification(value))
@@ -384,14 +129,14 @@ class CallCompositeManager(private val context: Context) {
                 callComposite?.registerPushNotification(deviceRegistrationToken)
                     ?.whenComplete { _, throwable ->
                         if (throwable != null) {
-                            toast(applicationContext, "Register push failed.")
+                            log("Register push failed.")
                             throw throwable
                         } else {
-                            toast(applicationContext, "Register push success.")
+                            log("Register push success.")
                         }
                     }
             } catch (e: Exception) {
-                e.message?.let { toast(applicationContext, it) }
+                e.message?.let { log(it) }
             }
         }
     }
@@ -402,14 +147,14 @@ class CallCompositeManager(private val context: Context) {
             callComposite?.unregisterPushNotification()
                 ?.whenComplete { _, throwable ->
                     if (throwable != null) {
-                        toast(applicationContext, "Unregister push failed.")
+                        log("Unregister push failed.")
                         throw throwable
                     } else {
-                        toast(applicationContext, "Unregister push success.")
+                        log("Unregister push success.")
                     }
                 }
         } catch (e: Exception) {
-            e.message?.let { toast(applicationContext, it) }
+            e.message?.let { log(it) }
         }
     }
 
@@ -423,7 +168,7 @@ class CallCompositeManager(private val context: Context) {
             return
         }
         val callComposite = createCallComposite(acsToken, displayName, context, identity)
-        subscribeToEvents(context, callComposite)
+        subscribeToEvents(callComposite)
         this.callComposite = callComposite
     }
 
@@ -447,10 +192,6 @@ class CallCompositeManager(private val context: Context) {
             CommunicationTokenRefreshOptions({ acsToken }, true)
         val communicationTokenCredential =
             CommunicationTokenCredential(communicationTokenRefreshOptions)
-        val callScreenOrientation =
-            SettingsFeatures.orientation(SettingsFeatures.callScreenOrientation())
-        val setupScreenOrientation =
-            SettingsFeatures.orientation(SettingsFeatures.setupScreenOrientation())
 
         val callCompositeBuilder = CallCompositeBuilder()
 
@@ -458,215 +199,20 @@ class CallCompositeManager(private val context: Context) {
             callCompositeBuilder.userId(CommunicationIdentifier.fromRawId(identity))
         }
 
-        if (setupScreenOrientation != null) {
-            callCompositeBuilder.setupScreenOrientation(setupScreenOrientation)
-        }
-
-        if (SettingsFeatures.getDisableInternalPushForIncomingCallCheckbox()) {
-            callCompositeBuilder.disableInternalPushForIncomingCall(true)
-        }
-
-        if (callScreenOrientation != null) {
-            callCompositeBuilder.callScreenOrientation(callScreenOrientation)
-        }
-
-        SettingsFeatures.locale(SettingsFeatures.language())?.let {
-            val isRtl = SettingsFeatures.getLayoutDirection()
-            callCompositeBuilder
-                .localization(
-                    if (isRtl != null) {
-                        CallCompositeLocalizationOptions(it, isRtl)
-                    } else {
-                        CallCompositeLocalizationOptions(it)
-                    },
-                )
-        }
-
-        if (!SettingsFeatures.getUseDeprecatedLaunch()) {
-            callCompositeBuilder.credential(communicationTokenCredential)
-            callCompositeBuilder.applicationContext(context)
-            callCompositeBuilder.displayName(displayName)
-        }
-
-        callScreenOptions().let { callCompositeBuilder.callScreenOptions(it) }
-
-        setupScreenOptions()?.let { callCompositeBuilder.setupScreenOptions(it) }
-
-
-
-        if (SettingsFeatures.enableMultitasking() != null) {
-            val multitaskingOptions =
-                if (SettingsFeatures.enablePipWhenMultitasking() != null) {
-                    CallCompositeMultitaskingOptions(
-                        SettingsFeatures.enableMultitasking(),
-                        SettingsFeatures.enablePipWhenMultitasking(),
-                    )
-                } else {
-                    CallCompositeMultitaskingOptions(
-                        SettingsFeatures.enableMultitasking(),
-                    )
-                }
-
-            callCompositeBuilder.multitasking(multitaskingOptions)
-        }
+        callCompositeBuilder.credential(communicationTokenCredential)
+        callCompositeBuilder.applicationContext(context)
+        callCompositeBuilder.displayName(displayName)
+        callCompositeBuilder.multitasking(CallCompositeMultitaskingOptions(true, true))
 
         return callCompositeBuilder.build()
     }
 
-    private fun callScreenOptions(): CallCompositeCallScreenOptions? {
-        var callScreenOptions: CallCompositeCallScreenOptions? = null
-        if (SettingsFeatures.getDisplayLeaveCallConfirmationValue() != null) {
-            callScreenOptions = CallCompositeCallScreenOptions()
-
-            val controlBarOptions = CallCompositeCallScreenControlBarOptions()
-            callScreenOptions.setControlBarOptions(controlBarOptions)
-
-            controlBarOptions.setLeaveCallConfirmation(
-                if (SettingsFeatures.getDisplayLeaveCallConfirmationValue() == true) CallCompositeLeaveCallConfirmationMode.ALWAYS_ENABLED
-                else CallCompositeLeaveCallConfirmationMode.ALWAYS_DISABLED
-            )
-        }
-
-        if (SettingsFeatures.getAddCustomButtons() == true) {
-            callScreenOptions = callScreenOptions ?: CallCompositeCallScreenOptions()
-            if (callScreenOptions.controlBarOptions == null)
-                callScreenOptions.controlBarOptions = CallCompositeCallScreenControlBarOptions()
-
-            with(callScreenOptions) {
-                controlBarOptions.cameraButton = CallCompositeButtonViewData()
-                    .setOnClickHandler { toast(it.context, "cameraButton clicked") }
-
-                controlBarOptions.microphoneButton = CallCompositeButtonViewData()
-                    .setOnClickHandler { toast(it.context, "microphoneButton clicked") }
-
-                controlBarOptions.audioDeviceButton = CallCompositeButtonViewData()
-                    .setOnClickHandler { toast(it.context, "audioDeviceButton clicked") }
-
-                controlBarOptions.liveCaptionsButton = CallCompositeButtonViewData()
-                    .setOnClickHandler { toast(it.context, "liveCaptionsButton clicked") }
-
-                controlBarOptions.liveCaptionsToggleButton = CallCompositeButtonViewData()
-                    .setOnClickHandler { toast(it.context, "liveCaptionsToggleButton clicked") }
-
-                controlBarOptions.spokenLanguageButton = CallCompositeButtonViewData()
-                    .setOnClickHandler { toast(it.context, "spokenLanguageButton clicked") }
-
-                controlBarOptions.captionsLanguageButton = CallCompositeButtonViewData()
-                    .setOnClickHandler { toast(it.context, "captionsLanguageButton clicked") }
-
-                controlBarOptions.reportIssueButton = CallCompositeButtonViewData()
-                    .setOnClickHandler { toast(it.context, "reportIssueButton clicked") }
-
-                controlBarOptions.shareDiagnosticsButton = CallCompositeButtonViewData()
-                    .setOnClickHandler { toast(it.context, "shareDiagnosticsButton clicked") }
-
-                if (controlBarOptions == null)
-                    controlBarOptions = CallCompositeCallScreenControlBarOptions()
-
-            }
-        }
-        if (!SettingsFeatures.getCallScreenInformationTitle().isNullOrEmpty() ||
-            !SettingsFeatures.getCallScreenInformationSubtitle().isNullOrEmpty() ||
-            /* <CALL_START_TIME>
-            SettingsFeatures.getCallScreenShowCallDuration() != null ||
-            </CALL_START_TIME> */
-            SettingsFeatures.getCallScreenInformationTitleUpdateParticipantCount() != 0 ||
-            SettingsFeatures.getCallScreenInformationSubtitleUpdateParticipantCount() != 0
-        ) {
-            callScreenOptions = callScreenOptions ?: CallCompositeCallScreenOptions()
-
-            callScreenHeaderOptions = callScreenHeaderOptions
-                ?: CallCompositeCallScreenHeaderViewData()
-            SettingsFeatures.getCallScreenInformationTitle()?.let {
-                if (it.isNotEmpty()) {
-                    callScreenHeaderOptions?.title = it
-                }
-            }
-            SettingsFeatures.getCallScreenInformationSubtitle()?.let {
-                if (it.isNotEmpty()) {
-                    callScreenHeaderOptions?.subtitle = it
-                }
-            }
-            /* <CALL_START_TIME>
-            SettingsFeatures.getCallScreenShowCallDuration()?.let {
-                callScreenHeaderOptions?.showCallDuration = it
-            }
-            </CALL_START_TIME> */
-        }
-        if (SettingsFeatures.getAddCustomButtons() == true) {
-            val headerButton1 =
-                CallCompositeCustomButtonViewData(
-                    UUID.randomUUID().toString(),
-                    R.drawable.ic_menu_call,
-                    "Header Button 1",
-                    fun(it: CallCompositeCustomButtonClickEvent) {
-                        toast(it.context, "Header Button 1 clicked")
-                    }
-                )
-            val headerButton2 =
-                CallCompositeCustomButtonViewData(
-                    UUID.randomUUID().toString(),
-                    R.drawable.ic_menu_call,
-                    "Header Button 2",
-                    fun(it: CallCompositeCustomButtonClickEvent) {
-                        toast(it.context, "Header Button 2 clicked")
-                    }
-                )
-            callScreenHeaderOptions = callScreenHeaderOptions
-                ?: CallCompositeCallScreenHeaderViewData()
-            callScreenHeaderOptions?.customButtons = listOf(headerButton1, headerButton2)
-        }
-        callScreenOptions?.setHeaderViewData(callScreenHeaderOptions)
-        return callScreenOptions
-    }
-
-    private fun setupScreenOptions(): CallCompositeSetupScreenOptions? {
-
-        var setupScreenOptions: CallCompositeSetupScreenOptions? = null
-
-        if (SettingsFeatures.getSetupScreenCameraEnabledValue() != null) {
-            setupScreenOptions = CallCompositeSetupScreenOptions()
-            setupScreenOptions.setCameraButtonEnabled(SettingsFeatures.getSetupScreenCameraEnabledValue())
-        }
-
-        if (SettingsFeatures.getSetupScreenMicEnabledValue() != null) {
-            setupScreenOptions = setupScreenOptions ?: CallCompositeSetupScreenOptions()
-            setupScreenOptions.setMicrophoneButtonEnabled(SettingsFeatures.getSetupScreenMicEnabledValue())
-        }
-
-        if (SettingsFeatures.getAddCustomButtons() == true) {
-            val micButton = CallCompositeButtonViewData()
-                .setOnClickHandler { toast(it.context, "MicrophoneButton clicked") }
-
-            val audioDeviceButton = CallCompositeButtonViewData()
-                .setOnClickHandler { toast(it.context, "AudioDeviceButton clicked") }
-
-            val cameraButton = CallCompositeButtonViewData()
-                .setOnClickHandler {
-                    micButton.isVisible = !micButton.isVisible
-                    audioDeviceButton.isEnabled = !audioDeviceButton.isEnabled
-                    toast(it.context, "CameraButton clicked")
-                }
-            setupScreenOptions = setupScreenOptions ?: CallCompositeSetupScreenOptions()
-            setupScreenOptions.setCameraButton(cameraButton)
-            setupScreenOptions.setMicrophoneButton(micButton)
-            setupScreenOptions.setAudioDeviceButton(audioDeviceButton)
-        }
-
-        return setupScreenOptions
-    }
-
-    private fun toast(
-        context: Context,
-        message: String,
-    ) {
-        Log.i("ACSCallingUI", message)
-        Handler(Looper.getMainLooper()).post {
-            Toast.makeText(context.applicationContext, "Debug: $message", Toast.LENGTH_SHORT).show()
-        }
+    private fun log(message: String) {
+        Log.i("AcsOneOnOneCall", message)
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun canUseFullScreenIntent(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -684,7 +230,7 @@ class CallCompositeManager(private val context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             try {
                 val intent = Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT).apply {
-                    data = Uri.parse("package:${context.packageName}")
+                    data = "package:${context.packageName}".toUri()
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 context.startActivity(intent)
@@ -711,6 +257,7 @@ class CallCompositeManager(private val context: Context) {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 putExtra(IncomingCallActivity.DISPLAY_NAME, notification.callerDisplayName)
                 putExtra("CALL_ID", notification.callId)
+                putExtra("DISPLAY_NAME", notification.callerDisplayName)
                 putExtra("ACTION", "ACCEPT")
             }
 
@@ -719,6 +266,7 @@ class CallCompositeManager(private val context: Context) {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 putExtra(IncomingCallActivity.DISPLAY_NAME, notification.callerDisplayName)
                 putExtra("CALL_ID", notification.callId)
+                putExtra("DISPLAY_NAME", notification.callerDisplayName)
                 putExtra("ACTION", "DECLINE")
             }
 
@@ -727,6 +275,7 @@ class CallCompositeManager(private val context: Context) {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 putExtra(IncomingCallActivity.DISPLAY_NAME, notification.callerDisplayName)
                 putExtra("CALL_ID", notification.callId)
+                putExtra("DISPLAY_NAME", notification.callerDisplayName)
                 putExtra("ACTION", "FULL_SCREEN")
             }
 
