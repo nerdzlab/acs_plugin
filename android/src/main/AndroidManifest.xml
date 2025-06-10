@@ -49,6 +49,16 @@
             android:required="false" />
 
         <activity
+                android:name="com.acs_plugin.IncomingCallActivity"
+                android:launchMode="singleTop"
+                android:theme="@style/AzureCommunicationUICalling.Theme"
+                android:exported="false"
+                android:windowSoftInputMode="adjustResize"
+                android:showOnLockScreen="true"
+                android:turnScreenOn="true"
+                android:screenOrientation="portrait" />
+
+        <activity
             android:name="com.acs_plugin.calling.presentation.CallCompositeActivity"
             android:launchMode="singleTop"
             android:theme="@style/AzureCommunicationUICalling.Theme"

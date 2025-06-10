@@ -1,39 +1,58 @@
 package com.acs_plugin
 
+import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.azure.android.communication.chat.models.ChatPushNotification
+import com.acs_plugin.calling.models.CallCompositePushNotification
+import com.acs_plugin.calling.models.CallCompositePushNotificationEventType
+import com.acs_plugin.utils.IntentHelper
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import java.util.concurrent.Semaphore
 
 class FBMessagingService : FirebaseMessagingService() {
 
-    private val TAG = "MyFirebaseMsgService"
-    var initCompleted = Semaphore(1)
-
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        try {
-            Log.d(TAG, "Incoming push notification.")
-
-            initCompleted.acquire()
-
-            if (remoteMessage.data.isNotEmpty()) {
-                val chatPushNotification = ChatPushNotification().setPayload(remoteMessage.data)
-                sendPushNotificationToActivity(chatPushNotification)
+        super.onMessageReceived(remoteMessage)
+        if (remoteMessage.data.isNotEmpty()) {
+            val pushNotificationInfo = CallCompositePushNotification(remoteMessage.data)
+            Log.d("NOTIFICATION_RECEIVED", "onMessageReceived - ${pushNotificationInfo.eventType}")
+            if (pushNotificationInfo.eventType == CallCompositePushNotificationEventType.INCOMING_CALL ||
+                pushNotificationInfo.eventType == CallCompositePushNotificationEventType.INCOMING_GROUP_CALL
+            ) {
+                wakeAppIfScreenOff()
+                sendIntent(IntentHelper.HANDLE_INCOMING_CALL_PUSH, remoteMessage)
+            } else {
+                sendIntent(IntentHelper.CLEAR_PUSH_NOTIFICATION, remoteMessage)
             }
-
-            initCompleted.release()
-        } catch (e: InterruptedException) {
-            Log.e(TAG, "Error receiving push notification.")
         }
     }
 
-    private fun sendPushNotificationToActivity(chatPushNotification: ChatPushNotification) {
-        Log.d(TAG, "Passing push notification to Activity: ${chatPushNotification.payload}")
+    private fun sendIntent(tag: String, remoteMessage: RemoteMessage?) {
+        Log.d("NOTIFICATION_RECEIVED", "Passing push notification to Activity: ${remoteMessage?.data}")
         val intent = Intent("acs_chat_intent")
-        intent.putExtra("PushNotificationPayload", chatPushNotification)
+        intent.putExtra("PushNotificationPayload", remoteMessage)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+    }
+
+    private fun wakeAppIfScreenOff() {
+        val pm = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val screenIsOn = pm.isInteractive // check if screen is on
+
+        if (!screenIsOn) {
+            val wakeLockTag: String = applicationContext.packageName + "WAKELOCK"
+            val wakeLock = pm.newWakeLock(
+                PowerManager.FULL_WAKE_LOCK or
+                        PowerManager.ACQUIRE_CAUSES_WAKEUP or
+                        PowerManager.ON_AFTER_RELEASE,
+                wakeLockTag
+            )
+
+            // acquire will turn on the display
+            wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
+
+            wakeLock.release()
+        }
     }
 }

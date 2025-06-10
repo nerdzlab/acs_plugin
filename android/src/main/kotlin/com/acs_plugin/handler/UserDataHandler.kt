@@ -15,7 +15,7 @@ class UserDataHandler(
     private val onUserDataReceived: (UserData) -> Unit
 ) : MethodHandler {
 
-    private var userData: UserData? = null
+    var userDataClass: UserData? = null
         set(value) {
             field = value
             value?.let {
@@ -35,7 +35,7 @@ class UserDataHandler(
     private fun loadSavedUserData() {
         val userDataJson = sharedPreferences.getString(Constants.Prefs.USER_DATA_KEY, null)
         userDataJson?.let {
-            userData = Json.decodeFromString<UserData>(it)
+            userDataClass = Json.decodeFromString<UserData>(it)
         }
     }
 
@@ -54,7 +54,7 @@ class UserDataHandler(
                     val userId = arguments?.get(Constants.Arguments.USER_ID) as? String
 
                     if (token != null && name != null && userId != null) {
-                        userData = UserData(token = token, name = name, userId = userId)
+                        userDataClass = UserData(token = token, name = name, userId = userId)
                         result.success(null)
                     } else {
                         result.error(
@@ -73,5 +73,5 @@ class UserDataHandler(
     }
 
 
-    fun getUserData(): UserData? = userData
+    fun getUserData(): UserData? = userDataClass
 }

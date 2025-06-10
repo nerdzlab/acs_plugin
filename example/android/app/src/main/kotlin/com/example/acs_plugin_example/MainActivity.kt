@@ -17,11 +17,13 @@ class MainActivity: FlutterActivity(){
 
     companion object {
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 123
+        private const val FULLSCREEN_INTENT_PERMISSION_REQUEST_CODE = 124
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestNotificationPermission()
+        requestFullscreenIntentPermission()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
@@ -82,6 +84,43 @@ class MainActivity: FlutterActivity(){
         }
     }
 
+    private fun requestFullscreenIntentPermission() {
+        // Only needed for Android 14 (API 34) and higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            when {
+                // Check if permission is already granted
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.USE_FULL_SCREEN_INTENT
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Permission is already granted
+                }
+
+                // Should show rationale
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.USE_FULL_SCREEN_INTENT
+                ) -> {
+                    // You could show an explanation here if needed
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.USE_FULL_SCREEN_INTENT),
+                        FULLSCREEN_INTENT_PERMISSION_REQUEST_CODE
+                    )
+                }
+
+                // First time asking for permission
+                else -> {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.USE_FULL_SCREEN_INTENT),
+                        FULLSCREEN_INTENT_PERMISSION_REQUEST_CODE
+                    )
+                }
+            }
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -97,7 +136,14 @@ class MainActivity: FlutterActivity(){
                 }
                 return
             }
+            FULLSCREEN_INTENT_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Fullscreen intent permission granted
+                } else {
+                    // Fullscreen intent permission denied
+                }
+                return
+            }
         }
     }
-
 }

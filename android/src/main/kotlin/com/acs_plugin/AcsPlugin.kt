@@ -1,15 +1,21 @@
 package com.acs_plugin
 
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
+import android.os.Parcelable
+import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.acs_plugin.handler.CallHandler
 import com.acs_plugin.handler.ChatHandler
 import com.acs_plugin.handler.MethodHandler
 import com.acs_plugin.handler.UserDataHandler
+import com.acs_plugin.utils.CallCompositeManager
 import com.acs_plugin.utils.FlutterEventDispatcher
-import com.google.firebase.messaging.FirebaseMessaging
+import com.acs_plugin.utils.SettingsFeatures
+import com.google.firebase.messaging.RemoteMessage
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -34,6 +40,33 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private val handlers = mutableListOf<MethodHandler>()
 
+    private var callCompositeManager: CallCompositeManager? = null
+
+    fun getCallCompositeManager(context: Context): CallCompositeManager {
+        if (callCompositeManager == null) {
+            callCompositeManager = CallCompositeManager(context)
+        }
+        return callCompositeManager!!
+    }
+
+    val firebaseMessagingReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+            val pushNotification =
+                intent.getParcelableExtra<Parcelable?>("PushNotificationPayload") as RemoteMessage
+
+            Log.d("BroadcastReceiver", "Push Notification received in MainActivity: " + pushNotification.data)
+
+            val userData = (handlers.firstOrNull { it is UserDataHandler } as UserDataHandler).userDataClass
+
+            getCallCompositeManager(this@AcsPlugin.context).handleIncomingCall(
+                value = pushNotification.data,
+                acsIdentityToken = userData?.token.orEmpty(),
+                displayName = userData?.name.orEmpty(),
+                this@AcsPlugin.context
+            )
+        }
+    }
+
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         context = flutterPluginBinding.applicationContext
 
@@ -46,17 +79,14 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     // ActivityAware callbacks:
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            val token = task.result
-            setupHandlers()
-            LocalBroadcastManager
-                .getInstance(activity!!)
-                .registerReceiver(
-                    (handlers.first { it is ChatHandler } as ChatHandler).firebaseMessagingReceiver,
-                    IntentFilter("acs_chat_intent")
-                );
-            handlers.forEach { it.onFirebaseTokenReceived(token) }
-        }
+        SettingsFeatures.initialize(context)
+        setupHandlers()
+        LocalBroadcastManager
+            .getInstance(activity!!)
+            .registerReceiver(
+                firebaseMessagingReceiver,
+                IntentFilter("acs_chat_intent")
+            )
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -82,6 +112,7 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private fun setupHandlers() {
         val userDataHandler = UserDataHandler(context, channel) {
+            getCallCompositeManager(context).registerPush(context, it.token, it.name)
             handlers.forEach { it.onUserReceived() }
         }
         val callHandler = CallHandler(context, activity)

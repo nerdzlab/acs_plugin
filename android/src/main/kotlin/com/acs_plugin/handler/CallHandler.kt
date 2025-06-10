@@ -11,7 +11,6 @@ import com.acs_plugin.calling.models.CallCompositeLocalOptions
 import com.acs_plugin.calling.models.CallCompositeRoomLocator
 import com.acs_plugin.data.UserData
 import com.acs_plugin.extension.falseIfNull
-import com.azure.android.communication.calling.CallAgent
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.communication.common.CommunicationTokenRefreshOptions
 import com.azure.android.communication.common.CommunicationUserIdentifier
@@ -25,7 +24,6 @@ class CallHandler(
 ) : MethodHandler {
 
     private var token: String? = null
-    private var callAgent: CallAgent? = null
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
