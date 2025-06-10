@@ -1,45 +1,39 @@
 package com.acs_plugin
 
-import android.content.SharedPreferences
-import com.acs_plugin.data.UserData
-import com.azure.android.communication.calling.CallAgentOptions
-import com.azure.android.communication.calling.CallClient
-import com.azure.android.communication.calling.PushNotificationInfo
-import com.azure.android.communication.common.CommunicationTokenCredential
+import android.content.Intent
+import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.azure.android.communication.chat.models.ChatPushNotification
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import kotlinx.serialization.json.Json
+import java.util.concurrent.Semaphore
 
 class FBMessagingService : FirebaseMessagingService() {
 
-    private val sharedPreferences: SharedPreferences by lazy {
-        baseContext.getSharedPreferences(Constants.Prefs.PREFS_NAME, MODE_PRIVATE)
-    }
-
-    private val userData: UserData?
-        get() {
-            val json = sharedPreferences.getString(Constants.Prefs.USER_DATA_KEY, null)
-            return json?.let {
-                try {
-                    Json.decodeFromString<UserData>(it)
-                } catch (_: Exception) {
-                    null
-                }
-            }
-        }
-
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-
-    }
+    private val TAG = "MyFirebaseMsgService"
+    var initCompleted = Semaphore(1)
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        if (remoteMessage.getNotification() != null) {
-            val callClient = CallClient()
-            val tokenCredential = CommunicationTokenCredential(userData?.token)
-            val callAgentOptions = CallAgentOptions()
-            val callAgent = callClient.createCallAgent(baseContext, tokenCredential, callAgentOptions).get()
-            callAgent.handlePushNotification(PushNotificationInfo.fromMap(remoteMessage.data))
+        try {
+            Log.d(TAG, "Incoming push notification.")
+
+            initCompleted.acquire()
+
+            if (remoteMessage.data.isNotEmpty()) {
+                val chatPushNotification = ChatPushNotification().setPayload(remoteMessage.data)
+                sendPushNotificationToActivity(chatPushNotification)
+            }
+
+            initCompleted.release()
+        } catch (e: InterruptedException) {
+            Log.e(TAG, "Error receiving push notification.")
         }
+    }
+
+    private fun sendPushNotificationToActivity(chatPushNotification: ChatPushNotification) {
+        Log.d(TAG, "Passing push notification to Activity: ${chatPushNotification.payload}")
+        val intent = Intent("acs_chat_intent")
+        intent.putExtra("PushNotificationPayload", chatPushNotification)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 }

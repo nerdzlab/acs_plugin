@@ -1,7 +1,10 @@
 package com.acs_plugin.handler
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Parcelable
 import android.util.Log
 import androidx.core.content.edit
 import com.acs_plugin.Constants
@@ -29,6 +32,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.util.*
 
+
 class ChatHandler(
     private val context: Context,
     private val onSendEvent: (Event) -> Unit
@@ -36,6 +40,7 @@ class ChatHandler(
 
     private var chatClient: ChatClient? = null
     private var chatAdapter: ChatAdapter? = null
+    private var token: String? = null
 
     private val finishedResults = Collections.synchronizedSet(HashSet<MethodChannel.Result>())
 
@@ -60,9 +65,28 @@ class ChatHandler(
             }
         }
 
+    val firebaseMessagingReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+            val pushNotification =
+                intent.getParcelableExtra<Parcelable?>("PushNotificationPayload") as ChatPushNotification
+
+            Log.d("BroadcastReceiver", "Push Notification received in MainActivity: " + pushNotification.getPayload())
+
+            val isHandled: Boolean? = chatClient?.handlePushNotification(pushNotification)
+            if (isHandled == false) {
+                Log.d("BroadcastReceiver", "No listener registered for incoming push notification!")
+            }
+        }
+    }
+
     private var chatEndpoint: String?
         get() = sharedPreferences.getString(Constants.Prefs.CHAT_ENDPOINT, null)
         set(value) = sharedPreferences.edit { putString(Constants.Prefs.CHAT_ENDPOINT, value) }
+
+    override fun onFirebaseTokenReceived(token: String) {
+        super.onFirebaseTokenReceived(token)
+        this.token = token
+    }
 
     override fun handle(
         call: MethodCall,
@@ -313,12 +337,15 @@ class ChatHandler(
 
                 val identifier: CommunicationIdentifier =
                     CommunicationIdentifier.CommunicationUserIdentifier(userData.userId)
-                chatClient?.startRealtimeNotifications(context) {}
+                chatClient?.startRealtimeNotifications(context) {
+
+                }
 
                 chatAdapter = ChatAdapterBuilder().endpoint(endpoint).identity(identifier).credential(credential)
                     .displayName(userData.name).build()
 
                 chatAdapter?.connect(context)
+                chatClient?.startPushNotifications(token)
                 subscribeToChatEvents()
                 handleResultSuccess(result)
             } catch (e: Exception) {

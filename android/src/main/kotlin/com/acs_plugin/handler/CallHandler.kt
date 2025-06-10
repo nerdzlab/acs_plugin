@@ -21,11 +21,12 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.serialization.json.Json
 
-
 class CallHandler(
     private val context: Context,
     private val activity: Activity?
 ) : MethodHandler {
+
+    private var token: String? = null
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
@@ -45,7 +46,12 @@ class CallHandler(
 
     override fun onFirebaseTokenReceived(token: String) {
         super.onFirebaseTokenReceived(token)
-        createCallAgent(token)
+        this.token = token
+    }
+
+    override fun onUserReceived() {
+        super.onUserReceived()
+        createCallAgent()
     }
 
     override fun handle(call: MethodCall, result: MethodChannel.Result): Boolean {
@@ -145,12 +151,12 @@ class CallHandler(
         result.success(null)
     }
 
-    private fun createCallAgent(userToken: String): CallAgent? {
+    private fun createCallAgent(): CallAgent? {
         val callClient = CallClient()
-        val tokenCredential = CommunicationTokenCredential(userToken)
+        val tokenCredential = CommunicationTokenCredential(userData?.token)
         val callAgentOptions = CallAgentOptions()
         val callAgent = callClient.createCallAgent(context, tokenCredential, callAgentOptions).get()
-        callAgent.registerPushNotification(userToken).get()
+        callAgent.registerPushNotification(token).get()
         return callAgent
     }
 
@@ -168,7 +174,10 @@ class CallHandler(
             return
         }
 
-        val communicationTokenRefreshOptions = CommunicationTokenRefreshOptions({ userData?.token }, true)
+        val communicationTokenRefreshOptions = CommunicationTokenRefreshOptions(
+            { userData?.token },
+            true
+        )
         val communicationTokenCredential = CommunicationTokenCredential(communicationTokenRefreshOptions)
 
         val participants = participantsId.map { CommunicationUserIdentifier(it) }

@@ -2,6 +2,8 @@ package com.acs_plugin
 
 import android.app.Activity
 import android.content.Context
+import android.content.IntentFilter
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.acs_plugin.handler.CallHandler
 import com.acs_plugin.handler.ChatHandler
 import com.acs_plugin.handler.MethodHandler
@@ -44,9 +46,15 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     // ActivityAware callbacks:
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
-        setupHandlers()
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             val token = task.result
+            setupHandlers()
+            LocalBroadcastManager
+                .getInstance(activity!!)
+                .registerReceiver(
+                    (handlers.first { it is ChatHandler } as ChatHandler).firebaseMessagingReceiver,
+                    IntentFilter("acs_chat_intent")
+                );
             handlers.forEach { it.onFirebaseTokenReceived(token) }
         }
     }
@@ -73,7 +81,9 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     private fun setupHandlers() {
-        val userDataHandler = UserDataHandler(context, channel) {}
+        val userDataHandler = UserDataHandler(context, channel) {
+            handlers.forEach { it.onUserReceived() }
+        }
         val callHandler = CallHandler(context, activity)
         val chatHandler = ChatHandler(context) {
             FlutterEventDispatcher.sendEvent(it.name, it.payload)
