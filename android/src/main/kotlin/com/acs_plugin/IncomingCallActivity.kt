@@ -1,9 +1,12 @@
 package com.acs_plugin
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.acs_plugin.data.enum.OneOnOneCallingAction
 
 class IncomingCallActivity : AppCompatActivity() {
 
@@ -19,23 +22,28 @@ class IncomingCallActivity : AppCompatActivity() {
                     or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                     or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         )
-        val context = this
-            findViewById<ImageButton>(R.id.accept).setOnClickListener {
+        findViewById<ImageButton>(R.id.accept).setOnClickListener {
+            val intent = Intent("acs_chat_intent")
+            intent.putExtra(Constants.Arguments.ACTION_TYPE, OneOnOneCallingAction.ACCEPT)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
 //                val application = application as CallLauncherApplication
 //                val acsIdentityToken = sharedPreference.getString(CACHED_TOKEN, "")
 //                val displayName = sharedPreference.getString(CACHED_USER_NAME, "")
 //                application.getCallCompositeManager(context).acceptIncomingCall(this@IncomingCallActivity, acsIdentityToken!!, displayName!!)
 //                finish()
-            }
+        }
         findViewById<ImageButton>(R.id.decline).setOnClickListener {
+            val intent = Intent("acs_chat_intent")
+            intent.putExtra(Constants.Arguments.ACTION_TYPE, OneOnOneCallingAction.DECLINE)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
 //                val application = application as CallLauncherApplication
 //                application.getCallCompositeManager(context).declineIncomingCall()
 //                finish()
-            }
+        }
 
-            intent.getStringExtra(DISPLAY_NAME)?.let {
+        intent.getStringExtra(DISPLAY_NAME)?.let {
 //                profileName.text = it
-            }
+        }
 
         supportActionBar?.hide()
     }

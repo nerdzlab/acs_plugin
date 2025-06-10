@@ -69,6 +69,9 @@ object Constants {
         const val CALL_ID = "callId"
         const val WHITEBOARD_ID = "whiteboardId"
         const val PARTICIPANTS_ID = "participantsId"
+        const val PUSH_NOTIFICATION_DATA = "push_notification_data"
+
+        const val ACTION_TYPE = "action_type"
     }
 
     object JsonKeys {

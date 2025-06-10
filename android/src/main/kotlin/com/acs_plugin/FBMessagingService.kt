@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.acs_plugin.calling.models.CallCompositePushNotification
 import com.acs_plugin.calling.models.CallCompositePushNotificationEventType
+import com.acs_plugin.data.enum.OneOnOneCallingAction
 import com.acs_plugin.utils.IntentHelper
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -32,7 +33,8 @@ class FBMessagingService : FirebaseMessagingService() {
     private fun sendIntent(tag: String, remoteMessage: RemoteMessage?) {
         Log.d("NOTIFICATION_RECEIVED", "Passing push notification to Activity: ${remoteMessage?.data}")
         val intent = Intent("acs_chat_intent")
-        intent.putExtra("PushNotificationPayload", remoteMessage)
+        intent.putExtra(Constants.Arguments.PUSH_NOTIFICATION_DATA, remoteMessage)
+        intent.putExtra(Constants.Arguments.ACTION_TYPE, OneOnOneCallingAction.INCOMING_CALL)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
