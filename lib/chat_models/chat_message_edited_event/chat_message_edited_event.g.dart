@@ -22,8 +22,8 @@ _$ChatMessageEditedEventImpl _$$ChatMessageEditedEventImplFromJson(
       senderDisplayName: json['senderDisplayName'] as String,
       createdOn: json['createdOn'] as String,
       version: json['version'] as String,
-      type: $enumDecode(_$ChatMessageTypeEnumMap, json['type']),
       message: json['message'] as String,
+      type: $enumDecodeNullable(_$ChatMessageTypeEnumMap, json['type']),
       editedOn: json['editedOn'] as String?,
       metadata: readValueObject(json, 'metadata') == null
           ? null
@@ -41,8 +41,8 @@ Map<String, dynamic> _$$ChatMessageEditedEventImplToJson(
       'senderDisplayName': instance.senderDisplayName,
       'createdOn': instance.createdOn,
       'version': instance.version,
-      'type': _$ChatMessageTypeEnumMap[instance.type]!,
       'message': instance.message,
+      'type': _$ChatMessageTypeEnumMap[instance.type],
       'editedOn': instance.editedOn,
       'metadata': instance.metadata,
     };

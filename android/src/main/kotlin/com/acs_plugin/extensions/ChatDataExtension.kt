@@ -1,6 +1,5 @@
 package com.acs_plugin.extensions
 
-import android.R.attr.type
 import com.acs_plugin.Constants
 import com.azure.android.communication.chat.models.*
 import com.azure.android.communication.common.CommunicationIdentifier
@@ -51,7 +50,6 @@ fun ChatMessageEditedEvent.toMap(): MutableMap<String, Any?> {
     map[Constants.JsonKeys.SENDER_DISPLAY_NAME] = senderDisplayName ?: ""
     map[Constants.JsonKeys.CREATED_ON] = createdOn?.toString() ?: ""
     map[Constants.JsonKeys.VERSION] = version
-    map[Constants.JsonKeys.TYPE] = type.toString()
     map[Constants.JsonKeys.MESSAGE] = content
     editedOn?.let { map[Constants.JsonKeys.EDITED_ON] = it.toString() }
     metadata?.let { map[Constants.JsonKeys.METADATA] = it }
@@ -82,7 +80,6 @@ fun ChatMessageDeletedEvent.toMap(): MutableMap<String, Any?> {
     map[Constants.JsonKeys.SENDER_DISPLAY_NAME] = senderDisplayName ?: ""
     map[Constants.JsonKeys.CREATED_ON] = createdOn?.toString() ?: ""
     map[Constants.JsonKeys.VERSION] = version
-    map[Constants.JsonKeys.TYPE] = type.toString()
     deletedOn?.let { map[Constants.JsonKeys.DELETED_ON] = it.toString() }
     return map
 }
