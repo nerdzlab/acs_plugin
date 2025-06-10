@@ -1,6 +1,7 @@
 package com.acs_plugin.calling.presentation.fragment.calling.moreactions
 
 import com.acs_plugin.Constants
+import com.acs_plugin.calling.configuration.CallType
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.MoreActionItem
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.MoreActionType
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
@@ -26,33 +27,58 @@ internal class MoreActionsListViewModel(
     private lateinit var _displayStateFlow: MutableStateFlow<Boolean>
     val displayStateFlow: StateFlow<Boolean> get() = _displayStateFlow
 
+    private lateinit var _reactionsVisibilityStateFlow: MutableStateFlow<Boolean>
+    val reactionsVisibilityStateFlow: StateFlow<Boolean> get() = _reactionsVisibilityStateFlow
+
     private lateinit var _actionItemsFlow: MutableStateFlow<List<MoreActionItem>>
     val actionItemsFlow: StateFlow<List<MoreActionItem>> get() = _actionItemsFlow
 
     private lateinit var displayParticipantListCallback: () -> Unit
 
     fun init(
+        callType: CallType?,
         cameraState: CameraState,
         raisedHandStatus: RaisedHandStatus,
         navigationState: NavigationState,
         buttonState: ButtonState,
         shareScreenStatus: ShareScreenStatus,
+        participantsCount: Int,
         displayParticipantList: () -> Unit
     ) {
         this.displayParticipantListCallback = displayParticipantList
         _displayStateFlow = MutableStateFlow(navigationState.showMoreMenu)
-        _actionItemsFlow = MutableStateFlow(provideActionListItems(cameraState, raisedHandStatus, buttonState, shareScreenStatus))
+        _reactionsVisibilityStateFlow = MutableStateFlow(callType != CallType.TEAMS_MEETING)
+        _actionItemsFlow = MutableStateFlow(
+            provideActionListItems(
+                cameraState = cameraState,
+                raisedHandStatus = raisedHandStatus,
+                buttonState = buttonState,
+                shareScreenStatus = shareScreenStatus,
+                callType = callType,
+                participantsCount = participantsCount
+            )
+        )
     }
 
     fun update(
+        callType: CallType?,
         cameraState: CameraState,
         raisedHandStatus: RaisedHandStatus,
         navigationState: NavigationState,
         buttonState: ButtonState,
+        participantsCount: Int,
         shareScreenStatus: ShareScreenStatus
     ) {
         _displayStateFlow.value = navigationState.showMoreMenu
-        _actionItemsFlow.value = provideActionListItems(cameraState, raisedHandStatus, buttonState, shareScreenStatus)
+        _reactionsVisibilityStateFlow.value = callType != CallType.TEAMS_MEETING
+        _actionItemsFlow.value = provideActionListItems(
+            cameraState = cameraState,
+            raisedHandStatus = raisedHandStatus,
+            buttonState = buttonState,
+            shareScreenStatus = shareScreenStatus,
+            callType = callType,
+            participantsCount = participantsCount
+        )
     }
 
     fun close() {
@@ -82,7 +108,9 @@ internal class MoreActionsListViewModel(
         cameraState: CameraState,
         raisedHandStatus: RaisedHandStatus,
         buttonState: ButtonState,
-        shareScreenStatus: ShareScreenStatus
+        shareScreenStatus: ShareScreenStatus,
+        callType: CallType?,
+        participantsCount: Int
     ): List<MoreActionItem> {
         val isCameraTurnOn = cameraState.operation == CameraOperationalStatus.ON
 
@@ -99,7 +127,10 @@ internal class MoreActionsListViewModel(
             if (raisedHandStatus == RaisedHandStatus.RAISED) {
                 add(MoreActionType.LOWER_HAND.mapToMoreActionItem())
             } else {
-                add(MoreActionType.RAISE_HAND.mapToMoreActionItem())
+                add(MoreActionType.RAISE_HAND.mapToMoreActionItem().apply {
+                    // For Teems meeting raised hand works only for more than 1 participant
+                    isEnabled = if (callType == CallType.TEAMS_MEETING) participantsCount > 1 else true
+                })
             }
             add(MoreActionType.CHANGE_VIEW.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
             if (shareScreenStatus == ShareScreenStatus.ON) {

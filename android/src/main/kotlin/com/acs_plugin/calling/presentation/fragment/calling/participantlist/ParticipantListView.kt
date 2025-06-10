@@ -25,6 +25,7 @@ import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textview.MaterialTextView
+import com.microsoft.fluentui.util.isVisible
 import kotlinx.coroutines.launch
 
 @SuppressLint("ViewConstructor")
@@ -57,6 +58,12 @@ internal class ParticipantListView(
 
     fun start(viewLifecycleOwner: LifecycleOwner) {
         initializeParticipantListDrawer()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.sharingMeetingLinkVisibilityStateFlow.collect {
+                shareMeetingLink.isVisible = it
+            }
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             avatarViewManager.getRemoteParticipantsPersonaSharedFlow().collect {

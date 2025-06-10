@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
@@ -29,6 +30,7 @@ internal class MoreActionsListView @JvmOverloads constructor(
     private var emojiApplause: MaterialTextView
     private var emojiLaugh: MaterialTextView
     private var emojiSurprised: MaterialTextView
+    private var emojiRow: LinearLayout
     private var actionsFlexboxLayer: FlexboxLayout
 
     private lateinit var menuDialog: BottomSheetDialog
@@ -36,6 +38,8 @@ internal class MoreActionsListView @JvmOverloads constructor(
     init {
         orientation = VERTICAL
         LayoutInflater.from(context).inflate(R.layout.more_actions_list_view, this, true)
+
+        emojiRow = findViewById<LinearLayout>(R.id.emoji_row)
 
         emojiLike = findViewById<MaterialTextView>(R.id.emoji_like)
         emojiLike.onSingleClickListener { sendReaction(ReactionType.LIKE) }
@@ -68,6 +72,12 @@ internal class MoreActionsListView @JvmOverloads constructor(
                 if (it) {
                     menuDialog.show()
                 }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.reactionsVisibilityStateFlow.collect {
+                emojiRow.isVisible = it
             }
         }
 

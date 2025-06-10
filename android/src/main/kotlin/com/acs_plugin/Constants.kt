@@ -1,6 +1,5 @@
 package com.acs_plugin
 
-
 object Constants {
 
     object MethodChannels {
@@ -23,6 +22,7 @@ object Constants {
         const val SET_USER_DATA = "setUserData"
         const val GET_TOKEN = "getToken"
         const val INITIALIZE_ROOM_CALL = "initializeRoomCall"
+        const val START_TEAMS_MEETING_CALL = "startTeamsMeetingCall"
         const val START_ONE_ON_ONE_CALL = "startOneOnOneCall"
         const val GET_INITIAL_LIST_THREADS = "getInitialListThreads"
         const val IS_MORE_THREADS_AVAILABLE = "isMoreThreadsAvailable"
@@ -67,10 +67,10 @@ object Constants {
         const val METADATA = "metadata"
         const val MESSAGE_ID = "messageId"
         const val CALL_ID = "callId"
-        const val WHITEBOARD_ID = "whiteboardId"
+        const val WHITEBOARD_ID = "whiteBoardId"
+        const val MEETING_LINK = "meetingLink"
         const val PARTICIPANTS_ID = "participantsId"
         const val PUSH_NOTIFICATION_DATA = "push_notification_data"
-
         const val ACTION_TYPE = "action_type"
     }
 
