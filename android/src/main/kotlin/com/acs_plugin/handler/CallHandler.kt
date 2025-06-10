@@ -12,8 +12,6 @@ import com.acs_plugin.calling.models.CallCompositeRoomLocator
 import com.acs_plugin.data.UserData
 import com.acs_plugin.extension.falseIfNull
 import com.azure.android.communication.calling.CallAgent
-import com.azure.android.communication.calling.CallAgentOptions
-import com.azure.android.communication.calling.CallClient
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.communication.common.CommunicationTokenRefreshOptions
 import com.azure.android.communication.common.CommunicationUserIdentifier
@@ -27,6 +25,7 @@ class CallHandler(
 ) : MethodHandler {
 
     private var token: String? = null
+    private var callAgent: CallAgent? = null
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
@@ -47,11 +46,6 @@ class CallHandler(
     override fun onFirebaseTokenReceived(token: String) {
         super.onFirebaseTokenReceived(token)
         this.token = token
-    }
-
-    override fun onUserReceived() {
-        super.onUserReceived()
-        createCallAgent()
     }
 
     override fun handle(call: MethodCall, result: MethodChannel.Result): Boolean {
@@ -149,15 +143,6 @@ class CallHandler(
 
         callComposite.launch(this.activity, locator, localOptions)
         result.success(null)
-    }
-
-    private fun createCallAgent(): CallAgent? {
-        val callClient = CallClient()
-        val tokenCredential = CommunicationTokenCredential(userData?.token)
-        val callAgentOptions = CallAgentOptions()
-        val callAgent = callClient.createCallAgent(context, tokenCredential, callAgentOptions).get()
-        callAgent.registerPushNotification(token).get()
-        return callAgent
     }
 
     private fun startOneOnOneCall(

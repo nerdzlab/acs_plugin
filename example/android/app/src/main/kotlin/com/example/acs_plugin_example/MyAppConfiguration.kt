@@ -9,6 +9,7 @@ import com.acs_plugin.Constants
 import com.acs_plugin.data.UserData
 import com.azure.android.communication.chat.implementation.notifications.fcm.RegistrationRenewalWorkerFactory
 import com.azure.android.communication.common.CommunicationTokenCredential
+import com.jakewharton.threetenabp.AndroidThreeTen
 import java9.util.function.Consumer
 import kotlinx.serialization.json.Json
 
@@ -40,6 +41,7 @@ class MyAppConfiguration : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         WorkManager.initialize(this, workManagerConfiguration)
+        AndroidThreeTen.init(this)
     }
 
     override fun getWorkManagerConfiguration(): Configuration = Configuration.Builder().setWorkerFactory(
