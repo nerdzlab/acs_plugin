@@ -39,10 +39,13 @@ class MyAppConfiguration : Application(), Configuration.Provider {
         AndroidThreeTen.init(this)
     }
 
-    override fun getWorkManagerConfiguration(): Configuration = Configuration.Builder().setWorkerFactory(
-        RegistrationRenewalWorkerFactory(
-            CommunicationTokenCredential(userData?.token ?: ""),
-            exceptionHandler
-        )
-    ).build()
+    override fun getWorkManagerConfiguration(): Configuration =
+        userData?.token?.let { token ->
+            Configuration.Builder().setWorkerFactory(
+                RegistrationRenewalWorkerFactory(
+                    CommunicationTokenCredential(token),
+                    exceptionHandler
+                )
+            ).build()
+        } ?: Configuration.Builder().build()
 }

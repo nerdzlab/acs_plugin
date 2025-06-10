@@ -45,9 +45,11 @@ internal class MoreActionsListViewModel(
         participantsCount: Int,
         displayParticipantList: () -> Unit
     ) {
+        val isReactionsAvailable = callType != CallType.TEAMS_MEETING && callType != CallType.ONE_TO_ONE_INCOMING && callType != CallType.ONE_TO_N_OUTGOING
+
         this.displayParticipantListCallback = displayParticipantList
         _displayStateFlow = MutableStateFlow(navigationState.showMoreMenu)
-        _reactionsVisibilityStateFlow = MutableStateFlow(callType != CallType.TEAMS_MEETING)
+        _reactionsVisibilityStateFlow = MutableStateFlow(isReactionsAvailable)
         _actionItemsFlow = MutableStateFlow(
             provideActionListItems(
                 cameraState = cameraState,
@@ -69,8 +71,10 @@ internal class MoreActionsListViewModel(
         participantsCount: Int,
         shareScreenStatus: ShareScreenStatus
     ) {
+        val isReactionsAvailable = callType != CallType.TEAMS_MEETING && callType != CallType.ONE_TO_ONE_INCOMING && callType != CallType.ONE_TO_N_OUTGOING
+
         _displayStateFlow.value = navigationState.showMoreMenu
-        _reactionsVisibilityStateFlow.value = callType != CallType.TEAMS_MEETING
+        _reactionsVisibilityStateFlow.value = isReactionsAvailable
         _actionItemsFlow.value = provideActionListItems(
             cameraState = cameraState,
             raisedHandStatus = raisedHandStatus,
@@ -113,6 +117,7 @@ internal class MoreActionsListViewModel(
         participantsCount: Int
     ): List<MoreActionItem> {
         val isCameraTurnOn = cameraState.operation == CameraOperationalStatus.ON
+        val isRaisedHandAvailable = callType != CallType.TEAMS_MEETING && callType != CallType.ONE_TO_ONE_INCOMING && callType != CallType.ONE_TO_N_OUTGOING
 
         return buildList {
             add(MoreActionType.CHAT.mapToMoreActionItem().apply {
@@ -128,16 +133,20 @@ internal class MoreActionsListViewModel(
                 add(MoreActionType.LOWER_HAND.mapToMoreActionItem())
             } else {
                 add(MoreActionType.RAISE_HAND.mapToMoreActionItem().apply {
-                    // For Teems meeting raised hand works only for more than 1 participant
-                    isEnabled = if (callType == CallType.TEAMS_MEETING) participantsCount > 1 else true
+                    // For Teems meeting and one n one calls raised hand works only for more than 1 participant
+                    isEnabled = if (isRaisedHandAvailable) {
+                        true
+                    } else {
+                        participantsCount > 1
+                    }
                 })
             }
-            add(MoreActionType.CHANGE_VIEW.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
-            if (shareScreenStatus == ShareScreenStatus.ON) {
-                add(MoreActionType.STOP_SHARE_SCREEN.mapToMoreActionItem())
-            } else {
-                add(MoreActionType.SHARE_SCREEN.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
-            }
+//            add(MoreActionType.CHANGE_VIEW.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
+//            if (shareScreenStatus == ShareScreenStatus.ON) {
+//                add(MoreActionType.STOP_SHARE_SCREEN.mapToMoreActionItem())
+//            } else {
+//                add(MoreActionType.SHARE_SCREEN.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
+//            }
         }
     }
 }
