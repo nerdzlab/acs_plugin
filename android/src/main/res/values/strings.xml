@@ -27,4 +27,7 @@
     <string name="unpin" translatable="false">Unpin</string>
     <string name="do_not_show_video" translatable="false">Don\'t show video</string>
     <string name="show_video" translatable="false">Show video</string>
+	<string name="decline">Decline</string>
+    <string name="accept">Accept</string>
+    <string name="incoming_call">Incoming call</string>
 </resources>

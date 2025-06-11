@@ -1,96 +1,97 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-          package="com.acs_plugin">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	package="com.acs_plugin">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.BLUETOOTH" />
+	<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+	<uses-permission android:name="android.permission.RECORD_AUDIO" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+	<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+	<uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
 
-    <application android:hardwareAccelerated="true">
+	<application android:hardwareAccelerated="true">
 
-        <activity
-            android:name="com.acs_plugin.calling.presentation.MultitaskingCallCompositeActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:excludeFromRecents="true"
-            android:taskAffinity="com.acs_plugin.calling.presentation.CallCompositeActivity"
-            android:theme="@style/AzureCommunicationUICalling.Theme"
-            android:windowSoftInputMode="adjustResize"
-            android:showOnLockScreen="true"
-            android:turnScreenOn="true"
-            android:screenOrientation="portrait" />
+		<activity
+			android:name="com.acs_plugin.calling.presentation.MultitaskingCallCompositeActivity"
+			android:exported="false"
+			android:launchMode="singleTask"
+			android:excludeFromRecents="true"
+			android:taskAffinity="com.acs_plugin.calling.presentation.CallCompositeActivity"
+			android:theme="@style/AzureCommunicationUICalling.Theme"
+			android:windowSoftInputMode="adjustResize"
+			android:showOnLockScreen="true"
+			android:turnScreenOn="true"
+			android:screenOrientation="portrait" />
 
-        <activity
-            android:name="com.acs_plugin.calling.presentation.PiPCallCompositeActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:supportsPictureInPicture="true"
-            android:excludeFromRecents="true"
-            android:taskAffinity="com.acs_plugin.calling.presentation.CallCompositeActivity"
-            android:theme="@style/AzureCommunicationUICalling.Theme"
-            android:windowSoftInputMode="adjustResize"
-            android:showOnLockScreen="true"
-            android:turnScreenOn="true"
-            android:screenOrientation="portrait" />
+		<activity
+			android:name="com.acs_plugin.calling.presentation.PiPCallCompositeActivity"
+			android:exported="false"
+			android:launchMode="singleTask"
+			android:supportsPictureInPicture="true"
+			android:excludeFromRecents="true"
+			android:taskAffinity="com.acs_plugin.calling.presentation.CallCompositeActivity"
+			android:theme="@style/AzureCommunicationUICalling.Theme"
+			android:windowSoftInputMode="adjustResize"
+			android:showOnLockScreen="true"
+			android:turnScreenOn="true"
+			android:screenOrientation="portrait" />
 
-        <uses-library
-            android:name="org.apache.http.legacy"
-            android:required="false" />
+		<uses-library
+			android:name="org.apache.http.legacy"
+			android:required="false" />
 
-        <activity
-            android:name="com.acs_plugin.calling.presentation.CallCompositeActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AzureCommunicationUICalling.Theme"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            android:showOnLockScreen="true"
-            android:turnScreenOn="true"
-            android:screenOrientation="portrait" />
+		<activity
+			android:name="com.acs_plugin.calling.presentation.CallCompositeActivity"
+			android:launchMode="singleTop"
+			android:theme="@style/AzureCommunicationUICalling.Theme"
+			android:exported="false"
+			android:windowSoftInputMode="adjustResize"
+			android:showOnLockScreen="true"
+			android:turnScreenOn="true"
+			android:screenOrientation="portrait" />
 
-        <activity
-                android:name="com.acs_plugin.ui.IncomingCallActivity"
-                android:launchMode="singleTop"
-                android:theme="@style/AzureCommunicationUICalling.Theme"
-                android:exported="false"
-                android:windowSoftInputMode="adjustResize"
-                android:showOnLockScreen="true"
-                android:turnScreenOn="true"
-                android:screenOrientation="portrait" />
+		<activity
+			android:name="com.acs_plugin.ui.IncomingCallActivity"
+			android:launchMode="singleTop"
+			android:theme="@style/AzureCommunicationUICalling.Theme"
+			android:exported="false"
+			android:windowSoftInputMode="adjustResize"
+			android:showOnLockScreen="true"
+			android:turnScreenOn="true"
+			android:screenOrientation="portrait" />
 
-        <service
-            android:name="com.acs_plugin.calling.service.InCallService"
-            android:foregroundServiceType="microphone"
-            android:stopWithTask="false"
-            android:exported="false" />
+		<service
+			android:name="com.acs_plugin.calling.service.InCallService"
+			android:foregroundServiceType="microphone"
+			android:stopWithTask="false"
+			android:exported="false" />
 
-        <service
-            android:name="com.azure.android.communication.calling.TelecomConnectionService"
-            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.telecom.ConnectionService" />
-            </intent-filter>
-        </service>
+		<service
+			android:name="com.azure.android.communication.calling.TelecomConnectionService"
+			android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.telecom.ConnectionService" />
+			</intent-filter>
+		</service>
 
-        <service
-            android:name=".service.FBMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+		<service
+			android:name=".service.FBMessagingService"
+			android:exported="false">
+			<intent-filter>
+				<action android:name="com.google.firebase.MESSAGING_EVENT" />
+			</intent-filter>
+		</service>
 
-    </application>
+	</application>
 
 </manifest>
