@@ -145,7 +145,7 @@ final class CallHandler: MethodHandler {
         result: @escaping FlutterResult
     ) {
         let localOptions = LocalOptions(
-            cameraOn: true,
+            cameraOn: false,
             isChatEnable: isChatEnable,
             microphoneOn: true,
             skipSetupScreen: isRejoin,
@@ -161,7 +161,7 @@ final class CallHandler: MethodHandler {
         result: @escaping FlutterResult
     ) {
         let localOptions = LocalOptions(
-            cameraOn: true,
+            cameraOn: false,
             isChatEnable: true,
             microphoneOn: true,
             skipSetupScreen: true
@@ -182,12 +182,9 @@ final class CallHandler: MethodHandler {
     }
     
     func subscribeToEvents(callComposite: CallComposite) {
-        func getLocalOptions(azureCorrelationId: String?) -> LocalOptions {
-            return LocalOptions(cameraOn: true, isChatEnable: true, microphoneOn: true, azureCorrelationId: azureCorrelationId)
-        }
-        
         let callKitCallAccepted: (String) -> Void = { [weak callComposite] callId in
-            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: getLocalOptions(azureCorrelationId: callId))
+            let localOptions = LocalOptions(cameraOn: false, isChatEnable: true, microphoneOn: true, azureCorrelationId: callId)
+            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: localOptions)
         }
         
         callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted
