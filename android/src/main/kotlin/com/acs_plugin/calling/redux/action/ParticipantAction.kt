@@ -18,7 +18,7 @@ internal sealed class ParticipantAction : Action {
     class ClearLobbyError : ParticipantAction()
     class Remove(val userIdentifier: String) : ParticipantAction()
     class RemoveParticipantError : ParticipantAction()
-    class ReactionParticipantUpdated(val participantReactionMap: Map<String, ReactionPayload>) : ParticipantAction()
+    class ReactionParticipantUpdated(val participantReactionMap: Map<String, ReactionPayload?>) : ParticipantAction()
 
     class SetTotalParticipantCount(val totalParticipantCount: Int) : ParticipantAction()
 }

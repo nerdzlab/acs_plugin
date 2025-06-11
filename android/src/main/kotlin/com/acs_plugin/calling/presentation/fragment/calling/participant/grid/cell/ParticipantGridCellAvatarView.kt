@@ -106,7 +106,9 @@ internal class ParticipantGridCellAvatarView(
 
         lifecycleScope.launch {
             participantViewModel.getReactionTypeStateFlow().collect {
-                reactionOverlayView.show(it)
+                reactionOverlayView.show(it) {
+                    participantViewModel.onReactionShown()
+                }
             }
         }
     }

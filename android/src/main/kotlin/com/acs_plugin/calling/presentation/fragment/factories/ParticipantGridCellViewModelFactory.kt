@@ -5,10 +5,12 @@ package com.acs_plugin.calling.presentation.fragment.factories
 
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.ParticipantGridCellViewModel
+import com.acs_plugin.calling.redux.action.Action
 
 internal class ParticipantGridCellViewModelFactory {
     fun ParticipantGridCellViewModel(
         participantInfoModel: ParticipantInfoModel,
+        dispatch: (Action) -> Unit
     ): ParticipantGridCellViewModel =
         ParticipantGridCellViewModel(
             participantInfoModel.userIdentifier,
@@ -23,6 +25,7 @@ internal class ParticipantGridCellViewModelFactory {
             participantInfoModel.participantStatus,
             participantInfoModel.selectedReaction,
             participantInfoModel.isPrimaryParticipant(),
-            participantInfoModel.isVideoTurnOffForMe
+            participantInfoModel.isVideoTurnOffForMe,
+            dispatch
         )
 }

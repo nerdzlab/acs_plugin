@@ -7,6 +7,8 @@ import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ParticipantStatus
 import com.acs_plugin.calling.models.VideoStreamModel
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
+import com.acs_plugin.calling.redux.action.Action
+import com.acs_plugin.calling.redux.action.ParticipantAction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -23,7 +25,8 @@ internal class ParticipantGridCellViewModel(
     participantStatus: ParticipantStatus?,
     reactionType: ReactionType?,
     isPrimaryParticipant: Boolean,
-    isVideoTurnOffForMe: Boolean
+    isVideoTurnOffForMe: Boolean,
+    private val dispatch: (Action) -> Unit
 ) {
     private var isOnHoldStateFlow = MutableStateFlow(isOnHold(participantStatus))
     private var isCallingStateFlow = MutableStateFlow(isCalling(participantStatus))
@@ -121,6 +124,12 @@ internal class ParticipantGridCellViewModel(
         this.isCallingStateFlow.value = isCalling(participant.participantStatus)
         this.isRaisedHandStateFlow.value = participant.isRaisedHand
         this.reactionTypeStateFlow.value = participant.selectedReaction
+    }
+
+    fun onReactionShown() {
+        dispatch(
+            ParticipantAction.ReactionParticipantUpdated(mapOf(this.participantUserIdentifier to null))
+        )
     }
 
     private fun isCalling(participantStatus: ParticipantStatus?) =

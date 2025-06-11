@@ -104,7 +104,9 @@ internal class ParticipantGridCellVideoView(
         }
         lifecycleScope.launch {
             participantViewModel.getReactionTypeStateFlow().collect {
-                reactionOverlayView.show(it)
+                reactionOverlayView.show(it) {
+                    participantViewModel.onReactionShown()
+                }
             }
         }
     }

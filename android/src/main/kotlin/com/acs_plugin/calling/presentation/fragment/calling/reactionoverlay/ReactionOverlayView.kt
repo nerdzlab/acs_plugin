@@ -46,12 +46,13 @@ class ReactionOverlayView @JvmOverloads constructor(
         visibility = GONE
     }
 
-    suspend fun show(reaction: ReactionType?) {
+    suspend fun show(reaction: ReactionType?, reactionShownCallback: () -> Unit) {
         if (reaction != null) {
             emojiTextView.setText(reaction.titleResId)
             visibility = VISIBLE
             delay(3000L)
             visibility = GONE
+            reactionShownCallback.invoke()
         }
     }
 }

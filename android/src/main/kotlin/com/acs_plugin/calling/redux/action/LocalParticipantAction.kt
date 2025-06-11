@@ -101,7 +101,7 @@ internal sealed class LocalParticipantAction : Action {
     object LowerHandSucceeded : LocalParticipantAction()
     data class LowerHandFailed(val error: CallCompositeError) : LocalParticipantAction()
 
-    class SendReactionTriggered(val reactionType: ReactionType) : LocalParticipantAction()
+    class SendReactionTriggered(val reactionType: ReactionType?) : LocalParticipantAction()
     object SendReactionSucceeded : LocalParticipantAction()
     data class SendReactionFailed(val error: CallCompositeError) : LocalParticipantAction()
 

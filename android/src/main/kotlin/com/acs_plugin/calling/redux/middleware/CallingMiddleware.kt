@@ -93,7 +93,9 @@ internal class CallingMiddlewareImpl(
                     callingMiddlewareActionHandler.lowerHand(store)
                 }
                 is LocalParticipantAction.SendReactionTriggered -> {
-                    callingMiddlewareActionHandler.sendReaction(action.reactionType, store)
+                    action.reactionType?.let {
+                        callingMiddlewareActionHandler.sendReaction(action.reactionType, store)
+                    }
                 }
                 is LocalParticipantAction.ShareScreenTriggered -> {
                     callingMiddlewareActionHandler.turnShareScreenOn(store)
