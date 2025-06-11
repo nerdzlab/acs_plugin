@@ -75,6 +75,7 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                         this@AcsPlugin.context
                     )
                 }
+                OneOnOneCallingAction.STOP_CALL -> getCallCompositeManager(this@AcsPlugin.context).dismissCallComposite()
                 else -> Unit
             }
 

@@ -165,6 +165,7 @@ class CallCompositeManager(private val context: Context) {
         identity: String = "",
     ) {
         if (this.callComposite != null) {
+            subscribeToEvents(callComposite!!)
             return
         }
         val callComposite = createCallComposite(acsToken, displayName, context, identity)
