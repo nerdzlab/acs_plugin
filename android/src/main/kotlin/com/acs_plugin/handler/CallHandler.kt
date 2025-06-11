@@ -243,7 +243,13 @@ class CallHandler(
             .userId(CommunicationUserIdentifier(userData?.userId))
             .build()
 
-        val callCompositeLocalOptions = CallCompositeLocalOptions()
+        val callCompositeLocalOptions = CallCompositeLocalOptions().apply {
+            setCameraOn(true)
+            setMicrophoneOn(true)
+            setSkipSetupScreen(true)
+            setChatEnabled(true)
+        }
+
         participants.firstOrNull()?.let { remoteParticipant ->
             callComposite.launch(activity, participants, callCompositeLocalOptions)
             result.success(null)
