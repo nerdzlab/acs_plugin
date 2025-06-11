@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
+import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.MoreActionType
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
 import com.acs_plugin.extension.onSingleClickListener
 import com.google.android.flexbox.FlexboxLayout
@@ -34,6 +35,8 @@ internal class MoreActionsListView @JvmOverloads constructor(
     private var actionsFlexboxLayer: FlexboxLayout
 
     private lateinit var menuDialog: BottomSheetDialog
+
+    private lateinit var openChatCallback: () -> Unit
 
     init {
         orientation = VERTICAL
@@ -61,9 +64,11 @@ internal class MoreActionsListView @JvmOverloads constructor(
 
     fun start(
         viewLifecycleOwner: LifecycleOwner,
-        viewModel: MoreActionsListViewModel
+        viewModel: MoreActionsListViewModel,
+        openChatCallback: () -> Unit
     ) {
         this.viewModel = viewModel
+        this.openChatCallback = openChatCallback
 
         initializeMenuDialog()
 
@@ -92,9 +97,10 @@ internal class MoreActionsListView @JvmOverloads constructor(
 
                 it.forEach { item ->
                     val actionView = MoreActionItemView(context)
-                    actionView.setAction(item) {
+                    actionView.setAction(item) { type ->
                         menuDialog.dismiss()
-                        viewModel.onActionClicked(it)
+                        viewModel.onActionClicked(type)
+                        if (type == MoreActionType.CHAT) openChatCallback.invoke()
                     }
                     actionsFlexboxLayer.addView(actionView, lp)
                 }

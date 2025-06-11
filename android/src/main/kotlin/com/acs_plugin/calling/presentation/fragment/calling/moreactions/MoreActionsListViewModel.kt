@@ -1,6 +1,6 @@
 package com.acs_plugin.calling.presentation.fragment.calling.moreactions
 
-import com.acs_plugin.Constants
+import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.calling.configuration.CallType
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.MoreActionItem
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.MoreActionType
@@ -96,7 +96,7 @@ internal class MoreActionsListViewModel(
 
     fun onActionClicked(actionType: MoreActionType) {
         when (actionType) {
-            MoreActionType.CHAT -> FlutterEventDispatcher.sendEvent(Constants.FlutterEvents.ON_SHOW_CHAT)
+            MoreActionType.CHAT -> FlutterEventDispatcher.sendEvent(PluginConstants.FlutterEvents.ON_SHOW_CHAT)
             MoreActionType.PARTICIPANTS -> displayParticipantListCallback.invoke()
             MoreActionType.BLUR_ON -> dispatch(LocalParticipantAction.BlurPreviewOnTriggered())
             MoreActionType.BLUR_OFF -> dispatch(LocalParticipantAction.BlurPreviewOffTriggered())
@@ -141,7 +141,7 @@ internal class MoreActionsListViewModel(
                     }
                 })
             }
-//            add(MoreActionType.CHANGE_VIEW.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
+            add(MoreActionType.CHANGE_VIEW.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
 //            if (shareScreenStatus == ShareScreenStatus.ON) {
 //                add(MoreActionType.STOP_SHARE_SCREEN.mapToMoreActionItem())
 //            } else {

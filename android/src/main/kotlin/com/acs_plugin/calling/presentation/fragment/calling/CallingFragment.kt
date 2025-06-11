@@ -164,7 +164,9 @@ internal class CallingFragment :
             viewLifecycleOwner,
             viewModel.floatingHeaderViewModel,
             this::displayParticipantList
-        )
+        ) {
+            (activity as? MultitaskingCallCompositeActivity)?.hide()
+        }
 
         lobbyHeaderView = view.findViewById(R.id.azure_communication_ui_calling_lobby_header)
         lobbyHeaderView.start(
@@ -228,7 +230,9 @@ internal class CallingFragment :
         moreCallOptionsListView.start(viewLifecycleOwner)
 
         moreActionsListView = MoreActionsListView(this.requireContext())
-        moreActionsListView.start(viewLifecycleOwner, viewModel.moreActionsListViewModel)
+        moreActionsListView.start(viewLifecycleOwner, viewModel.moreActionsListViewModel) {
+            (activity as? MultitaskingCallCompositeActivity)?.hide()
+        }
 
         captionsListView = CaptionsListView(
             context = this.requireContext(),

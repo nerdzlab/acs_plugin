@@ -4,7 +4,7 @@
 package com.acs_plugin.calling.presentation.fragment.calling.header
 
 import android.content.Context
-import com.acs_plugin.Constants
+import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.calling.logger.Logger
 import com.acs_plugin.calling.models.createCustomButtonClickEvent
 import com.acs_plugin.calling.presentation.manager.UpdatableOptionsManager
@@ -138,7 +138,7 @@ internal class InfoHeaderViewModel(
     }
 
     fun onChatButtonClicked() {
-        FlutterEventDispatcher.sendEvent(Constants.FlutterEvents.ON_SHOW_CHAT)
+        FlutterEventDispatcher.sendEvent(PluginConstants.FlutterEvents.ON_SHOW_CHAT)
     }
 
     fun onCustomButtonClicked(context: Context, id: String) {

@@ -3,7 +3,7 @@
 
 package com.acs_plugin.calling.presentation.fragment.calling.hangup
 
-import com.acs_plugin.Constants
+import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.calling.configuration.CallType
 import com.acs_plugin.calling.redux.Store
 import com.acs_plugin.calling.redux.action.Action
@@ -36,7 +36,7 @@ internal class LeaveConfirmViewModel(
 
     fun confirm() {
         if (callType != CallType.ONE_TO_ONE_INCOMING && callType != CallType.ONE_TO_N_OUTGOING) {
-            FlutterEventDispatcher.sendEvent(Constants.FlutterEvents.ON_USER_CALL_ENDED)
+            FlutterEventDispatcher.sendEvent(PluginConstants.FlutterEvents.ON_USER_CALL_ENDED)
         }
 
         if (store.getCurrentState().localParticipantState.initialCallJoinState.skipSetupScreen &&

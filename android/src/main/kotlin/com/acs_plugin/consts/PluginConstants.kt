@@ -1,6 +1,6 @@
-package com.acs_plugin
+package com.acs_plugin.consts
 
-object Constants {
+object PluginConstants {
 
     object MethodChannels {
         const val SETUP_CHAT_SERVICE = "setupChatService"

@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.PowerManager
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.acs_plugin.Constants
+import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.calling.models.CallCompositePushNotification
 import com.acs_plugin.calling.models.CallCompositePushNotificationEventType
 import com.acs_plugin.data.enum.OneOnOneCallingAction
@@ -23,9 +23,9 @@ class FBMessagingService : FirebaseMessagingService() {
                 pushNotificationInfo.eventType == CallCompositePushNotificationEventType.INCOMING_GROUP_CALL
             ) {
                 wakeAppIfScreenOff()
-                sendIntent(Constants.IntentDataKeys.HANDLE_INCOMING_CALL_PUSH, remoteMessage)
+                sendIntent(PluginConstants.IntentDataKeys.HANDLE_INCOMING_CALL_PUSH, remoteMessage)
             } else {
-                sendIntent(Constants.IntentDataKeys.CLEAR_PUSH_NOTIFICATION, remoteMessage)
+                sendIntent(PluginConstants.IntentDataKeys.CLEAR_PUSH_NOTIFICATION, remoteMessage)
             }
         }
     }
@@ -37,8 +37,8 @@ class FBMessagingService : FirebaseMessagingService() {
     private fun sendIntent(tag: String, remoteMessage: RemoteMessage?) {
         Log.d("NOTIFICATION_RECEIVED", "Passing push notification to Activity: ${remoteMessage?.data}")
         val intent = Intent("acs_chat_intent")
-        intent.putExtra(Constants.Arguments.PUSH_NOTIFICATION_DATA, remoteMessage)
-        intent.putExtra(Constants.Arguments.ACTION_TYPE, OneOnOneCallingAction.INCOMING_CALL)
+        intent.putExtra(PluginConstants.Arguments.PUSH_NOTIFICATION_DATA, remoteMessage)
+        intent.putExtra(PluginConstants.Arguments.ACTION_TYPE, OneOnOneCallingAction.INCOMING_CALL)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 

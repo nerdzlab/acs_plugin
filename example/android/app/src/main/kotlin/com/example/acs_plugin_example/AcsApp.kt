@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import com.acs_plugin.Constants
+import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.data.UserData
 import com.azure.android.communication.chat.implementation.notifications.fcm.RegistrationRenewalWorkerFactory
 import com.azure.android.communication.common.CommunicationTokenCredential
@@ -18,12 +18,12 @@ class AcsApp : Application(), Configuration.Provider {
     private var exceptionHandler: Consumer<Throwable?> = Consumer<Throwable?> { }
 
     private val sharedPreferences: SharedPreferences by lazy {
-        applicationContext.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
+        applicationContext.getSharedPreferences(PluginConstants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
     }
 
     private val userData: UserData?
         get() {
-            val json = sharedPreferences.getString(Constants.Prefs.USER_DATA_KEY, null)
+            val json = sharedPreferences.getString(PluginConstants.Prefs.USER_DATA_KEY, null)
             return json?.let {
                 try {
                     Json.decodeFromString<UserData>(it)

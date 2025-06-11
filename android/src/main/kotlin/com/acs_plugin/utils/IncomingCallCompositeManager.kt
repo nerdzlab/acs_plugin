@@ -8,9 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -26,9 +24,8 @@ import com.azure.android.communication.common.CommunicationIdentifier
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.communication.common.CommunicationTokenRefreshOptions
 import com.google.firebase.messaging.FirebaseMessaging
-import androidx.core.net.toUri
 
-class CallCompositeManager(private val context: Context) {
+class IncomingCallCompositeManager(private val context: Context) {
 
     private var callComposite: CallComposite? = null
     private var incomingCallId: String? = null
@@ -38,6 +35,7 @@ class CallCompositeManager(private val context: Context) {
             setCameraOn(true)
             setMicrophoneOn(true)
             setSkipSetupScreen(true)
+            setChatEnabled(true)
         }
 
         return localOptions
@@ -45,25 +43,23 @@ class CallCompositeManager(private val context: Context) {
 
     private fun subscribeToEvents(callComposite: CallComposite) {
         val onDismissedEventHandler: ((CallCompositeDismissedEvent) -> Unit) = {
-            log("onDismissed: errorCode: ${it.errorCode}, cause: ${it.cause?.message}")
+            Log.i("AcsOneOnOneCall", "onDismissed: errorCode: ${it.errorCode}, cause: ${it.cause?.message}")
         }
         callComposite.addOnDismissedEventHandler(onDismissedEventHandler)
 
         callComposite.addOnAudioSelectionChangedEventHandler { event ->
-            log(message = "Audio selection changed to ${event.audioSelectionMode}")
+            Log.i("AcsOneOnOneCall", "Audio selection changed to ${event.audioSelectionMode}")
         }
 
         callComposite.addOnIncomingCallEventHandler {
-            log("Incoming call. ${it.callId}")
+            Log.i("AcsOneOnOneCall", "Incoming call. ${it.callId}")
             onIncomingCall(it)
         }
 
         callComposite.addOnIncomingCallCancelledEventHandler {
-            log("Incoming call cancelled. ${it.callId}")
+            Log.i("AcsOneOnOneCall", "Incoming call cancelled. ${it.callId}")
             onIncomingCallCancelled(it)
         }
-
-
     }
 
     fun dismissCallComposite() {
@@ -112,7 +108,7 @@ class CallCompositeManager(private val context: Context) {
             displayName
         )
         if (callComposite?.callState == CallCompositeCallStateCode.CONNECTED) {
-            log("Incoming call ignored as there is already an active call.")
+            Log.i("AcsOneOnOneCall", "Incoming call ignored as there is already an active call.")
             return
         }
         callComposite?.handlePushNotification(CallCompositePushNotification(value))
@@ -129,14 +125,14 @@ class CallCompositeManager(private val context: Context) {
                 callComposite?.registerPushNotification(deviceRegistrationToken)
                     ?.whenComplete { _, throwable ->
                         if (throwable != null) {
-                            log("Register push failed.")
+                            Log.i("AcsOneOnOneCall", "Register push failed.")
                             throw throwable
                         } else {
-                            log("Register push success.")
+                            Log.i("AcsOneOnOneCall","Register push success.")
                         }
                     }
             } catch (e: Exception) {
-                e.message?.let { log(it) }
+                e.message?.let { Log.i("AcsOneOnOneCall", it) }
             }
         }
     }
@@ -147,14 +143,14 @@ class CallCompositeManager(private val context: Context) {
             callComposite?.unregisterPushNotification()
                 ?.whenComplete { _, throwable ->
                     if (throwable != null) {
-                        log("Unregister push failed.")
+                        Log.i("AcsOneOnOneCall", "Unregister push failed.")
                         throw throwable
                     } else {
-                        log("Unregister push success.")
+                        Log.i("AcsOneOnOneCall", "Unregister push success.")
                     }
                 }
         } catch (e: Exception) {
-            e.message?.let { log(it) }
+            e.message?.let { Log.i("AcsOneOnOneCall", it) }
         }
     }
 
@@ -208,11 +204,6 @@ class CallCompositeManager(private val context: Context) {
         return callCompositeBuilder.build()
     }
 
-    private fun log(message: String) {
-        Log.i("AcsOneOnOneCall", message)
-    }
-
-
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun canUseFullScreenIntent(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
@@ -224,26 +215,6 @@ class CallCompositeManager(private val context: Context) {
                 context,
                 android.Manifest.permission.USE_FULL_SCREEN_INTENT
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    private fun requestFullScreenIntentPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            try {
-                val intent = Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT).apply {
-                    data = "package:${context.packageName}".toUri()
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-                context.startActivity(intent)
-            } catch (e: Exception) {
-                Log.e("CallCompositeManager", "Failed to open full-screen intent settings", e)
-                // Fallback to app settings
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.parse("package:${context.packageName}")
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-                context.startActivity(intent)
-            }
         }
     }
 
@@ -347,18 +318,5 @@ class CallCompositeManager(private val context: Context) {
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
-    }
-
-    // Public method to check and request permission
-    fun ensureFullScreenIntentPermission(): Boolean {
-        val hasPermission = canUseFullScreenIntent()
-        Log.d("CallCompositeManager", "Full-screen intent permission status: $hasPermission")
-
-        if (!hasPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            Log.d("CallCompositeManager", "Requesting full-screen intent permission")
-            requestFullScreenIntentPermission()
-        }
-
-        return hasPermission
     }
 }

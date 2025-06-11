@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.acs_plugin.Constants
+import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.R
 import com.acs_plugin.data.enum.OneOnOneCallingAction
 
@@ -37,13 +37,13 @@ class IncomingCallActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.accept).setOnClickListener {
             val intent = Intent("acs_chat_intent")
-            intent.putExtra(Constants.Arguments.ACTION_TYPE, OneOnOneCallingAction.ACCEPT)
+            intent.putExtra(PluginConstants.Arguments.ACTION_TYPE, OneOnOneCallingAction.ACCEPT)
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
             finish()
         }
         findViewById<ImageButton>(R.id.decline).setOnClickListener {
             val intent = Intent("acs_chat_intent")
-            intent.putExtra(Constants.Arguments.ACTION_TYPE, OneOnOneCallingAction.DECLINE)
+            intent.putExtra(PluginConstants.Arguments.ACTION_TYPE, OneOnOneCallingAction.DECLINE)
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
             finish()
         }

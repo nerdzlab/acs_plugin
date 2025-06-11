@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
-import com.acs_plugin.Constants
+import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.chat.ChatAdapter
 import com.acs_plugin.chat.ChatAdapterBuilder
 import com.acs_plugin.chat.service.sdk.wrapper.ChatEventType
@@ -13,7 +13,7 @@ import com.acs_plugin.chat.service.sdk.wrapper.CommunicationIdentifier
 import com.acs_plugin.chat.service.sdk.wrapper.into
 import com.acs_plugin.data.Event
 import com.acs_plugin.data.UserData
-import com.acs_plugin.extensions.toMap
+import com.acs_plugin.extension.toMap
 import com.azure.android.communication.chat.ChatClient
 import com.azure.android.communication.chat.ChatClientBuilder
 import com.azure.android.communication.chat.ChatThreadClient
@@ -47,12 +47,12 @@ class ChatHandler(
     private var allPagesFetched = false
 
     private val sharedPreferences: SharedPreferences by lazy {
-        context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
+        context.getSharedPreferences(PluginConstants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
     }
 
     private val userData: UserData?
         get() {
-            val json = sharedPreferences.getString(Constants.Prefs.USER_DATA_KEY, null)
+            val json = sharedPreferences.getString(PluginConstants.Prefs.USER_DATA_KEY, null)
             return json?.let {
                 try {
                     Json.decodeFromString<UserData>(it)
@@ -65,8 +65,8 @@ class ChatHandler(
 
 
     private var chatEndpoint: String?
-        get() = sharedPreferences.getString(Constants.Prefs.CHAT_ENDPOINT, null)
-        set(value) = sharedPreferences.edit { putString(Constants.Prefs.CHAT_ENDPOINT, value) }
+        get() = sharedPreferences.getString(PluginConstants.Prefs.CHAT_ENDPOINT, null)
+        set(value) = sharedPreferences.edit { putString(PluginConstants.Prefs.CHAT_ENDPOINT, value) }
 
     override fun onFirebaseTokenReceived(token: String) {
         super.onFirebaseTokenReceived(token)
@@ -79,8 +79,8 @@ class ChatHandler(
     ): Boolean {
         val args = call.arguments as? Map<*, *>
         return when (call.method) {
-            Constants.MethodChannels.SETUP_CHAT_SERVICE -> {
-                val endpoint = args?.get(Constants.Arguments.ENDPOINT) as? String
+            PluginConstants.MethodChannels.SETUP_CHAT_SERVICE -> {
+                val endpoint = args?.get(PluginConstants.Arguments.ENDPOINT) as? String
                 if (endpoint != null) {
                     this.chatEndpoint = endpoint
                     setupChatAdapter(endpoint, result)
@@ -90,8 +90,8 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.INIT_CHAT_THREAD -> {
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.INIT_CHAT_THREAD -> {
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
                 if (threadId != null) {
                     initializeChatThread(threadId, result)
                 } else {
@@ -100,10 +100,10 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.SEND_MESSAGE -> {
-                val content = args?.get(Constants.Arguments.CONTENT) as? String
-                val senderDisplayName = args?.get(Constants.Arguments.SENDER_DISPLAY_NAME) as? String
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.SEND_MESSAGE -> {
+                val content = args?.get(PluginConstants.Arguments.CONTENT) as? String
+                val senderDisplayName = args?.get(PluginConstants.Arguments.SENDER_DISPLAY_NAME) as? String
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
 
                 if (content == null || senderDisplayName == null || threadId == null) {
                     handleResultError(
@@ -114,8 +114,8 @@ class ChatHandler(
                     return true
                 }
 
-                val type = (args[Constants.Arguments.TYPE] as? String)?.let { ChatMessageType.valueOf(it) }
-                val metadata = args[Constants.Arguments.METADATA] as? Map<String, String>
+                val type = (args[PluginConstants.Arguments.TYPE] as? String)?.let { ChatMessageType.valueOf(it) }
+                val metadata = args[PluginConstants.Arguments.METADATA] as? Map<String, String>
 
                 sendMessage(
                     threadId = threadId,
@@ -128,17 +128,17 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.EDIT_MESSAGE -> {
-                val messageId = args?.get(Constants.Arguments.MESSAGE_ID) as? String
-                val content = args?.get(Constants.Arguments.CONTENT) as? String
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.EDIT_MESSAGE -> {
+                val messageId = args?.get(PluginConstants.Arguments.MESSAGE_ID) as? String
+                val content = args?.get(PluginConstants.Arguments.CONTENT) as? String
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
 
                 if (messageId == null || content == null || threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing 'messageId', 'content' or 'threadId'")
                     return true
                 }
 
-                val metadata = args[Constants.Arguments.METADATA] as? Map<String, String>
+                val metadata = args[PluginConstants.Arguments.METADATA] as? Map<String, String>
 
                 editMessage(
                     threadId = threadId,
@@ -150,9 +150,9 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.DELETE_MESSAGE -> {
-                val messageId = args?.get(Constants.Arguments.MESSAGE_ID) as? String
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.DELETE_MESSAGE -> {
+                val messageId = args?.get(PluginConstants.Arguments.MESSAGE_ID) as? String
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
 
                 if (messageId == null || threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing arguments")
@@ -167,9 +167,9 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.SEND_READ_RECEIPT -> {
-                val messageId = args?.get(Constants.Arguments.MESSAGE_ID) as? String
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.SEND_READ_RECEIPT -> {
+                val messageId = args?.get(PluginConstants.Arguments.MESSAGE_ID) as? String
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
 
                 if (messageId == null || threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing arguments")
@@ -184,8 +184,8 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.SEND_TYPING_INDICATOR -> {
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.SEND_TYPING_INDICATOR -> {
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
 
                 if (threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing arguments")
@@ -199,13 +199,13 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.DISCONNECT_CHAT_SERVICE -> {
+            PluginConstants.MethodChannels.DISCONNECT_CHAT_SERVICE -> {
                 disconnectChatService(result)
                 true
             }
 
-            Constants.MethodChannels.GET_INITIAL_MESSAGES -> {
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.GET_INITIAL_MESSAGES -> {
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
                 if (threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing arguments")
                     return true
@@ -215,8 +215,8 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.RETRIEVE_CHAT_THREAD_PROPERTIES -> {
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.RETRIEVE_CHAT_THREAD_PROPERTIES -> {
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
                 if (threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing arguments")
                     return true
@@ -226,8 +226,8 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.GET_LIST_OF_PARTICIPANTS -> {
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.GET_LIST_OF_PARTICIPANTS -> {
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
                 if (threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing arguments")
                     return true
@@ -237,8 +237,8 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.GET_PREVIOUS_MESSAGES -> {
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.GET_PREVIOUS_MESSAGES -> {
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
                 if (threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing arguments")
                     return true
@@ -248,8 +248,8 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.IS_CHAT_HAS_MORE_MESSAGES -> {
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.IS_CHAT_HAS_MORE_MESSAGES -> {
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
                 if (threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing arguments")
                     return true
@@ -259,8 +259,8 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.GET_LIST_READ_RECEIPTS -> {
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.GET_LIST_READ_RECEIPTS -> {
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
                 if (threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing arguments")
                     return true
@@ -270,8 +270,8 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.GET_LAST_MESSAGE -> {
-                val threadId = args?.get(Constants.Arguments.THREAD_ID) as? String
+            PluginConstants.MethodChannels.GET_LAST_MESSAGE -> {
+                val threadId = args?.get(PluginConstants.Arguments.THREAD_ID) as? String
                 if (threadId == null) {
                     handleResultError(result, "MISSING_ARGUMENTS", "Missing arguments")
                     return true
@@ -281,17 +281,17 @@ class ChatHandler(
                 true
             }
 
-            Constants.MethodChannels.GET_INITIAL_LIST_THREADS -> {
+            PluginConstants.MethodChannels.GET_INITIAL_LIST_THREADS -> {
                 getInitialListThreads(result)
                 true
             }
 
-            Constants.MethodChannels.GET_NEXT_THREADS -> {
+            PluginConstants.MethodChannels.GET_NEXT_THREADS -> {
                 getNextThreads(result)
                 true
             }
 
-            Constants.MethodChannels.IS_MORE_THREADS_AVAILABLE -> {
+            PluginConstants.MethodChannels.IS_MORE_THREADS_AVAILABLE -> {
                 isMoreThreadsAvailable(result)
                 true
             }
@@ -661,7 +661,7 @@ class ChatHandler(
             client.addEventHandler(ChatEventType.TYPING_INDICATOR_RECEIVED.into()) { payload ->
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_TYPING_INDICATOR_RECEIVED,
+                        name = PluginConstants.FlutterEvents.ON_TYPING_INDICATOR_RECEIVED,
                         payload = (payload as TypingIndicatorReceivedEvent).toMap()
                     )
                 )
@@ -670,7 +670,7 @@ class ChatHandler(
             client.addEventHandler(ChatEventType.READ_RECEIPT_RECEIVED.into()) { payload ->
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_READ_RECEIPT_RECEIVED,
+                        name = PluginConstants.FlutterEvents.ON_READ_RECEIPT_RECEIVED,
                         payload = (payload as ReadReceiptReceivedEvent).toMap()
                     )
                 )
@@ -679,7 +679,7 @@ class ChatHandler(
             client.addEventHandler(ChatEventType.CHAT_MESSAGE_RECEIVED.into()) { payload ->
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_CHAT_MESSAGE_RECEIVED,
+                        name = PluginConstants.FlutterEvents.ON_CHAT_MESSAGE_RECEIVED,
                         payload = (payload as ChatMessageReceivedEvent).toMap()
                     )
                 )
@@ -688,7 +688,7 @@ class ChatHandler(
             client.addEventHandler(ChatEventType.CHAT_MESSAGE_EDITED.into()) { payload ->
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_CHAT_MESSAGE_EDITED,
+                        name = PluginConstants.FlutterEvents.ON_CHAT_MESSAGE_EDITED,
                         payload = (payload as ChatMessageEditedEvent).toMap()
                     )
                 )
@@ -697,7 +697,7 @@ class ChatHandler(
             client.addEventHandler(ChatEventType.CHAT_MESSAGE_DELETED.into()) { payload ->
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_CHAT_MESSAGE_DELETED,
+                        name = PluginConstants.FlutterEvents.ON_CHAT_MESSAGE_DELETED,
                         payload = (payload as ChatMessageDeletedEvent).toMap()
                     )
                 )
@@ -706,7 +706,7 @@ class ChatHandler(
             client.addEventHandler(ChatEventType.CHAT_THREAD_CREATED.into()) { payload ->
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_CHAT_THREAD_CREATED,
+                        name = PluginConstants.FlutterEvents.ON_CHAT_THREAD_CREATED,
                         payload = (payload as ChatThreadCreatedEvent).toMap()
                     )
                 )
@@ -715,7 +715,7 @@ class ChatHandler(
             client.addEventHandler(ChatEventType.CHAT_THREAD_PROPERTIES_UPDATED.into()) { payload ->
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_CHAT_THREAD_PROPERTIES_UPDATED,
+                        name = PluginConstants.FlutterEvents.ON_CHAT_THREAD_PROPERTIES_UPDATED,
                         payload = (payload as ChatThreadPropertiesUpdatedEvent).toMap()
                     )
                 )
@@ -724,7 +724,7 @@ class ChatHandler(
             client.addEventHandler(ChatEventType.CHAT_THREAD_DELETED.into()) { payload ->
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_CHAT_THREAD_DELETED,
+                        name = PluginConstants.FlutterEvents.ON_CHAT_THREAD_DELETED,
                         payload = (payload as ChatThreadDeletedEvent).toMap()
                     )
                 )
@@ -733,7 +733,7 @@ class ChatHandler(
             client.addEventHandler(ChatEventType.PARTICIPANTS_ADDED.into()) { payload ->
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_PARTICIPANTS_ADDED,
+                        name = PluginConstants.FlutterEvents.ON_PARTICIPANTS_ADDED,
                         payload = (payload as ParticipantsAddedEvent).toMap()
                     )
                 )
@@ -742,7 +742,7 @@ class ChatHandler(
             client.addEventHandler(ChatEventType.PARTICIPANTS_REMOVED.into()) { payload ->
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_PARTICIPANTS_REMOVED,
+                        name = PluginConstants.FlutterEvents.ON_PARTICIPANTS_REMOVED,
                         payload = (payload as ParticipantsRemovedEvent).toMap()
                     )
                 )
@@ -752,7 +752,7 @@ class ChatHandler(
             client.startRealtimeNotifications(context) {
                 onSendEvent(
                     Event(
-                        name = Constants.FlutterEvents.ON_REAL_TIME_NOTIFICATION_CONNECTED
+                        name = PluginConstants.FlutterEvents.ON_REAL_TIME_NOTIFICATION_CONNECTED
                     )
                 )
             }

@@ -8,12 +8,13 @@ import android.content.IntentFilter
 import android.os.Parcelable
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.data.enum.OneOnOneCallingAction
 import com.acs_plugin.handler.CallHandler
 import com.acs_plugin.handler.ChatHandler
 import com.acs_plugin.handler.MethodHandler
 import com.acs_plugin.handler.UserDataHandler
-import com.acs_plugin.utils.CallCompositeManager
+import com.acs_plugin.utils.IncomingCallCompositeManager
 import com.acs_plugin.utils.FlutterEventDispatcher
 import com.google.firebase.messaging.RemoteMessage
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -38,37 +39,39 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var context: Context
     private val handlers = mutableListOf<MethodHandler>()
 
-    private var callCompositeManager: CallCompositeManager? = null
+    private var incomingCallCompositeManager: IncomingCallCompositeManager? = null
 
-    fun getCallCompositeManager(context: Context): CallCompositeManager {
-        if (callCompositeManager == null) {
-            callCompositeManager = CallCompositeManager(context)
+    fun getIncomingCallCompositeManager(context: Context): IncomingCallCompositeManager {
+        if (incomingCallCompositeManager == null) {
+            incomingCallCompositeManager = IncomingCallCompositeManager(context)
         }
-        return callCompositeManager!!
+        return incomingCallCompositeManager!!
     }
 
     val callReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
 
-            val actionType = intent.getSerializableExtra(Constants.Arguments.ACTION_TYPE) as OneOnOneCallingAction?
+            val actionType = intent.getSerializableExtra(PluginConstants.Arguments.ACTION_TYPE) as OneOnOneCallingAction?
 
             Log.d("BroadcastReceiver", "Push Notification received in MainActivity: " + actionType)
 
             val userData = (handlers.firstOrNull { it is UserDataHandler } as UserDataHandler).userDataClass
 
             when (actionType) {
-                OneOnOneCallingAction.ACCEPT -> getCallCompositeManager(this@AcsPlugin.context).acceptIncomingCall(
-                    this@AcsPlugin.activity!!,
-                    userData?.token.orEmpty(),
-                    userData?.name.orEmpty()
-                )
+                OneOnOneCallingAction.ACCEPT -> activity?.let { activity ->
+                    getIncomingCallCompositeManager(this@AcsPlugin.context).acceptIncomingCall(
+                        activity,
+                        userData?.token.orEmpty(),
+                        userData?.name.orEmpty()
+                    )
+                }
 
-                OneOnOneCallingAction.DECLINE -> getCallCompositeManager(this@AcsPlugin.context).declineIncomingCall()
+                OneOnOneCallingAction.DECLINE -> getIncomingCallCompositeManager(this@AcsPlugin.context).declineIncomingCall()
                 OneOnOneCallingAction.INCOMING_CALL -> {
                     val pushNotification =
-                        intent.getParcelableExtra<Parcelable?>(Constants.Arguments.PUSH_NOTIFICATION_DATA) as RemoteMessage
+                        intent.getParcelableExtra<Parcelable?>(PluginConstants.Arguments.PUSH_NOTIFICATION_DATA) as RemoteMessage
 
-                    getCallCompositeManager(this@AcsPlugin.context).handleIncomingCall(
+                    getIncomingCallCompositeManager(this@AcsPlugin.context).handleIncomingCall(
                         value = pushNotification.data,
                         acsIdentityToken = userData?.token.orEmpty(),
                         displayName = userData?.name.orEmpty(),
@@ -115,7 +118,7 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        if (call.method == Constants.MethodChannels.GET_PRELOADED_ACTION) return
+        if (call.method == PluginConstants.MethodChannels.GET_PRELOADED_ACTION) return
         handlers.forEach { handler -> handler.handle(call, result) }
     }
 
@@ -125,8 +128,7 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private fun setupHandlers() {
         val userDataHandler = UserDataHandler(context, channel) {
-            getCallCompositeManager(context).registerPush(context, it.token, it.name)
-            handlers.forEach { it.onUserReceived() }
+            getIncomingCallCompositeManager(context).registerPush(context, it.token, it.name)
         }
         val callHandler = CallHandler(context, activity)
         val chatHandler = ChatHandler(context) {

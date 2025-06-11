@@ -3,7 +3,7 @@ package com.acs_plugin.handler
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
-import com.acs_plugin.Constants
+import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.calling.CallComposite
 import com.acs_plugin.calling.CallCompositeBuilder
 import com.acs_plugin.calling.models.CallCompositeJoinLocator
@@ -28,12 +28,12 @@ class CallHandler(
     private var token: String? = null
 
     private val sharedPreferences: SharedPreferences by lazy {
-        context.getSharedPreferences(Constants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
+        context.getSharedPreferences(PluginConstants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
     }
 
     private val userData: UserData?
         get() {
-            val json = sharedPreferences.getString(Constants.Prefs.USER_DATA_KEY, null)
+            val json = sharedPreferences.getString(PluginConstants.Prefs.USER_DATA_KEY, null)
             return json?.let {
                 try {
                     Json.decodeFromString<UserData>(it)
@@ -50,13 +50,13 @@ class CallHandler(
 
     override fun handle(call: MethodCall, result: MethodChannel.Result): Boolean {
         return when (call.method) {
-            Constants.MethodChannels.INITIALIZE_ROOM_CALL -> {
+            PluginConstants.MethodChannels.INITIALIZE_ROOM_CALL -> {
                 val args = call.arguments as? Map<*, *>
-                val roomId = args?.get(Constants.Arguments.ROOM_ID) as? String
-                val callId = args?.get(Constants.Arguments.CALL_ID) as? String
-                val whiteboardId = args?.get(Constants.Arguments.WHITEBOARD_ID) as? String
-                val isChatEnabled = args?.get(Constants.Arguments.IS_CHAT_ENABLED) as? Boolean
-                val isRejoined = args?.get(Constants.Arguments.IS_REJOINED) as? Boolean
+                val roomId = args?.get(PluginConstants.Arguments.ROOM_ID) as? String
+                val callId = args?.get(PluginConstants.Arguments.CALL_ID) as? String
+                val whiteboardId = args?.get(PluginConstants.Arguments.WHITEBOARD_ID) as? String
+                val isChatEnabled = args?.get(PluginConstants.Arguments.IS_CHAT_ENABLED) as? Boolean
+                val isRejoined = args?.get(PluginConstants.Arguments.IS_REJOINED) as? Boolean
                 try {
                     if (roomId != null && callId != null && whiteboardId != null) {
                         initializeRoomCall(
@@ -79,10 +79,10 @@ class CallHandler(
             }
 
 
-            Constants.MethodChannels.START_ONE_ON_ONE_CALL -> {
+            PluginConstants.MethodChannels.START_ONE_ON_ONE_CALL -> {
                 try {
                     val args = call.arguments as? Map<*, *>
-                    val participantsId = args?.get(Constants.Arguments.PARTICIPANTS_ID) as? List<String>
+                    val participantsId = args?.get(PluginConstants.Arguments.PARTICIPANTS_ID) as? List<String>
 
                     if (participantsId != null) {
                         startOneOnOneCall(
@@ -100,13 +100,13 @@ class CallHandler(
                 }
             }
 
-            Constants.MethodChannels.START_TEAMS_MEETING_CALL -> {
+            PluginConstants.MethodChannels.START_TEAMS_MEETING_CALL -> {
                 val args = call.arguments as? Map<*, *>
-                val meetingLink = args?.get(Constants.Arguments.MEETING_LINK) as? String
-                val callId = args?.get(Constants.Arguments.CALL_ID) as? String
-                val whiteboardId = args?.get(Constants.Arguments.WHITEBOARD_ID) as? String
-                val isChatEnabled = args?.get(Constants.Arguments.IS_CHAT_ENABLED) as? Boolean
-                val isRejoined = args?.get(Constants.Arguments.IS_REJOINED) as? Boolean
+                val meetingLink = args?.get(PluginConstants.Arguments.MEETING_LINK) as? String
+                val callId = args?.get(PluginConstants.Arguments.CALL_ID) as? String
+                val whiteboardId = args?.get(PluginConstants.Arguments.WHITEBOARD_ID) as? String
+                val isChatEnabled = args?.get(PluginConstants.Arguments.IS_CHAT_ENABLED) as? Boolean
+                val isRejoined = args?.get(PluginConstants.Arguments.IS_REJOINED) as? Boolean
                 try {
                     if (meetingLink != null && callId != null && whiteboardId != null) {
                         startTeamsMeetingCall(
@@ -241,6 +241,7 @@ class CallHandler(
             .credential(communicationTokenCredential)
             .displayName(userData?.name)
             .userId(CommunicationUserIdentifier(userData?.userId))
+            .multitasking(CallCompositeMultitaskingOptions(true, true))
             .build()
 
         val callCompositeLocalOptions = CallCompositeLocalOptions().apply {

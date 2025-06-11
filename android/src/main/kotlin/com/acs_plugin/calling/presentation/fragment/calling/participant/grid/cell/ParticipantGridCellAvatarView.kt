@@ -73,11 +73,9 @@ internal class ParticipantGridCellAvatarView(
                 if (it) {
                     onHoldTextView.visibility = VISIBLE
                     micIndicatorAudioImageView.visibility = GONE
-                    displayNameAudioTextView.setTextColor(ContextCompat.getColor(context, R.color.azure_communication_ui_calling_color_participant_list_mute_mic))
                 } else {
                     onHoldTextView.visibility = INVISIBLE
                     setMicButtonVisibility(participantViewModel.getIsMutedStateFlow().value)
-                    displayNameAudioTextView.setTextColor(ContextCompat.getColor(context, R.color.azure_communication_ui_calling_color_on_background))
                 }
             }
         }
