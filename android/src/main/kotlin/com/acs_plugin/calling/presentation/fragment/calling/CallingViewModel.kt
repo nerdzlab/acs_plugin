@@ -29,7 +29,9 @@ import com.acs_plugin.calling.redux.state.RttState
 import com.acs_plugin.calling.redux.state.VisibilityState
 import com.acs_plugin.calling.redux.state.VisibilityStatus
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 internal class CallingViewModel(
@@ -43,8 +45,8 @@ internal class CallingViewModel(
     private val capabilitiesManager: CapabilitiesManager,
 ) : BaseViewModel(store) {
 
-    private val _shareMeetingLinkMutableFlow = MutableStateFlow("")
-    var shareMeetingLinkMutableFlow = _shareMeetingLinkMutableFlow as StateFlow<String>
+    private val _shareMeetingLinkMutableFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    var shareMeetingLinkMutableFlow = _shareMeetingLinkMutableFlow as SharedFlow<String>
 
     private var isCaptionsVisibleMutableFlow = MutableStateFlow(false)
     // This is a flag to ensure that the call is started only once
@@ -100,7 +102,7 @@ internal class CallingViewModel(
     }
 
     fun onShareMeetingLinkClicked() {
-        _shareMeetingLinkMutableFlow.value = store.getCurrentState().callState.callId.orEmpty()
+        _shareMeetingLinkMutableFlow.tryEmit(store.getCurrentState().callState.callId.orEmpty())
     }
 
     override fun init(coroutineScope: CoroutineScope) {
