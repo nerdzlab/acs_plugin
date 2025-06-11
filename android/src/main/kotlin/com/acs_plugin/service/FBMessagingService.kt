@@ -24,11 +24,6 @@ class FBMessagingService : FirebaseMessagingService() {
             ) {
                 wakeAppIfScreenOff()
                 sendIntent(Constants.IntentDataKeys.HANDLE_INCOMING_CALL_PUSH, remoteMessage)
-            } else if (pushNotificationInfo.eventType == CallCompositePushNotificationEventType.STOP_RINGING) {
-                val intent = Intent("acs_chat_intent")
-                intent.putExtra(Constants.Arguments.PUSH_NOTIFICATION_DATA, remoteMessage)
-                intent.putExtra(Constants.Arguments.ACTION_TYPE, OneOnOneCallingAction.STOP_CALL)
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
             } else {
                 sendIntent(Constants.IntentDataKeys.CLEAR_PUSH_NOTIFICATION, remoteMessage)
             }
