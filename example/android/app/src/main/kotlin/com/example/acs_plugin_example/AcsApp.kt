@@ -13,7 +13,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import java9.util.function.Consumer
 import kotlinx.serialization.json.Json
 
-class MyAppConfiguration : Application(), Configuration.Provider {
+class AcsApp : Application(), Configuration.Provider {
 
     private var exceptionHandler: Consumer<Throwable?> = Consumer<Throwable?> { }
 

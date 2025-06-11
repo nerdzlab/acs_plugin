@@ -6,7 +6,7 @@
 
     <application
         android:label="acs_plugin_example"
-        android:name=".MyAppConfiguration"
+        android:name=".AcsApp"
         android:icon="@mipmap/ic_launcher"
         tools:replace="android:label">
         <activity
