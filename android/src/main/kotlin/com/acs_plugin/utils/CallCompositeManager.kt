@@ -15,6 +15,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.Person
 import androidx.core.content.ContextCompat
 import com.acs_plugin.ui.IncomingCallActivity
 import com.acs_plugin.R
@@ -25,11 +26,10 @@ import com.azure.android.communication.common.CommunicationIdentifier
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.communication.common.CommunicationTokenRefreshOptions
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.flow.MutableStateFlow
 import androidx.core.net.toUri
 
 class CallCompositeManager(private val context: Context) {
-    val callCompositeCallStateStateFlow = MutableStateFlow("")
+
     private var callComposite: CallComposite? = null
     private var incomingCallId: String? = null
 
@@ -294,6 +294,10 @@ class CallCompositeManager(private val context: Context) {
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
 
+            val incomingCaller = Person.Builder()
+                .setName(notification.callerDisplayName ?: "Unknown caller")
+                .setImportant(true)
+                .build()
 
             val builder: NotificationCompat.Builder =
                 NotificationCompat.Builder(context, "acs")
@@ -302,17 +306,8 @@ class CallCompositeManager(private val context: Context) {
                     .setWhen(System.currentTimeMillis())
                     .setContentTitle("Incoming Call")
                     .setContentText(notification.callerDisplayName ?: "Unknown caller")
-                    .addAction(
-                        R.drawable.ic_menu_call,
-                        "Accept",
-                        acceptPendingIntent
-                    )
-                    .addAction(
-                        R.drawable.ic_menu_call,
-                        "Decline",
-                        declinePendingIntent
-                    )
-                    .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                    .setStyle(
+                        NotificationCompat.CallStyle.forIncomingCall(incomingCaller, declinePendingIntent, acceptPendingIntent))
                     .setCategory(NotificationCompat.CATEGORY_CALL)
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

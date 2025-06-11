@@ -29,6 +29,10 @@ class FBMessagingService : FirebaseMessagingService() {
         }
     }
 
+    override fun onNewToken(token: String) {
+        super.onNewToken(token)
+    }
+
     private fun sendIntent(tag: String, remoteMessage: RemoteMessage?) {
         Log.d("NOTIFICATION_RECEIVED", "Passing push notification to Activity: ${remoteMessage?.data}")
         val intent = Intent("acs_chat_intent")
