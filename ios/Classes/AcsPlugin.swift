@@ -265,7 +265,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         do {
             // Keeping default .playAndRecord without forcing speaker
             try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
-            try audioSession.setActive(true)
+            try? audioSession.setActive(true)
         }
         catch {
             configError = error
