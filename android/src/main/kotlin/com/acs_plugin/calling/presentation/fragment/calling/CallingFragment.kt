@@ -42,6 +42,7 @@ import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyErrorHead
 import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyHeaderView
 import com.acs_plugin.calling.presentation.fragment.calling.lobby.WaitingLobbyOverlayView
 import com.acs_plugin.calling.presentation.fragment.calling.localuser.LocalParticipantView
+import com.acs_plugin.calling.presentation.fragment.calling.meetingview.MeetingViewListView
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.MoreActionsListView
 import com.acs_plugin.calling.presentation.fragment.calling.notification.ToastNotificationView
 import com.acs_plugin.calling.presentation.fragment.calling.notification.UpperMessageBarNotificationLayoutView
@@ -104,6 +105,7 @@ internal class CallingFragment :
     private lateinit var wakeLock: PowerManager.WakeLock
     private lateinit var moreCallOptionsListView: MoreCallOptionsListView
     private lateinit var moreActionsListView: MoreActionsListView
+    private lateinit var meetingViewListView: MeetingViewListView
     private lateinit var lobbyHeaderView: LobbyHeaderView
     private lateinit var lobbyErrorHeaderView: LobbyErrorHeaderView
     private lateinit var captionsListView: CaptionsListView
@@ -233,6 +235,9 @@ internal class CallingFragment :
         moreActionsListView.start(viewLifecycleOwner, viewModel.moreActionsListViewModel) {
             (activity as? MultitaskingCallCompositeActivity)?.hide()
         }
+
+        meetingViewListView = MeetingViewListView(this.requireContext())
+        meetingViewListView.start(viewLifecycleOwner, viewModel.meetingViewListViewModel)
 
         captionsListView = CaptionsListView(
             context = this.requireContext(),

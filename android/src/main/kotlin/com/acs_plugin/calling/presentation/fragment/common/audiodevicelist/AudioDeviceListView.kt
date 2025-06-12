@@ -1,8 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
 package com.acs_plugin.calling.presentation.fragment.common.audiodevicelist
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.FrameLayout
 import android.widget.Switch
@@ -24,6 +22,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.microsoft.fluentui.R as fluentUiR
 import kotlinx.coroutines.launch
 
+@SuppressLint("ViewConstructor")
 internal class AudioDeviceListView(
     private val viewModel: AudioDeviceListViewModel,
     context: Context,

@@ -112,4 +112,7 @@ internal sealed class LocalParticipantAction : Action {
     class StopShareScreenTriggered : LocalParticipantAction()
     object StopShareScreenSucceeded : LocalParticipantAction()
     data class StopShareScreenFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class GalleryViewTriggered : LocalParticipantAction()
+    class SpeakerViewTriggered : LocalParticipantAction()
 }

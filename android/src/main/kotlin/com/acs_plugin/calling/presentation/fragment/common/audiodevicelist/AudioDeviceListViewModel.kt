@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
 package com.acs_plugin.calling.presentation.fragment.common.audiodevicelist
 
 import com.acs_plugin.calling.redux.action.Action
@@ -15,9 +12,9 @@ import kotlinx.coroutines.flow.StateFlow
 internal class AudioDeviceListViewModel(private val dispatch: (Action) -> Unit) {
 
     private val displayAudioDeviceSelectionMenuMutableStateFlow = MutableStateFlow(false)
+    val displayAudioDeviceSelectionMenuStateFlow = displayAudioDeviceSelectionMenuMutableStateFlow as StateFlow<Boolean>
 
     private lateinit var audioStateMutableStateFlow: MutableStateFlow<AudioState>
-    val displayAudioDeviceSelectionMenuStateFlow = displayAudioDeviceSelectionMenuMutableStateFlow as StateFlow<Boolean>
     val audioStateFlow get() = audioStateMutableStateFlow as StateFlow<AudioState>
 
     fun init(

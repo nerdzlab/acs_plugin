@@ -78,6 +78,7 @@ internal class CallingViewModel(
     val captionsLanguageSelectionListViewModel = callingViewModelProvider.captionsLanguageSelectionListViewModel
     val captionsLayoutViewModel = callingViewModelProvider.captionsViewModel
     val moreActionsListViewModel = callingViewModelProvider.moreActionsListViewModel
+    val meetingViewListViewModel = callingViewModelProvider.meetingViewListViewModel
     val isCaptionsVisibleFlow: StateFlow<Boolean> = isCaptionsVisibleMutableFlow
     var isCaptionsMaximized: Boolean = false
 
@@ -247,8 +248,12 @@ internal class CallingViewModel(
             buttonState = state.buttonState,
             shareScreenStatus = state.localParticipantState.shareScreenStatus,
             participantsCount = state.remoteParticipantState.totalParticipantCount,
-            displayParticipantList = { participantListViewModel.displayParticipantList() }
+            meetingViewMode = state.localParticipantState.meetingViewMode,
+            displayParticipantList = { participantListViewModel.displayParticipantList() },
+            displayMeetingViewList = { meetingViewListViewModel.displayMeetingViewSelectionMenu() }
         )
+
+        meetingViewListViewModel.init(meetingViewMode = state.localParticipantState.meetingViewMode)
 
         super.init(coroutineScope)
     }
@@ -353,7 +358,7 @@ internal class CallingViewModel(
         }
 
         if (shouldUpdateRemoteParticipantsViewModels(state)) {
-            var updatedRemoteParticipantsForGridView = remoteParticipantsForGridView.mapValues { (id, participant) ->
+            val updatedRemoteParticipantsForGridView = remoteParticipantsForGridView.mapValues { (id, participant) ->
                 participant.copy(
                     isPinned = id == pinnedUserIdentifier,
                     isWhiteboard = id == state.callState.whiteboardId,
@@ -480,8 +485,11 @@ internal class CallingViewModel(
             navigationState = state.navigationState,
             buttonState = state.buttonState,
             shareScreenStatus = state.localParticipantState.shareScreenStatus,
-            participantsCount = state.remoteParticipantState.totalParticipantCount
+            participantsCount = state.remoteParticipantState.totalParticipantCount,
+            meetingViewMode = state.localParticipantState.meetingViewMode
         )
+
+        meetingViewListViewModel.update(meetingViewMode = state.localParticipantState.meetingViewMode)
     }
 
     private fun getLobbyParticipantsForHeader(state: ReduxState) =
@@ -542,7 +550,7 @@ internal class CallingViewModel(
         val currentParticipants = currentState.remoteParticipantState.participantMap
 
         // Find the participant and update their info
-        var updatedParticipantInfo = currentParticipants[id]?.let { participantInfo ->
+        val updatedParticipantInfo = currentParticipants[id]?.let { participantInfo ->
             when (type) {
                 ParticipantMenuType.PIN -> {
                     this.pinnedUserIdentifier = id

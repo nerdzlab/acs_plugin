@@ -69,6 +69,11 @@ internal enum class ShareScreenStatus {
     OFF
 }
 
+internal enum class MeetingViewMode {
+    GALLERY,
+    SPEAKER
+}
+
 internal data class CameraState(
     val operation: CameraOperationalStatus,
     val device: CameraDeviceSelectionStatus,
@@ -111,5 +116,6 @@ internal data class LocalUserState(
     val currentCapabilitiesAreDefault: Boolean = true,
     val raisedHandStatus: RaisedHandStatus,
     val reactionType: ReactionType? = null,
-    val shareScreenStatus: ShareScreenStatus
+    val shareScreenStatus: ShareScreenStatus,
+    val meetingViewMode: MeetingViewMode
 )

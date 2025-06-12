@@ -15,6 +15,9 @@
     <string name="raise_hand" translatable="false">Raise hand</string>
     <string name="lower_hand" translatable="false">Lower hand</string>
     <string name="change_view" translatable="false">Change view</string>
+    <string name="meeting_view" translatable="false">Meeting view</string>
+    <string name="gallery_view" translatable="false">Gallery view</string>
+    <string name="speaker_view" translatable="false">Speaker view</string>
     <string name="share_screen" translatable="false">Share screen</string>
     <string name="stop_sharing" translatable="false">Stop sharing</string>
     <string name="emoji_heart" translatable="false">❤️</string>
@@ -27,7 +30,7 @@
     <string name="unpin" translatable="false">Unpin</string>
     <string name="do_not_show_video" translatable="false">Don\'t show video</string>
     <string name="show_video" translatable="false">Show video</string>
-	<string name="decline">Decline</string>
-    <string name="accept">Accept</string>
-    <string name="incoming_call">Incoming call</string>
+	<string name="decline" translatable="false">Decline</string>
+    <string name="accept" translatable="false">Accept</string>
+    <string name="incoming_call" translatable="false">Incoming call</string>
 </resources>

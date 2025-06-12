@@ -12,6 +12,7 @@ import com.acs_plugin.calling.redux.state.BlurStatus
 import com.acs_plugin.calling.redux.state.ButtonState
 import com.acs_plugin.calling.redux.state.CameraOperationalStatus
 import com.acs_plugin.calling.redux.state.CameraState
+import com.acs_plugin.calling.redux.state.MeetingViewMode
 import com.acs_plugin.calling.redux.state.NavigationState
 import com.acs_plugin.calling.redux.state.RaisedHandStatus
 import com.acs_plugin.calling.redux.state.ShareScreenStatus
@@ -35,6 +36,8 @@ internal class MoreActionsListViewModel(
 
     private lateinit var displayParticipantListCallback: () -> Unit
 
+    private lateinit var displayMeetingViewListCallback: () -> Unit
+
     fun init(
         callType: CallType?,
         cameraState: CameraState,
@@ -43,11 +46,14 @@ internal class MoreActionsListViewModel(
         buttonState: ButtonState,
         shareScreenStatus: ShareScreenStatus,
         participantsCount: Int,
-        displayParticipantList: () -> Unit
+        meetingViewMode: MeetingViewMode,
+        displayParticipantList: () -> Unit,
+        displayMeetingViewList: () -> Unit
     ) {
         val isReactionsAvailable = callType != CallType.TEAMS_MEETING && callType != CallType.ONE_TO_ONE_INCOMING && callType != CallType.ONE_TO_N_OUTGOING
 
         this.displayParticipantListCallback = displayParticipantList
+        this.displayMeetingViewListCallback = displayMeetingViewList
         _displayStateFlow = MutableStateFlow(navigationState.showMoreMenu)
         _reactionsVisibilityStateFlow = MutableStateFlow(isReactionsAvailable)
         _actionItemsFlow = MutableStateFlow(
@@ -57,7 +63,8 @@ internal class MoreActionsListViewModel(
                 buttonState = buttonState,
                 shareScreenStatus = shareScreenStatus,
                 callType = callType,
-                participantsCount = participantsCount
+                participantsCount = participantsCount,
+                meetingViewMode = meetingViewMode
             )
         )
     }
@@ -69,7 +76,8 @@ internal class MoreActionsListViewModel(
         navigationState: NavigationState,
         buttonState: ButtonState,
         participantsCount: Int,
-        shareScreenStatus: ShareScreenStatus
+        shareScreenStatus: ShareScreenStatus,
+        meetingViewMode: MeetingViewMode
     ) {
         val isReactionsAvailable = callType != CallType.TEAMS_MEETING && callType != CallType.ONE_TO_ONE_INCOMING && callType != CallType.ONE_TO_N_OUTGOING
 
@@ -81,7 +89,8 @@ internal class MoreActionsListViewModel(
             buttonState = buttonState,
             shareScreenStatus = shareScreenStatus,
             callType = callType,
-            participantsCount = participantsCount
+            participantsCount = participantsCount,
+            meetingViewMode = meetingViewMode
         )
     }
 
@@ -102,9 +111,10 @@ internal class MoreActionsListViewModel(
             MoreActionType.BLUR_OFF -> dispatch(LocalParticipantAction.BlurPreviewOffTriggered())
             MoreActionType.RAISE_HAND -> dispatch(LocalParticipantAction.RaiseHandTriggered())
             MoreActionType.LOWER_HAND -> dispatch(LocalParticipantAction.LowerHandTriggered())
+            MoreActionType.CHANGE_GALLERY_VIEW -> displayMeetingViewListCallback.invoke()
+            MoreActionType.CHANGE_SPEAKER_VIEW -> displayMeetingViewListCallback.invoke()
             MoreActionType.SHARE_SCREEN -> dispatch(LocalParticipantAction.ShareScreenTriggered())
             MoreActionType.STOP_SHARE_SCREEN -> dispatch(LocalParticipantAction.StopShareScreenTriggered())
-            else -> {}
         }
     }
 
@@ -114,7 +124,8 @@ internal class MoreActionsListViewModel(
         buttonState: ButtonState,
         shareScreenStatus: ShareScreenStatus,
         callType: CallType?,
-        participantsCount: Int
+        participantsCount: Int,
+        meetingViewMode: MeetingViewMode
     ): List<MoreActionItem> {
         val isCameraTurnOn = cameraState.operation == CameraOperationalStatus.ON
         val isRaisedHandAvailable = callType != CallType.TEAMS_MEETING && callType != CallType.ONE_TO_ONE_INCOMING && callType != CallType.ONE_TO_N_OUTGOING
@@ -141,7 +152,11 @@ internal class MoreActionsListViewModel(
                     }
                 })
             }
-            add(MoreActionType.CHANGE_VIEW.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
+            if (meetingViewMode == MeetingViewMode.GALLERY) {
+                add(MoreActionType.CHANGE_GALLERY_VIEW.mapToMoreActionItem())
+            } else {
+                add(MoreActionType.CHANGE_SPEAKER_VIEW.mapToMoreActionItem())
+            }
 //            if (shareScreenStatus == ShareScreenStatus.ON) {
 //                add(MoreActionType.STOP_SHARE_SCREEN.mapToMoreActionItem())
 //            } else {
