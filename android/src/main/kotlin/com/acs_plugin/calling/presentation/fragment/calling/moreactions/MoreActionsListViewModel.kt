@@ -157,11 +157,11 @@ internal class MoreActionsListViewModel(
             } else {
                 add(MoreActionType.CHANGE_SPEAKER_VIEW.mapToMoreActionItem())
             }
-//            if (shareScreenStatus == ShareScreenStatus.ON) {
-//                add(MoreActionType.STOP_SHARE_SCREEN.mapToMoreActionItem())
-//            } else {
-//                add(MoreActionType.SHARE_SCREEN.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
-//            }
+            if (shareScreenStatus == ShareScreenStatus.ON) {
+                add(MoreActionType.STOP_SHARE_SCREEN.mapToMoreActionItem())
+            } else {
+                add(MoreActionType.SHARE_SCREEN.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
+            }
         }
     }
 }

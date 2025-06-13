@@ -92,6 +92,9 @@ internal open class CallCompositeActivity : AppCompatActivity() {
     private lateinit var visibilityStatusFlow: MutableStateFlow<VisibilityStatus>
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //TODO Lock Portrait mode for the first version
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         // Before super, we'll set up the DI injector and check the PiP state
         try {
             diContainerHolder.instanceId = instanceId
@@ -414,12 +417,14 @@ internal open class CallCompositeActivity : AppCompatActivity() {
                 supportActionBar?.hide()
                 val callScreenOrientation: Int? =
                     getScreenOrientation(configuration.callScreenOrientation)
-                requestedOrientation =
-                    when {
-                        (callScreenOrientation != null) -> callScreenOrientation
-                        isAndroidTV(this) -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-                        else -> ActivityInfo.SCREEN_ORIENTATION_USER
-                    }
+                //TODO Lock Portrait mode for the first version
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//                requestedOrientation =
+//                    when {
+//                        (callScreenOrientation != null) -> callScreenOrientation
+//                        isAndroidTV(this) -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+//                        else -> ActivityInfo.SCREEN_ORIENTATION_USER
+//                    }
                 launchFragment(CallingFragment::class.java.name)
             }
 
@@ -428,12 +433,14 @@ internal open class CallCompositeActivity : AppCompatActivity() {
                 supportActionBar?.show()
                 val setupScreenOrientation: Int? =
                     getScreenOrientation(configuration.setupScreenOrientation)
-                requestedOrientation =
-                    when {
-                        (setupScreenOrientation != null) -> setupScreenOrientation
-                        isAndroidTV(this) -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-                        else -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                    }
+                //TODO Lock Portrait mode for the first version
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//                requestedOrientation =
+//                    when {
+//                        (setupScreenOrientation != null) -> setupScreenOrientation
+//                        isAndroidTV(this) -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+//                        else -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//                    }
                 launchFragment(SetupFragment::class.java.name)
             }
         }
