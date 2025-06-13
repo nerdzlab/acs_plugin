@@ -10,6 +10,7 @@ import com.acs_plugin.calling.redux.action.Action
 import com.acs_plugin.calling.redux.state.CaptionsState
 import com.acs_plugin.calling.redux.state.CaptionsStatus
 import com.acs_plugin.calling.redux.state.DeviceConfigurationState
+import com.acs_plugin.calling.redux.state.MeetingViewMode
 import com.acs_plugin.calling.redux.state.RttState
 import com.acs_plugin.calling.redux.state.VisibilityStatus
 import com.acs_plugin.calling.utilities.EventFlow
@@ -98,7 +99,8 @@ internal class ParticipantGridViewModel(
         deviceConfigurationState: DeviceConfigurationState,
         captionsState: CaptionsState,
         reaction: Map<String, ReactionPayload?>,
-        reactionModifiedTimestamp: Number
+        reactionModifiedTimestamp: Number,
+        meetingViewMode: MeetingViewMode
     ) {
         isOverlayDisplayedFlow.value = isOverlayDisplayedOverGrid
         isVerticalStyleGridMutableFlow.value = shouldUseVerticalStyleGrid(deviceConfigurationState, rttState, captionsState)

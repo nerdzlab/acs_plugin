@@ -335,7 +335,8 @@ internal class CallingViewModel(
                 deviceConfigurationState = state.deviceConfigurationState,
                 captionsState = state.captionsState,
                 reaction = state.remoteParticipantState.reactionInfo,
-                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp
+                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp,
+                meetingViewMode = state.localParticipantState.meetingViewMode
             )
             floatingHeaderViewModel.dismiss()
             lobbyHeaderViewModel.dismiss()
@@ -380,7 +381,8 @@ internal class CallingViewModel(
                 deviceConfigurationState = state.deviceConfigurationState,
                 captionsState = state.captionsState,
                 reaction = state.remoteParticipantState.reactionInfo,
-                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp
+                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp,
+                meetingViewMode = state.localParticipantState.meetingViewMode
             )
 
             floatingHeaderViewModel.update(
