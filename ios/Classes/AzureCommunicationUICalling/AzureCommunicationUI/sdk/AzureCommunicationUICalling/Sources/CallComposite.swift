@@ -64,12 +64,12 @@ public class CallComposite {
     /// The events handler for Call Composite
     public let events: Events
     
-    private let themeOptions: ThemeOptions?
-    private let localizationOptions: LocalizationOptions?
-    private let enableMultitasking: Bool
-    private let enableSystemPipWhenMultitasking: Bool
-    private let setupViewOrientationOptions: OrientationOptions?
-    private let callingViewOrientationOptions: OrientationOptions?
+    private var themeOptions: ThemeOptions?
+    private var localizationOptions: LocalizationOptions?
+    private var enableMultitasking: Bool
+    private var enableSystemPipWhenMultitasking: Bool
+    private var setupViewOrientationOptions: OrientationOptions?
+    private var callingViewOrientationOptions: OrientationOptions?
     
     // Internal dependencies
     private var logger: Logger = DefaultLogger(category: "Calling")
@@ -189,6 +189,28 @@ public class CallComposite {
         self.credential = credential
         userId = options?.userId
         events = Events()
+        themeOptions = options?.themeOptions
+        localizationOptions = options?.localizationOptions
+        localizationProvider = LocalizationProvider(logger: logger)
+        enableMultitasking = options?.enableMultitasking ?? false
+        enableSystemPipWhenMultitasking = options?.enableSystemPipWhenMultitasking ?? false
+        setupViewOrientationOptions = options?.setupScreenOrientation
+        callingViewOrientationOptions = options?.callingScreenOrientation
+        orientationProvider = OrientationProvider()
+        leaveCallConfirmationMode =
+        options?.callScreenOptions?.controlBarOptions?.leaveCallConfirmationMode ?? .alwaysEnabled
+        setupScreenOptions = options?.setupScreenOptions
+        callScreenOptions = options?.callScreenOptions
+        callKitOptions = options?.callKitOptions
+        displayName = options?.displayName
+        if let disableInternalPushForIncomingCall = options?.disableInternalPushForIncomingCall {
+            self.disableInternalPushForIncomingCall = disableInternalPushForIncomingCall
+        }
+    }
+    
+    public func reconfigure(credential: CommunicationTokenCredential, withOptions options: CallCompositeOptions? = nil) {
+        self.credential = credential
+        userId = options?.userId
         themeOptions = options?.themeOptions
         localizationOptions = options?.localizationOptions
         localizationProvider = LocalizationProvider(logger: logger)

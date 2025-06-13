@@ -76,8 +76,9 @@ final class UserDataHandler: MethodHandler {
                let baseUrl = arguments["baseUrl"] as? String
             {
                 self.userData = UserData(token: token, name: name, userId: userId, languageCode: languageCode, appToken: appToken, baseUrl: baseUrl)
-                
-            } else {
+                self.reconfigureCallComposite()
+            }
+            else {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, name and userId are required", details: nil))
             }
             
@@ -128,6 +129,37 @@ final class UserDataHandler: MethodHandler {
     
     func getUserData() -> UserData? {
         return userData
+    }
+    
+    private func reconfigureCallComposite() {
+        guard let userData else {
+            return
+        }
+        
+        guard let tokenRefresher else {
+            return
+        }
+        
+        let refreshOptions = CommunicationTokenRefreshOptions(
+            initialToken: userData.token,
+            refreshProactively: true,
+            tokenRefresher: tokenRefresher
+        )
+        
+        guard let credential = try? CommunicationTokenCredential(withOptions: refreshOptions) else {
+            return
+        }
+        
+        let callCompositeOptions = CallCompositeOptions(
+            localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
+            enableMultitasking: true,
+            enableSystemPictureInPictureWhenMultitasking: true,
+            callKitOptions: isRealDevice ? CallKitOptions() : nil,
+            displayName: userData.name,
+            userId: CommunicationUserIdentifier(userData.userId)
+        )
+        
+        GlobalCompositeManager.callComposite?.reconfigure(credential: credential, withOptions: callCompositeOptions)
     }
     
     private func setupTokenRefresh() {

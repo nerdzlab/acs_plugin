@@ -96,16 +96,16 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/safe_device/ios"
 
 SPEC CHECKSUMS:
-  acs_plugin: a30f6604d95d9881319d1d0a31e8c66fed820c36
+  acs_plugin: cefcf283907a6553e5dcc3ebc431d849b47c013a
   AzureCommunicationCalling: 8907740906f89374676d0b28ae1de9af491a950b
   AzureCommunicationChat: 2997f9ce17f7663e503684f7aa4312f6954a65ee
   AzureCommunicationCommon: 130a21be2be889f83dc4adbf994af6285f962de8
   AzureCore: 1e940658808f94fdf6a23264febfc516fb59fe3e
   DTTJailbreakDetection: 5e356c5badc17995f65a83ed9483f787a0057b71
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
   MicrosoftFluentUI: f6db695718efb93f4ca9bdc366c00b80a1f91dba
-  safe_device: 2573e42a36900686b7bf02a87ac60c5c3a79a015
+  safe_device: 4539eb6bdbeb4b61a763a51c4e73e6b37dea4e3d
   Trouter: 7eab36954ad740e32db3ff9f6025b0dff92193d7
 
 PODFILE CHECKSUM: c95e948df9a5913135b2a9d6cf04e96eeeeddf01

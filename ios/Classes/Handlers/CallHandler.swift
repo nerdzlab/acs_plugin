@@ -24,7 +24,6 @@ final class CallHandler: MethodHandler {
             static let initializeRoomCall = "initializeRoomCall"
             static let startOneOnOneCall = "startOneOnOneCall"
             static let startTeamsMeetingCall = "startTeamsMeetingCall"
-            static let setUserData = "setUserData"
         }
     }
     

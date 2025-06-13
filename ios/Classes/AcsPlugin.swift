@@ -68,8 +68,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         instance.eventChannel = eventChannel
         
         instance.setupHandlers()
-        
-        shared.setupPushKit()
+        instance.setupPushKit()
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -257,7 +256,6 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         return callKitRemoteInfo
     }
     
-    // If you not do the change of the session category, the call won't start in silent mode
     public func configureAudioSession() -> Error? {
         let audioSession = AVAudioSession.sharedInstance()
         var configError: Error?

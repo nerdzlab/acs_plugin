@@ -130,21 +130,20 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
             joinCallOptions.callKitRemoteInfo = callKitRemoteInfo
         }
         var joinLocator: JoinMeetingLocator
-        if callConfiguration.compositeCallType == .groupCall,
-           let groupId = callConfiguration.groupId {
+        if callConfiguration.compositeCallType == .groupCall, let groupId = callConfiguration.groupId {
             joinLocator = GroupCallLocator(groupId: groupId)
-        } else if callConfiguration.compositeCallType == .teamsMeeting,
-                  let meetingLink = callConfiguration.meetingLink {
+        }
+        else if callConfiguration.compositeCallType == .teamsMeeting, let meetingLink = callConfiguration.meetingLink {
             joinLocator = TeamsMeetingLinkLocator(
                 meetingLink: meetingLink.trimmingCharacters(in: .whitespacesAndNewlines))
-        } else if callConfiguration.compositeCallType == .teamsMeeting,
-                  let meetingId = callConfiguration.meetingId?.trimmingCharacters(in: .whitespacesAndNewlines),
-                  let meetingPasscode = callConfiguration.meetingPasscode?.trimmingCharacters(in: .whitespacesAndNewlines) {
+        }
+        else if callConfiguration.compositeCallType == .teamsMeeting, let meetingId = callConfiguration.meetingId?.trimmingCharacters(in: .whitespacesAndNewlines), let meetingPasscode = callConfiguration.meetingPasscode?.trimmingCharacters(in: .whitespacesAndNewlines) {
             joinLocator = TeamsMeetingIdLocator(with: meetingId, passcode: meetingPasscode)
-        } else if callConfiguration.compositeCallType == .roomsCall,
-                  let roomId = callConfiguration.roomId {
+        }
+        else if callConfiguration.compositeCallType == .roomsCall, let roomId = callConfiguration.roomId {
             joinLocator = RoomCallLocator(roomId: roomId.trimmingCharacters(in: .whitespacesAndNewlines))
-        } else {
+        }
+        else {
             logger.error("Invalid groupID / meeting link")
             throw CallCompositeInternalError.callJoinFailed
         }
