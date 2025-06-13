@@ -15,7 +15,9 @@ import kotlinx.serialization.json.Json
 
 class AcsApp : Application(), Configuration.Provider {
 
-    private var exceptionHandler: Consumer<Throwable?> = Consumer<Throwable?> { }
+    private var exceptionHandler: Consumer<Throwable?> = Consumer<Throwable?> { throwable ->
+        throwable?.printStackTrace()
+    }
 
     private val sharedPreferences: SharedPreferences by lazy {
         applicationContext.getSharedPreferences(PluginConstants.Prefs.PREFS_NAME, Context.MODE_PRIVATE)
@@ -35,17 +37,35 @@ class AcsApp : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        WorkManager.initialize(this, workManagerConfiguration)
         AndroidThreeTen.init(this)
+
+        try {
+            WorkManager.initialize(this, workManagerConfiguration)
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
+        }
     }
 
-    override fun getWorkManagerConfiguration(): Configuration =
-        userData?.token?.let { token ->
-            Configuration.Builder().setWorkerFactory(
-                RegistrationRenewalWorkerFactory(
-                    CommunicationTokenCredential(token),
-                    exceptionHandler
-                )
-            ).build()
-        } ?: Configuration.Builder().build()
+    override fun getWorkManagerConfiguration(): Configuration {
+        return userData?.token?.let { token ->
+            try {
+                Configuration.Builder()
+                    .setWorkerFactory(
+                        RegistrationRenewalWorkerFactory(
+                            CommunicationTokenCredential(token),
+                            exceptionHandler
+                        )
+                    )
+                    .setMinimumLoggingLevel(android.util.Log.DEBUG)
+                    .build()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Configuration.Builder()
+                    .setMinimumLoggingLevel(android.util.Log.DEBUG)
+                    .build()
+            }
+        } ?: Configuration.Builder()
+            .setMinimumLoggingLevel(android.util.Log.DEBUG)
+            .build()
+    }
 }

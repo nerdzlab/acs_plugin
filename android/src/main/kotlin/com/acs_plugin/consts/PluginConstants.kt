@@ -44,6 +44,7 @@ object PluginConstants {
         const val ON_PARTICIPANTS_ADDED = "onParticipantsAdded"
         const val ON_PARTICIPANTS_REMOVED = "onParticipantsRemoved"
         const val ON_CHAT_PUSH_NOTIFICATION_OPENED = "onChatPushNotificationOpened"
+        const val ON_USER_DATA_SAVED = "onUserDataSaved"
     }
 
     object Prefs {

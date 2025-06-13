@@ -3,6 +3,9 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:label="acs_plugin_example"
@@ -38,7 +41,7 @@
                 android:name="androidx.startup.InitializationProvider"
                 android:authorities="${applicationId}.androidx-startup"
                 android:exported="false"
-                tools:node="merge">
+                tools:node="remove">
             <!-- If you are using androidx.startup to initialize other components -->
             <meta-data
                     android:name="androidx.work.WorkManagerInitializer"
