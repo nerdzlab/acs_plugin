@@ -330,9 +330,9 @@ class ChatHandler(
                     .displayName(userData.name).build()
 
                 chatAdapter?.connect(context)
-                chatClient?.startPushNotifications(token)
                 subscribeToChatEvents()
                 handleResultSuccess(result)
+                chatClient?.startPushNotifications(token)
             } catch (e: Exception) {
                 handleResultError(result, "CHAT_SETUP_ERROR", e.message, null)
             }
