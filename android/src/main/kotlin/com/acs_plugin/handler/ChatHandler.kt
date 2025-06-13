@@ -316,14 +316,12 @@ class ChatHandler(
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val credential =
-//                    CommunicationTokenCredential(userData.token)
-                    CommunicationTokenCredential("eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjZkMTQxM2NmLTJkMjQtNDE5MS1hNTcwLTExZGE5MTZlODQyNV8wMDAwMDAyNy1iNjUwLWUxODQtNWI0Mi1hZDNhMGQwMDRkNjEiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDk4MjA0NTMiLCJleHAiOjE3NDk5MDY4NTMsInJnbiI6ImRlIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiNmQxNDEzY2YtMmQyNC00MTkxLWE1NzAtMTFkYTkxNmU4NDI1IiwicmVzb3VyY2VMb2NhdGlvbiI6Imdlcm1hbnkiLCJpYXQiOjE3NDk4MjA0NTN9.b4Lo8Rt_GeTKxn3ntR_C6xNIqZEDVyiHWm3qDZIchFG4ltMlJUppqcmNeGiVEUysdFEFXKMRRbAGgFfOhDdACuGbZs7azz3KI3V4Ub9HHRY1yL287fQ3zhLYm5XjfoQed57aaPPkb7LMJPdVdD2MveIJh2pcn2xQnF5m7PoKaNDCzN2r7oWW_d0vNYXP8BsjrnmEbphq84Q6oNFAvNEf6y93adi8DsJIXFNc3YM8BeUcY0o1S0edZXamH2m6tg70JaD9CF9Vg63SfgwUgvMXuS3MRV6wF8yO4u1XvYqT78f6rN2pT9C-AaTAYN2JJ7cH3X4bj6k9rgvF1Epa4B81Nw")
+                    CommunicationTokenCredential(userData.token)
 
                 chatClient = ChatClientBuilder().endpoint(endpoint).credential(credential).buildClient()
 
                 val identifier: CommunicationIdentifier =
-//                    CommunicationIdentifier.CommunicationUserIdentifier(userData.userId)
-                    CommunicationIdentifier.CommunicationUserIdentifier("8:acs:6d1413cf-2d24-4191-a570-11da916e8425_00000027-b650-e184-5b42-ad3a0d004d61")
+                    CommunicationIdentifier.CommunicationUserIdentifier(userData.userId)
                 chatClient?.startRealtimeNotifications(context) {
 
                 }
@@ -332,8 +330,7 @@ class ChatHandler(
                     .displayName(userData.name).build()
 
                 chatAdapter?.connect(context)
-//                chatClient?.startPushNotifications(token)
-                chatClient?.startPushNotifications("eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjZkMTQxM2NmLTJkMjQtNDE5MS1hNTcwLTExZGE5MTZlODQyNV8wMDAwMDAyNy1iNjUwLWUxODQtNWI0Mi1hZDNhMGQwMDRkNjEiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDk4MjA0NTMiLCJleHAiOjE3NDk5MDY4NTMsInJnbiI6ImRlIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiNmQxNDEzY2YtMmQyNC00MTkxLWE1NzAtMTFkYTkxNmU4NDI1IiwicmVzb3VyY2VMb2NhdGlvbiI6Imdlcm1hbnkiLCJpYXQiOjE3NDk4MjA0NTN9.b4Lo8Rt_GeTKxn3ntR_C6xNIqZEDVyiHWm3qDZIchFG4ltMlJUppqcmNeGiVEUysdFEFXKMRRbAGgFfOhDdACuGbZs7azz3KI3V4Ub9HHRY1yL287fQ3zhLYm5XjfoQed57aaPPkb7LMJPdVdD2MveIJh2pcn2xQnF5m7PoKaNDCzN2r7oWW_d0vNYXP8BsjrnmEbphq84Q6oNFAvNEf6y93adi8DsJIXFNc3YM8BeUcY0o1S0edZXamH2m6tg70JaD9CF9Vg63SfgwUgvMXuS3MRV6wF8yO4u1XvYqT78f6rN2pT9C-AaTAYN2JJ7cH3X4bj6k9rgvF1Epa4B81Nw")
+                chatClient?.startPushNotifications(token)
                 subscribeToChatEvents()
                 handleResultSuccess(result)
             } catch (e: Exception) {
