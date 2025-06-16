@@ -37,6 +37,7 @@
 			android:exported="false"
 			android:launchMode="singleTask"
 			android:supportsPictureInPicture="true"
+			android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|uiMode|keyboardHidden|keyboard|navigation|density|colorMode"
 			android:excludeFromRecents="true"
 			android:taskAffinity="com.acs_plugin.calling.presentation.CallCompositeActivity"
 			android:theme="@style/AzureCommunicationUICalling.Theme"

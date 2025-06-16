@@ -24,9 +24,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
+import com.acs_plugin.R
 import com.acs_plugin.calling.CallCompositeException
 import com.acs_plugin.calling.CallCompositeInstanceManager
-import com.acs_plugin.R
 import com.acs_plugin.calling.models.CallCompositeSupportedLocale
 import com.acs_plugin.calling.models.CallCompositeSupportedScreenOrientation
 import com.acs_plugin.calling.models.CallCompositeUserReportedIssueEvent
@@ -42,7 +42,6 @@ import com.acs_plugin.calling.redux.action.PipAction
 import com.acs_plugin.calling.redux.state.NavigationStatus
 import com.acs_plugin.calling.redux.state.VisibilityStatus
 import com.acs_plugin.calling.utilities.collect
-import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.calling.utilities.isKeyboardOpen
 import com.acs_plugin.calling.utilities.isTablet
 import com.acs_plugin.calling.utilities.launchAll
@@ -50,7 +49,7 @@ import com.microsoft.fluentui.util.activity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import java.util.Locale
+import java.util.*
 
 internal open class CallCompositeActivity : AppCompatActivity() {
     private val diContainerHolder: CallCompositeActivityViewModel by viewModels {
@@ -269,7 +268,7 @@ internal open class CallCompositeActivity : AppCompatActivity() {
             ) {
                 val params = PictureInPictureParams
                     .Builder()
-                    .setAspectRatio(Rational(1, 1))
+                    .setAspectRatio(Rational(16, 9))
                     .build()
 
                 if (enterPictureInPictureMode(params))
@@ -318,7 +317,7 @@ internal open class CallCompositeActivity : AppCompatActivity() {
         ) {
             val params = PictureInPictureParams
                 .Builder()
-                .setAspectRatio(Rational(1, 1))
+                .setAspectRatio(Rational(16, 9))
                 .build()
             var enteredPiPSucceeded = false
             try {
