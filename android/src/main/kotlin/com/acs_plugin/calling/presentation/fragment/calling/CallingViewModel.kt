@@ -110,6 +110,7 @@ internal class CallingViewModel(
     override fun init(coroutineScope: CoroutineScope) {
         val state = store.getCurrentState()
         val remoteParticipantsForGridView = remoteParticipantsForGridView(state.remoteParticipantState.participantMap)
+        val remoteParticipantsWithOutWhiteboard = state.remoteParticipantState.participantMap.toMutableMap().apply { remove(whiteboardId) }
 
         controlBarViewModel.init(
             permissionState = state.permissionState,
@@ -141,7 +142,7 @@ internal class CallingViewModel(
         )
 
         floatingHeaderViewModel.init(
-            remoteParticipantsForGridView.count(),
+            remoteParticipantsWithOutWhiteboard.count(),
             state.callScreenInfoHeaderState,
             state.buttonState,
             isOverlayDisplayedOverGrid(state),
@@ -162,7 +163,7 @@ internal class CallingViewModel(
 
         participantListViewModel.init(
             callType,
-            state.remoteParticipantState.participantMap,
+            remoteParticipantsWithOutWhiteboard,
             state.localParticipantState,
             shouldShowLobby(
                 state.localParticipantState.capabilities,
@@ -276,9 +277,10 @@ internal class CallingViewModel(
         }
 
         val remoteParticipantsForGridView = remoteParticipantsForGridView(state.remoteParticipantState.participantMap)
+        val remoteParticipantsWithOutWhiteboard = state.remoteParticipantState.participantMap.toMutableMap().apply { remove(whiteboardId) }
         val remoteParticipantsInAllStatesCount = state.remoteParticipantState.participantMap.count()
         val hiddenRemoteParticipantsCount = remoteParticipantsInAllStatesCount - remoteParticipantsForGridView.count()
-        val totalParticipantCountExceptHidden = state.remoteParticipantState.totalParticipantCount - hiddenRemoteParticipantsCount
+        val totalParticipantCountExceptHidden = remoteParticipantsWithOutWhiteboard.count() - hiddenRemoteParticipantsCount
 
         controlBarViewModel.update(
             state.permissionState,
@@ -425,7 +427,7 @@ internal class CallingViewModel(
 
             participantListViewModel.update(
                 callType,
-                state.remoteParticipantState.participantMap,
+                remoteParticipantsWithOutWhiteboard,
                 state.localParticipantState,
                 state.visibilityState,
                 shouldShowLobby(
@@ -591,7 +593,9 @@ internal class CallingViewModel(
     private fun openParticipantMenu(id: String) {
         val state = store.getCurrentState()
         state.remoteParticipantState.participantMap[id]?.let { participantInfoModel ->
-            participantMenuViewModel.displayParticipantMenu(isWhiteboardEnabled, participantInfoModel)
+            if (participantInfoModel.userIdentifier != whiteboardId) {
+                participantMenuViewModel.displayParticipantMenu(isWhiteboardEnabled, participantInfoModel)
+            }
         }
     }
 }
