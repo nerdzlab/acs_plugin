@@ -8,18 +8,16 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
-import androidx.core.content.ContextCompat
-import com.acs_plugin.ui.IncomingCallActivity
 import com.acs_plugin.R
 import com.acs_plugin.calling.CallComposite
 import com.acs_plugin.calling.CallCompositeBuilder
 import com.acs_plugin.calling.models.*
+import com.acs_plugin.data.enum.OneOnOneCallingAction
+import com.acs_plugin.ui.IncomingCallActivity
 import com.azure.android.communication.common.CommunicationIdentifier
 import com.azure.android.communication.common.CommunicationTokenCredential
 import com.azure.android.communication.common.CommunicationTokenRefreshOptions
@@ -204,45 +202,26 @@ class IncomingCallCompositeManager(private val context: Context) {
         return callCompositeBuilder.build()
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun canUseFullScreenIntent(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
-            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.canUseFullScreenIntent()
-        } else {
-            // For Android 13 and below, check if permission is declared
-            ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.USE_FULL_SCREEN_INTENT
-            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        }
-    }
 
     @SuppressLint("MissingPermission")
     private fun showNotificationForIncomingCall(notification: CallCompositeIncomingCallEvent) {
         context.let { context ->
-            // Create notification channel first
             createNotificationChannel()
 
-            // Create accept and decline intents
-            val acceptIntent = Intent(context, IncomingCallActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                putExtra(IncomingCallActivity.DISPLAY_NAME, notification.callerDisplayName)
+            val acceptIntent = Intent("com.acs_plugin.CALL_ACTION").apply {
+                setPackage(context.packageName) // Important: Make it explicit
+                putExtra("ACTION_TYPE", OneOnOneCallingAction.ACCEPT)
                 putExtra("CALL_ID", notification.callId)
                 putExtra("DISPLAY_NAME", notification.callerDisplayName)
-                putExtra("ACTION", "ACCEPT")
             }
 
-            // Create decline intent
-            val declineIntent = Intent(context, IncomingCallActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                putExtra(IncomingCallActivity.DISPLAY_NAME, notification.callerDisplayName)
+            val declineIntent = Intent("com.acs_plugin.CALL_ACTION").apply {
+                setPackage(context.packageName) // Important: Make it explicit
+                putExtra("ACTION_TYPE", OneOnOneCallingAction.DECLINE)
                 putExtra("CALL_ID", notification.callId)
                 putExtra("DISPLAY_NAME", notification.callerDisplayName)
-                putExtra("ACTION", "DECLINE")
             }
 
-            // Full screen intent (same as accept for now)
             val fullScreenIntent = Intent(context, IncomingCallActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                 putExtra(IncomingCallActivity.DISPLAY_NAME, notification.callerDisplayName)
@@ -256,12 +235,12 @@ class IncomingCallCompositeManager(private val context: Context) {
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
 
-            val acceptPendingIntent = PendingIntent.getActivity(
+            val acceptPendingIntent = PendingIntent.getBroadcast(
                 context, 1, acceptIntent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
 
-            val declinePendingIntent = PendingIntent.getActivity(
+            val declinePendingIntent = PendingIntent.getBroadcast(
                 context, 2, declineIntent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
@@ -288,13 +267,9 @@ class IncomingCallCompositeManager(private val context: Context) {
                     .setAutoCancel(true)
                     .setFullScreenIntent(fullScreenPendingIntent, true)
 
-            // Log permission status for debugging
-            val hasPermission = canUseFullScreenIntent()
-            Log.d("CallCompositeManager", "Can use full-screen intent: $hasPermission")
 
-                builder.setFullScreenIntent(fullScreenPendingIntent, true)
-                Log.d("CallCompositeManager", "Full-screen intent set")
-
+            builder.setFullScreenIntent(fullScreenPendingIntent, true)
+            Log.d("CallCompositeManager", "Full-screen intent set")
 
             val notificationManager = NotificationManagerCompat.from(context)
             notificationManager.notify(1, builder.build())

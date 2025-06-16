@@ -92,6 +92,14 @@
 			</intent-filter>
 		</service>
 
+		<receiver android:name=".utils.CallNotificationReceiver"
+			android:enabled="true"
+			android:exported="false">
+			<intent-filter>
+				<action android:name="com.acs_plugin.CALL_ACTION" />
+			</intent-filter>
+		</receiver>
+
 	</application>
 
 </manifest>

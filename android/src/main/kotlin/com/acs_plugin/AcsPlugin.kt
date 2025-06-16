@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Parcelable
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.registerReceiver
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.data.enum.OneOnOneCallingAction
@@ -14,8 +16,9 @@ import com.acs_plugin.handler.CallHandler
 import com.acs_plugin.handler.ChatHandler
 import com.acs_plugin.handler.MethodHandler
 import com.acs_plugin.handler.UserDataHandler
-import com.acs_plugin.utils.IncomingCallCompositeManager
+import com.acs_plugin.utils.CallNotificationReceiver
 import com.acs_plugin.utils.FlutterEventDispatcher
+import com.acs_plugin.utils.IncomingCallCompositeManager
 import com.google.firebase.messaging.RemoteMessage
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -103,6 +106,11 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 callReceiver,
                 IntentFilter("acs_chat_intent")
             )
+
+        // In your Application class or main activity onCreate
+        val callNotificationReceiver = CallNotificationReceiver()
+        val intentFilter = IntentFilter("com.acs_plugin.CALL_ACTION")
+        registerReceiver(context, callNotificationReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
