@@ -65,7 +65,8 @@ internal class ParticipantGridView : GridLayout {
         viewLifecycleOwner: LifecycleOwner,
         showFloatingHeader: () -> Unit,
         avatarViewManager: AvatarViewManager,
-        getMoreParticipantViewCallback: () -> Unit
+        getMoreParticipantViewCallback: () -> Unit,
+        whiteboardId: String
     ) {
         accessibilityManager =
             context.applicationContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
@@ -92,7 +93,7 @@ internal class ParticipantGridView : GridLayout {
         this.showFloatingHeaderCallBack = showFloatingHeader
         this.getMoreParticipantViewCallback = getMoreParticipantViewCallback
         this.getVideoStreamCallback = { participantID: String, videoStreamID: String ->
-            this.videoViewManager.getRemoteVideoStreamRenderer(participantID, videoStreamID)
+            this.videoViewManager.getRemoteVideoStreamRenderer(participantID, videoStreamID, whiteboardId == participantID)
         }
 
         this.getScreenShareVideoStreamRendererCallback = {

@@ -46,7 +46,10 @@ internal class ParticipantMenuViewModel() {
             if (participant.isVideoTurnOffForMe) {
                 add(ParticipantMenuType.SHOW_VIDEO.mapToParticipantMenuItem().apply { isEnabled = participant.cameraVideoStreamModel != null })
             } else {
-                add(ParticipantMenuType.HIDE_VIDEO.mapToParticipantMenuItem().apply { isEnabled = participant.cameraVideoStreamModel != null })
+                add(
+                    ParticipantMenuType.HIDE_VIDEO.mapToParticipantMenuItem().apply {
+                        isEnabled = !participant.isWhiteboard && participant.cameraVideoStreamModel != null }
+                )
             }
         }
     }
