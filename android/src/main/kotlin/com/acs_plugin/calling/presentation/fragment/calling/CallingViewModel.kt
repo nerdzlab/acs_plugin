@@ -81,6 +81,7 @@ internal class CallingViewModel(
     val meetingViewListViewModel = callingViewModelProvider.meetingViewListViewModel
     val isCaptionsVisibleFlow: StateFlow<Boolean> = isCaptionsVisibleMutableFlow
     var isCaptionsMaximized: Boolean = false
+    val whiteboardId: String = store.getCurrentState().callState.whiteboardId.orEmpty()
 
     fun switchFloatingHeader() {
         floatingHeaderViewModel.switchFloatingHeader()
