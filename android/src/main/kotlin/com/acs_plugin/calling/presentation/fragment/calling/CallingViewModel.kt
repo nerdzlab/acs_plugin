@@ -104,7 +104,7 @@ internal class CallingViewModel(
     }
 
     fun onShareMeetingLinkClicked() {
-        _shareMeetingLinkMutableFlow.tryEmit(store.getCurrentState().callState.callId.orEmpty())
+        _shareMeetingLinkMutableFlow.tryEmit(store.getCurrentState().callState.callIdForSharing.orEmpty())
     }
 
     override fun init(coroutineScope: CoroutineScope) {
