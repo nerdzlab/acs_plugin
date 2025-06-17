@@ -37,6 +37,7 @@ internal class AudioDeviceListView(
         inflate(context, R.layout.audio_device_list_view, this)
         deviceTable = findViewById(R.id.bottom_drawer_table)
         noiseSuppressionSwitch = findViewById(R.id.noise_suppression_switch)
+        noiseSuppressionSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.switchNoiseSuppression(isChecked) }
     }
 
     fun start(viewLifecycleOwner: LifecycleOwner) {

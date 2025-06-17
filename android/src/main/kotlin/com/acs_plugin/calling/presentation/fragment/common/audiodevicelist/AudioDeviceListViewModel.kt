@@ -43,6 +43,16 @@ internal class AudioDeviceListViewModel(private val dispatch: (Action) -> Unit) 
         )
     }
 
+    fun switchNoiseSuppression(isTurnedOn: Boolean) {
+        dispatch(
+            if (isTurnedOn) {
+                LocalParticipantAction.NoiseSuppressionOnTriggered()
+            } else {
+                LocalParticipantAction.NoiseSuppressionOffTriggered()
+            }
+        )
+    }
+
     fun displayAudioDeviceSelectionMenu() {
         displayAudioDeviceSelectionMenuMutableStateFlow.value = true
     }
