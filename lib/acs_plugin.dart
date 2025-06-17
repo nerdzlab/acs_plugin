@@ -39,7 +39,6 @@ class AcsPlugin {
   VoidCallback? onOneOnOneCallEnded;
   VoidCallback? onRealTimeNotificationConnected;
   VoidCallback? onRealTimeNotificationDisconnected;
-  VoidCallback? onUserDataSaved;
 
   /// Called when native iOS needs a new token
   Future<String> Function()? onTokenRefreshRequested;
@@ -326,10 +325,6 @@ class AcsPlugin {
               Map<String, dynamic>.from(event.payload));
           onChatPushNotificationOpened?.call(model);
         }
-        break;
-      case EventType.onUserDataSaved:
-        log("User data saved successfully");
-        onUserDataSaved?.call();
         break;
       case EventType.unknown:
         log("Unknown event: ${event.payload}");
