@@ -220,7 +220,8 @@ class CallingSDKWrapper: NSObject, CallingSDKWrapperProtocol {
                 logger.error( "Start call failed")
                 throw CallCompositeInternalError.callJoinFailed
             }
-        } catch {
+        }
+        catch {
             logger.error( "Start call failed")
             throw CallCompositeInternalError.callJoinFailed
         }

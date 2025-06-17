@@ -715,8 +715,10 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
     }
     
     private func createDebugInfoManager() -> DebugInfoManagerProtocol {
-        return DebugInfoManager(callHistoryRepository: self.callHistoryRepository,
-                                getLogFiles: { return [] })
+        return DebugInfoManager(
+            callHistoryRepository: self.callHistoryRepository,
+            getLogFiles: { return [] }
+        )
     }
     
     private func cleanUpManagers() {
@@ -782,25 +784,31 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
         if let callingSDKInitializer = callingSDKInitializer {
             return callingSDKInitializer
         }
+        
         guard let credential = credential else {
             if let didFail = events.onError {
                 let compositeError = CallCompositeError(
                     code: CallCompositeErrorCode.communicationTokenCredentialNotSet,
-                    error: CommunicationTokenCredentialError.communicationTokenCredentialNotSet)
+                    error: CommunicationTokenCredentialError.communicationTokenCredentialNotSet
+                )
                 didFail(compositeError)
             }
             fatalError("CommunicationTokenCredential cannot be nil, use init with credentials.")
         }
-        let callingSDKInitializer = CallingSDKInitializer(tags: self.callConfiguration?.diagnosticConfig.tags
-                                                          ?? DiagnosticConfig().tags,
-                                                          credential: credential,
-                                                          callKitOptions: callKitOptions,
-                                                          displayName: displayName,
-                                                          disableInternalPushForIncomingCall:
-                                                            disableInternalPushForIncomingCall,
-                                                          logger: logger,
-                                                          events: events,
-                                                          onCallAdded: onCallAdded)
+        let callingSDKInitializer = CallingSDKInitializer(
+            tags: self.callConfiguration?.diagnosticConfig.tags
+            ?? DiagnosticConfig().tags,
+            credential: credential,
+            callKitOptions: callKitOptions,
+            displayName: displayName,
+            disableInternalPushForIncomingCall:
+                disableInternalPushForIncomingCall,
+            logger: logger,
+            events: events,
+            onCallAdded: { [weak self] callId in
+                self?.onCallAdded(callId: callId)
+            }
+        )
         self.callingSDKInitializer = callingSDKInitializer
         return callingSDKInitializer
     }
@@ -830,9 +838,10 @@ extension CallComposite {
          </CALL_START_TIME> */
     }
     
-    private func makeToolkitHostingController(router: NavigationRouter,
-                                              viewFactory: CompositeViewFactoryProtocol)
-    -> ContainerUIHostingController {
+    private func makeToolkitHostingController(
+        router: NavigationRouter,
+        viewFactory: CompositeViewFactoryProtocol
+    ) -> ContainerUIHostingController {
         let isRightToLeft = localizationProvider.isRightToLeft
         let setupViewOrientationMask = orientationProvider.orientationMask(for:
                                                                             setupViewOrientationOptions)

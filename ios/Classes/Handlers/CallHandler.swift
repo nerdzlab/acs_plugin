@@ -31,11 +31,11 @@ final class CallHandler: MethodHandler {
     private let onSendEvent: (Event) -> Void
     
     private var isRealDevice: Bool {
-#if targetEnvironment(simulator)
+        #if targetEnvironment(simulator)
         return false
-#else
+        #else
         return true
-#endif
+        #endif
     }
 
     init(
