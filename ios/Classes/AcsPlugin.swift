@@ -43,14 +43,33 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     public static var shared: AcsPlugin = AcsPlugin()
-    private var voipRegistry: PKPushRegistry = PKPushRegistry(queue: DispatchQueue.main)
+    private var voipRegistry: PKPushRegistry = PKPushRegistry(
+        queue: DispatchQueue.main
+    )
+    
+    private lazy var userDataHandler: UserDataHandler = UserDataHandler(
+        onSubscribeToCallCompositeEvents: { [weak self] callComposite in
+            self?.callHandler?.subscribeToEvents(callComposite: callComposite)
+            self?.broadcastExtensionHandler?.subscribeToEvents(callComposite: callComposite)
+        },
+        onUserDataReceived: { [weak self] userData in
+            self?.userDataHandler.getCallComposite()?.registerPushNotifications(deviceRegistrationToken: self?.voipToken ?? Data()) { result in
+                switch result {
+                case .success:
+                    self?.logger.debug { "Successfully registered for VoIP push notifications." }
+                    
+                case .failure(let error):
+                    self?.logger.debug { "Failed to register for VoIP push notifications: \(error)" }
+                }
+            }
+        }
+    )
     
     private var voipToken: Data?
     private var eventChannel: FlutterEventChannel?
     private var eventSink: FlutterEventSink?
-    private var callHandler: CallHandler!
-    private var broadcastExtensionHandler: BroadcastExtensionHandler!
-    private var userDataHandler: UserDataHandler!
+    private var callHandler: CallHandler?
+    private var broadcastExtensionHandler: BroadcastExtensionHandler?
     private var chatHandler: ChatHandler?
     private var handlers: [MethodHandler?] = []
     private var preloadedAction: PreloadedAction?
@@ -88,10 +107,6 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     private func setupHandlers() {
-        logger.debug {
-            "Setting up handlers for ACS Plugin"
-        }
-        
         callHandler = CallHandler(
             onGetllComposite: { [weak self] in
                 self?.userDataHandler.getCallComposite()
@@ -109,36 +124,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                 self?.sendEvent(event)
             }
         )
-        
-        userDataHandler = UserDataHandler(
-            onSubscribeToCallCompositeEvents: { [weak self] callComposite in
-                self?.callHandler.subscribeToEvents(callComposite: callComposite)
-                self?.broadcastExtensionHandler.subscribeToEvents(callComposite: callComposite)
-            },
-            onUserDataReceived: { [weak self] userData in
-                self?.userDataHandler?.getCallComposite()?.registerPushNotifications(deviceRegistrationToken: self?.voipToken ?? Data()) { result in
-                    switch result {
-                    case .success:
-                        self?.logger.debug { "Successfully registered for VoIP push notifications." }
-                        
-                    case .failure(let error):
-                        self?.logger.debug { "Failed to register for VoIP push notifications: \(error)" }
-                    }
-                }
-            },
-            unregisterPushNotifications: { [weak self] in
-                self?.userDataHandler.getCallComposite()?.unregisterPushNotifications() { result in
-                    switch result {
-                    case .success:
-                        print("Successfully unregistered for VoIP push notifications.")
-                        
-                    case .failure(let error):
-                        print("Failed to unregister for VoIP push notifications: \(error)")
-                    }
-                }
-            }
-        )
-        
+                
         chatHandler = ChatHandler(
             onGetUserData: { [weak self] in
                 self?.userDataHandler.getUserData()
@@ -150,6 +136,17 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         )
         
         handlers = [callHandler, userDataHandler, broadcastExtensionHandler, chatHandler]
+        
+        subscirbeToComposite()
+    }
+    
+    private func subscirbeToComposite() {
+        guard let composite = userDataHandler.getCallComposite() else {
+            return
+        }
+        
+        broadcastExtensionHandler?.subscribeToEvents(callComposite: composite)
+        callHandler?.subscribeToEvents(callComposite: composite)
     }
     
     private func setupPushKit() {
@@ -205,24 +202,29 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             
             CallComposite.reportIncomingCall(pushNotification: pushInfo, callKitOptions: callKitOptions) { [weak self] result in
                 guard let self else {
+                    completion()
                     return
                 }
                 
                 if case .success = result {
+                    if self.handlers.isEmpty {
+                        self.setupHandlers()
+                    }
+
                     DispatchQueue.global().async {
-                        if let callCamposite = self.userDataHandler.getCallComposite() {
-                            callCamposite.handlePushNotification(pushNotification: pushInfo)
+                        guard let callCamposite = self.userDataHandler.getCallComposite() else {
+                            completion()
+                            return
                         }
-                        else {
-                            AcsPlugin.shared.setupHandlers()
-                            self.userDataHandler.getCallComposite()?.handlePushNotification(pushNotification: pushInfo) { _ in
-                                completion()
-                            }
+                        
+                        callCamposite.handlePushNotification(pushNotification: pushInfo) { _ in
+                            completion()
                         }
                     }
                 }
                 else {
                     self.logger.debug { "calling demo app: failed on reportIncomingCall" }
+                    completion()
                 }
             }
         }
