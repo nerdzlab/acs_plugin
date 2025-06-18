@@ -29,7 +29,9 @@ import com.acs_plugin.calling.redux.state.RttState
 import com.acs_plugin.calling.redux.state.VisibilityState
 import com.acs_plugin.calling.redux.state.VisibilityStatus
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 internal class CallingViewModel(
@@ -43,8 +45,8 @@ internal class CallingViewModel(
     private val capabilitiesManager: CapabilitiesManager,
 ) : BaseViewModel(store) {
 
-    private val _shareMeetingLinkMutableFlow = MutableStateFlow("")
-    var shareMeetingLinkMutableFlow = _shareMeetingLinkMutableFlow as StateFlow<String>
+    private val _shareMeetingLinkMutableFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    var shareMeetingLinkMutableFlow = _shareMeetingLinkMutableFlow as SharedFlow<String>
 
     private var isCaptionsVisibleMutableFlow = MutableStateFlow(false)
     // This is a flag to ensure that the call is started only once
@@ -76,8 +78,10 @@ internal class CallingViewModel(
     val captionsLanguageSelectionListViewModel = callingViewModelProvider.captionsLanguageSelectionListViewModel
     val captionsLayoutViewModel = callingViewModelProvider.captionsViewModel
     val moreActionsListViewModel = callingViewModelProvider.moreActionsListViewModel
+    val meetingViewListViewModel = callingViewModelProvider.meetingViewListViewModel
     val isCaptionsVisibleFlow: StateFlow<Boolean> = isCaptionsVisibleMutableFlow
     var isCaptionsMaximized: Boolean = false
+    val whiteboardId: String = store.getCurrentState().callState.whiteboardId.orEmpty()
 
     fun switchFloatingHeader() {
         floatingHeaderViewModel.switchFloatingHeader()
@@ -100,12 +104,13 @@ internal class CallingViewModel(
     }
 
     fun onShareMeetingLinkClicked() {
-        _shareMeetingLinkMutableFlow.value = store.getCurrentState().callState.callId.orEmpty()
+        _shareMeetingLinkMutableFlow.tryEmit(store.getCurrentState().callState.callIdForSharing.orEmpty())
     }
 
     override fun init(coroutineScope: CoroutineScope) {
         val state = store.getCurrentState()
         val remoteParticipantsForGridView = remoteParticipantsForGridView(state.remoteParticipantState.participantMap)
+        val remoteParticipantsWithOutWhiteboard = state.remoteParticipantState.participantMap.toMutableMap().apply { remove(whiteboardId) }
 
         controlBarViewModel.init(
             permissionState = state.permissionState,
@@ -137,7 +142,7 @@ internal class CallingViewModel(
         )
 
         floatingHeaderViewModel.init(
-            remoteParticipantsForGridView.count(),
+            remoteParticipantsWithOutWhiteboard.count(),
             state.callScreenInfoHeaderState,
             state.buttonState,
             isOverlayDisplayedOverGrid(state),
@@ -158,7 +163,7 @@ internal class CallingViewModel(
 
         participantListViewModel.init(
             callType,
-            state.remoteParticipantState.participantMap,
+            remoteParticipantsWithOutWhiteboard,
             state.localParticipantState,
             shouldShowLobby(
                 state.localParticipantState.capabilities,
@@ -245,8 +250,12 @@ internal class CallingViewModel(
             buttonState = state.buttonState,
             shareScreenStatus = state.localParticipantState.shareScreenStatus,
             participantsCount = state.remoteParticipantState.totalParticipantCount,
-            displayParticipantList = { participantListViewModel.displayParticipantList() }
+            meetingViewMode = state.localParticipantState.meetingViewMode,
+            displayParticipantList = { participantListViewModel.displayParticipantList() },
+            displayMeetingViewList = { meetingViewListViewModel.displayMeetingViewSelectionMenu() }
         )
+
+        meetingViewListViewModel.init(meetingViewMode = state.localParticipantState.meetingViewMode)
 
         super.init(coroutineScope)
     }
@@ -268,9 +277,10 @@ internal class CallingViewModel(
         }
 
         val remoteParticipantsForGridView = remoteParticipantsForGridView(state.remoteParticipantState.participantMap)
+        val remoteParticipantsWithOutWhiteboard = state.remoteParticipantState.participantMap.toMutableMap().apply { remove(whiteboardId) }
         val remoteParticipantsInAllStatesCount = state.remoteParticipantState.participantMap.count()
         val hiddenRemoteParticipantsCount = remoteParticipantsInAllStatesCount - remoteParticipantsForGridView.count()
-        val totalParticipantCountExceptHidden = state.remoteParticipantState.totalParticipantCount - hiddenRemoteParticipantsCount
+        val totalParticipantCountExceptHidden = remoteParticipantsWithOutWhiteboard.count() - hiddenRemoteParticipantsCount
 
         controlBarViewModel.update(
             state.permissionState,
@@ -328,7 +338,8 @@ internal class CallingViewModel(
                 deviceConfigurationState = state.deviceConfigurationState,
                 captionsState = state.captionsState,
                 reaction = state.remoteParticipantState.reactionInfo,
-                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp
+                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp,
+                meetingViewMode = state.localParticipantState.meetingViewMode
             )
             floatingHeaderViewModel.dismiss()
             lobbyHeaderViewModel.dismiss()
@@ -351,7 +362,7 @@ internal class CallingViewModel(
         }
 
         if (shouldUpdateRemoteParticipantsViewModels(state)) {
-            var updatedRemoteParticipantsForGridView = remoteParticipantsForGridView.mapValues { (id, participant) ->
+            val updatedRemoteParticipantsForGridView = remoteParticipantsForGridView.mapValues { (id, participant) ->
                 participant.copy(
                     isPinned = id == pinnedUserIdentifier,
                     isWhiteboard = id == state.callState.whiteboardId,
@@ -373,7 +384,8 @@ internal class CallingViewModel(
                 deviceConfigurationState = state.deviceConfigurationState,
                 captionsState = state.captionsState,
                 reaction = state.remoteParticipantState.reactionInfo,
-                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp
+                reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp,
+                meetingViewMode = state.localParticipantState.meetingViewMode
             )
 
             floatingHeaderViewModel.update(
@@ -415,7 +427,7 @@ internal class CallingViewModel(
 
             participantListViewModel.update(
                 callType,
-                state.remoteParticipantState.participantMap,
+                remoteParticipantsWithOutWhiteboard,
                 state.localParticipantState,
                 state.visibilityState,
                 shouldShowLobby(
@@ -478,8 +490,11 @@ internal class CallingViewModel(
             navigationState = state.navigationState,
             buttonState = state.buttonState,
             shareScreenStatus = state.localParticipantState.shareScreenStatus,
-            participantsCount = state.remoteParticipantState.totalParticipantCount
+            participantsCount = state.remoteParticipantState.totalParticipantCount,
+            meetingViewMode = state.localParticipantState.meetingViewMode
         )
+
+        meetingViewListViewModel.update(meetingViewMode = state.localParticipantState.meetingViewMode)
     }
 
     private fun getLobbyParticipantsForHeader(state: ReduxState) =
@@ -540,7 +555,7 @@ internal class CallingViewModel(
         val currentParticipants = currentState.remoteParticipantState.participantMap
 
         // Find the participant and update their info
-        var updatedParticipantInfo = currentParticipants[id]?.let { participantInfo ->
+        val updatedParticipantInfo = currentParticipants[id]?.let { participantInfo ->
             when (type) {
                 ParticipantMenuType.PIN -> {
                     this.pinnedUserIdentifier = id
@@ -578,7 +593,9 @@ internal class CallingViewModel(
     private fun openParticipantMenu(id: String) {
         val state = store.getCurrentState()
         state.remoteParticipantState.participantMap[id]?.let { participantInfoModel ->
-            participantMenuViewModel.displayParticipantMenu(isWhiteboardEnabled, participantInfoModel)
+            if (participantInfoModel.userIdentifier != whiteboardId) {
+                participantMenuViewModel.displayParticipantMenu(isWhiteboardEnabled, participantInfoModel)
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
 import com.acs_plugin.calling.redux.state.CameraOperationalStatus
 import com.acs_plugin.calling.redux.state.CameraTransmissionStatus
 import com.acs_plugin.calling.redux.state.LocalUserState
+import com.acs_plugin.calling.redux.state.MeetingViewMode
 import com.acs_plugin.calling.redux.state.NoiseSuppressionStatus
 import com.acs_plugin.calling.redux.state.RaisedHandStatus
 import com.acs_plugin.calling.redux.state.ShareScreenStatus
@@ -354,6 +355,17 @@ internal class LocalParticipantStateReducerImpl : LocalParticipantStateReducer {
             is LocalParticipantAction.StopShareScreenFailed -> {
                 localUserState.copy(
                     shareScreenStatus = ShareScreenStatus.ON
+                )
+            }
+
+            is LocalParticipantAction.GalleryViewTriggered -> {
+                localUserState.copy(
+                    meetingViewMode = MeetingViewMode.GALLERY
+                )
+            }
+            is LocalParticipantAction.SpeakerViewTriggered -> {
+                localUserState.copy(
+                    meetingViewMode = MeetingViewMode.SPEAKER
                 )
             }
 

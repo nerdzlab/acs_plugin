@@ -20,6 +20,7 @@ import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyErrorHead
 import com.acs_plugin.calling.presentation.fragment.calling.lobby.LobbyHeaderViewModel
 import com.acs_plugin.calling.presentation.fragment.calling.lobby.WaitingLobbyOverlayViewModel
 import com.acs_plugin.calling.presentation.fragment.calling.localuser.LocalParticipantViewModel
+import com.acs_plugin.calling.presentation.fragment.calling.meetingview.MeetingViewListViewModel
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.MoreActionsListViewModel
 import com.acs_plugin.calling.presentation.fragment.calling.notification.ToastNotificationViewModel
 import com.acs_plugin.calling.presentation.fragment.calling.notification.UpperMessageBarNotificationLayoutViewModel
@@ -69,7 +70,7 @@ internal class CallingViewModelFactory(
     }
 
     val participantGridViewModel by lazy {
-        ParticipantGridViewModel(participantGridCellViewModelFactory, maxRemoteParticipants)
+        ParticipantGridViewModel(participantGridCellViewModelFactory, maxRemoteParticipants, store::dispatch)
     }
 
     val controlBarViewModel by lazy {
@@ -158,4 +159,6 @@ internal class CallingViewModelFactory(
     }
 
     val moreActionsListViewModel by lazy { MoreActionsListViewModel(store::dispatch) }
+
+    val meetingViewListViewModel by lazy { MeetingViewListViewModel(store::dispatch) }
 }

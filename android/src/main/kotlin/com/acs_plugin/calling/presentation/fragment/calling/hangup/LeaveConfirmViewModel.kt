@@ -3,7 +3,8 @@
 
 package com.acs_plugin.calling.presentation.fragment.calling.hangup
 
-import com.acs_plugin.Constants
+import com.acs_plugin.consts.PluginConstants
+import com.acs_plugin.calling.configuration.CallType
 import com.acs_plugin.calling.redux.Store
 import com.acs_plugin.calling.redux.action.Action
 import com.acs_plugin.calling.redux.action.CallingAction
@@ -16,7 +17,11 @@ import com.acs_plugin.utils.FlutterEventDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-internal class LeaveConfirmViewModel(private val store: Store<ReduxState>) {
+internal class LeaveConfirmViewModel(
+    private val store: Store<ReduxState>,
+    private val callType: CallType? = null
+) {
+
     private val shouldDisplayLeaveConfirmMutableStateFlow = MutableStateFlow(false)
     var shouldDisplayLeaveConfirmStateFlow = shouldDisplayLeaveConfirmMutableStateFlow as StateFlow<Boolean>
 
@@ -30,7 +35,9 @@ internal class LeaveConfirmViewModel(private val store: Store<ReduxState>) {
     }
 
     fun confirm() {
-        FlutterEventDispatcher.sendEvent(Constants.FlutterEvents.ON_USER_CALL_ENDED)
+        if (callType != CallType.ONE_TO_ONE_INCOMING && callType != CallType.ONE_TO_N_OUTGOING) {
+            FlutterEventDispatcher.sendEvent(PluginConstants.FlutterEvents.ON_USER_CALL_ENDED)
+        }
 
         if (store.getCurrentState().localParticipantState.initialCallJoinState.skipSetupScreen &&
             (

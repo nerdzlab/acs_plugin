@@ -117,6 +117,7 @@ internal class VideoViewManager(
     fun getRemoteVideoStreamRenderer(
         participantID: String,
         videoStreamId: String,
+        isWhiteboard: Boolean
     ): View? {
         var rendererView: VideoStreamRendererView? = null
         val uniqueID = generateUniqueKey(participantID, videoStreamId)
@@ -125,7 +126,8 @@ internal class VideoViewManager(
         } else if (updateRemoteParticipantVideoRenderer(
                 participantID,
                 videoStreamId,
-                context
+                context,
+                isWhiteboard
             )
         ) {
             rendererView = remoteParticipantVideoRendererMap[uniqueID]?.rendererView
@@ -140,6 +142,7 @@ internal class VideoViewManager(
         userID: String,
         videoStreamID: String,
         context: Context,
+        isWhiteboard: Boolean = false
     ): Boolean {
         val remoteParticipants = callingSDKWrapper.getRemoteParticipantsMap()
 
@@ -163,14 +166,14 @@ internal class VideoViewManager(
                             context
                         )
 
-                    val forceFitMode = isAndroidTV && !isScreenShare && remoteParticipants.size <= 1
+                    val forceFitMode = isAndroidTV && !isScreenShare && remoteParticipants.size <= 1 || isWhiteboard
 
                     val rendererView =
-                        if (isScreenShare || forceFitMode) videoStreamRenderer.createView(
-                            CreateViewOptions(
-                                ScalingMode.FIT
-                            )
-                        ) else videoStreamRenderer.createView()
+                        if (isScreenShare || forceFitMode) {
+                            videoStreamRenderer.createView(CreateViewOptions(ScalingMode.FIT))
+                        } else {
+                            videoStreamRenderer.createView()
+                        }
 
                     remoteParticipantVideoRendererMap[uniqueID] =
                         VideoRenderer(

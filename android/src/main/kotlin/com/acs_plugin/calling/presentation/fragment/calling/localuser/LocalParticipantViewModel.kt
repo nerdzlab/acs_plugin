@@ -38,7 +38,6 @@ internal class LocalParticipantViewModel(
     private lateinit var displayRaisedHandFlow: MutableStateFlow<Boolean>
     private lateinit var reactionFlow: MutableStateFlow<Pair<LocalParticipantViewMode, ReactionType?>>
 
-
     fun getVideoStatusFlow(): StateFlow<VideoModel> = videoStatusFlow
     fun getDisplayFullScreenAvatarFlow(): StateFlow<Boolean> = displayFullScreenAvatarFlow
     fun getDisplayNameStateFlow(): StateFlow<String?> = displayNameStateFlow
@@ -163,6 +162,10 @@ internal class LocalParticipantViewModel(
     }
 
     fun switchCamera() = dispatch(LocalParticipantAction.CameraSwitchTriggered())
+
+    fun onReactionShown() {
+        dispatch(LocalParticipantAction.SendReactionTriggered(null))
+    }
 
     private fun shouldDisplayVideo(videoStreamID: String?) = videoStreamID != null
 

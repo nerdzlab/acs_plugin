@@ -24,9 +24,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
+import com.acs_plugin.R
 import com.acs_plugin.calling.CallCompositeException
 import com.acs_plugin.calling.CallCompositeInstanceManager
-import com.acs_plugin.R
 import com.acs_plugin.calling.models.CallCompositeSupportedLocale
 import com.acs_plugin.calling.models.CallCompositeSupportedScreenOrientation
 import com.acs_plugin.calling.models.CallCompositeUserReportedIssueEvent
@@ -42,7 +42,6 @@ import com.acs_plugin.calling.redux.action.PipAction
 import com.acs_plugin.calling.redux.state.NavigationStatus
 import com.acs_plugin.calling.redux.state.VisibilityStatus
 import com.acs_plugin.calling.utilities.collect
-import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.calling.utilities.isKeyboardOpen
 import com.acs_plugin.calling.utilities.isTablet
 import com.acs_plugin.calling.utilities.launchAll
@@ -50,7 +49,7 @@ import com.microsoft.fluentui.util.activity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import java.util.Locale
+import java.util.*
 
 internal open class CallCompositeActivity : AppCompatActivity() {
     private val diContainerHolder: CallCompositeActivityViewModel by viewModels {
@@ -92,6 +91,9 @@ internal open class CallCompositeActivity : AppCompatActivity() {
     private lateinit var visibilityStatusFlow: MutableStateFlow<VisibilityStatus>
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //TODO Lock Portrait mode for the first version
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         // Before super, we'll set up the DI injector and check the PiP state
         try {
             diContainerHolder.instanceId = instanceId
@@ -266,7 +268,7 @@ internal open class CallCompositeActivity : AppCompatActivity() {
             ) {
                 val params = PictureInPictureParams
                     .Builder()
-                    .setAspectRatio(Rational(1, 1))
+                    .setAspectRatio(Rational(16, 9))
                     .build()
 
                 if (enterPictureInPictureMode(params))
@@ -315,7 +317,7 @@ internal open class CallCompositeActivity : AppCompatActivity() {
         ) {
             val params = PictureInPictureParams
                 .Builder()
-                .setAspectRatio(Rational(1, 1))
+                .setAspectRatio(Rational(16, 9))
                 .build()
             var enteredPiPSucceeded = false
             try {
@@ -414,12 +416,14 @@ internal open class CallCompositeActivity : AppCompatActivity() {
                 supportActionBar?.hide()
                 val callScreenOrientation: Int? =
                     getScreenOrientation(configuration.callScreenOrientation)
-                requestedOrientation =
-                    when {
-                        (callScreenOrientation != null) -> callScreenOrientation
-                        isAndroidTV(this) -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-                        else -> ActivityInfo.SCREEN_ORIENTATION_USER
-                    }
+                //TODO Lock Portrait mode for the first version
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//                requestedOrientation =
+//                    when {
+//                        (callScreenOrientation != null) -> callScreenOrientation
+//                        isAndroidTV(this) -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+//                        else -> ActivityInfo.SCREEN_ORIENTATION_USER
+//                    }
                 launchFragment(CallingFragment::class.java.name)
             }
 
@@ -428,12 +432,14 @@ internal open class CallCompositeActivity : AppCompatActivity() {
                 supportActionBar?.show()
                 val setupScreenOrientation: Int? =
                     getScreenOrientation(configuration.setupScreenOrientation)
-                requestedOrientation =
-                    when {
-                        (setupScreenOrientation != null) -> setupScreenOrientation
-                        isAndroidTV(this) -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-                        else -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                    }
+                //TODO Lock Portrait mode for the first version
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//                requestedOrientation =
+//                    when {
+//                        (setupScreenOrientation != null) -> setupScreenOrientation
+//                        isAndroidTV(this) -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+//                        else -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//                    }
                 launchFragment(SetupFragment::class.java.name)
             }
         }

@@ -6,9 +6,11 @@ package com.acs_plugin.calling.presentation.fragment.calling.participant.grid
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ReactionPayload
 import com.acs_plugin.calling.presentation.fragment.factories.ParticipantGridCellViewModelFactory
+import com.acs_plugin.calling.redux.action.Action
 import com.acs_plugin.calling.redux.state.CaptionsState
 import com.acs_plugin.calling.redux.state.CaptionsStatus
 import com.acs_plugin.calling.redux.state.DeviceConfigurationState
+import com.acs_plugin.calling.redux.state.MeetingViewMode
 import com.acs_plugin.calling.redux.state.RttState
 import com.acs_plugin.calling.redux.state.VisibilityStatus
 import com.acs_plugin.calling.utilities.EventFlow
@@ -20,6 +22,7 @@ import java.lang.Integer.min
 internal class ParticipantGridViewModel(
     private val participantGridCellViewModelFactory: ParticipantGridCellViewModelFactory,
     private val maxRemoteParticipantSize: Int,
+    private val dispatch: (Action) -> Unit
 ) {
 
     private var remoteParticipantsUpdatedStateFlow: MutableStateFlow<List<ParticipantGridCellViewModel>> =
@@ -95,8 +98,9 @@ internal class ParticipantGridViewModel(
         isOverlayDisplayedOverGrid: Boolean,
         deviceConfigurationState: DeviceConfigurationState,
         captionsState: CaptionsState,
-        reaction: Map<String, ReactionPayload>,
-        reactionModifiedTimestamp: Number
+        reaction: Map<String, ReactionPayload?>,
+        reactionModifiedTimestamp: Number,
+        meetingViewMode: MeetingViewMode
     ) {
         isOverlayDisplayedFlow.value = isOverlayDisplayedOverGrid
         isVerticalStyleGridMutableFlow.value = shouldUseVerticalStyleGrid(deviceConfigurationState, rttState, captionsState)
@@ -249,7 +253,7 @@ internal class ParticipantGridViewModel(
 
         remoteParticipantsMapSorted.forEach { (id, participantInfoModel) ->
             displayedRemoteParticipantsViewModelMap[id] =
-                participantGridCellViewModelFactory.ParticipantGridCellViewModel(participantInfoModel)
+                participantGridCellViewModelFactory.ParticipantGridCellViewModel(participantInfoModel, dispatch)
         }
 
         if (remoteParticipantsMapSorted.isNotEmpty() || viewModelsToRemoveCount > 0) {
@@ -351,16 +355,15 @@ internal class ParticipantGridViewModel(
 
     private fun updateRemoteParticipantsReaction(
         remoteParticipantsMap: Map<String, ParticipantInfoModel>,
-        reactionMap: Map<String, ReactionPayload>
+        reactionMap: Map<String, ReactionPayload?>
     ): Map<String, ParticipantInfoModel> {
         reactionMap.forEach { (participantId, payload) ->
             val participant = remoteParticipantsMap[participantId]
-            if (participant != null && participant.selectedReaction != payload.reaction) {
-                participant.selectedReaction = payload.reaction
+            if (participant != null && participant.selectedReaction != payload?.reaction) {
+                participant.selectedReaction = payload?.reaction
                 participant.modifiedTimestamp = System.currentTimeMillis()
             }
         }
         return remoteParticipantsMap.toMap()
     }
-
 }

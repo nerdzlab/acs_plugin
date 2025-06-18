@@ -16,6 +16,6 @@ internal data class RemoteParticipantsState(
     val raisedHandsModifiedTimestamp: Number,
     val lobbyErrorCode: CallCompositeLobbyErrorCode?,
     val totalParticipantCount: Int,
-    val reactionInfo: Map<String, ReactionPayload>,
+    val reactionInfo: Map<String, ReactionPayload?>,
     val reactionModifiedTimestamp: Number
 )

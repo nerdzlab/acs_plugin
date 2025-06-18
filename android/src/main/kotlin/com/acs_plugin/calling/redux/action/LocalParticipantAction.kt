@@ -101,7 +101,7 @@ internal sealed class LocalParticipantAction : Action {
     object LowerHandSucceeded : LocalParticipantAction()
     data class LowerHandFailed(val error: CallCompositeError) : LocalParticipantAction()
 
-    class SendReactionTriggered(val reactionType: ReactionType) : LocalParticipantAction()
+    class SendReactionTriggered(val reactionType: ReactionType?) : LocalParticipantAction()
     object SendReactionSucceeded : LocalParticipantAction()
     data class SendReactionFailed(val error: CallCompositeError) : LocalParticipantAction()
 
@@ -112,4 +112,7 @@ internal sealed class LocalParticipantAction : Action {
     class StopShareScreenTriggered : LocalParticipantAction()
     object StopShareScreenSucceeded : LocalParticipantAction()
     data class StopShareScreenFailed(val error: CallCompositeError) : LocalParticipantAction()
+
+    class GalleryViewTriggered : LocalParticipantAction()
+    class SpeakerViewTriggered : LocalParticipantAction()
 }

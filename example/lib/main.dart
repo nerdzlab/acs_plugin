@@ -53,19 +53,13 @@ class _CallScreenState extends State<CallScreen> {
 
   // Configuration constants - move to a config file in a real app
   String get _acsToken {
-    // if (_isSuperBrainsMode) {
-    //   return "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCQTFENTczNEY1MzM4QkRENjRGNjA4NjE2QTQ5NzFCOTEwNjU5QjAiLCJ4NXQiOiIyNkhWYzA5VE9MM1dUMkNHRnFTWEc1RUdXYkEiLCJ0eXAiOiJKV1QifQ.eyJza3lwZWlkIjoiYWNzOjZkMTQxM2NmLTJkMjQtNDE5MS1hNTcwLTExZGE5MTZlODQyNV8wMDAwMDAyNy1iNjUwLWUxODQtNWI0Mi1hZDNhMGQwMDRkNjEiLCJzY3AiOjE3OTIsImNzaSI6IjE3NDkwMjMxOTgiLCJleHAiOjE3NDkxMDk1OTgsInJnbiI6ImRlIiwiYWNzU2NvcGUiOiJjaGF0LHZvaXAiLCJyZXNvdXJjZUlkIjoiNmQxNDEzY2YtMmQyNC00MTkxLWE1NzAtMTFkYTkxNmU4NDI1IiwicmVzb3VyY2VMb2NhdGlvbiI6Imdlcm1hbnkiLCJpYXQiOjE3NDkwMjMxOTh9.tVDNonWEP-YedwYWCiPQ6OCsF2HsFwKglmo3HxrjqaWBH1jR411IV9_nQgqKpcxfwdPwh1nPi1GIiwY3-8XyQVD2DAMsYr7CapYzC-C1iqnU53WnJR-JeDsUFpm4s2NEQ5140ejqc9BD0AHPpEJm6fS5OrCHekggadZaR3VBQrCSo1gFtgBCfvXxTts-Fwr74UDNeugKF2rmkktoUb3LI6LasUi4PAwJiZgpq1WBGbsq7Nee_eRcd4fpHFxjLm759iHmDMg-GLIdJndUEzMe7eeIZY-sHxAO41FqBT92tUuf23kClQO8HYNe0d-t_elkIwPZm9l1Bn0vFpvGjdq1Yg";
-    // }
-
-    if (isRealDevice) {
+    if (_isSuperBrainsMode) {
+      return Constants.superBrainsUserToken;
+    } else if (isRealDevice) {
       return Constants.userOneToken;
     } else {
-    return Constants.userTwoToken;
+      return Constants.userTwoToken;
     }
-  }
-
-  String get _chatToken {
-    return Constants.chatUserToken;
   }
 
   bool get _isSuperBrainsMode {
@@ -74,10 +68,6 @@ class _CallScreenState extends State<CallScreen> {
 
   String get _whiteBoardId {
     return Constants.whiteBoardId;
-  }
-
-  String get _chatUserId {
-    return Constants.chatUserId;
   }
 
   String get _callId {
@@ -93,11 +83,9 @@ class _CallScreenState extends State<CallScreen> {
   static const String _teemsMeetingLink = Constants.teemsMeetingLink;
 
   String get _userId {
-    // if (_isSuperBrainsMode) {
-    //   return "8:acs:6d1413cf-2d24-4191-a570-11da916e8425_00000027-b650-e184-5b42-ad3a0d004d61";
-    // }
-
-    if (isRealDevice) {
+    if (_isSuperBrainsMode) {
+      return Constants.superBrainsUserId;
+    } else if (isRealDevice) {
       return Constants.userOneId;
     } else {
       return Constants.userTwoId;
@@ -296,12 +284,12 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _setUserData() async {
     try {
       await _acsPlugin.setUserData(
-        token: _acsToken,
-        name: _userName,
-        userId: _userId,
-        languageCode: 'nl',
-        appToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA1YTI0NzdhLWRmODUtNGRiNy1iNzQ5LWYyMjQwNzAxOGIzZCIsIm9yZ2FuaXphdGlvbl9pZCI6IjY1NzU2ZTgzLTAwYjUtNDc1NS04M2EzLTAwZGQyYzFhYTY5MSIsImlzX29uYm9hcmRlZCI6dHJ1ZSwic3luY19wYXRpZW50X2RhdGEiOmZhbHNlLCJ2aWRlb19jYWxsX3Byb3ZpZGVyIjoiaG1zIiwiaHR0cHM6Ly9oYXN1cmEuaW8vand0L2NsYWltcyI6eyJ4LWhhc3VyYS1hbGxvd2VkLXJvbGVzIjpbInVzZXIiXSwieC1oYXN1cmEtZGVmYXVsdC1yb2xlIjoidXNlciIsIngtaGFzdXJhLXVzZXItaWQiOiIwNWEyNDc3YS1kZjg1LTRkYjctYjc0OS1mMjI0MDcwMThiM2QifSwicm9sZSI6InVzZXIiLCJhY2NvdW50X3R5cGUiOm51bGwsImlhdCI6MTc0OTEzMjExOSwiZXhwIjoxNzUxNzI0MTE5LCJzdWIiOiIwNWEyNDc3YS1kZjg1LTRkYjctYjc0OS1mMjI0MDcwMThiM2QifQ.75JB4Jr0Oebx5eF7nlJQxBu9Oe_BytEZ-LrF9vYKkDo",
-        baseUrl: "https://api-msteam.superbrains.nl/v1/graphql"
+          token: _acsToken,
+          name: _userName,
+          userId: _userId,
+          languageCode: 'nl',
+          appToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA1YTI0NzdhLWRmODUtNGRiNy1iNzQ5LWYyMjQwNzAxOGIzZCIsIm9yZ2FuaXphdGlvbl9pZCI6IjY1NzU2ZTgzLTAwYjUtNDc1NS04M2EzLTAwZGQyYzFhYTY5MSIsImlzX29uYm9hcmRlZCI6dHJ1ZSwic3luY19wYXRpZW50X2RhdGEiOmZhbHNlLCJ2aWRlb19jYWxsX3Byb3ZpZGVyIjoiaG1zIiwiaHR0cHM6Ly9oYXN1cmEuaW8vand0L2NsYWltcyI6eyJ4LWhhc3VyYS1hbGxvd2VkLXJvbGVzIjpbInVzZXIiXSwieC1oYXN1cmEtZGVmYXVsdC1yb2xlIjoidXNlciIsIngtaGFzdXJhLXVzZXItaWQiOiIwNWEyNDc3YS1kZjg1LTRkYjctYjc0OS1mMjI0MDcwMThiM2QifSwicm9sZSI6InVzZXIiLCJhY2NvdW50X3R5cGUiOm51bGwsImlhdCI6MTc0OTEzMjExOSwiZXhwIjoxNzUxNzI0MTE5LCJzdWIiOiIwNWEyNDc3YS1kZjg1LTRkYjctYjc0OS1mMjI0MDcwMThiM2QifQ.75JB4Jr0Oebx5eF7nlJQxBu9Oe_BytEZ-LrF9vYKkDo",
+          baseUrl: "https://api-msteam.superbrains.nl/v1/graphql"
       );
       log('Set user data successfully');
       _shwoSnacBar('Set user data successfully');
@@ -395,7 +383,7 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _isChatHasMoreMessages() async {
     try {
       final isChatHasMoreMessages =
-          await _acsPlugin.isChatHasMoreMessages(threadId: _threadId);
+      await _acsPlugin.isChatHasMoreMessages(threadId: _threadId);
       log('Chat has more messages: $isChatHasMoreMessages');
       _shwoSnacBar('Chat has more messages: $isChatHasMoreMessages');
     } on PlatformException catch (error) {

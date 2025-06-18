@@ -1,6 +1,6 @@
-package com.acs_plugin
+package com.acs_plugin.consts
 
-object Constants {
+object PluginConstants {
 
     object MethodChannels {
         const val SETUP_CHAT_SERVICE = "setupChatService"
@@ -23,6 +23,7 @@ object Constants {
         const val GET_TOKEN = "getToken"
         const val INITIALIZE_ROOM_CALL = "initializeRoomCall"
         const val START_TEAMS_MEETING_CALL = "startTeamsMeetingCall"
+        const val START_ONE_ON_ONE_CALL = "startOneOnOneCall"
         const val GET_INITIAL_LIST_THREADS = "getInitialListThreads"
         const val IS_MORE_THREADS_AVAILABLE = "isMoreThreadsAvailable"
         const val GET_NEXT_THREADS = "getNextThreads"
@@ -43,6 +44,7 @@ object Constants {
         const val ON_PARTICIPANTS_ADDED = "onParticipantsAdded"
         const val ON_PARTICIPANTS_REMOVED = "onParticipantsRemoved"
         const val ON_CHAT_PUSH_NOTIFICATION_OPENED = "onChatPushNotificationOpened"
+        const val ON_CALL_UI_CLOSED = "onCallUIClosed"
     }
 
     object Prefs {
@@ -68,6 +70,9 @@ object Constants {
         const val CALL_ID = "callId"
         const val WHITEBOARD_ID = "whiteBoardId"
         const val MEETING_LINK = "meetingLink"
+        const val PARTICIPANTS_ID = "participantsId"
+        const val PUSH_NOTIFICATION_DATA = "push_notification_data"
+        const val ACTION_TYPE = "action_type"
     }
 
     object JsonKeys {
@@ -105,5 +110,10 @@ object Constants {
         const val DISPLAY_NAME = "displayName"
         const val SHARE_HISTORY_TIME = "shareHistoryTime"
         const val CONTENT = "content"
+    }
+
+    object IntentDataKeys {
+        const val HANDLE_INCOMING_CALL_PUSH = "HANDLE_INCOMING_CALL_PUSH"
+        const val CLEAR_PUSH_NOTIFICATION = "CLEAR_PUSH_NOTIFICATION"
     }
 }

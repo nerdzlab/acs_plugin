@@ -39,6 +39,7 @@ internal class InfoHeaderView : ConstraintLayout {
     private lateinit var chatButton: AppCompatImageView
     private lateinit var infoHeaderViewModel: InfoHeaderViewModel
     private lateinit var displayParticipantListCallback: () -> Unit
+    private lateinit var openChatCallback: () -> Unit
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -67,16 +68,21 @@ internal class InfoHeaderView : ConstraintLayout {
 //        customButton1 = findViewById(R.id.azure_communication_ui_call_header_custom_button_1)
 //        customButton2 = findViewById(R.id.azure_communication_ui_call_header_custom_button_2)
         chatButton = findViewById(R.id.azure_communication_ui_call_info_header_chat_button)
-        chatButton.onSingleClickListener { infoHeaderViewModel.onChatButtonClicked() }
+        chatButton.onSingleClickListener {
+            infoHeaderViewModel.onChatButtonClicked()
+            openChatCallback()
+        }
     }
 
     fun start(
         viewLifecycleOwner: LifecycleOwner,
         infoHeaderViewModel: InfoHeaderViewModel,
         displayParticipantList: () -> Unit,
+        openChatCallback: () -> Unit
     ) {
         this.infoHeaderViewModel = infoHeaderViewModel
         this.displayParticipantListCallback = displayParticipantList
+        this.openChatCallback = openChatCallback
         setupAccessibility()
         viewLifecycleOwner.lifecycleScope.launchAll(
             {

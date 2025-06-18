@@ -14,7 +14,8 @@ enum class MoreActionType(
     BLUR_OFF(R.string.turn_blur_off, R.drawable.ic_blur_off),
     RAISE_HAND(R.string.raise_hand, R.drawable.ic_raise_hand),
     LOWER_HAND(R.string.lower_hand, R.drawable.ic_raised_hand),
-    CHANGE_VIEW(R.string.change_view, R.drawable.ic_grid_view),
+    CHANGE_GALLERY_VIEW(R.string.change_view, R.drawable.ic_grid_view),
+    CHANGE_SPEAKER_VIEW(R.string.change_view, R.drawable.ic_avatar_placeholder),
     SHARE_SCREEN(R.string.share_screen, R.drawable.ic_share),
     STOP_SHARE_SCREEN(R.string.stop_sharing, R.drawable.ic_stop_sharing);
 

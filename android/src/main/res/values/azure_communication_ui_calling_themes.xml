@@ -51,7 +51,7 @@
             true
         </item>
         <item name="android:windowBackground">
-            @color/azure_communication_ui_calling_color_background
+            @color/white
         </item>
     </style>
 

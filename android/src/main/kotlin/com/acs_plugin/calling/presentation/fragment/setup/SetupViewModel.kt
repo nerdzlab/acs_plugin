@@ -13,6 +13,8 @@ import com.acs_plugin.calling.redux.action.LocalParticipantAction
 import com.acs_plugin.calling.redux.action.NavigationAction
 import com.acs_plugin.calling.redux.state.AudioFocusStatus
 import com.acs_plugin.calling.redux.state.ReduxState
+import com.acs_plugin.consts.PluginConstants
+import com.acs_plugin.utils.FlutterEventDispatcher
 import kotlinx.coroutines.CoroutineScope
 
 internal class SetupViewModel(
@@ -39,6 +41,7 @@ internal class SetupViewModel(
     }
 
     fun exitComposite() {
+        FlutterEventDispatcher.sendEvent(PluginConstants.FlutterEvents.ON_CALL_UI_CLOSED)
         // double check here if we need both the action to execute
         dispatchAction(action = CallingAction.CallEndRequested())
         dispatchAction(action = NavigationAction.Exit())
