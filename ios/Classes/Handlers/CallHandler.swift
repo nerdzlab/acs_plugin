@@ -24,7 +24,6 @@ final class CallHandler: MethodHandler {
             static let initializeRoomCall = "initializeRoomCall"
             static let startOneOnOneCall = "startOneOnOneCall"
             static let startTeamsMeetingCall = "startTeamsMeetingCall"
-            static let setUserData = "setUserData"
         }
     }
     
@@ -32,11 +31,11 @@ final class CallHandler: MethodHandler {
     private let onSendEvent: (Event) -> Void
     
     private var isRealDevice: Bool {
-#if targetEnvironment(simulator)
+        #if targetEnvironment(simulator)
         return false
-#else
+        #else
         return true
-#endif
+        #endif
     }
 
     init(
@@ -145,7 +144,7 @@ final class CallHandler: MethodHandler {
         result: @escaping FlutterResult
     ) {
         let localOptions = LocalOptions(
-            cameraOn: true,
+            cameraOn: false,
             isChatEnable: isChatEnable,
             microphoneOn: true,
             skipSetupScreen: isRejoin,
@@ -161,7 +160,7 @@ final class CallHandler: MethodHandler {
         result: @escaping FlutterResult
     ) {
         let localOptions = LocalOptions(
-            cameraOn: true,
+            cameraOn: false,
             isChatEnable: true,
             microphoneOn: true,
             skipSetupScreen: true
@@ -182,12 +181,9 @@ final class CallHandler: MethodHandler {
     }
     
     func subscribeToEvents(callComposite: CallComposite) {
-        func getLocalOptions(azureCorrelationId: String?) -> LocalOptions {
-            return LocalOptions(cameraOn: true, isChatEnable: true, microphoneOn: true, azureCorrelationId: azureCorrelationId)
-        }
-        
         let callKitCallAccepted: (String) -> Void = { [weak callComposite] callId in
-            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: getLocalOptions(azureCorrelationId: callId))
+            let localOptions = LocalOptions(cameraOn: false, isChatEnable: true, microphoneOn: true, azureCorrelationId: callId)
+            callComposite?.launch(callIdAcceptedFromCallKit: callId, localOptions: localOptions)
         }
         
         callComposite.events.onIncomingCallAcceptedFromCallKit = callKitCallAccepted

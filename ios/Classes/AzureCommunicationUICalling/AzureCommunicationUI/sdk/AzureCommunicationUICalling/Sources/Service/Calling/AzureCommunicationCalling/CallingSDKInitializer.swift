@@ -39,6 +39,11 @@ internal class CallingSDKInitializer: NSObject {
         self.events = events
         self.onCallAdded = onCallAdded
     }
+    
+    deinit {
+        callClient?.dispose()
+        callAgent?.dispose()
+    }
 
     func getIncomingCall() -> AzureCommunicationCalling.IncomingCall? {
         return incomingCall
@@ -92,11 +97,12 @@ internal class CallingSDKInitializer: NSObject {
             callAgent.delegate = self
             
             if isNeedRenewCallAgent {
-                //need event to inform about call agent updating
+                //need event to  inform about call agent updating
             }
             
             return callAgent
-        } catch {
+        }
+        catch {
             logger.error("It was not possible to create a call agent.")
             throw error
         }
@@ -138,11 +144,8 @@ internal class CallingSDKInitializer: NSObject {
         sdkCallKitOptions.isCallHoldSupported = callKitOptions.isCallHoldSupported
         sdkCallKitOptions.configureAudioSession = callKitOptions.configureAudioSession
         if let provideRemoteInfo = callKitOptions.provideRemoteInfo {
-            sdkCallKitOptions.provideRemoteInfo = { (callerInfo: AzureCommunicationCalling.CallerInfo)
-                -> AzureCommunicationCalling.CallKitRemoteInfo in
-                let info = provideRemoteInfo(
-                    Caller(displayName: callerInfo.displayName,
-                           identifier: callerInfo.identifier))
+            sdkCallKitOptions.provideRemoteInfo = { (callerInfo: AzureCommunicationCalling.CallerInfo) -> AzureCommunicationCalling.CallKitRemoteInfo in
+                let info = provideRemoteInfo(Caller(displayName: callerInfo.displayName, identifier: callerInfo.identifier))
                 let callKitRemoteInfo = AzureCommunicationCalling.CallKitRemoteInfo()
                 callKitRemoteInfo.displayName = info.displayName
                 callKitRemoteInfo.handle = info.handle

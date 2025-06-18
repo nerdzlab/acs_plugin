@@ -24,6 +24,7 @@ final class UserDataHandler: MethodHandler {
     private enum Constants {
         enum MethodChannels {
             static let setUserData = "setUserData"
+            static let clearUserData = "clearUserData"
             static let unregisterPushNotifications = "unregisterPushNotifications"
         }
     }
@@ -43,24 +44,21 @@ final class UserDataHandler: MethodHandler {
     
     private let onSubscribeToCallCompositeEvents: (CallComposite) -> Void
     private let onUserDataReceived: (UserData) -> Void
-    private let unregisterPushNotifications: () -> Void
     
     private var isRealDevice: Bool {
-#if targetEnvironment(simulator)
+        #if targetEnvironment(simulator)
         return false
-#else
+        #else
         return true
-#endif
+        #endif
     }
     
     init(
         onSubscribeToCallCompositeEvents: @escaping (CallComposite) -> Void,
         onUserDataReceived: @escaping (UserData) -> Void,
-        unregisterPushNotifications: @escaping () -> Void
     ) {
         self.onSubscribeToCallCompositeEvents = onSubscribeToCallCompositeEvents
         self.onUserDataReceived = onUserDataReceived
-        self.unregisterPushNotifications = unregisterPushNotifications
         self.setupTokenRefresh()
     }
     
@@ -75,16 +73,35 @@ final class UserDataHandler: MethodHandler {
                let appToken = arguments["appToken"] as? String,
                let baseUrl = arguments["baseUrl"] as? String
             {
-                self.userData = UserData(token: token, name: name, userId: userId, languageCode: languageCode, appToken: appToken, baseUrl: baseUrl)
-                
-            } else {
-                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Token, name and userId are required", details: nil))
+                self.userData = UserData(
+                    token: token,
+                    name: name,
+                    userId: userId,
+                    languageCode: languageCode,
+                    appToken: appToken,
+                    baseUrl: baseUrl
+                )
+                self.reconfigureCallComposite()
+            }
+            else {
+                result(
+                    FlutterError(
+                        code: "INVALID_ARGUMENTS",
+                        message: "Token, name and userId are required",
+                        details: nil
+                    )
+                )
             }
             
             return true
             
         case Constants.MethodChannels.unregisterPushNotifications:
-            unregisterPushNotifications()
+            getCallComposite()
+            
+            return true
+            
+        case Constants.MethodChannels.clearUserData:
+            userData = nil
             
             return true
             
@@ -93,10 +110,30 @@ final class UserDataHandler: MethodHandler {
         }
     }
     
-    func getCallComposite() ->  CallComposite? {
-        guard let userData = userData else { return nil }
+    func getCallComposite(with options: CallKitOptions? = nil) ->  CallComposite? {
+        if let options {
+            return reconfigureCallComposite(with: options)
+        }
+        else {
+            return GlobalCompositeManager.callComposite ?? reconfigureCallComposite()
+        }
+    }
+    
+    func getUserData() -> UserData? {
+        userData
+    }
+    
+    @discardableResult
+    private func reconfigureCallComposite(with options: CallKitOptions? = nil) -> CallComposite? {
+        let callOptions = options ?? (isRealDevice ? CallKitOptions() : nil)
         
-        guard let tokenRefresher = self.tokenRefresher else { return nil }
+        guard let userData else {
+            return nil
+        }
+        
+        guard let tokenRefresher else {
+            return nil
+        }
         
         let refreshOptions = CommunicationTokenRefreshOptions(
             initialToken: userData.token,
@@ -104,30 +141,28 @@ final class UserDataHandler: MethodHandler {
             tokenRefresher: tokenRefresher
         )
         
-        guard let credential = try? CommunicationTokenCredential(withOptions: refreshOptions) else { return nil }
+        guard let credential = try? CommunicationTokenCredential(withOptions: refreshOptions) else {
+            return nil
+        }
         
         let callCompositeOptions = CallCompositeOptions(
             localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
             enableMultitasking: true,
             enableSystemPictureInPictureWhenMultitasking: true,
-            callKitOptions: isRealDevice ? CallKitOptions() : nil,
+            callKitOptions: callOptions,
             displayName: userData.name,
             userId: CommunicationUserIdentifier(userData.userId)
         )
+        let composite = CallComposite(
+            credential: credential,
+            withOptions: callCompositeOptions
+        )
         
-        let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
+        onSubscribeToCallCompositeEvents(composite)
         
-        if (GlobalCompositeManager.callComposite == nil) {
-            onSubscribeToCallCompositeEvents(callComposite)
-        }
+        GlobalCompositeManager.callComposite = composite
         
-        GlobalCompositeManager.callComposite = callComposite
-        
-        return callComposite
-    }
-    
-    func getUserData() -> UserData? {
-        return userData
+        return composite
     }
     
     private func setupTokenRefresh() {

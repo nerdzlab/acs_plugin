@@ -64,12 +64,12 @@ public class CallComposite {
     /// The events handler for Call Composite
     public let events: Events
     
-    private let themeOptions: ThemeOptions?
-    private let localizationOptions: LocalizationOptions?
-    private let enableMultitasking: Bool
-    private let enableSystemPipWhenMultitasking: Bool
-    private let setupViewOrientationOptions: OrientationOptions?
-    private let callingViewOrientationOptions: OrientationOptions?
+    private var themeOptions: ThemeOptions?
+    private var localizationOptions: LocalizationOptions?
+    private var enableMultitasking: Bool
+    private var enableSystemPipWhenMultitasking: Bool
+    private var setupViewOrientationOptions: OrientationOptions?
+    private var callingViewOrientationOptions: OrientationOptions?
     
     // Internal dependencies
     private var logger: Logger = DefaultLogger(category: "Calling")
@@ -189,6 +189,28 @@ public class CallComposite {
         self.credential = credential
         userId = options?.userId
         events = Events()
+        themeOptions = options?.themeOptions
+        localizationOptions = options?.localizationOptions
+        localizationProvider = LocalizationProvider(logger: logger)
+        enableMultitasking = options?.enableMultitasking ?? false
+        enableSystemPipWhenMultitasking = options?.enableSystemPipWhenMultitasking ?? false
+        setupViewOrientationOptions = options?.setupScreenOrientation
+        callingViewOrientationOptions = options?.callingScreenOrientation
+        orientationProvider = OrientationProvider()
+        leaveCallConfirmationMode =
+        options?.callScreenOptions?.controlBarOptions?.leaveCallConfirmationMode ?? .alwaysEnabled
+        setupScreenOptions = options?.setupScreenOptions
+        callScreenOptions = options?.callScreenOptions
+        callKitOptions = options?.callKitOptions
+        displayName = options?.displayName
+        if let disableInternalPushForIncomingCall = options?.disableInternalPushForIncomingCall {
+            self.disableInternalPushForIncomingCall = disableInternalPushForIncomingCall
+        }
+    }
+    
+    public func reconfigure(credential: CommunicationTokenCredential, withOptions options: CallCompositeOptions? = nil) {
+        self.credential = credential
+        userId = options?.userId
         themeOptions = options?.themeOptions
         localizationOptions = options?.localizationOptions
         localizationProvider = LocalizationProvider(logger: logger)
@@ -693,8 +715,10 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
     }
     
     private func createDebugInfoManager() -> DebugInfoManagerProtocol {
-        return DebugInfoManager(callHistoryRepository: self.callHistoryRepository,
-                                getLogFiles: { return [] })
+        return DebugInfoManager(
+            callHistoryRepository: self.callHistoryRepository,
+            getLogFiles: { return [] }
+        )
     }
     
     private func cleanUpManagers() {
@@ -760,25 +784,31 @@ and launch(locator: JoinLocator, localOptions: LocalOptions? = nil) instead.
         if let callingSDKInitializer = callingSDKInitializer {
             return callingSDKInitializer
         }
+        
         guard let credential = credential else {
             if let didFail = events.onError {
                 let compositeError = CallCompositeError(
                     code: CallCompositeErrorCode.communicationTokenCredentialNotSet,
-                    error: CommunicationTokenCredentialError.communicationTokenCredentialNotSet)
+                    error: CommunicationTokenCredentialError.communicationTokenCredentialNotSet
+                )
                 didFail(compositeError)
             }
             fatalError("CommunicationTokenCredential cannot be nil, use init with credentials.")
         }
-        let callingSDKInitializer = CallingSDKInitializer(tags: self.callConfiguration?.diagnosticConfig.tags
-                                                          ?? DiagnosticConfig().tags,
-                                                          credential: credential,
-                                                          callKitOptions: callKitOptions,
-                                                          displayName: displayName,
-                                                          disableInternalPushForIncomingCall:
-                                                            disableInternalPushForIncomingCall,
-                                                          logger: logger,
-                                                          events: events,
-                                                          onCallAdded: onCallAdded)
+        let callingSDKInitializer = CallingSDKInitializer(
+            tags: self.callConfiguration?.diagnosticConfig.tags
+            ?? DiagnosticConfig().tags,
+            credential: credential,
+            callKitOptions: callKitOptions,
+            displayName: displayName,
+            disableInternalPushForIncomingCall:
+                disableInternalPushForIncomingCall,
+            logger: logger,
+            events: events,
+            onCallAdded: { [weak self] callId in
+                self?.onCallAdded(callId: callId)
+            }
+        )
         self.callingSDKInitializer = callingSDKInitializer
         return callingSDKInitializer
     }
@@ -808,9 +838,10 @@ extension CallComposite {
          </CALL_START_TIME> */
     }
     
-    private func makeToolkitHostingController(router: NavigationRouter,
-                                              viewFactory: CompositeViewFactoryProtocol)
-    -> ContainerUIHostingController {
+    private func makeToolkitHostingController(
+        router: NavigationRouter,
+        viewFactory: CompositeViewFactoryProtocol
+    ) -> ContainerUIHostingController {
         let isRightToLeft = localizationProvider.isRightToLeft
         let setupViewOrientationMask = orientationProvider.orientationMask(for:
                                                                             setupViewOrientationOptions)

@@ -109,6 +109,11 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
   }
 
   @override
+  Future<void> clearUserData() async {
+    await methodChannel.invokeMethod('clearUserData');
+  }
+
+  @override
   Future<void> setBroadcastExtensionData({
     required String appGroupIdentifier,
     required String extensionBubdleId,

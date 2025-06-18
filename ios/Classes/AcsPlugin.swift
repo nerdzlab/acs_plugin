@@ -43,17 +43,37 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
     }
     
     public static var shared: AcsPlugin = AcsPlugin()
-    private var voipRegistry: PKPushRegistry = PKPushRegistry(queue: DispatchQueue.main)
+    private var voipRegistry: PKPushRegistry = PKPushRegistry(
+        queue: DispatchQueue.main
+    )
+    
+    private lazy var userDataHandler: UserDataHandler = UserDataHandler(
+        onSubscribeToCallCompositeEvents: { [weak self] callComposite in
+            self?.callHandler?.subscribeToEvents(callComposite: callComposite)
+            self?.broadcastExtensionHandler?.subscribeToEvents(callComposite: callComposite)
+        },
+        onUserDataReceived: { [weak self] userData in
+            self?.userDataHandler.getCallComposite()?.registerPushNotifications(deviceRegistrationToken: self?.voipToken ?? Data()) { result in
+                switch result {
+                case .success:
+                    self?.logger.debug { "Successfully registered for VoIP push notifications." }
+                    
+                case .failure(let error):
+                    self?.logger.debug { "Failed to register for VoIP push notifications: \(error)" }
+                }
+            }
+        }
+    )
     
     private var voipToken: Data?
     private var eventChannel: FlutterEventChannel?
     private var eventSink: FlutterEventSink?
-    private var callHandler: CallHandler!
-    private var broadcastExtensionHandler: BroadcastExtensionHandler!
-    private var userDataHandler: UserDataHandler!
+    private var callHandler: CallHandler?
+    private var broadcastExtensionHandler: BroadcastExtensionHandler?
     private var chatHandler: ChatHandler?
     private var handlers: [MethodHandler?] = []
     private var preloadedAction: PreloadedAction?
+    private let logger = DefaultLogger(category: "AcsPlugin")
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "acs_plugin", binaryMessenger: registrar.messenger())
@@ -68,8 +88,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         instance.eventChannel = eventChannel
         
         instance.setupHandlers()
-        
-        shared.setupPushKit()
+        instance.setupPushKit()
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -105,34 +124,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                 self?.sendEvent(event)
             }
         )
-        
-        userDataHandler = UserDataHandler(
-            onSubscribeToCallCompositeEvents: { [weak self] callComposite in
-                self?.callHandler.subscribeToEvents(callComposite: callComposite)
-                self?.broadcastExtensionHandler.subscribeToEvents(callComposite: callComposite)
-            },
-            onUserDataReceived: { [weak self] userData in
-                self?.userDataHandler?.getCallComposite()?.registerPushNotifications(deviceRegistrationToken: self?.voipToken ?? Data()) { result in
-                    switch result {
-                    case .success:
-                        print("Successfully registered for VoIP push notifications.")
-                    case .failure(let error):
-                        print("Failed to register for VoIP push notifications: \(error)")
-                    }
-                }
-            },
-            unregisterPushNotifications: { [weak self] in
-                self?.userDataHandler.getCallComposite()?.unregisterPushNotifications() { result in
-                    switch result {
-                    case .success:
-                        print("Successfully unregistered for VoIP push notifications.")
-                    case .failure(let error):
-                        print("Failed to unregister for VoIP push notifications: \(error)")
-                    }
-                }
-            }
-        )
-        
+                
         chatHandler = ChatHandler(
             onGetUserData: { [weak self] in
                 self?.userDataHandler.getUserData()
@@ -144,6 +136,17 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         )
         
         handlers = [callHandler, userDataHandler, broadcastExtensionHandler, chatHandler]
+        
+        subscirbeToComposite()
+    }
+    
+    private func subscirbeToComposite() {
+        guard let composite = userDataHandler.getCallComposite() else {
+            return
+        }
+        
+        broadcastExtensionHandler?.subscribeToEvents(callComposite: composite)
+        callHandler?.subscribeToEvents(callComposite: composite)
     }
     
     private func setupPushKit() {
@@ -155,7 +158,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         if type == .voIP {
             self.voipToken = pushCredentials.token
             let tokenString = pushCredentials.token.map { String(format: "%02x", $0) }.joined()
-            print("Received VoIP token: \(tokenString)")
+            logger.debug { "Received VoIP token: \(tokenString)" }
         }
     }
     
@@ -163,15 +166,16 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                              didReceiveIncomingPushWith payload: PKPushPayload,
                              for type: PKPushType,
                              completion: @escaping () -> Void) {
-        print("pushRegistry payload: \(payload.dictionaryPayload)")
+        logger.debug { "pushRegistry payload: \(payload.dictionaryPayload)" }
         if isAppInForeground() {
-            os_log("calling demo app: app is in foreground")
-            
+            logger.debug { "calling demo app: app is in foreground" }
             let pushNotificationInfo = PushNotification(data: payload.dictionaryPayload)
             userDataHandler.getCallComposite()?.handlePushNotification(pushNotification: pushNotificationInfo)
-            os_log("callId---------------------\(pushNotificationInfo.callId)")
-        } else {
-            os_log("calling demo app: app is not in foreground")
+            logger.debug { "callId---------------------\(pushNotificationInfo.callId)" }
+        }
+        else {
+            logger.debug { "calling demo app: app is not in foreground" }
+            
             let pushInfo = PushNotification(data: payload.dictionaryPayload)
             os_log("callId---------------------\(pushInfo.callId)")
             
@@ -196,52 +200,34 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
                 configureAudioSession: configureAudioSession
             )
             
-            CallComposite.reportIncomingCall(pushNotification: pushInfo,
-                                             callKitOptions: callKitOptions) { result in
+            CallComposite.reportIncomingCall(pushNotification: pushInfo, callKitOptions: callKitOptions) { [weak self] result in
+                guard let self else {
+                    completion()
+                    return
+                }
+                
                 if case .success = result {
+                    if self.handlers.isEmpty {
+                        self.setupHandlers()
+                    }
+
                     DispatchQueue.global().async {
-                        if let callCamposite = self.userDataHandler.getCallComposite() {
-                            callCamposite.handlePushNotification(pushNotification: pushInfo)
-                        } else {
-                            AcsPlugin.shared.setupHandlers()
-                            self.getCallComposite(callKitOptions: callKitOptions)?
-                                .handlePushNotification(pushNotification: pushInfo)
+                        guard let callCamposite = self.userDataHandler.getCallComposite() else {
+                            completion()
+                            return
+                        }
+                        
+                        callCamposite.handlePushNotification(pushNotification: pushInfo) { _ in
+                            completion()
                         }
                     }
-                } else {
-                    os_log("calling demo app: failed on reportIncomingCall")
+                }
+                else {
+                    self.logger.debug { "calling demo app: failed on reportIncomingCall" }
+                    completion()
                 }
             }
         }
-    }
-    
-    private func getCallComposite(callKitOptions: CallKitOptions) ->  CallComposite? {
-        guard
-            let userData = UserDefaults.standard.loadUserData(),
-            let credential = try? CommunicationTokenCredential(token: userData.token)
-        else {
-            return nil
-        }
-        
-        let callCompositeOptions = CallCompositeOptions(
-            localization: LocalizationOptions(locale: Locale.resolveLocale(from: userData.languageCode)),
-            enableMultitasking: true,
-            enableSystemPictureInPictureWhenMultitasking: true,
-            callKitOptions: callKitOptions,
-            displayName: userData.name,
-            userId: CommunicationUserIdentifier(userData.userId)
-        )
-        
-        let callComposite = GlobalCompositeManager.callComposite != nil ?  GlobalCompositeManager.callComposite! : CallComposite(credential: credential, withOptions: callCompositeOptions)
-        
-        if (GlobalCompositeManager.callComposite == nil) {
-            broadcastExtensionHandler.subscribeToEvents(callComposite: callComposite)
-            callHandler.subscribeToEvents(callComposite: callComposite)
-        }
-        
-        GlobalCompositeManager.callComposite = callComposite
-        
-        return callComposite
     }
     
     public func incomingCallRemoteInfo(info: Caller) -> CallKitRemoteInfo {
@@ -252,48 +238,29 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
             remoteInfoDisplayName = info.identifier.rawId
         }
         
-        let callKitRemoteInfo = CallKitRemoteInfo(displayName: remoteInfoDisplayName,
-                                                  handle: cxHandle)
+        let callKitRemoteInfo = CallKitRemoteInfo(
+            displayName: remoteInfoDisplayName,
+            handle: cxHandle
+        )
         return callKitRemoteInfo
     }
-    
-    //    public func configureAudioSession() -> Error? {
-    //        let audioSession = AVAudioSession.sharedInstance()
-    //        var configError: Error?
-    //
-    //        do {
-    //            // Keeping default .playAndRecord without forcing speaker
-    //            try audioSession.setCategory(.playAndRecord)
-    //        } catch {
-    //            configError = error
-    //        }
-    //
-    //        return configError
-    //    }
     
     public func configureAudioSession() -> Error? {
         let audioSession = AVAudioSession.sharedInstance()
         var configError: Error?
-        
-        // Check the current audio output route
-        let currentRoute = audioSession.currentRoute
-        let isUsingSpeaker = currentRoute.outputs.contains { $0.portType == .builtInSpeaker }
-        let isUsingReceiver = currentRoute.outputs.contains { $0.portType == .builtInReceiver }
-        
-        // Only configure the session if necessary (e.g., when not on speaker/receiver)
-        if !isUsingSpeaker && !isUsingReceiver {
-            do {
-                // Keeping default .playAndRecord without forcing speaker
-                try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
-                try audioSession.setActive(true)
-            } catch {
-                configError = error
-            }
+
+        do {
+            // Keeping default .playAndRecord without forcing speaker
+            try audioSession.setCategory(.playAndRecord, options: [.allowBluetooth])
+            try? audioSession.setActive(true)
         }
-        
+        catch {
+            configError = error
+        }
+
         return configError
     }
-    
+        
     public func saveLaunchedChatNotification(pushNotificationReceivedEvent: PushNotificationChatMessageReceivedEvent) {
         preloadedAction = PreloadedAction(type: .chatNotification, chatPushNotificationReceivedEvent: pushNotificationReceivedEvent)
     }
@@ -306,7 +273,8 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         //If app run from terminated state, chat handler does not create, as flutter part does not triggers
         if chatHandler != nil {
             chatHandler?.setAPNSData(apnsToken: apnsToken, appGroupId: appGroupId, completion: completion)
-        } else {
+        }
+        else {
             BackgroundChatManager.shared.renewPushSubscription(appGroupId: appGroupId, apnsToken: apnsToken, completion: completion)
         }
     }
@@ -323,6 +291,7 @@ public class AcsPlugin: NSObject, FlutterPlugin, PKPushRegistryDelegate {
         switch appState {
         case .active:
             return true
+            
         default:
             return false
         }

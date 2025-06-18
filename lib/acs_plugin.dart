@@ -142,6 +142,11 @@ class AcsPlugin {
     );
   }
 
+  // Clear User Data
+  Future<void> clearUserData() async {
+    await AcsPluginPlatform.instance.clearUserData();
+  }
+
 // Sets the broadcast extension data for screen sharing on iOS.
   ///
   /// This is required to configure the screen broadcasting extension
