@@ -55,6 +55,7 @@ internal class CallingViewModel(
 
     private var isWhiteboardEnabled = false
     private var pinnedUserIdentifier: String? = null
+    private var turnOffVideoParticipantsIds: MutableList<String> = mutableListOf()
 
     val moreCallOptionsListViewModel = callingViewModelProvider.moreCallOptionsListViewModel
     val participantGridViewModel = callingViewModelProvider.participantGridViewModel
@@ -339,7 +340,8 @@ internal class CallingViewModel(
                 captionsState = state.captionsState,
                 reaction = state.remoteParticipantState.reactionInfo,
                 reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp,
-                meetingViewMode = state.localParticipantState.meetingViewMode
+                meetingViewMode = state.localParticipantState.meetingViewMode,
+                meetingViewModeModifiedTimestamp = System.currentTimeMillis()
             )
             floatingHeaderViewModel.dismiss()
             lobbyHeaderViewModel.dismiss()
@@ -366,6 +368,7 @@ internal class CallingViewModel(
                 participant.copy(
                     isPinned = id == pinnedUserIdentifier,
                     isWhiteboard = id == state.callState.whiteboardId,
+                    isVideoTurnOffForMe = turnOffVideoParticipantsIds.contains(id)
                 )
             }
 
@@ -385,7 +388,8 @@ internal class CallingViewModel(
                 captionsState = state.captionsState,
                 reaction = state.remoteParticipantState.reactionInfo,
                 reactionModifiedTimestamp = state.remoteParticipantState.reactionModifiedTimestamp,
-                meetingViewMode = state.localParticipantState.meetingViewMode
+                meetingViewMode = state.localParticipantState.meetingViewMode,
+                meetingViewModeModifiedTimestamp = state.localParticipantState.meetingViewModeModifiedTimestamp
             )
 
             floatingHeaderViewModel.update(
@@ -552,7 +556,15 @@ internal class CallingViewModel(
 
     fun onParticipantMenuClicked(id: String, type: ParticipantMenuType) {
         val currentState = store.getCurrentState()
-        val currentParticipants = currentState.remoteParticipantState.participantMap
+        var currentParticipants = currentState.remoteParticipantState.participantMap.toMutableMap()
+
+        if (type == ParticipantMenuType.PIN || type == ParticipantMenuType.UNPIN) {
+            val oldPinnedParticipant = currentParticipants[pinnedUserIdentifier]
+
+            if (oldPinnedParticipant != null) {
+                currentParticipants[oldPinnedParticipant.userIdentifier] = oldPinnedParticipant.copy(isPinned = false, modifiedTimestamp = System.currentTimeMillis())
+            }
+        }
 
         // Find the participant and update their info
         val updatedParticipantInfo = currentParticipants[id]?.let { participantInfo ->
@@ -565,8 +577,14 @@ internal class CallingViewModel(
                     this.pinnedUserIdentifier = null
                     participantInfo.copy(isPinned = false)
                 }
-                ParticipantMenuType.HIDE_VIDEO -> participantInfo.copy(isVideoTurnOffForMe = true)
-                ParticipantMenuType.SHOW_VIDEO -> participantInfo.copy(isVideoTurnOffForMe = false)
+                ParticipantMenuType.HIDE_VIDEO -> {
+                    turnOffVideoParticipantsIds.add(id)
+                    participantInfo.copy(isVideoTurnOffForMe = true)
+                }
+                ParticipantMenuType.SHOW_VIDEO -> {
+                    turnOffVideoParticipantsIds.remove(id)
+                    participantInfo.copy(isVideoTurnOffForMe = false)
+                }
             }
         }
 
@@ -593,6 +611,11 @@ internal class CallingViewModel(
     private fun openParticipantMenu(id: String) {
         val state = store.getCurrentState()
         state.remoteParticipantState.participantMap[id]?.let { participantInfoModel ->
+            participantInfoModel.apply {
+                isPinned = id == pinnedUserIdentifier
+                isWhiteboard = id == state.callState.whiteboardId
+                isVideoTurnOffForMe = turnOffVideoParticipantsIds.contains(id)
+            }
             if (participantInfoModel.userIdentifier != whiteboardId) {
                 participantMenuViewModel.displayParticipantMenu(isWhiteboardEnabled, participantInfoModel)
             }

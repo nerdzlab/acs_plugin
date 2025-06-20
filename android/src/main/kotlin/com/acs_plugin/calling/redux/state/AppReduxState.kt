@@ -80,7 +80,8 @@ internal class AppReduxState(
             currentCapabilitiesAreDefault = true,
             raisedHandStatus = RaisedHandStatus.LOWER,
             shareScreenStatus = ShareScreenStatus.OFF,
-            meetingViewMode = MeetingViewMode.GALLERY
+            meetingViewMode = MeetingViewMode.GALLERY,
+            meetingViewModeModifiedTimestamp = 0
         )
 
     override var permissionState: PermissionState =

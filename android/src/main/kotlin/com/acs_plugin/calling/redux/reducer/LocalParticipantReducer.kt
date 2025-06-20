@@ -360,11 +360,13 @@ internal class LocalParticipantStateReducerImpl : LocalParticipantStateReducer {
 
             is LocalParticipantAction.GalleryViewTriggered -> {
                 localUserState.copy(
+                    meetingViewModeModifiedTimestamp = System.currentTimeMillis(),
                     meetingViewMode = MeetingViewMode.GALLERY
                 )
             }
             is LocalParticipantAction.SpeakerViewTriggered -> {
                 localUserState.copy(
+                    meetingViewModeModifiedTimestamp = System.currentTimeMillis(),
                     meetingViewMode = MeetingViewMode.SPEAKER
                 )
             }

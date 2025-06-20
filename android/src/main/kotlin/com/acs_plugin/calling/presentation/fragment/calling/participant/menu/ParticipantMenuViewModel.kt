@@ -39,7 +39,7 @@ internal class ParticipantMenuViewModel() {
     ): List<ParticipantMenuItem> {
         return buildList {
             if (participant.isPinned) {
-                add(ParticipantMenuType.UNPIN.mapToParticipantMenuItem().apply { isEnabled = !isWhiteboardEnabled })
+                add(ParticipantMenuType.UNPIN.mapToParticipantMenuItem())
             } else {
                 add(ParticipantMenuType.PIN.mapToParticipantMenuItem().apply { isEnabled = !isWhiteboardEnabled })
             }

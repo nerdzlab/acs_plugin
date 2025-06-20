@@ -5,6 +5,7 @@ package com.acs_plugin.calling.presentation.fragment.calling.participant.grid
 
 import com.acs_plugin.calling.models.ParticipantInfoModel
 import com.acs_plugin.calling.models.ReactionPayload
+import com.acs_plugin.calling.presentation.fragment.calling.participant.grid.cell.ParticipantGridCellMoreView.Companion.MORE_VIEW_ID
 import com.acs_plugin.calling.presentation.fragment.factories.ParticipantGridCellViewModelFactory
 import com.acs_plugin.calling.redux.action.Action
 import com.acs_plugin.calling.redux.state.CaptionsState
@@ -38,6 +39,7 @@ internal class ParticipantGridViewModel(
     private var dominantSpeakersStateModifiedTimestamp: Number = 0
     private var raisedHandStateModifiedTimestamp: Number = 0
     private var reactionStateModifiedTimestamp: Number = 0
+    private var meetingViewModeStateModifiedTimestamp: Number = 0
     private var visibilityStatus: VisibilityStatus? = null
     private lateinit var isOverlayDisplayedFlow: MutableStateFlow<Boolean>
     private lateinit var isVerticalStyleGridMutableFlow: MutableStateFlow<Boolean>
@@ -100,7 +102,8 @@ internal class ParticipantGridViewModel(
         captionsState: CaptionsState,
         reaction: Map<String, ReactionPayload?>,
         reactionModifiedTimestamp: Number,
-        meetingViewMode: MeetingViewMode
+        meetingViewMode: MeetingViewMode,
+        meetingViewModeModifiedTimestamp: Number
     ) {
         isOverlayDisplayedFlow.value = isOverlayDisplayedOverGrid
         isVerticalStyleGridMutableFlow.value = shouldUseVerticalStyleGrid(deviceConfigurationState, rttState, captionsState)
@@ -109,6 +112,7 @@ internal class ParticipantGridViewModel(
             dominantSpeakersModifiedTimestamp == dominantSpeakersStateModifiedTimestamp &&
             raisedHandModifiedTimestamp == raisedHandStateModifiedTimestamp &&
             reactionModifiedTimestamp == reactionStateModifiedTimestamp &&
+            meetingViewModeModifiedTimestamp == meetingViewModeStateModifiedTimestamp &&
             this.visibilityStatus == visibilityStatus
         ) {
             return
@@ -118,10 +122,12 @@ internal class ParticipantGridViewModel(
         dominantSpeakersStateModifiedTimestamp = dominantSpeakersModifiedTimestamp
         raisedHandStateModifiedTimestamp = raisedHandModifiedTimestamp
         reactionStateModifiedTimestamp = reactionModifiedTimestamp
+        meetingViewModeStateModifiedTimestamp = meetingViewModeModifiedTimestamp
         this.visibilityStatus = visibilityStatus
 
         var remoteParticipantsMapSorted = updateRemoteParticipantsRaisedHand(remoteParticipantsMap, raisedHandInfo)
         remoteParticipantsMapSorted = updateRemoteParticipantsReaction(remoteParticipantsMapSorted, reaction)
+        remoteParticipantsMapSorted = updateRemoteDominantSpeakerParticipants(remoteParticipantsMapSorted, dominantSpeakersInfo, meetingViewMode)
 
         val participantSharingScreen = getParticipantSharingScreen(remoteParticipantsMap)
 
@@ -137,15 +143,16 @@ internal class ParticipantGridViewModel(
         }
 
         val whiteboardParticipant = remoteParticipantsMapSorted.values.find { it.isWhiteboard }
+        val dominantSpeakerParticipant = remoteParticipantsMapSorted.values.find { it.isDominantSpeaker && whiteboardParticipant == null }?.apply { modifiedTimestamp = System.currentTimeMillis() }
         val pinnedParticipant = remoteParticipantsMapSorted.values.find { it.isPinned && whiteboardParticipant == null }
 
-        val primaryParticipant = whiteboardParticipant ?: pinnedParticipant
+        val primaryParticipant = whiteboardParticipant ?: dominantSpeakerParticipant ?: pinnedParticipant
 
         val displayedParticipants: MutableList<ParticipantInfoModel>
 
         if (primaryParticipant != null) {
-            val others = remoteParticipantsMapSorted.filterKeys { it != primaryParticipant.userIdentifier }.values
-            val secondary = others.take(2)
+            val others = remoteParticipantsMapSorted.filterKeys { it != primaryParticipant.userIdentifier }
+            val secondary = sortRemoteParticipants(others, dominantSpeakersInfo).values.take(2)
 
             displayedParticipants = mutableListOf(primaryParticipant)
             displayedParticipants.addAll(secondary)
@@ -171,7 +178,7 @@ internal class ParticipantGridViewModel(
         val displayedParticipantsMap = displayedParticipants.associateBy { it.userIdentifier }.toMutableMap()
 
         updateRemoteParticipantsVideoStreams(displayedParticipantsMap)
-        updateDisplayedParticipants(displayedParticipantsMap)
+        updateDisplayedParticipants(primaryParticipant, displayedParticipantsMap)
     }
 
     fun onParticipantMenuClicked(userIdentifier: String) {
@@ -201,6 +208,7 @@ internal class ParticipantGridViewModel(
     }
 
     private fun updateDisplayedParticipants(
+        currentPrimaryParticipant: ParticipantInfoModel?,
         remoteParticipantsMapSorted: MutableMap<String, ParticipantInfoModel>,
     ) {
         val alreadyDisplayedParticipants =
@@ -257,8 +265,44 @@ internal class ParticipantGridViewModel(
         }
 
         if (remoteParticipantsMapSorted.isNotEmpty() || viewModelsToRemoveCount > 0) {
+            // Final reorder to ensure primary is first, more is last
+
+            val ordered = displayedRemoteParticipantsViewModelMap.toList().toMutableList()
+
+            val primary = ordered.find { it.second.getIsPrimaryParticipant() }
+            val more = ordered.find { it.second.getParticipantUserIdentifier() == MORE_VIEW_ID }
+
+            primary?.let {
+                ordered.remove(it)
+                ordered.add(0, it)
+            }
+
+            more?.let {
+                ordered.remove(it)
+                ordered.add(it)
+            }
+
+            displayedRemoteParticipantsViewModelMap.clear()
+            ordered.forEach { displayedRemoteParticipantsViewModelMap[it.first] = it.second }
+
             remoteParticipantsUpdatedStateFlow.value =
                 displayedRemoteParticipantsViewModelMap.values.toList()
+        }
+
+        val firstEntry = displayedRemoteParticipantsViewModelMap.entries.firstOrNull()
+
+        if (currentPrimaryParticipant?.userIdentifier != null && firstEntry?.key != currentPrimaryParticipant.userIdentifier) {
+            val reordered = displayedRemoteParticipantsViewModelMap.toList().toMutableList()
+
+            val primaryParticipant = currentPrimaryParticipant.userIdentifier to participantGridCellViewModelFactory.ParticipantGridCellViewModel(currentPrimaryParticipant, dispatch)
+
+            reordered.remove(primaryParticipant)
+            reordered.add(0, primaryParticipant)
+
+            displayedRemoteParticipantsViewModelMap.clear()
+            reordered.forEach { displayedRemoteParticipantsViewModelMap[it.first] = it.second }
+
+            remoteParticipantsUpdatedStateFlow.value = displayedRemoteParticipantsViewModelMap.values.toList()
         }
 
         // participants list may not be changed, but their state may be changed, like isMuted
@@ -334,6 +378,30 @@ internal class ParticipantGridViewModel(
             }
         }
         updateVideoStreamsCallback?.invoke(usersVideoStream)
+    }
+
+    private fun updateRemoteDominantSpeakerParticipants(
+        remoteParticipantsMap: Map<String, ParticipantInfoModel>,
+        dominantSpeakersInfo: List<String>,
+        meetingViewMode: MeetingViewMode
+    ) : Map<String, ParticipantInfoModel> {
+        val participants = remoteParticipantsMap.toMutableMap()
+        val oldDominantSpeakerId = participants.values.find { it.isDominantSpeaker }?.userIdentifier
+
+        if (meetingViewMode == MeetingViewMode.SPEAKER) {
+            val dominantSpeakerId = dominantSpeakersInfo.firstOrNull()
+            participants.forEach { (id, participant) ->
+                participant.isDominantSpeaker = id == dominantSpeakerId && !participant.isMuted
+            }
+            participants.values.find { it.isDominantSpeaker }?.modifiedTimestamp = System.currentTimeMillis()
+        } else {
+            participants.forEach { (_, participant) ->
+                participant.isDominantSpeaker = false
+            }
+            participants[oldDominantSpeakerId]?.apply { modifiedTimestamp = System.currentTimeMillis() }
+        }
+
+        return participants.toMap()
     }
 
     private fun updateRemoteParticipantsRaisedHand(

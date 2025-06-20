@@ -117,5 +117,6 @@ internal data class LocalUserState(
     val raisedHandStatus: RaisedHandStatus,
     val reactionType: ReactionType? = null,
     val shareScreenStatus: ShareScreenStatus,
-    val meetingViewMode: MeetingViewMode
+    val meetingViewMode: MeetingViewMode,
+    val meetingViewModeModifiedTimestamp: Number
 )

@@ -31,12 +31,13 @@ internal data class ParticipantInfoModel(
     var isRaisedHand: Boolean = false,
     var selectedReaction: ReactionType? = null,
     var isWhiteboard: Boolean = false,
+    var isDominantSpeaker: Boolean = false,
     var isPinned: Boolean = false,
     var isVideoTurnOffForMe: Boolean = false
 ) {
 
     fun isPrimaryParticipant(): Boolean {
-        return isWhiteboard || isPinned
+        return isWhiteboard  || isPinned || isDominantSpeaker
     }
 
     companion object {
