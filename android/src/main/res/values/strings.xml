@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="start_your_call" translatable="false">Start your call</string>
-    <string name="check_your_video_audio" translatable="false">Check your video and audio.</string>
-    <string name="user_name" translatable="false">User Name</string>
-    <string name="choose_audio" translatable="false">Choose audio</string>
-    <string name="turn_off_audio" translatable="false">Turn off the audio</string>
-    <string name="noise_suppression" translatable="false">Noise suppression</string>
-    <string name="participant_list" translatable="false">Participants (%d)</string>
-    <string name="share_meeting_link_title" translatable="false">Share meeting link</string>
-    <string name="chat" translatable="false">Chat</string>
-    <string name="participants" translatable="false">Participants</string>
-    <string name="turn_blur_off" translatable="false">Turn blur off</string>
-    <string name="turn_blur_on" translatable="false">Turn blur on</string>
-    <string name="raise_hand" translatable="false">Raise hand</string>
-    <string name="lower_hand" translatable="false">Lower hand</string>
-    <string name="change_view" translatable="false">Change view</string>
-    <string name="meeting_view" translatable="false">Meeting view</string>
-    <string name="gallery_view" translatable="false">Gallery view</string>
-    <string name="speaker_view" translatable="false">Speaker view</string>
-    <string name="share_screen" translatable="false">Share screen</string>
-    <string name="stop_sharing" translatable="false">Stop sharing</string>
+    <string name="start_your_call">Start your call</string>
+    <string name="check_your_video_audio">Check your video and audio.</string>
+    <string name="user_name">User Name</string>
+    <string name="choose_audio">Choose audio</string>
+    <string name="turn_off_audio">Turn off the audio</string>
+    <string name="noise_suppression">Noise suppression</string>
+    <string name="participant_list">Participants (%d)</string>
+    <string name="share_meeting_link_title">Share meeting link</string>
+    <string name="chat">Chat</string>
+    <string name="participants">Participants</string>
+    <string name="turn_blur_off">Turn blur off</string>
+    <string name="turn_blur_on">Turn blur on</string>
+    <string name="raise_hand">Raise hand</string>
+    <string name="lower_hand">Lower hand</string>
+    <string name="change_view">Change view</string>
+    <string name="meeting_view">Meeting view</string>
+    <string name="gallery_view">Gallery view</string>
+    <string name="speaker_view">Speaker view</string>
+    <string name="share_screen">Share screen</string>
+    <string name="stop_sharing">Stop sharing</string>
+    <string name="pin_for_me">Pin for me</string>
+    <string name="unpin">Unpin</string>
+    <string name="do_not_show_video">Don\'t show video</string>
+    <string name="show_video">Show video</string>
+    <string name="decline">Decline</string>
+    <string name="accept">Accept</string>
+    <string name="incoming_call">Incoming call</string>
+
     <string name="emoji_heart" translatable="false">❤️</string>
     <string name="emoji_laugh" translatable="false">😂</string>
     <string name="emoji_surprised" translatable="false">😮</string>
     <string name="emoji_applause" translatable="false">👏</string>
     <string name="emoji_like" translatable="false">👍</string>
     <string name="share_meeting_link" translatable="false">  https://msteam.desktop.superbrains.nl/meeting?callId=%s</string>
-    <string name="pin_for_me" translatable="false">Pin for me</string>
-    <string name="unpin" translatable="false">Unpin</string>
-    <string name="do_not_show_video" translatable="false">Don\'t show video</string>
-    <string name="show_video" translatable="false">Show video</string>
-	<string name="decline" translatable="false">Decline</string>
-    <string name="accept" translatable="false">Accept</string>
-    <string name="incoming_call" translatable="false">Incoming call</string>
 </resources>

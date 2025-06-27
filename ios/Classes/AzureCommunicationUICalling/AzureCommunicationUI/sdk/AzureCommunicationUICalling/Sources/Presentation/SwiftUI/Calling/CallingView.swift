@@ -310,13 +310,20 @@ struct CallingView: View {
     }
     
     var shareActivityView: some View {
-        return Group {
-            SharingActivityView(viewModel: viewModel.shareMeetingLinkViewModel,
-                                applicationActivities: nil,
-                                sourceView: debugInfoSourceView,
-                                isPresented: $viewModel.isShareMeetingLinkDisplayed)
-            .edgesIgnoringSafeArea(.all)
-            .modifier(LockPhoneOrientation())
+        Group {
+            if let shareVM = viewModel.shareMeetingLinkViewModel {
+                SharingActivityView(
+                    viewModel: shareVM,
+                    applicationActivities: nil,
+                    sourceView: debugInfoSourceView,
+                    isPresented: $viewModel.isShareMeetingLinkDisplayed
+                )
+                .edgesIgnoringSafeArea(.all)
+                .modifier(LockPhoneOrientation())
+            }
+            else {
+                EmptyView()
+            }
         }
     }
     

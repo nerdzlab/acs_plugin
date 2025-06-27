@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:acs_plugin/acs_plugin.dart';
 import 'package:safe_device/safe_device.dart';
+import 'dart:io';
 
 void main() {
   runApp(const MyApp());
@@ -63,7 +64,7 @@ class _CallScreenState extends State<CallScreen> {
   }
 
   bool get _isSuperBrainsMode {
-    return true;
+    return false;
   }
 
   String get _whiteBoardId {
@@ -72,6 +73,10 @@ class _CallScreenState extends State<CallScreen> {
 
   String get _callId {
     return Constants.callId;
+  }
+
+  String get _shareMeetingLink {
+    return Constants.shareMeetingLink;
   }
 
   static const String _roomId = Constants.roomId;
@@ -94,7 +99,7 @@ class _CallScreenState extends State<CallScreen> {
 
   String get _otherUserId {
     // if (_isSuperBrainsMode) {
-    //   return "8:acs:6d1413cf-2d24-4191-a570-11da916e8425_00000027-b650-e160-28d2-493a0d005b28";
+    //   return "";
     // }
 
     if (isRealDevice) {
@@ -115,7 +120,9 @@ class _CallScreenState extends State<CallScreen> {
   @override
   initState() {
     super.initState();
-    _setBroadcastExtensionData();
+    if (Platform.isIOS) {
+      _setBroadcastExtensionData();
+    }
     _subscribeToEvents();
 
     _acsPlugin.init();
@@ -239,6 +246,7 @@ class _CallScreenState extends State<CallScreen> {
         whiteBoardId: _whiteBoardId,
         isChatEnable: true,
         isRejoin: false,
+        shareURL: _shareMeetingLink,
       );
       log('Room call initialized successfully');
       _shwoSnacBar('Room call initialized successfully');
@@ -257,6 +265,7 @@ class _CallScreenState extends State<CallScreen> {
         whiteBoardId: _whiteBoardId,
         isChatEnable: true,
         isRejoin: false,
+        shareURL: _shareMeetingLink,
       );
       log('Meeting call initialized successfully');
       _shwoSnacBar('Meeting call initialized successfully');
@@ -288,9 +297,8 @@ class _CallScreenState extends State<CallScreen> {
           name: _userName,
           userId: _userId,
           languageCode: 'nl',
-          appToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA1YTI0NzdhLWRmODUtNGRiNy1iNzQ5LWYyMjQwNzAxOGIzZCIsIm9yZ2FuaXphdGlvbl9pZCI6IjY1NzU2ZTgzLTAwYjUtNDc1NS04M2EzLTAwZGQyYzFhYTY5MSIsImlzX29uYm9hcmRlZCI6dHJ1ZSwic3luY19wYXRpZW50X2RhdGEiOmZhbHNlLCJ2aWRlb19jYWxsX3Byb3ZpZGVyIjoiaG1zIiwiaHR0cHM6Ly9oYXN1cmEuaW8vand0L2NsYWltcyI6eyJ4LWhhc3VyYS1hbGxvd2VkLXJvbGVzIjpbInVzZXIiXSwieC1oYXN1cmEtZGVmYXVsdC1yb2xlIjoidXNlciIsIngtaGFzdXJhLXVzZXItaWQiOiIwNWEyNDc3YS1kZjg1LTRkYjctYjc0OS1mMjI0MDcwMThiM2QifSwicm9sZSI6InVzZXIiLCJhY2NvdW50X3R5cGUiOm51bGwsImlhdCI6MTc0OTEzMjExOSwiZXhwIjoxNzUxNzI0MTE5LCJzdWIiOiIwNWEyNDc3YS1kZjg1LTRkYjctYjc0OS1mMjI0MDcwMThiM2QifQ.75JB4Jr0Oebx5eF7nlJQxBu9Oe_BytEZ-LrF9vYKkDo",
-          baseUrl: "https://api-msteam.superbrains.nl/v1/graphql"
-      );
+          appToken: "",
+          baseUrl: "https://api-msteam.superbrains.nl/v1/graphql");
       log('Set user data successfully');
       _shwoSnacBar('Set user data successfully');
     } on PlatformException catch (error) {
@@ -383,7 +391,7 @@ class _CallScreenState extends State<CallScreen> {
   Future<void> _isChatHasMoreMessages() async {
     try {
       final isChatHasMoreMessages =
-      await _acsPlugin.isChatHasMoreMessages(threadId: _threadId);
+          await _acsPlugin.isChatHasMoreMessages(threadId: _threadId);
       log('Chat has more messages: $isChatHasMoreMessages');
       _shwoSnacBar('Chat has more messages: $isChatHasMoreMessages');
     } on PlatformException catch (error) {

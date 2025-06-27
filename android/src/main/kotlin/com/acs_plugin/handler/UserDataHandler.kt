@@ -11,7 +11,6 @@ import kotlinx.serialization.json.Json
 
 class UserDataHandler(
     private val context: Context,
-    private val channel: MethodChannel,
     private val onUserDataReceived: (UserData) -> Unit
 ) : MethodHandler {
 
@@ -52,9 +51,15 @@ class UserDataHandler(
                     val token = arguments?.get(PluginConstants.Arguments.TOKEN) as? String
                     val name = arguments?.get(PluginConstants.Arguments.NAME) as? String
                     val userId = arguments?.get(PluginConstants.Arguments.USER_ID) as? String
+                    val languageCode = arguments?.get(PluginConstants.Arguments.LANGUAGE_CODE) as? String
 
                     if (token != null && name != null && userId != null) {
-                        userDataClass = UserData(token = token, name = name, userId = userId)
+                        userDataClass = UserData(
+                            token = token,
+                            name = name,
+                            userId = userId,
+                            languageCode = languageCode ?: PluginConstants.Base.DEFAULT_LANGUAGE_CODE
+                        )
                         result.success(null)
                     } else {
                         result.error(
@@ -71,7 +76,4 @@ class UserDataHandler(
             else -> false
         }
     }
-
-
-    fun getUserData(): UserData? = userDataClass
 }

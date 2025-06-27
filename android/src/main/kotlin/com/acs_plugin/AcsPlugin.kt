@@ -135,7 +135,7 @@ class AcsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     private fun setupHandlers() {
-        val userDataHandler = UserDataHandler(context, channel) {
+        val userDataHandler = UserDataHandler(context) {
             getIncomingCallCompositeManager(context).registerPush(context, it.token, it.name)
         }
         val callHandler = CallHandler(context, activity)

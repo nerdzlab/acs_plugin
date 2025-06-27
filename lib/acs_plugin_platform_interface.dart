@@ -24,6 +24,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
+    required String shareURL,
   }) {
     throw UnimplementedError('initializeRoomCall() has not been implemented.');
   }
@@ -40,6 +41,7 @@ abstract class AcsPluginPlatform extends PlatformInterface {
     required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
+    required String shareURL,
   }) {
     throw UnimplementedError(
         'startTeamsMeetingCall() has not been implemented.');

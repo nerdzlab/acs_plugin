@@ -6,6 +6,8 @@ package com.acs_plugin.calling.service.sdk
 /*  <CALL_START_TIME>
 import java.util.Date
 </CALL_START_TIME> */
+import android.content.Context
+import android.media.MediaPlayer
 import com.acs_plugin.calling.configuration.CallType
 import com.acs_plugin.calling.models.CallCompositeAudioVideoMode
 import com.acs_plugin.calling.models.CallCompositeCaptionsData
@@ -25,6 +27,7 @@ import com.acs_plugin.calling.models.ReactionPayload
 import com.acs_plugin.calling.models.RttMessage
 import com.acs_plugin.calling.models.into
 import com.acs_plugin.calling.utilities.CoroutineContextProvider
+import com.acs_plugin.R
 import com.azure.android.communication.calling.Call
 import com.azure.android.communication.calling.CallCaptions
 import com.azure.android.communication.calling.CallState
@@ -73,6 +76,7 @@ import java.util.concurrent.CompletableFuture
 import com.azure.android.communication.calling.CapabilitiesChangedEvent as SdkCapabilitiesChangedEvent
 
 internal class CallingSDKEventHandler(
+    private val context: Context,
     coroutineContextProvider: CoroutineContextProvider,
     private val avMode: CallCompositeAudioVideoMode,
 ) {
@@ -655,6 +659,8 @@ internal class CallingSDKEventHandler(
     }
 
     private fun onHandRaised() {
+        playSound(context, R.raw.raise_hand)
+
         coroutineScope.launch {
             raisedHandParticipantsInfoFlow.emit(raisedHandFeature.raisedHands.map { it.identifier.rawId })
         }
@@ -667,6 +673,8 @@ internal class CallingSDKEventHandler(
     }
 
     private fun handleReceivedReaction(data: ByteArray) {
+        playSound(context, R.raw.reaction_received)
+
         try {
             val json = Json.decodeFromString<ReactionMessage>(data.decodeToString())
             coroutineScope.launch {
@@ -767,6 +775,7 @@ internal class CallingSDKEventHandler(
         id: String,
         addedParticipant: RemoteParticipant,
     ) {
+        playSound(context, R.raw.user_joined_call)
 
         val remoteVideoStreamsEvent =
             RemoteVideoStreamsUpdatedListener {
@@ -1025,4 +1034,14 @@ internal class CallingSDKEventHandler(
         }
     }
     </CALL_START_TIME> */
+
+    private fun playSound(context: Context, soundResId: Int) {
+        val mediaPlayer = MediaPlayer.create(context, soundResId)
+        mediaPlayer?.apply {
+            setOnCompletionListener { mp ->
+                mp.release()
+            }
+            start()
+        }
+    }
 }

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "901455226790",
+    "project_id": "superbains-stg",
+    "storage_bucket": "superbains-stg.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901455226790:android:642243e4e10084dd75d167",
+        "android_client_info": {
+          "package_name": "com.acs_plugin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyBMxRnvHQbqbdInQuoM2MxACafGYIGbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901455226790:android:b44d6a247c9d52de75d167",
+        "android_client_info": {
+          "package_name": "com.superbrain.user.stg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyBMxRnvHQbqbdInQuoM2MxACafGYIGbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

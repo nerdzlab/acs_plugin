@@ -55,14 +55,16 @@ class CallHandler(
                 val roomId = args?.get(PluginConstants.Arguments.ROOM_ID) as? String
                 val callId = args?.get(PluginConstants.Arguments.CALL_ID) as? String
                 val whiteboardId = args?.get(PluginConstants.Arguments.WHITEBOARD_ID) as? String
+                val shareLink = args?.get(PluginConstants.Arguments.SHARE_URL) as? String
                 val isChatEnabled = args?.get(PluginConstants.Arguments.IS_CHAT_ENABLED) as? Boolean
                 val isRejoined = args?.get(PluginConstants.Arguments.IS_REJOINED) as? Boolean
                 try {
-                    if (roomId != null && callId != null && whiteboardId != null) {
+                    if (roomId != null && callId != null && whiteboardId != null && shareLink != null) {
                         initializeRoomCall(
                             roomId = roomId,
                             callId = callId,
                             whiteboardId = whiteboardId,
+                            shareLink = shareLink,
                             isChatEnabled = isChatEnabled.falseIfNull(),
                             isRejoined = isRejoined.falseIfNull(),
                             result = result
@@ -105,14 +107,16 @@ class CallHandler(
                 val meetingLink = args?.get(PluginConstants.Arguments.MEETING_LINK) as? String
                 val callId = args?.get(PluginConstants.Arguments.CALL_ID) as? String
                 val whiteboardId = args?.get(PluginConstants.Arguments.WHITEBOARD_ID) as? String
+                val shareLink = args?.get(PluginConstants.Arguments.SHARE_URL) as? String
                 val isChatEnabled = args?.get(PluginConstants.Arguments.IS_CHAT_ENABLED) as? Boolean
                 val isRejoined = args?.get(PluginConstants.Arguments.IS_REJOINED) as? Boolean
                 try {
-                    if (meetingLink != null && callId != null && whiteboardId != null) {
+                    if (meetingLink != null && callId != null && whiteboardId != null && shareLink != null) {
                         startTeamsMeetingCall(
                             meetingLink = meetingLink,
                             callId = callId,
                             whiteboardId = whiteboardId,
+                            shareLink = shareLink,
                             isChatEnabled = isChatEnabled.falseIfNull(),
                             isRejoined = isRejoined.falseIfNull(),
                             result = result
@@ -136,6 +140,7 @@ class CallHandler(
         roomId: String,
         callId: String,
         whiteboardId: String,
+        shareLink: String,
         isChatEnabled: Boolean,
         isRejoined: Boolean,
         result: MethodChannel.Result
@@ -156,6 +161,7 @@ class CallHandler(
         val localOptions = CallCompositeLocalOptions().apply {
             setCallId(callId)
             setWhiteboardId(whiteboardId)
+            setShareLink(shareLink)
             setSkipSetupScreen(isRejoined)
             setChatEnabled(isChatEnabled)
         }
@@ -177,6 +183,7 @@ class CallHandler(
         meetingLink: String,
         callId: String,
         whiteboardId: String,
+        shareLink: String,
         isChatEnabled: Boolean,
         isRejoined: Boolean,
         result: MethodChannel.Result
@@ -197,6 +204,7 @@ class CallHandler(
         val localOptions = CallCompositeLocalOptions().apply {
             setCallId(callId)
             setWhiteboardId(whiteboardId)
+            setShareLink(shareLink)
             setSkipSetupScreen(isRejoined)
             setChatEnabled(isChatEnabled)
         }

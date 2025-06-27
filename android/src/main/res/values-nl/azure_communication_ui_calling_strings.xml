@@ -3,6 +3,34 @@
    Licensed under the MIT License.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <!--Plugin-->
+    <string name="start_your_call">Start je gesprek</string>
+    <string name="check_your_video_audio">Controleer je video en audio.</string>
+    <string name="user_name">Gebruikersnaam</string>
+    <string name="choose_audio">Kies audio</string>
+    <string name="turn_off_audio">Schakel audio uit</string>
+    <string name="noise_suppression">Ruisonderdrukking</string>
+    <string name="participant_list">Deelnemers (%d)</string>
+    <string name="share_meeting_link_title">Vergaderlink delen</string>
+    <string name="chat">Chat</string>
+    <string name="participants">Deelnemers</string>
+    <string name="turn_blur_off">Vervaging uitschakelen</string>
+    <string name="turn_blur_on">Vervaging inschakelen</string>
+    <string name="raise_hand">Hand opsteken</string>
+    <string name="lower_hand">Hand laten zakken</string>
+    <string name="change_view">Weergave wijzigen</string>
+    <string name="meeting_view">Vergaderweergave</string>
+    <string name="gallery_view">Galerijweergave</string>
+    <string name="speaker_view">Sprekerweergave</string>
+    <string name="share_screen">Scherm delen</string>
+    <string name="stop_sharing">Delen stoppen</string>
+    <string name="pin_for_me">Voor mij vastpinnen</string>
+    <string name="unpin">Losmaken</string>
+    <string name="do_not_show_video">Video niet weergeven</string>
+    <string name="show_video">Video weergeven</string>
+    <string name="decline">Weigeren</string>
+    <string name="accept">Accepteren</string>
+    <string name="incoming_call">Inkomend gesprek</string>
     <!--    Device-->
     <string name="azure_communication_ui_calling_audio_device_drawer_android">Android</string>
     <string name="azure_communication_ui_calling_audio_device_drawer_speaker">Luidspreker</string>

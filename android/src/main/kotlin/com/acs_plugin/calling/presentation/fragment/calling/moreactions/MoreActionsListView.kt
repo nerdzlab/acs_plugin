@@ -12,7 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.MoreActionType
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
+import com.acs_plugin.consts.PluginConstants
 import com.acs_plugin.extension.onSingleClickListener
+import com.acs_plugin.utils.FlutterEventDispatcher
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -37,6 +39,8 @@ internal class MoreActionsListView @JvmOverloads constructor(
     private lateinit var menuDialog: BottomSheetDialog
 
     private lateinit var openChatCallback: () -> Unit
+    private lateinit var startScreenShareCallback: () -> Unit
+    private lateinit var stopScreenShareCallback: () -> Unit
 
     init {
         orientation = VERTICAL
@@ -65,10 +69,14 @@ internal class MoreActionsListView @JvmOverloads constructor(
     fun start(
         viewLifecycleOwner: LifecycleOwner,
         viewModel: MoreActionsListViewModel,
-        openChatCallback: () -> Unit
+        openChatCallback: () -> Unit,
+        startScreenShareCallback: () -> Unit,
+        stopScreenShareCallback: () -> Unit
     ) {
         this.viewModel = viewModel
         this.openChatCallback = openChatCallback
+        this.startScreenShareCallback = startScreenShareCallback
+        this.stopScreenShareCallback = stopScreenShareCallback
 
         initializeMenuDialog()
 
@@ -99,8 +107,15 @@ internal class MoreActionsListView @JvmOverloads constructor(
                     val actionView = MoreActionItemView(context)
                     actionView.setAction(item) { type ->
                         menuDialog.dismiss()
-                        viewModel.onActionClicked(type)
-                        if (type == MoreActionType.CHAT) openChatCallback.invoke()
+                        when (type) {
+                            MoreActionType.CHAT -> {
+                                FlutterEventDispatcher.sendEvent(PluginConstants.FlutterEvents.ON_SHOW_CHAT)
+                                this@MoreActionsListView.openChatCallback.invoke()
+                            }
+                            MoreActionType.SHARE_SCREEN -> this@MoreActionsListView.startScreenShareCallback.invoke()
+                            MoreActionType.STOP_SHARE_SCREEN -> this@MoreActionsListView.stopScreenShareCallback.invoke()
+                            else -> viewModel.onActionClicked(type)
+                        }
                     }
                     actionsFlexboxLayer.addView(actionView, lp)
                 }

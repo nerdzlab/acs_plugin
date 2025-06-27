@@ -71,6 +71,8 @@ import com.acs_plugin.calling.service.sdk.CallingSDK
 import com.acs_plugin.calling.service.sdk.CallingSDKEventHandler
 import com.acs_plugin.calling.service.sdk.CallingSDKWrapper
 import com.acs_plugin.calling.utilities.CoroutineContextProvider
+import com.acs_plugin.utils.ScreenShareEventHandler
+import com.acs_plugin.utils.ScreenShareEventHandlerImpl
 import java.lang.ref.WeakReference
 
 internal class DependencyInjectionContainerImpl(
@@ -328,7 +330,11 @@ internal class DependencyInjectionContainerImpl(
 
     override val logger: Logger by lazy { defaultLogger }
 
-    private val callingSDKWrapper: CallingSDK by lazy {
+    val screenShareEventHandler: ScreenShareEventHandler by lazy {
+        ScreenShareEventHandlerImpl()
+    }
+
+    override val callingSDKWrapper: CallingSDK by lazy {
         customCallingSDK
             ?: CallingSDKWrapper(
                 applicationContext,
@@ -337,7 +343,8 @@ internal class DependencyInjectionContainerImpl(
                 logger,
                 callingSDKInitializer,
                 compositeCaptionsOptions = localOptions?.captionsOptions,
-                configuration.localUserIdentifier?.rawId
+                configuration.localUserIdentifier?.rawId,
+                screenShareEventHandler = screenShareEventHandler // Add this line
                 /* <END_CALL_FOR_ALL>
                 isOnCallEndTerminateForAll = localOptions?.isOnCallEndTerminateForAll ?: false
                 </END_CALL_FOR_ALL> */
@@ -346,6 +353,7 @@ internal class DependencyInjectionContainerImpl(
 
     private val callingSDKEventHandler by lazy {
         CallingSDKEventHandler(
+            applicationContext,
             coroutineContextProvider,
             localOptions?.audioVideoMode ?: CallCompositeAudioVideoMode.AUDIO_AND_VIDEO,
         )

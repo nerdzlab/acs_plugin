@@ -3,6 +3,7 @@
 
 package com.acs_plugin.calling.service.sdk
 
+import android.app.Activity
 import android.view.View
 import com.azure.android.communication.calling.CameraFacing
 import com.azure.android.communication.calling.CreateViewOptions
@@ -64,8 +65,8 @@ internal interface CallingSDK {
     fun raiseHand(): CompletableFuture<Void>
     fun lowerHand(): CompletableFuture<Void>
     fun sendReaction(reactionType: ReactionType): CompletableFuture<Void>
-    fun turnOnShareScreen(): CompletableFuture<Void>
-    fun turnOffShareScreen(): CompletableFuture<Void>
+    fun turnOnShareScreen(activity: Activity): CompletableFuture<Void>
+    fun turnOffShareScreen(activity: Activity): CompletableFuture<Void>
 
     // State.
     fun getLocalVideoStream(): CompletableFuture<LocalVideoStream>

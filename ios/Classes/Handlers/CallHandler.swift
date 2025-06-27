@@ -56,6 +56,7 @@ final class CallHandler: MethodHandler {
             if let arguments = call.arguments as? [String: Any],
                let roomId = arguments["roomId"] as? String,
                let callId = arguments["callId"] as? String,
+               let shareURL = arguments["shareURL"] as? String,
                let whiteBoardId = arguments["whiteBoardId"] as? String,
                let isChatEnable = arguments["isChatEnable"] as? Bool,
                let isRejoin = arguments["isRejoin"] as? Bool
@@ -66,6 +67,7 @@ final class CallHandler: MethodHandler {
                     whiteBoardId: whiteBoardId,
                     isChatEnable: isChatEnable,
                     isRejoin: isRejoin,
+                    shareURLString: shareURL,
                     result: result
                 )
             } else {
@@ -91,6 +93,7 @@ final class CallHandler: MethodHandler {
         case Constants.MethodChannels.startTeamsMeetingCall:
             if let arguments = call.arguments as? [String: Any],
                let callId = arguments["callId"] as? String,
+               let shareURL = arguments["shareURL"] as? String,
                let meetingLink = arguments["meetingLink"] as? String,
                let whiteBoardId = arguments["whiteBoardId"] as? String,
                let isChatEnable = arguments["isChatEnable"] as? Bool,
@@ -102,6 +105,7 @@ final class CallHandler: MethodHandler {
                     whiteBoardId: whiteBoardId,
                     isChatEnable: isChatEnable,
                     isRejoin: isRejoin,
+                    shareURLString: shareURL,
                     result: result
                 )
             } else {
@@ -121,6 +125,7 @@ final class CallHandler: MethodHandler {
         whiteBoardId: String,
         isChatEnable: Bool,
         isRejoin: Bool,
+        shareURLString: String?,
         result: @escaping FlutterResult
     ) {
         let localOptions = LocalOptions(
@@ -129,7 +134,8 @@ final class CallHandler: MethodHandler {
             microphoneOn: true,
             skipSetupScreen: isRejoin,
             whiteBoardId: whiteBoardId,
-            callId: callId
+            callId: callId,
+            shareURLString: shareURLString
         )
         
         onGetllComposite()?.launch(locator: .roomCall(roomId: roomId), localOptions: localOptions)
@@ -141,6 +147,7 @@ final class CallHandler: MethodHandler {
         whiteBoardId: String,
         isChatEnable: Bool,
         isRejoin: Bool,
+        shareURLString: String?,
         result: @escaping FlutterResult
     ) {
         let localOptions = LocalOptions(
@@ -149,7 +156,8 @@ final class CallHandler: MethodHandler {
             microphoneOn: true,
             skipSetupScreen: isRejoin,
             whiteBoardId: whiteBoardId,
-            callId: callId
+            callId: callId,
+            shareURLString: shareURLString
         )
         
         onGetllComposite()?.launch(locator: .teamsMeeting(teamsLink: meetingLink), localOptions: localOptions)

@@ -419,11 +419,12 @@ public class CallComposite {
         self.viewController = viewController
         present(viewController)
         UIApplication.shared.isIdleTimerDisabled = true
-        if store.state.permissionState.audioPermission == .notAsked {
-            store.dispatch(action: .permissionAction(.audioPermissionRequested))
-        } else {
-            store.dispatch(action: .callingAction(.setupCall))
-        }
+        // If you rely on reducers, the call wont work correctly for incomming calls
+        //        if store.state.permissionState.audioPermission == .notAsked {
+        //            store.dispatch(action: .permissionAction(.audioPermissionRequested))
+        //        } else {
+        store.dispatch(action: .callingAction(.setupCall))
+        //        }
         compositeUILaunched = true
     }
     

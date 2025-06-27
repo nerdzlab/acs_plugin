@@ -3,6 +3,7 @@
 
 package com.acs_plugin.calling.service
 
+import android.app.Activity
 import com.acs_plugin.calling.logger.Logger
 import com.acs_plugin.calling.models.CallCompositeCaptionsData
 import com.acs_plugin.calling.models.CallCompositeCaptionsType
@@ -265,12 +266,12 @@ internal class CallingService(
         return callingSdk.sendReaction(reactionType)
     }
 
-    fun turnOnShareScreen(): CompletableFuture<Void> {
-        return callingSdk.turnOnShareScreen()
+    fun turnOnShareScreen(activity: Activity): CompletableFuture<Void> {
+        return callingSdk.turnOnShareScreen(activity)
     }
 
-    fun turnOffShareScreen(): CompletableFuture<Void> {
-        return callingSdk.turnOffShareScreen()
+    fun turnOffShareScreen(activity: Activity): CompletableFuture<Void> {
+        return callingSdk.turnOffShareScreen(activity)
     }
 
     fun getCaptionsSupportedSpokenLanguagesSharedFlow(): SharedFlow<List<String>> {

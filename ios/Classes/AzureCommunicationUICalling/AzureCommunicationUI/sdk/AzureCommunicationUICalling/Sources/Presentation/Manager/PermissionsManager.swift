@@ -132,7 +132,6 @@ private extension PermissionsManager {
 
     func requestAudioPermissions() -> Future<AppPermission.Status, Never> {
         return Future { promise in
-
             AVAudioSession.sharedInstance().requestRecordPermission { [weak self] _ in
                 promise(Result.success(self?.getAudioPermissionStatus() ?? .unknown))
             }
@@ -141,9 +140,7 @@ private extension PermissionsManager {
 
     func requestVideoPermissions() -> Future<AppPermission.Status, Never> {
         return Future { promise in
-
             AVCaptureDevice.requestAccess(for: .video) { [weak self] _ in
-
                 promise(Result.success(self?.getVideoPermissionStatus() ?? .unknown))
             }
         }

@@ -258,14 +258,16 @@ internal class ControlBarViewModel(
         capabilities: Set<ParticipantCapabilityType>,
         cameraButton: DefaultButtonState?,
     ): Boolean {
-        return cameraButton?.isEnabled ?: true &&
-            permissionState.cameraPermissionState != PermissionStatus.DENIED &&
-            callingStatus == CallingStatus.CONNECTED &&
-            operation != CameraOperationalStatus.PENDING &&
-            capabilitiesManager.hasCapability(
-                capabilities,
-                ParticipantCapabilityType.TURN_VIDEO_ON,
-            )
+        // TODO HOTFIX for camera permissions
+//        return cameraButton?.isEnabled ?: true &&
+//            permissionState.cameraPermissionState != PermissionStatus.DENIED &&
+//            callingStatus == CallingStatus.CONNECTED &&
+//            operation != CameraOperationalStatus.PENDING &&
+//            capabilitiesManager.hasCapability(
+//                capabilities,
+//                ParticipantCapabilityType.TURN_VIDEO_ON,
+//            )
+        return true
     }
 
     private fun shouldMicBeEnabled(

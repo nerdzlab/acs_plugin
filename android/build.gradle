@@ -96,10 +96,39 @@ android {
     sourceSets {
         main.java.srcDirs += "src/main/kotlin"
         test.java.srcDirs += "src/test/kotlin"
+
+        // Configure source sets for different build types
+        debug {
+            // Debug will use the google-services.json from src/debug/
+        }
+        stage {
+            // Stage will use the google-services.json from src/stage/
+        }
+
     }
 
     defaultConfig {
         minSdk = 28
+    }
+
+    buildTypes {
+        debug {
+            // Default debug configuration
+            debuggable true
+        }
+
+        stage {
+            initWith release
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+        }
+
+        release {
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+        }
     }
 
     dependencies {
@@ -112,9 +141,9 @@ android {
             useJUnitPlatform()
 
             testLogging {
-               events "passed", "skipped", "failed", "standardOut", "standardError"
-               outputs.upToDateWhen {false}
-               showStandardStreams = true
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen { false }
+                showStandardStreams = true
             }
         }
     }
@@ -137,7 +166,7 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:$androidx_fragment_ktx_version"
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_layout_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$androidx_navigation_fragment_ktx_version"
-    api ("com.azure.android:azure-communication-calling:$azure_calling_sdk_version")
+    api("com.azure.android:azure-communication-calling:$azure_calling_sdk_version")
     api("com.azure.android:azure-communication-chat:$azure_chat_sdk_version")
     api("com.azure.android:azure-communication-common:$azure_common_sdk_version")
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_lifecycle_viewmodel_ktx_version"
@@ -146,7 +175,7 @@ dependencies {
     implementation "com.microsoft.fluentui:fluentui_persona:$microsoft_fluent_ui_version"
     implementation "com.microsoft.fluentui:fluentui_transients:$microsoft_fluent_ui_version"
 
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 
     api 'com.jakewharton.threetenabp:threetenabp:1.4.4'
 

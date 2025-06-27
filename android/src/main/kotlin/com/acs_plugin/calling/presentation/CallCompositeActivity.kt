@@ -5,13 +5,14 @@ package com.acs_plugin.calling.presentation
 
 import android.annotation.SuppressLint
 import android.app.PictureInPictureParams
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
-import android.util.LayoutDirection
 import android.util.Rational
 import android.view.MenuItem
 import android.view.View
@@ -27,7 +28,6 @@ import androidx.lifecycle.lifecycleScope
 import com.acs_plugin.R
 import com.acs_plugin.calling.CallCompositeException
 import com.acs_plugin.calling.CallCompositeInstanceManager
-import com.acs_plugin.calling.models.CallCompositeSupportedLocale
 import com.acs_plugin.calling.models.CallCompositeSupportedScreenOrientation
 import com.acs_plugin.calling.models.CallCompositeUserReportedIssueEvent
 import com.acs_plugin.calling.onExit
@@ -41,13 +41,17 @@ import com.acs_plugin.calling.redux.action.NavigationAction
 import com.acs_plugin.calling.redux.action.PipAction
 import com.acs_plugin.calling.redux.state.NavigationStatus
 import com.acs_plugin.calling.redux.state.VisibilityStatus
+import com.acs_plugin.calling.service.sdk.CallingSDKWrapper
 import com.acs_plugin.calling.utilities.collect
 import com.acs_plugin.calling.utilities.isKeyboardOpen
 import com.acs_plugin.calling.utilities.isTablet
 import com.acs_plugin.calling.utilities.launchAll
+import com.acs_plugin.consts.PluginConstants
+import com.acs_plugin.data.UserData
 import com.microsoft.fluentui.util.activity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -88,7 +92,35 @@ internal open class CallCompositeActivity : AppCompatActivity() {
     private val compositeExitManager get() = container.compositeExitManager
     private val captionsDataManager get() = container.captionsRttDataManager
     private val updatableOptionsManager get() = container.updatableOptionsManager
+    private val callingSDK get() = container.callingSDKWrapper
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Forward the result to CallingSDKWrapper for screen share handling
+        if (callingSDK is CallingSDKWrapper) {
+            (callingSDK as CallingSDKWrapper).handleActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+
     private lateinit var visibilityStatusFlow: MutableStateFlow<VisibilityStatus>
+
+    private val sharedPreferences: SharedPreferences by lazy {
+        this@CallCompositeActivity.getSharedPreferences(PluginConstants.Prefs.PREFS_NAME, MODE_PRIVATE)
+    }
+
+    private val userData: UserData?
+        get() {
+            val json = sharedPreferences.getString(PluginConstants.Prefs.USER_DATA_KEY, null)
+            return json?.let {
+                try {
+                    Json.decodeFromString<UserData>(it)
+                } catch (_: Exception) {
+                    null
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //TODO Lock Portrait mode for the first version
@@ -351,21 +383,11 @@ internal open class CallCompositeActivity : AppCompatActivity() {
     }
 
     private fun configureLocalization() {
-        val config: Configuration = resources.configuration
-        val locale = when (configuration.localizationConfig) {
-            null -> {
-                supportedOSLocale()
-            }
+        val languageCode = userData?.languageCode ?: PluginConstants.Base.DEFAULT_LANGUAGE_CODE
 
-            else -> {
-                configuration.localizationConfig!!.layoutDirection?.let {
-                    window?.decorView?.layoutDirection = it
-                    window?.decorView?.textDirection =
-                        if (it == LayoutDirection.RTL) View.TEXT_DIRECTION_RTL else View.TEXT_DIRECTION_LTR
-                }
-                configuration.localizationConfig!!.locale
-            }
-        }
+        val config: Configuration = resources.configuration
+        val locale = Locale(languageCode)
+
         config.setLocale(locale)
 
         resources.updateConfiguration(config, resources.displayMetrics)
@@ -521,16 +543,16 @@ internal open class CallCompositeActivity : AppCompatActivity() {
             )
     }
 
-    private fun supportedOSLocale(): Locale {
-        val languageCode = Locale.getDefault().language
-        val countryCode = Locale.getDefault().country
-        for (language in CallCompositeSupportedLocale.getSupportedLocales()) {
-            if (language.language == "$languageCode-$countryCode") {
-                return Locale(languageCode, countryCode)
-            }
-        }
-        return Locale.US
-    }
+//    private fun supportedOSLocale(): Locale {
+//        val languageCode = Locale.getDefault().language
+//        val countryCode = Locale.getDefault().country
+//        for (language in CallCompositeSupportedLocale.getSupportedLocales()) {
+//            if (language.language == "$languageCode-$countryCode") {
+//                return Locale(languageCode, countryCode)
+//            }
+//        }
+//        return Locale.US
+//    }
 
     private fun getScreenOrientation(orientation: CallCompositeSupportedScreenOrientation?): Int? {
         return when (orientation) {

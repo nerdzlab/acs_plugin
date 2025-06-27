@@ -41,6 +41,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
     required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
+    required String shareURL,
   }) async {
     await methodChannel.invokeMethod(
       'initializeRoomCall',
@@ -50,6 +51,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         'whiteBoardId': whiteBoardId,
         'isChatEnable': isChatEnable,
         'isRejoin': isRejoin,
+        'shareURL': shareURL,
       },
     );
   }
@@ -61,6 +63,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
     required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
+    required String shareURL,
   }) async {
     await methodChannel.invokeMethod(
       'startTeamsMeetingCall',
@@ -70,6 +73,7 @@ class MethodChannelAcsPlugin extends AcsPluginPlatform {
         'whiteBoardId': whiteBoardId,
         'isChatEnable': isChatEnable,
         'isRejoin': isRejoin,
+        'shareURL': shareURL,
       },
     );
   }

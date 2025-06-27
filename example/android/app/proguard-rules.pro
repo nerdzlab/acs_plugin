@@ -101,3 +101,19 @@
   @com.google.gson.annotations.SerializedName <fields>;
 }
 ##---------------End: Gson  ----------
+
+-dontwarn aQute.bnd.annotation.Resolution
+-dontwarn aQute.bnd.annotation.spi.ServiceProvider
+-dontwarn com.microsoft.device.display.DisplayMask
+-dontwarn com.sun.activation.registries.LogSupport
+-dontwarn com.sun.activation.registries.MailcapFile
+-dontwarn java.awt.datatransfer.DataFlavor
+-dontwarn java.awt.datatransfer.Transferable
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+-dontwarn com.google.android.material.R$id
+
+-keep class com.skype.rt.** {*;}
+-keep class com.azure.** {*;}
+-keep class com.skype.android.** {*;}
+-keep class com.microsoft.media.** {*;}
+-keep class com.microsoft.dl.** {*;}

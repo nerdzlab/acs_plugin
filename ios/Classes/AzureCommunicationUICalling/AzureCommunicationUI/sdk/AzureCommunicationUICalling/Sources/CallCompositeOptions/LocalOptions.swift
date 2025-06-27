@@ -19,8 +19,8 @@ public struct LocalOptions {
     /// White board id
     let whiteBoardId: String?
     
-    let callId: String?
-    
+    let callId: String? // TODO: Check if this is needed, was used to create share URL in Teams meeting call
+    let shareURLString: String? // Needed to share room or team meeting, users can not share one to one call at the moment
     let azureCorrelationId: String?
 
     ///  The CameraOn is used when we skip the setup screen
@@ -65,6 +65,7 @@ public struct LocalOptions {
                 callScreenOptions: CallScreenOptions? = nil,
                 whiteBoardId: String? = nil,
                 callId: String? = nil,
+                shareURLString: String? = nil,
                 azureCorrelationId: String? = nil
     ) {
         self.participantViewData = participantViewData
@@ -79,6 +80,7 @@ public struct LocalOptions {
         self.isChatEnabled = isChatEnable
         self.whiteBoardId = whiteBoardId
         self.callId = callId
+        self.shareURLString = shareURLString
         self.azureCorrelationId = azureCorrelationId
     }
 

@@ -233,9 +233,13 @@ internal class CallingFragment :
         moreCallOptionsListView.start(viewLifecycleOwner)
 
         moreActionsListView = MoreActionsListView(this.requireContext())
-        moreActionsListView.start(viewLifecycleOwner, viewModel.moreActionsListViewModel) {
-            (activity as? MultitaskingCallCompositeActivity)?.hide()
-        }
+        moreActionsListView.start(
+            viewLifecycleOwner = viewLifecycleOwner,
+            viewModel = viewModel.moreActionsListViewModel,
+            openChatCallback = { (activity as? MultitaskingCallCompositeActivity)?.hide() },
+            startScreenShareCallback = { viewModel.startShareScreen(requireActivity()) },
+            stopScreenShareCallback = { viewModel.stopShareScreen(requireActivity()) }
+        )
 
         meetingViewListView = MeetingViewListView(this.requireContext())
         meetingViewListView.start(viewLifecycleOwner, viewModel.meetingViewListViewModel)
@@ -276,7 +280,7 @@ internal class CallingFragment :
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.shareMeetingLinkMutableFlow.collect {
                 if (it.isNotEmpty()) {
-                    IntentUtils.shareText(requireActivity(), getString(R.string.share_meeting_link, it))
+                    IntentUtils.shareText(requireActivity(), it)
                 }
             }
         }

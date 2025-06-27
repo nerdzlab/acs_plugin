@@ -35,7 +35,8 @@ internal class ParticipantListViewModel(
         displayParticipantMenuCallback: (userIdentifier: String, displayName: String?) -> Unit,
         totalParticipantCountExceptHidden: Int,
     ) {
-        sharingMeetingLinkVisibilityMutableStateFlow = MutableStateFlow(callType != CallType.TEAMS_MEETING)
+        val isSharingLinkVisible = callType != CallType.TEAMS_MEETING && callType != CallType.ONE_TO_ONE_INCOMING && callType != CallType.ONE_TO_N_OUTGOING
+        sharingMeetingLinkVisibilityMutableStateFlow = MutableStateFlow(isSharingLinkVisible)
 
         val remoteParticipantList: List<ParticipantListCellModel> =
             participantMap.values.map {
@@ -61,7 +62,8 @@ internal class ParticipantListViewModel(
         canShowLobby: Boolean,
         totalParticipantCountExceptHidden: Int,
     ) {
-        sharingMeetingLinkVisibilityMutableStateFlow.value = callType != CallType.TEAMS_MEETING
+        val isSharingLinkVisible = callType != CallType.TEAMS_MEETING && callType != CallType.ONE_TO_ONE_INCOMING && callType != CallType.ONE_TO_N_OUTGOING
+        sharingMeetingLinkVisibilityMutableStateFlow = MutableStateFlow(isSharingLinkVisible)
 
         val remoteParticipantList: MutableList<ParticipantListCellModel> =
             participantMap.values.map {

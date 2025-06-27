@@ -3,6 +3,7 @@
 
 package com.acs_plugin.calling.redux.middleware.handler
 
+import android.app.Activity
 import android.telecom.CallAudioState
 import com.azure.android.communication.calling.CallingCommunicationException
 import com.acs_plugin.calling.configuration.CallCompositeConfiguration
@@ -116,8 +117,8 @@ internal interface CallingMiddlewareActionHandler {
     fun raiseHand(store: Store<ReduxState>)
     fun lowerHand(store: Store<ReduxState>)
     fun sendReaction(reaction: ReactionType, store: Store<ReduxState>)
-    fun turnShareScreenOn(store: Store<ReduxState>)
-    fun turnShareScreenOff(store: Store<ReduxState>)
+    fun turnShareScreenOn(store: Store<ReduxState>, activity: Activity)
+    fun turnShareScreenOff(store: Store<ReduxState>, activity: Activity)
 }
 
 internal class CallingMiddlewareActionHandlerImpl(
@@ -1103,8 +1104,8 @@ internal class CallingMiddlewareActionHandlerImpl(
         }
     }
 
-    override fun turnShareScreenOn(store: Store<ReduxState>) {
-        callingService.turnOnShareScreen().whenComplete { _, error ->
+    override fun turnShareScreenOn(store: Store<ReduxState>, activity: Activity) {
+        callingService.turnOnShareScreen(activity).whenComplete { _, error ->
             if (error != null) {
                 store.dispatch(
                     LocalParticipantAction.ShareScreenFailed(
@@ -1117,8 +1118,8 @@ internal class CallingMiddlewareActionHandlerImpl(
         }
     }
 
-    override fun turnShareScreenOff(store: Store<ReduxState>) {
-        callingService.turnOffShareScreen().whenComplete { _, error ->
+    override fun turnShareScreenOff(store: Store<ReduxState>, activity: Activity) {
+        callingService.turnOffShareScreen(activity).whenComplete { _, error ->
             if (error != null) {
                 store.dispatch(
                     LocalParticipantAction.StopShareScreenFailed(

@@ -5,6 +5,7 @@
 
 import Combine
 import Foundation
+import AVFoundation
 
 // swiftlint:disable file_length
 protocol CallingMiddlewareHandling {
@@ -196,13 +197,15 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
         Task {
             do {
                 try await callingService.setupCall()
-                if state.defaultUserState.cameraState == .on,
-                   state.errorState.internalError == nil {
+                
+                if state.defaultUserState.cameraState == .on, state.errorState.internalError == nil {
                     await requestCameraPreviewOn(state: state, dispatch: dispatch).value
                 }
+                
                 if state.defaultUserState.audioState == .on {
                     dispatch(.localUserAction(.microphonePreviewOn))
                 }
+                
                 if state.callingState.operationStatus == .skipSetupRequested {
                     dispatch(.callingAction(.callStartRequested))
                 }
@@ -471,8 +474,15 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
     func requestMicrophoneUnmute(state: AppState, dispatch: @escaping ActionDispatch) -> Task<Void, Never> {
         Task {
             do {
+                await withCheckedContinuation { continuation in
+                    AVAudioSession.sharedInstance().requestRecordPermission { _ in
+                        continuation.resume(returning: ())
+                    }
+                }
+                
                 try await callingService.unmuteLocalMic()
-            } catch {
+            }
+            catch {
                 dispatch(.localUserAction(.microphoneOnFailed(error: error)))
             }
         }
@@ -488,9 +498,11 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             case .local:
                 if state.navigationState.status == .inCall {
                     dispatch(.localUserAction(.cameraOnTriggered))
-                } else {
+                }
+                else {
                     dispatch(.localUserAction(.cameraPreviewOnTriggered))
                 }
+                
             case .remote:
                 dispatch(.localUserAction(.cameraOnTriggered))
             }
@@ -502,7 +514,9 @@ class CallingMiddlewareHandler: CallingMiddlewareHandling {
             guard state.permissionState.audioPermission == .requesting else {
                 return
             }
-            _ = setupCall(state: state, dispatch: dispatch)
+            
+            // Works incorrectly with incomming calls
+//            _ = setupCall(state: state, dispatch: dispatch)
         }
     }
     

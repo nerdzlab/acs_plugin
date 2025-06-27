@@ -101,3 +101,64 @@
   @com.google.gson.annotations.SerializedName <fields>;
 }
 ##---------------End: Gson  ----------
+
+# XML Pull Parser and Android XML handling
+-keep class org.xmlpull.v1.** { *; }
+-keep class android.content.res.XmlResourceParser { *; }
+-dontwarn org.xmlpull.v1.**
+-dontwarn android.content.res.XmlResourceParser
+
+# Keep XML Stream API classes
+-keep class javax.xml.stream.** { *; }
+-dontwarn javax.xml.stream.**
+
+# Keep XML parser implementations and interfaces
+-keep class * implements org.xmlpull.v1.XmlPullParser { *; }
+-keep class * implements org.xmlpull.v1.XmlPullParserFactory { *; }
+-keep class * implements javax.xml.stream.XMLInputFactory { *; }
+-keep class * implements javax.xml.stream.XMLOutputFactory { *; }
+-keep class * implements javax.xml.stream.XMLEventFactory { *; }
+
+# Azure SDK specific rules
+-keep class com.azure.** { *; }
+-dontwarn com.azure.**
+-keep class com.microsoft.** { *; }
+-dontwarn com.microsoft.**
+
+# Firebase and Google services
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+
+# Kotlinx serialization
+-keep class kotlinx.serialization.** { *; }
+-dontwarn kotlinx.serialization.**
+
+# Three Ten ABP (Date/Time handling)
+-keep class org.threeten.bp.** { *; }
+-dontwarn org.threeten.bp.**
+-keep class com.jakewharton.threetenabp.** { *; }
+-dontwarn com.jakewharton.threetenabp.**
+
+# General Android and support library rules
+-dontwarn android.**
+-dontwarn androidx.**
+-keep class androidx.** { *; }
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn aQute.bnd.annotation.Resolution
+-dontwarn aQute.bnd.annotation.spi.ServiceProvider
+-dontwarn com.microsoft.device.display.DisplayMask
+-dontwarn com.sun.activation.registries.LogSupport
+-dontwarn com.sun.activation.registries.MailcapFile
+-dontwarn java.awt.datatransfer.DataFlavor
+-dontwarn java.awt.datatransfer.Transferable
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+-dontwarn com.google.android.material.R$id
+
+-keep class com.skype.rt.** {*;}
+-keep class com.azure.** {*;}
+-keep class com.skype.android.** {*;}
+-keep class com.microsoft.media.** {*;}
+-keep class com.microsoft.dl.** {*;}

@@ -9,63 +9,38 @@ import kotlinx.coroutines.flow.SharedFlow
 /*  <CALL_START_TIME>
 import java.util.Date
 </CALL_START_TIME> */
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.media.projection.MediaProjectionManager
+import android.util.DisplayMetrics
+import android.util.Log
+import androidx.core.content.ContextCompat
 import com.acs_plugin.calling.CallCompositeException
 import com.acs_plugin.calling.configuration.CallConfiguration
 import com.acs_plugin.calling.configuration.CallType
 import com.acs_plugin.calling.logger.Logger
-import com.acs_plugin.calling.models.CallCompositeCaptionsOptions
-import com.acs_plugin.calling.models.CallCompositeLobbyErrorCode
+import com.acs_plugin.calling.models.*
 import com.acs_plugin.calling.models.ParticipantCapabilityType
-import com.acs_plugin.calling.models.ParticipantInfoModel
-import com.acs_plugin.calling.models.ReactionMessage
-import com.acs_plugin.calling.models.ReactionPayload
 import com.acs_plugin.calling.presentation.fragment.calling.moreactions.data.ReactionType
-import com.acs_plugin.calling.redux.state.AudioOperationalStatus
-import com.acs_plugin.calling.redux.state.AudioState
-import com.acs_plugin.calling.redux.state.CameraDeviceSelectionStatus
-import com.acs_plugin.calling.redux.state.CameraOperationalStatus
-import com.acs_plugin.calling.redux.state.CameraState
-import com.acs_plugin.calling.redux.state.NoiseSuppressionStatus
+import com.acs_plugin.calling.redux.state.*
 import com.acs_plugin.calling.utilities.isAndroidTV
 import com.acs_plugin.calling.utilities.toJavaUtil
-import com.azure.android.communication.calling.AcceptCallOptions
-import com.azure.android.communication.calling.BackgroundBlurEffect
-import com.azure.android.communication.calling.Call
-import com.azure.android.communication.calling.CallAgent
-import com.azure.android.communication.calling.CallClient
-import com.azure.android.communication.calling.CallingCommunicationException
-import com.azure.android.communication.calling.CameraFacing
-import com.azure.android.communication.calling.CapabilitiesCallFeature
-import com.azure.android.communication.calling.DataChannelPriority
-import com.azure.android.communication.calling.DataChannelReliability
-import com.azure.android.communication.calling.DataChannelSenderOptions
-import com.azure.android.communication.calling.DeviceManager
-import com.azure.android.communication.calling.Features
-import com.azure.android.communication.calling.GroupCallLocator
-import com.azure.android.communication.calling.HangUpOptions
-import com.azure.android.communication.calling.JoinCallOptions
-import com.azure.android.communication.calling.JoinMeetingLocator
-import com.azure.android.communication.calling.NoiseSuppressionMode
-import com.azure.android.communication.calling.OutgoingAudioFilters
-import com.azure.android.communication.calling.OutgoingAudioOptions
-import com.azure.android.communication.calling.OutgoingVideoOptions
-import com.azure.android.communication.calling.RaiseHandCallFeature
-import com.azure.android.communication.calling.RoomCallLocator
-import com.azure.android.communication.calling.StartCallOptions
-import com.azure.android.communication.calling.StartCaptionsOptions
-import com.azure.android.communication.calling.TeamsCaptions
-import com.azure.android.communication.calling.TeamsMeetingIdLocator
-import com.azure.android.communication.calling.TeamsMeetingLinkLocator
-import com.azure.android.communication.calling.VideoDevicesUpdatedListener
+import com.acs_plugin.utils.DisplaySize
+import com.acs_plugin.utils.ScreenShareEventHandler
+import com.acs_plugin.utils.ScreenShareEventHandlerImpl
+import com.acs_plugin.utils.ScreenShareService
+import com.azure.android.communication.calling.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
 import java.io.File
-import java.util.Collections
+import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.math.abs
+import kotlin.math.ceil
 import com.azure.android.communication.calling.LocalVideoStream as NativeLocalVideoStream
 
 internal class CallingSDKWrapper(
@@ -76,12 +51,15 @@ internal class CallingSDKWrapper(
     private val callingSDKInitializer: CallingSDKInitializer,
     private val compositeCaptionsOptions: CallCompositeCaptionsOptions? = null,
     private val localUserIdentifier: String?,
+    // Add the screen share event handler
+    private val screenShareEventHandler: ScreenShareEventHandler
     /* <END_CALL_FOR_ALL>
     private val isOnCallEndTerminateForAll: Boolean = false,
     </END_CALL_FOR_ALL> */
 ) : CallingSDK {
     private var nullableCall: Call? = null
     private var callClient: CallClient? = null
+    private var activity: Activity? = null
 
     private var deviceManagerCompletableFuture: CompletableFuture<DeviceManager>? = null
     private var localVideoStreamCompletableFuture: CompletableFuture<LocalVideoStream>? = null
@@ -91,6 +69,11 @@ internal class CallingSDKWrapper(
 
     private var videoDevicesUpdatedListener: VideoDevicesUpdatedListener? = null
     private var camerasCountStateFlow = MutableStateFlow(0)
+
+    private var mediaProjectionManager: MediaProjectionManager? = null
+
+    private val maxWidth = 1920.0
+    private val maxHeight = 1080.0
 
     private val callConfig: CallConfiguration
         get() {
@@ -132,7 +115,8 @@ internal class CallingSDKWrapper(
     override fun getLocalParticipantRoleSharedFlow() =
         callingSDKEventHandler.getCallParticipantRoleSharedFlow()
 
-    override fun getTotalRemoteParticipantCountSharedFlow() = callingSDKEventHandler.getTotalRemoteParticipantCountSharedFlow()
+    override fun getTotalRemoteParticipantCountSharedFlow() =
+        callingSDKEventHandler.getTotalRemoteParticipantCountSharedFlow()
 
     override fun getCapabilitiesChangedEventSharedFlow() =
         callingSDKEventHandler.getCallCapabilitiesEventSharedFlow()
@@ -777,11 +761,44 @@ internal class CallingSDKWrapper(
         return completableFuture
     }
 
-    override fun turnOnShareScreen(): CompletableFuture<Void> {
+    override fun turnOnShareScreen(activity: Activity): CompletableFuture<Void> {
+        this.activity = activity
         val completableFuture = CompletableFuture<Void>()
 
+        ScreenShareService.activeCall = call
+
         try {
-            //TODO Add screen share logic
+            mediaProjectionManager =
+                activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+            val screenCaptureIntent = mediaProjectionManager!!.createScreenCaptureIntent()
+
+            // Start the permission request
+            activity.startActivityForResult(screenCaptureIntent, ScreenShareEventHandlerImpl.REQUEST_MEDIA_PROJECTION)
+
+            // Wait for the result via our event handler
+            if (screenShareEventHandler is ScreenShareEventHandlerImpl) {
+                screenShareEventHandler.requestMediaProjectionPermission().thenAccept { (resultCode, data) ->
+                    if (resultCode == Activity.RESULT_OK && data != null) {
+                        try {
+                            startScreenShareService(activity, resultCode, data)
+                            completableFuture.complete(null)
+                        } catch (e: Exception) {
+                            completableFuture.completeExceptionally(e)
+                        }
+                    } else {
+                        completableFuture.completeExceptionally(
+                            IllegalStateException("MediaProjection permission denied")
+                        )
+                    }
+                }.exceptionally { throwable ->
+                    completableFuture.completeExceptionally(throwable)
+                    null
+                }
+            } else {
+                completableFuture.completeExceptionally(
+                    IllegalStateException("Invalid screen share event handler")
+                )
+            }
         } catch (e: Exception) {
             completableFuture.completeExceptionally(e)
         }
@@ -789,17 +806,62 @@ internal class CallingSDKWrapper(
         return completableFuture
     }
 
-    override fun turnOffShareScreen(): CompletableFuture<Void> {
+    override fun turnOffShareScreen(activity: Activity): CompletableFuture<Void> {
         val completableFuture = CompletableFuture<Void>()
 
         try {
-            //TODO Add stop screen sharing logic
+            val serviceIntent = Intent(activity, ScreenShareService::class.java).apply {
+                action = ScreenShareService.ACTION_STOP_SCREEN_SHARE
+            }
+            activity.stopService(serviceIntent)
+            completableFuture.complete(null)
         } catch (e: Exception) {
             completableFuture.completeExceptionally(e)
         }
 
         return completableFuture
     }
+
+    private fun startScreenShareService(context: Context, resultCode: Int, data: Intent) {
+        val displaySize = getDisplaySize()
+        val serviceIntent = Intent(context, ScreenShareService::class.java).apply {
+            action = ScreenShareService.ACTION_START_SCREEN_SHARE
+            putExtra(ScreenShareService.EXTRA_RESULT_CODE, resultCode)
+            putExtra(ScreenShareService.EXTRA_RESULT_DATA, data)
+            putExtra(ScreenShareService.EXTRA_WIDTH, displaySize.width)
+            putExtra(ScreenShareService.EXTRA_HEIGHT, displaySize.height)
+            putExtra(ScreenShareService.EXTRA_FRAME_RATE, 30)
+        }
+        ContextCompat.startForegroundService(context, serviceIntent)
+    }
+
+    // Method to be called from Activity's onActivityResult
+    fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        screenShareEventHandler.onMediaProjectionResult(requestCode, resultCode, data)
+    }
+
+    private fun getDisplaySize(): DisplaySize {
+        val displayMetrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
+        var width = displayMetrics.widthPixels
+        var height = displayMetrics.heightPixels
+
+        if (height > maxHeight) {
+            val percentage = abs((maxHeight / height) - 1)
+            width = ceil((width * percentage)).toInt()
+            height = maxHeight.toInt()
+        }
+
+        if (width > maxWidth) {
+            val percentage = abs((maxWidth / width) - 1)
+            height = ceil((height * percentage)).toInt()
+            width = maxWidth.toInt()
+        }
+
+        return DisplaySize(width, height)
+    }
+
+
     //endregion
 
     private fun createCallAgent(): CompletableFuture<CallAgent> {
@@ -854,6 +916,7 @@ internal class CallingSDKWrapper(
                         )
                     }
                 }
+
                 CallType.ROOMS_CALL -> RoomCallLocator(callConfig.roomId)
                 else -> {
                     throw CallCompositeException(
@@ -944,7 +1007,7 @@ internal class CallingSDKWrapper(
 
     private fun doFrontAndBackCamerasExist(): Boolean {
         return getCamera(CameraFacing.FRONT) != null &&
-            getCamera(CameraFacing.BACK) != null
+                getCamera(CameraFacing.BACK) != null
     }
 
     private fun getCamera(
@@ -1022,6 +1085,7 @@ internal class CallingSDKWrapper(
                                             "Not supported camera facing type"
                                         )
                                     )
+
                                     else -> result.complete(cameraDeviceSelectionStatus)
                                 }
                             }
@@ -1073,6 +1137,7 @@ internal class CallingSDKWrapper(
                                             "Not supported camera facing type"
                                         )
                                     )
+
                                     else -> result.complete(cameraDeviceSelectionStatus)
                                 }
                             }

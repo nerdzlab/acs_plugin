@@ -33,6 +33,7 @@ import com.acs_plugin.calling.redux.state.ReduxState
 import com.acs_plugin.calling.service.CallHistoryService
 import com.acs_plugin.calling.service.CallingService
 import com.acs_plugin.calling.service.NotificationService
+import com.acs_plugin.calling.service.sdk.CallingSDK
 import java.lang.ref.WeakReference
 
 // Dependency Container for the Call Composite Activity
@@ -88,4 +89,5 @@ internal interface DependencyInjectionContainer {
     val captionsRttDataManager: CaptionsRttDataManager
 
     val updatableOptionsManager: UpdatableOptionsManager
+    val callingSDKWrapper: CallingSDK
 }

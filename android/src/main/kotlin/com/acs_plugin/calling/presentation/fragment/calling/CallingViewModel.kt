@@ -3,6 +3,7 @@
 
 package com.acs_plugin.calling.presentation.fragment.calling
 
+import android.app.Activity
 import android.util.Log
 import com.acs_plugin.calling.configuration.CallType
 import com.acs_plugin.calling.models.CallCompositeAudioVideoMode
@@ -18,11 +19,13 @@ import com.acs_plugin.calling.presentation.manager.CapabilitiesManager
 import com.acs_plugin.calling.presentation.manager.NetworkManager
 import com.acs_plugin.calling.redux.Store
 import com.acs_plugin.calling.redux.action.CallingAction
+import com.acs_plugin.calling.redux.action.LocalParticipantAction
 import com.acs_plugin.calling.redux.action.ParticipantAction
 import com.acs_plugin.calling.redux.action.RttAction
 import com.acs_plugin.calling.redux.state.CallingStatus
 import com.acs_plugin.calling.redux.state.CaptionsStatus
 import com.acs_plugin.calling.redux.state.LifecycleStatus
+import com.acs_plugin.calling.redux.state.MeetingViewMode
 import com.acs_plugin.calling.redux.state.PermissionStatus
 import com.acs_plugin.calling.redux.state.ReduxState
 import com.acs_plugin.calling.redux.state.RttState
@@ -105,7 +108,7 @@ internal class CallingViewModel(
     }
 
     fun onShareMeetingLinkClicked() {
-        _shareMeetingLinkMutableFlow.tryEmit(store.getCurrentState().callState.callIdForSharing.orEmpty())
+        store.getCurrentState().callState.callShareLink?.let { _shareMeetingLinkMutableFlow.tryEmit(it) }
     }
 
     override fun init(coroutineScope: CoroutineScope) {
@@ -499,6 +502,14 @@ internal class CallingViewModel(
         )
 
         meetingViewListViewModel.update(meetingViewMode = state.localParticipantState.meetingViewMode)
+    }
+
+    fun startShareScreen(activity: Activity) {
+        dispatchAction(LocalParticipantAction.ShareScreenTriggered(activity))
+    }
+
+    fun stopShareScreen(activity: Activity) {
+        dispatchAction(LocalParticipantAction.StopShareScreenTriggered(activity))
     }
 
     private fun getLobbyParticipantsForHeader(state: ReduxState) =

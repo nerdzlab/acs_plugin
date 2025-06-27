@@ -62,8 +62,6 @@ class ChatHandler(
             }
         }
 
-
-
     private var chatEndpoint: String?
         get() = sharedPreferences.getString(PluginConstants.Prefs.CHAT_ENDPOINT, null)
         set(value) = sharedPreferences.edit { putString(PluginConstants.Prefs.CHAT_ENDPOINT, value) }

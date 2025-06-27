@@ -42,7 +42,7 @@ internal class CallingViewModel: ObservableObject {
     let layoutOptionsViewModel: LayoutOptionsViewModel
     let meetingOptionsViewModel: MeetingOptionsViewModel
     var onHoldOverlayViewModel: OnHoldOverlayViewModel!
-    var shareMeetingLinkViewModel: ShareMeetingInfoActivityViewModel!
+    var shareMeetingLinkViewModel: ShareMeetingInfoActivityViewModel? // One to one meetings could not be shared
     let isRightToLeft: Bool
     let whiteBoardId: String?
     var azureCorrelationId: String?

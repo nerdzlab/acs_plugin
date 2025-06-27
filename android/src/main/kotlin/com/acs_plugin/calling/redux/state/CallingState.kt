@@ -40,7 +40,7 @@ internal data class CallingState(
     val callEndReasonCode: Int? = null,
     val callEndReasonSubCode: Int? = null,
     var whiteboardId: String? = null,
-    var callIdForSharing: String? = null,
+    var callShareLink: String? = null,
     /*  <CALL_START_TIME>
     val callStartTime: Date? = null,
     </CALL_START_TIME> */

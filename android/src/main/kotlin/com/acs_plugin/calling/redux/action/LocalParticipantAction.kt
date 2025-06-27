@@ -3,6 +3,7 @@
 
 package com.acs_plugin.calling.redux.action
 
+import android.app.Activity
 import com.acs_plugin.calling.error.CallCompositeError
 import com.acs_plugin.calling.models.ParticipantCapabilityType
 import com.acs_plugin.calling.models.ParticipantRole
@@ -105,11 +106,11 @@ internal sealed class LocalParticipantAction : Action {
     object SendReactionSucceeded : LocalParticipantAction()
     data class SendReactionFailed(val error: CallCompositeError) : LocalParticipantAction()
 
-    class ShareScreenTriggered : LocalParticipantAction()
+    data class ShareScreenTriggered(val activity: Activity) : LocalParticipantAction()
     object ShareScreenSucceeded : LocalParticipantAction()
     data class ShareScreenFailed(val error: CallCompositeError) : LocalParticipantAction()
 
-    class StopShareScreenTriggered : LocalParticipantAction()
+    data class StopShareScreenTriggered(val activity: Activity) : LocalParticipantAction()
     object StopShareScreenSucceeded : LocalParticipantAction()
     data class StopShareScreenFailed(val error: CallCompositeError) : LocalParticipantAction()
 

@@ -2,6 +2,10 @@ package com.acs_plugin.consts
 
 object PluginConstants {
 
+    object Base {
+        const val DEFAULT_LANGUAGE_CODE = "nl"
+    }
+
     object MethodChannels {
         const val SETUP_CHAT_SERVICE = "setupChatService"
         const val DISCONNECT_CHAT_SERVICE = "disconnectChatService"
@@ -51,6 +55,7 @@ object PluginConstants {
         const val PREFS_NAME = "user_data_prefs"
         const val USER_DATA_KEY = "user_data"
         const val CHAT_ENDPOINT = "chat_endpoint"
+        const val SELECTED_LANGUAGE = "selected_language"
     }
 
     object Arguments {
@@ -73,6 +78,8 @@ object PluginConstants {
         const val PARTICIPANTS_ID = "participantsId"
         const val PUSH_NOTIFICATION_DATA = "push_notification_data"
         const val ACTION_TYPE = "action_type"
+        const val LANGUAGE_CODE = "languageCode"
+        const val SHARE_URL = "shareURL"
     }
 
     object JsonKeys {

@@ -105,7 +105,6 @@ internal class MoreActionsListViewModel(
 
     fun onActionClicked(actionType: MoreActionType) {
         when (actionType) {
-            MoreActionType.CHAT -> FlutterEventDispatcher.sendEvent(PluginConstants.FlutterEvents.ON_SHOW_CHAT)
             MoreActionType.PARTICIPANTS -> displayParticipantListCallback.invoke()
             MoreActionType.BLUR_ON -> dispatch(LocalParticipantAction.BlurPreviewOnTriggered())
             MoreActionType.BLUR_OFF -> dispatch(LocalParticipantAction.BlurPreviewOffTriggered())
@@ -113,8 +112,7 @@ internal class MoreActionsListViewModel(
             MoreActionType.LOWER_HAND -> dispatch(LocalParticipantAction.LowerHandTriggered())
             MoreActionType.CHANGE_GALLERY_VIEW -> displayMeetingViewListCallback.invoke()
             MoreActionType.CHANGE_SPEAKER_VIEW -> displayMeetingViewListCallback.invoke()
-            MoreActionType.SHARE_SCREEN -> dispatch(LocalParticipantAction.ShareScreenTriggered())
-            MoreActionType.STOP_SHARE_SCREEN -> dispatch(LocalParticipantAction.StopShareScreenTriggered())
+            else -> Unit
         }
     }
 
@@ -160,7 +158,7 @@ internal class MoreActionsListViewModel(
             if (shareScreenStatus == ShareScreenStatus.ON) {
                 add(MoreActionType.STOP_SHARE_SCREEN.mapToMoreActionItem())
             } else {
-                add(MoreActionType.SHARE_SCREEN.mapToMoreActionItem().apply { isEnabled = false }) //TODO Enabled after feature implementation
+                add(MoreActionType.SHARE_SCREEN.mapToMoreActionItem())
             }
         }
     }

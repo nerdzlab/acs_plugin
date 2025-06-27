@@ -141,7 +141,7 @@ protocol CompositeViewModelFactoryProtocol {
     
     func makeDebugInfoSharingActivityViewModel() -> DebugInfoSharingActivityViewModel
     
-    func makeShareMeetingInfoActivityViewModel() -> ShareMeetingInfoActivityViewModel
+    func makeShareMeetingInfoActivityViewModel() -> ShareMeetingInfoActivityViewModel? // returns nil when one to one call
     
     func makeToggleListItemViewModel(title: String,
                                      isToggleOn: Binding<Bool>,

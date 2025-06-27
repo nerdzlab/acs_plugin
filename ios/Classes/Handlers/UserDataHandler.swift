@@ -31,16 +31,7 @@ final class UserDataHandler: MethodHandler {
     
     var tokenRefresher: ((@escaping (String?, Error?) -> Void) -> Void)?
     
-    private var userData: UserData? {
-        didSet {
-            guard let userData else { return }
-            UserDefaults.standard.saveUserData(userData)
-            onUserDataReceived(userData)
-            
-            guard let appGroup = UserDefaults.standard.getAppGroupIdentifier() else { return }
-            UserDefaults(suiteName: appGroup)?.setLanguageCode(userData.languageCode)
-        }
-    }
+    private var userData: UserData?
     
     private let onSubscribeToCallCompositeEvents: (CallComposite) -> Void
     private let onUserDataReceived: (UserData) -> Void
@@ -55,11 +46,15 @@ final class UserDataHandler: MethodHandler {
     
     init(
         onSubscribeToCallCompositeEvents: @escaping (CallComposite) -> Void,
-        onUserDataReceived: @escaping (UserData) -> Void,
+        onUserDataReceived: @escaping (UserData) -> Void
     ) {
         self.onSubscribeToCallCompositeEvents = onSubscribeToCallCompositeEvents
         self.onUserDataReceived = onUserDataReceived
+        self.userData = UserDefaults.standard.loadUserData()
         self.setupTokenRefresh()
+        DispatchQueue.main.async {
+            self.initialSetup()
+        }
     }
     
     func handle(call: FlutterMethodCall, result: @escaping FlutterResult) -> Bool {
@@ -73,7 +68,8 @@ final class UserDataHandler: MethodHandler {
                let appToken = arguments["appToken"] as? String,
                let baseUrl = arguments["baseUrl"] as? String
             {
-                self.userData = UserData(
+                let shouldReconfigureComposite = userData == nil || languageCode != userData?.languageCode // reconfigure only if user logouted before or language changed
+                let newUser = UserData(
                     token: token,
                     name: name,
                     userId: userId,
@@ -81,7 +77,19 @@ final class UserDataHandler: MethodHandler {
                     appToken: appToken,
                     baseUrl: baseUrl
                 )
-                self.reconfigureCallComposite()
+                
+                self.userData = newUser
+                
+                self.onUserDataReceived(newUser)
+                
+                UserDefaults.standard.saveUserData(newUser)
+                if let appGroup = UserDefaults.standard.getAppGroupIdentifier(), let languageCode = userData?.languageCode {
+                    UserDefaults(suiteName: appGroup)?.setLanguageCode(languageCode)
+                }
+                
+                if shouldReconfigureComposite {
+                    self.reconfigureCallComposite()
+                }
             }
             else {
                 result(
@@ -96,13 +104,14 @@ final class UserDataHandler: MethodHandler {
             return true
             
         case Constants.MethodChannels.unregisterPushNotifications:
-            getCallComposite()
+            getCallComposite()?.unregisterPushNotifications()
             
             return true
             
         case Constants.MethodChannels.clearUserData:
             userData = nil
-            
+            UserDefaults.standard.clearUserData()
+
             return true
             
         default:
@@ -133,6 +142,13 @@ final class UserDataHandler: MethodHandler {
         
         guard let tokenRefresher else {
             return nil
+        }
+        
+        // Needed to not recreate CallComposite if call in progress
+        if let existingComposite = GlobalCompositeManager.callComposite {
+            if existingComposite.callState == .connected, existingComposite.callState == .connecting {
+                return existingComposite
+            }
         }
         
         let refreshOptions = CommunicationTokenRefreshOptions(
@@ -190,5 +206,13 @@ final class UserDataHandler: MethodHandler {
                 }
             }
         }
+    }
+    
+    private func initialSetup() {
+        guard let userData else {
+            return
+        }
+        
+        onUserDataReceived(userData)
     }
 }

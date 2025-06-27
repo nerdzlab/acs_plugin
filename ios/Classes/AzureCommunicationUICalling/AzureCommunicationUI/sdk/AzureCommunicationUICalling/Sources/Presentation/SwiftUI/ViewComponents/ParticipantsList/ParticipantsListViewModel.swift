@@ -74,7 +74,7 @@ class ParticipantsListViewModel: ObservableObject {
             // Grab the Remote Participants
             let remoteParticipantVMs = remoteParticipantsState.participantInfoList
                 .filter { participant in
-                    participant.status == .connected || participant.status == .hold
+                    (participant.status == .connected || participant.status == .hold) && !participant.isWhiteBoard
                 }.map {
                     let participant = $0
                     return ParticipantsListCellViewModel(participantInfoModel: participant,

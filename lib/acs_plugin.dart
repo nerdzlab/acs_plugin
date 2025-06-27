@@ -87,12 +87,14 @@ class AcsPlugin {
     required bool isChatEnable,
     required String whiteBoardId,
     required bool isRejoin,
+    required String shareURL,
   }) async {
     await AcsPluginPlatform.instance.initializeRoomCall(
       roomId: roomId,
       callId: callId,
       whiteBoardId: whiteBoardId,
       isChatEnable: isChatEnable,
+      shareURL: shareURL,
       isRejoin: isRejoin,
     );
   }
@@ -104,12 +106,14 @@ class AcsPlugin {
     required String whiteBoardId,
     required bool isChatEnable,
     required bool isRejoin,
+    required String shareURL,
   }) async {
     await AcsPluginPlatform.instance.startTeamsMeetingCall(
       meetingLink: meetingLink,
       callId: callId,
       whiteBoardId: whiteBoardId,
       isChatEnable: isChatEnable,
+      shareURL: shareURL,
       isRejoin: isRejoin,
     );
   }

@@ -98,10 +98,10 @@ internal class CallingMiddlewareImpl(
                     }
                 }
                 is LocalParticipantAction.ShareScreenTriggered -> {
-                    callingMiddlewareActionHandler.turnShareScreenOn(store)
+                    callingMiddlewareActionHandler.turnShareScreenOn(store, action.activity)
                 }
                 is LocalParticipantAction.StopShareScreenTriggered -> {
-                    callingMiddlewareActionHandler.turnShareScreenOff(store)
+                    callingMiddlewareActionHandler.turnShareScreenOff(store, action.activity)
                 }
                 is CallingAction.HoldRequested -> {
                     callingMiddlewareActionHandler.hold(store)

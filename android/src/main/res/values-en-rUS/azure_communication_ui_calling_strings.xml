@@ -3,6 +3,34 @@
    Licensed under the MIT License.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <!--    Plugin-->
+    <string name="start_your_call">Start your call</string>
+    <string name="check_your_video_audio">Check your video and audio.</string>
+    <string name="user_name">User Name</string>
+    <string name="choose_audio">Choose audio</string>
+    <string name="turn_off_audio">Turn off the audio</string>
+    <string name="noise_suppression">Noise suppression</string>
+    <string name="participant_list">Participants (%d)</string>
+    <string name="share_meeting_link_title">Share meeting link</string>
+    <string name="chat">Chat</string>
+    <string name="participants">Participants</string>
+    <string name="turn_blur_off">Turn blur off</string>
+    <string name="turn_blur_on">Turn blur on</string>
+    <string name="raise_hand">Raise hand</string>
+    <string name="lower_hand">Lower hand</string>
+    <string name="change_view">Change view</string>
+    <string name="meeting_view">Meeting view</string>
+    <string name="gallery_view">Gallery view</string>
+    <string name="speaker_view">Speaker view</string>
+    <string name="share_screen">Share screen</string>
+    <string name="stop_sharing">Stop sharing</string>
+    <string name="pin_for_me">Pin for me</string>
+    <string name="unpin">Unpin</string>
+    <string name="do_not_show_video">Don\'t show video</string>
+    <string name="show_video">Show video</string>
+    <string name="decline">Decline</string>
+    <string name="accept">Accept</string>
+    <string name="incoming_call">Incoming call</string>
     <!--    Device-->
     <string name="azure_communication_ui_calling_audio_device_drawer_android">Android</string>
     <string name="azure_communication_ui_calling_audio_device_drawer_speaker">Speaker</string>

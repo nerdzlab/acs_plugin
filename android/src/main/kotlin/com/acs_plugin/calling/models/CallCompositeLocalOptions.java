@@ -39,6 +39,7 @@ public final class CallCompositeLocalOptions {
     private boolean isChatEnabled = false;
     private String callId = "";
     private String whiteboardId = "";
+    private String shareLink = "";
     private CallCompositeAudioVideoMode audioVideoMode = CallCompositeAudioVideoMode.AUDIO_AND_VIDEO;
     private CallCompositeCaptionsOptions captionsOptions = null;
 
@@ -220,6 +221,24 @@ public final class CallCompositeLocalOptions {
      */
     public CallCompositeLocalOptions setWhiteboardId(final String whiteboardId) {
         this.whiteboardId = whiteboardId;
+        return this;
+    }
+
+    /**
+     * Get the Share Meeting Link.
+     * @return The Share Link as a String.
+     */
+    public String getShareLink() {
+        return shareLink;
+    }
+
+    /**
+     * Set the Share Link.
+     * @param shareLink The Share Link to set, as a String.
+     * @return The current {@link CallCompositeLocalOptions} object for Fluent use.
+     */
+    public CallCompositeLocalOptions setShareLink(final String shareLink) {
+        this.shareLink = shareLink;
         return this;
     }
 
