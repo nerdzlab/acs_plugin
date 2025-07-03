@@ -391,7 +391,7 @@ class ScreenShareService : Service() {
 
                 // Send the frame to Azure Communication Services
                 Log.d(TAG, "state: ${screenShareOutgoingVideoStream?.state}")
-//                if (screenShareOutgoingVideoStream?.state == VideoStreamState.STARTED) {
+                if (screenShareOutgoingVideoStream?.state == VideoStreamState.STARTED) {
                     screenShareOutgoingVideoStream?.sendRawVideoFrame(rawVideoFrameBuffer)
                         ?.whenComplete { _, exception ->
                             if (exception != null) {
@@ -409,7 +409,7 @@ class ScreenShareService : Service() {
                                 }
                             }
                         }
-//                }
+                }
 
             } catch (e: Exception) {
                 Log.e(TAG, "Error processing image frame: ${e.message}", e)
